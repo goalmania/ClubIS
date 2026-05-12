@@ -9,7 +9,8 @@ const PIANI = [
     nome: 'Starter',
     colore: 'var(--gray)',
     prezzoMensile: 59,
-    prezzoAnnuale: 49,
+    prezzoAnnuale: 50,   // €600/anno (−15%)
+    fatturatoAnno: 600,
     features: ['Rosa & tesseramenti', 'Certificati medici', 'Quote & rateali', 'Calendario & distinte', 'Prima nota', '11 dashboard role-based'],
     envMensile: process.env.NEXT_PUBLIC_STRIPE_LINK_STARTER_MONTHLY,
     envAnnuale: process.env.NEXT_PUBLIC_STRIPE_LINK_STARTER_ANNUAL,
@@ -19,7 +20,8 @@ const PIANI = [
     nome: 'Pro',
     colore: 'var(--accent2)',
     prezzoMensile: 99,
-    prezzoAnnuale: 83,
+    prezzoAnnuale: 84,   // €1.008/anno (−15%)
+    fatturatoAnno: 1008,
     popular: true,
     features: ['Tutto Starter +', 'Dashboard DS completa', 'Analisi C.U. FIGC', 'Scouting con export PDF', 'Rimborsi SEPA', 'Registro IVA'],
     envMensile: process.env.NEXT_PUBLIC_STRIPE_LINK_PRO_MONTHLY,
@@ -30,7 +32,8 @@ const PIANI = [
     nome: 'Elite',
     colore: 'var(--accent)',
     prezzoMensile: 179,
-    prezzoAnnuale: 149,
+    prezzoAnnuale: 152,  // €1.824/anno (−15%)
+    fatturatoAnno: 1824,
     features: ['Tutto Pro +', 'DM Scout integrato', 'Utenti illimitati', 'Onboarding dedicato', 'Supporto WhatsApp 4h', 'Report mensile auto'],
     envMensile: process.env.NEXT_PUBLIC_STRIPE_LINK_ELITE_MONTHLY,
     envAnnuale: process.env.NEXT_PUBLIC_STRIPE_LINK_ELITE_ANNUAL,
@@ -202,7 +205,11 @@ function AbbonamentoContent() {
                     <div style={{ marginBottom: 14 }}>
                       <span style={{ fontFamily: 'var(--font-display)', fontSize: 26, fontWeight: 900, color: 'var(--white)' }}>€{prezzo}</span>
                       <span style={{ fontSize: 11, color: 'var(--gray)', marginLeft: 4 }}>/mese</span>
-                      {annuale && <div style={{ fontSize: 10, color: 'var(--gray)', marginTop: 2 }}>Fatturato annualmente</div>}
+                      {annuale && (
+                        <div style={{ fontSize: 10, color: 'var(--accent)', marginTop: 3 }}>
+                          €{p.fatturatoAnno.toLocaleString('it-IT')}/anno · risparmio 15%
+                        </div>
+                      )}
                     </div>
 
                     <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 16px', flex: 1 }}>
