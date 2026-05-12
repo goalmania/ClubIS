@@ -83,6 +83,7 @@ export async function POST(req: NextRequest) {
     .from('clubs')
     .insert({
       nome: club_nome,
+      citta: '',
       categoria: club_categoria ?? 'eccellenza',
       plan_status: 'trial',
       plan_tier: PIANO_TIER[pianoScelto],
