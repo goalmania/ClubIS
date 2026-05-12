@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const pdfParse: (buf: Buffer) => Promise<{ text: string; numpages: number }> = require('pdf-parse')
+const pdfParse: (buf: Buffer) => Promise<{ text: string; numpages: number }> = require('pdf-parse') // eslint-disable-line
 
 export interface PartitaEstratta {
   data: string       // DD/MM/YYYY
