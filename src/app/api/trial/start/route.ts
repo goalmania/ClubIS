@@ -190,15 +190,28 @@ export async function POST(req: NextRequest) {
       })
 
       if (!dmAuthError && dmAuth.user) {
-        // Crea profilo DMScout
+        // Crea profilo DMScout con stato trial
         await dmDb.from('profiles').insert({
           user_id: dmAuth.user.id,
           org_type: 'club',
           org_name: club_nome,
           display_name: `${nome} ${cognome}`,
+          plan_status: 'trial',
+          trial_ends_at: trialEndsAtIso,
         }).select('id').maybeSingle()
 
         dmscoutAccountCreated = true
+      } else if (!dmAuthError && !dmAuth?.user) {
+        // account già esistente: aggiorna solo il piano
+        const { data: existingUsers } = await dmDb.auth.admin.listUsers()
+        const existingUser = existingUsers?.users?.find((u: { email?: string }) => u.email === emailNorm)
+        if (existingUser) {
+          await dmDb.from('profiles').update({
+            plan_status: 'trial',
+            trial_ends_at: trialEndsAtIso,
+          }).eq('user_id', existingUser.id)
+          dmscoutAccountCreated = true
+        }
       }
       // Se la creazione DMScout fallisce non blocchiamo — è best-effort
     }

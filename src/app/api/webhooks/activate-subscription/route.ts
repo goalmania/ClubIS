@@ -123,6 +123,11 @@ export async function POST(req: NextRequest) {
       const { data: { users } } = await dmDb.auth.admin.listUsers()
       const dmscoutUserExists = users.some(u => u.email === emailNorm)
 
+      const profileUpdate = {
+        plan_status: 'active',
+        ...(current_period_end ? { current_period_end } : {}),
+      }
+
       if (!dmscoutUserExists) {
         // Crea account DMScout con password temporanea — l'utente la cambierà
         const tempPassword = `DM${Math.random().toString(36).slice(2, 10).toUpperCase()}!`
@@ -138,11 +143,17 @@ export async function POST(req: NextRequest) {
             org_type: 'club',
             org_name: club.nome,
             display_name: club.nome,
+            ...profileUpdate,
           })
           dmscoutActivated = true
         }
       } else {
-        dmscoutActivated = true // già esistente
+        // Account già esistente: aggiorna piano
+        const dmUser = users.find((u: { email?: string }) => u.email === emailNorm)
+        if (dmUser) {
+          await dmDb.from('profiles').update(profileUpdate).eq('user_id', dmUser.id)
+        }
+        dmscoutActivated = true
       }
     }
   }
