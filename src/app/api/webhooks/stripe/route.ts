@@ -39,6 +39,17 @@ async function verifyStripeSignature(
 
 function planTierFromStripePrice(priceId: string | null | undefined): PlanTier {
   if (!priceId) return 'starter'
+  // Mappa price ID → tier tramite env var
+  const map: Record<string, PlanTier> = {
+    [process.env.STRIPE_PRICE_STARTER_MONTHLY ?? '']: 'starter',
+    [process.env.STRIPE_PRICE_STARTER_ANNUAL  ?? '']: 'starter',
+    [process.env.STRIPE_PRICE_PRO_MONTHLY     ?? '']: 'pro',
+    [process.env.STRIPE_PRICE_PRO_ANNUAL      ?? '']: 'pro',
+    [process.env.STRIPE_PRICE_ELITE_MONTHLY   ?? '']: 'elite',
+    [process.env.STRIPE_PRICE_ELITE_ANNUAL    ?? '']: 'elite',
+  }
+  if (map[priceId]) return map[priceId]
+  // Fallback: cerca 'elite'/'pro' nel price ID (utile in dev)
   const lower = priceId.toLowerCase()
   if (lower.includes('elite')) return 'elite'
   if (lower.includes('pro'))   return 'pro'

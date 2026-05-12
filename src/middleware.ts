@@ -111,6 +111,7 @@ export async function middleware(request: NextRequest) {
       ) {
         const url = new URL('/abbonamento-scaduto', request.url)
         url.searchParams.set('motivo', 'trial_scaduto')
+        if (user.email) url.searchParams.set('email', user.email)
         return NextResponse.redirect(url)
       }
 
@@ -122,6 +123,7 @@ export async function middleware(request: NextRequest) {
       // Qualsiasi altro stato (inactive, expired): blocca
       const url = new URL('/abbonamento-scaduto', request.url)
       url.searchParams.set('motivo', club.plan_status ?? 'inactive')
+      if (user.email) url.searchParams.set('email', user.email)
       return NextResponse.redirect(url)
     }
   }
