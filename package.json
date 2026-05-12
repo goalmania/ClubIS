@@ -19,6 +19,7 @@
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.49.1",
     "@types/pdf-parse": "^1.1.5",
+    "@vercel/speed-insights": "^2.0.0",
     "clsx": "^2.1.1",
     "next": "14.2.18",
     "pdf-parse": "^2.4.5",
