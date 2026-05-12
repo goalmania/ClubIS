@@ -4,6 +4,7 @@ import './globals.css'
 export const metadata: Metadata = {
   title: 'ClubIS — The Intelligence System',
   description: 'Gestionale integrato per società di calcio',
+  icons: { icon: '/favicon.svg' },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
