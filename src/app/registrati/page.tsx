@@ -13,6 +13,9 @@ const PIANI = {
 type Piano = keyof typeof PIANI
 
 const CATEGORIE = [
+  { value: 'serie_a',         label: 'Serie A' },
+  { value: 'serie_b',         label: 'Serie B' },
+  { value: 'serie_c',         label: 'Serie C' },
   { value: 'serie_d',         label: 'Serie D' },
   { value: 'eccellenza',      label: 'Eccellenza' },
   { value: 'promozione',      label: 'Promozione' },

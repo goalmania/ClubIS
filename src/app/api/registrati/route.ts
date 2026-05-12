@@ -87,7 +87,6 @@ export async function POST(req: NextRequest) {
       plan_status: 'trial',
       plan_tier: PIANO_TIER[pianoScelto],
       trial_ends_at: trialEndsAt.toISOString(),
-      onboarding_completato: false,
       onboarding_completed: false,
     })
     .select('id')
