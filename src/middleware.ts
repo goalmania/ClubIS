@@ -79,7 +79,7 @@ export async function middleware(request: NextRequest) {
 
     const { data: club } = await supabase
       .from('clubs')
-      .select('plan_status, onboarding_completed, trial_ends_at')
+      .select('plan_status, onboarding_completed, trial_ends_at, current_period_end')
       .eq('id', utente.club_id)
       .maybeSingle()
 
@@ -115,8 +115,17 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(url)
       }
 
-      // Abbonamento attivo: consenti
+      // Abbonamento attivo: controlla che current_period_end non sia scaduto
       if (club.plan_status === 'active') {
+        if (
+          (club as any).current_period_end &&
+          new Date((club as any).current_period_end) <= now
+        ) {
+          const url = new URL('/abbonamento-scaduto', request.url)
+          url.searchParams.set('motivo', 'expired')
+          if (user.email) url.searchParams.set('email', user.email)
+          return NextResponse.redirect(url)
+        }
         return response
       }
 

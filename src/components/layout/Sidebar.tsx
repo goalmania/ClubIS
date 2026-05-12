@@ -54,6 +54,7 @@ const navConfig: Record<RuoloUtente, NavSezione[]> = {
       { label: 'Organigramma', href: '/dashboard/presidente/organigramma', icon: 'Users' },
       { label: 'Staff', href: '/dashboard/presidente/staff', icon: 'Users' },
       { label: 'Gestione Account', href: '/dashboard/presidente/gestione-account', icon: 'Settings' },
+      { label: 'Abbonamento', href: '/dashboard/presidente/abbonamento', icon: 'Tag' },
       { label: 'Inviti Staff', href: '/dashboard/presidente/inviti', icon: 'Link' },
       { label: 'Sponsor', href: '/dashboard/presidente/sponsor', icon: 'Handshake' },
       { label: 'Compliance campionato', href: '/dashboard/presidente/compliance-campionato', icon: 'Check', feature: 'compliance_indice' },

@@ -47,11 +47,13 @@ export default function DMScoutWidget({ attivo, scadenza, clubId }: Props) {
             </div>
           </div>
           <a
-            href="/dashboard/presidente/abbonamento"
+            href="https://dmscout.it"
+            target="_blank"
+            rel="noopener noreferrer"
             className="btn btn-primary btn-sm"
             style={{ fontSize: 11 }}
           >
-            {scaduto ? 'Rinnova ClubIS Pro →' : 'Attiva ClubIS Pro →'}
+            {scaduto ? 'Rinnova DMScout →' : 'Attiva DMScout →'}
           </a>
         </div>
 
@@ -64,7 +66,7 @@ export default function DMScoutWidget({ attivo, scadenza, clubId }: Props) {
             fontFamily: 'var(--font-mono)', fontSize: 11,
             color: 'var(--gray)', lineHeight: 1.6,
           }}>
-            Con <strong style={{ color: 'var(--accent)' }}>ClubIS Pro + DM Scout</strong> hai accesso a:
+            Con <strong style={{ color: 'var(--accent)' }}>DM Scout</strong> hai accesso a:
             <br />· Database giocatori con profili completi e statistiche
             <br />· Analisi comparativa per ogni ruolo
             <br />· Report automatici pre-partita
@@ -166,7 +168,9 @@ export default function DMScoutWidget({ attivo, scadenza, clubId }: Props) {
             ⚠ Abbonamento in scadenza tra {giorniRimasti} giorni
           </span>
           <a
-            href="/dashboard/presidente/abbonamento"
+            href="https://dmscout.it"
+            target="_blank"
+            rel="noopener noreferrer"
             className="btn btn-sm"
             style={{ fontSize: 11, borderColor: 'var(--ambra)', color: 'var(--ambra)' }}
           >
