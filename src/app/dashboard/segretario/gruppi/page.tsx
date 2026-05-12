@@ -211,7 +211,12 @@ export default function GruppiPage() {
     setModalEdit(g); setLoadingEdit(true); setCercaEdit('')
     const { data } = await sb.from('gruppi_membri')
       .select('id, giocatore_id, utente_id').eq('gruppo_id', g.id)
-    setEditMembri(data ?? [])
+    setEditMembri((data ?? []).map((m: any) => ({
+      id: m.id, gruppo_id: g.id,
+      giocatore_id: m.giocatore_id ?? null,
+      utente_id: m.utente_id ?? null,
+      ruolo_nel_gruppo: null, data_ingresso: null,
+    })))
     const fk = g.tipo === 'staff' ? 'utente_id' : 'giocatore_id'
     setEditSelIds((data ?? []).map((m: any) => m[fk]).filter(Boolean))
     setLoadingEdit(false)

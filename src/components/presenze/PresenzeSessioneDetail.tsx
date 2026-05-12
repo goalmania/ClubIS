@@ -84,7 +84,7 @@ export default function PresenzeSessioneDetail({ sessioneId, readonly = false }:
             id: g.id, giocatore_id: g.id,
             nome: g.nome, cognome: g.cognome,
             ruolo: g.ruolo_principale, numero_maglia: t.numero_maglia, foto_url: g.foto_url,
-            stato: p ? (p.presente ? 'presente' : 'assente') : 'non_registrato',
+            stato: (p ? (p.presente ? 'presente' : 'assente') : 'non_registrato') as StatoPresenza,
             motivo_assenza: p?.motivo_assenza ?? null,
             presence_id: p?.id ?? null,
           }
