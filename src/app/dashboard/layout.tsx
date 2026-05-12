@@ -128,7 +128,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
               : '— scaduta oggi'}
           </span>
           <a
-            href="https://dmfootballservices.com"
+            href="https://dmfootballservices.it/#prezzi"
             target="_blank"
             rel="noopener noreferrer"
             style={{
