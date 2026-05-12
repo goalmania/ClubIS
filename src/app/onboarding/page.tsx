@@ -225,7 +225,6 @@ export default function OnboardingPage() {
     setSaving(true)
     await supabase.from('clubs').update({
       onboarding_completed: true,
-      onboarding_completato: true,
       onboarding_step: 4,
     }).eq('id', clubId)
     router.push('/dashboard/presidente')

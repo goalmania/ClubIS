@@ -73,7 +73,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   const { data: club } = await supabase
     .from('clubs')
-    .select('nome, categoria, logo_url, onboarding_completato, plan_tier, plan_status, trial_ends_at')
+    .select('nome, categoria, logo_url, onboarding_completed, plan_tier, plan_status, trial_ends_at')
     .eq('id', effectiveClubId)
     .maybeSingle()
 
@@ -186,7 +186,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           <OnboardingWrapper
             clubId={effectiveClubId}
             ruolo={effectiveRuolo}
-            mostra={!(club?.onboarding_completato ?? false)}
+            mostra={!(club?.onboarding_completed ?? false)}
           />
           <ClubPlanProvider planTier={effectivePlanTier}>
             {children}

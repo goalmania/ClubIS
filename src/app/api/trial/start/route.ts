@@ -131,7 +131,6 @@ export async function POST(req: NextRequest) {
       plan_status: 'trial',
       plan_tier: 'elite',
       trial_ends_at: trialEndsAtIso,
-      onboarding_completato: false,
       onboarding_completed: false,
     }
     // Se include anche DMScout, attiva subito il campo dmscout sul club

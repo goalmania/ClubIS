@@ -84,7 +84,7 @@ export function useOnboarding(clubId: string) {
 
       const [{ data: club }, { data: steps }] = await Promise.all([
         supabase.from('clubs')
-          .select('onboarding_completato')
+          .select('onboarding_completed')
           .eq('id', clubId)
           .single(),
         supabase.from('onboarding_steps')
@@ -97,11 +97,11 @@ export function useOnboarding(clubId: string) {
 
       const completati = steps?.map((s: any) => s.step as number) ?? []
       const tuttiCompletati = completati.length >= STEPS_ONBOARDING.length
-      const flagCompletato  = club?.onboarding_completato ?? false
+      const flagCompletato  = club?.onboarding_completed ?? false
 
       // Allinea il flag DB se tutti gli step risultano già completati
       if (tuttiCompletati && !flagCompletato) {
-        supabase.from('clubs').update({ onboarding_completato: true }).eq('id', clubId)
+        supabase.from('clubs').update({ onboarding_completed: true }).eq('id', clubId)
       }
 
       setOnboardingCompletato(flagCompletato || tuttiCompletati)
@@ -132,7 +132,7 @@ export function useOnboarding(clubId: string) {
     // Se tutti gli step sono completati → segna onboarding come fatto
     if (nuoviCompletati.length >= STEPS_ONBOARDING.length) {
       await supabase.from('clubs')
-        .update({ onboarding_completato: true })
+        .update({ onboarding_completed: true })
         .eq('id', clubId)
       setOnboardingCompletato(true)
     }
