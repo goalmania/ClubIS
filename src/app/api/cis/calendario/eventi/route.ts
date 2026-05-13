@@ -227,11 +227,11 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // Rigenera outbox notifiche CIS per questo evento
+  // Rigenera outbox notifiche CIS per questo evento (non bloccante)
   try {
     await generateScheduledNotificationsForEvent(supabase as any, eventoId)
   } catch (e: any) {
-    return NextResponse.json({ error: e.message ?? 'Errore scheduling notifiche' }, { status: 500 })
+    console.error('[calendario/eventi] notifiche scheduling fallito:', e?.message)
   }
 
   return NextResponse.json({ ok: true, id: eventoId })

@@ -10,7 +10,14 @@ type MedioTrasporto = 'pullman' | 'treno' | 'aereo' | 'auto_propria' | 'altro'
 type PlayerOption = { id: string; nome: string; cognome: string }
 type StaffOption = { id: string; nome: string; cognome: string; ruolo: string }
 type TeamManagerOption = { id: string; nome: string; cognome: string }
-type PartitaOption = { id: string; competizione?: string | null; avversario: string; data_ora: string; casa_trasferta: string }
+type PartitaOption = {
+  id: string
+  competizione?: string | null
+  avversario: string
+  data_ora: string
+  casa_trasferta: string
+  source: 'partite' | 'calendario'
+}
 
 const MAX_ALLEGATI = 10
 const CIS_ALLEGATI_BUCKET = 'cis-eventi-allegati'
@@ -55,6 +62,7 @@ export default function TrasferteCreateDrawer() {
 
   const [form, setForm] = useState({
     partita_id: '' as string,
+    partita_source: 'partite' as 'partite' | 'calendario',
     destinazione: '',
     data_partenza: today,
     data_rientro: today,
@@ -104,6 +112,7 @@ export default function TrasferteCreateDrawer() {
   const resetForm = () => {
     setForm({
       partita_id: '',
+      partita_source: 'partite',
       destinazione: '',
       data_partenza: today,
       data_rientro: today,
@@ -145,19 +154,45 @@ export default function TrasferteCreateDrawer() {
       if (utenteError || !utente?.club_id) return
       const clubId = utente.club_id
 
-      // Competizione/evento: derivo dalla tabella `partite`
-      const { data: partiteData, error: partErr } = await supabase
+      // Partite dalla tabella `partite` (vecchio sistema)
+      const { data: partiteData } = await supabase
         .from('partite')
         .select('id, competizione, avversario, data_ora, casa_trasferta')
         .eq('club_id', clubId)
         .order('data_ora', { ascending: true })
         .limit(50)
 
-      if (!partErr && partiteData) {
-        setPartite(partiteData as any[])
-      } else {
-        setPartite([])
-      }
+      const partiteRows: PartitaOption[] = (partiteData ?? []).map((p: any) => ({
+        id: p.id,
+        competizione: p.competizione,
+        avversario: p.avversario,
+        data_ora: p.data_ora,
+        casa_trasferta: p.casa_trasferta,
+        source: 'partite',
+      }))
+
+      // Partite dal calendario (eventi_calendario tipologia='partita')
+      const { data: eventiData } = await supabase
+        .from('eventi_calendario')
+        .select('id, data_ora_inizio, luogo_testo, note')
+        .eq('club_id', clubId)
+        .eq('tipologia', 'partita')
+        .order('data_ora_inizio', { ascending: true })
+        .limit(50)
+
+      const calendarioRows: PartitaOption[] = (eventiData ?? []).map((e: any) => ({
+        id: e.id,
+        competizione: 'Calendario',
+        avversario: e.luogo_testo || e.note || 'Partita',
+        data_ora: e.data_ora_inizio,
+        casa_trasferta: 'casa',
+        source: 'calendario',
+      }))
+
+      const tutte = [...partiteRows, ...calendarioRows].sort(
+        (a, b) => new Date(a.data_ora).getTime() - new Date(b.data_ora).getTime(),
+      )
+      setPartite(tutte)
 
       // Staff (escludo team_manager) + Team manager
       const staffRoles = ['presidente', 'ds', 'segretario', 'allenatore', 'osservatore', 'medico', 'team_manager']
@@ -318,7 +353,8 @@ export default function TrasferteCreateDrawer() {
           costo_effettivo: costoEff,
           note: noteInitial,
           stato: 'programmata',
-          partita_id: form.partita_id,
+          partita_id: form.partita_source === 'partite' ? (form.partita_id || null) : null,
+          evento_calendario_id: form.partita_source === 'calendario' ? (form.partita_id || null) : null,
         }),
       })
 
@@ -433,7 +469,14 @@ export default function TrasferteCreateDrawer() {
                     <select
                       className="input"
                       value={form.partita_id}
-                      onChange={e => setForm(prev => ({ ...prev, partita_id: e.target.value }))}
+                      onChange={e => {
+                        const selected = partite.find(p => p.id === e.target.value)
+                        setForm(prev => ({
+                          ...prev,
+                          partita_id: e.target.value,
+                          partita_source: selected?.source ?? 'partite',
+                        }))
+                      }}
                     >
                       <option value="" disabled>
                         {partite.length > 0 ? 'Seleziona…' : 'Nessuna partita disponibile'}

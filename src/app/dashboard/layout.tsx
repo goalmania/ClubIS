@@ -92,10 +92,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
     ? Math.ceil((new Date(trialEndsAt).getTime() - Date.now()) / 86_400_000)
     : null
 
+  const rawPlanTier = ((club as any)?.plan_tier ?? 'starter') as string
   const effectivePlanTier = (
     utente.is_super_admin ? 'super_admin'
     : isTrial            ? 'elite'
-    : ((club as any)?.plan_tier ?? 'starter')
+    : (rawPlanTier.trim().toLowerCase() || 'starter')
   ) as PlanTier
 
   return (

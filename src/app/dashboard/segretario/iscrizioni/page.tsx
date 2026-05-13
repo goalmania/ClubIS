@@ -143,6 +143,7 @@ export default function IscrizioniPage() {
       club_id: clubId, slug: mSlug.trim().toLowerCase().replace(/\s+/g, '-'),
       titolo: mTitolo.trim(), descrizione: mDesc.trim() || null,
       tipo: mTipo, stagione: mStagione,
+      attivo: true,
       data_chiusura: mChiusura || null,
       max_iscrizioni: mMax ? parseInt(mMax) : null,
       importo_iscrizione: mImporto ? parseFloat(mImporto) : null,
