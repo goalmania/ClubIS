@@ -19,6 +19,7 @@ export async function POST(req: NextRequest) {
     note,
     stato,
     partita_id,
+    evento_calendario_id,
   } = body as any
 
   if (!destinazione || typeof destinazione !== 'string') {
@@ -58,6 +59,7 @@ export async function POST(req: NextRequest) {
     note,
     stato: stato ?? 'programmata',
     partita_id: partita_id ?? null,
+    evento_calendario_id: evento_calendario_id ?? null,
   }
 
   const { data: ins, error } = await supabase

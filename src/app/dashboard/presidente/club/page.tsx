@@ -94,6 +94,22 @@ const CATEGORIA_LABEL: Record<string, string> = {
 const PIANO_LABEL: Record<string, string> = { base: 'Base', pro: 'Pro', elite: 'Elite' }
 const PIANO_COLOR: Record<string, string> = { base: 'var(--gray)', pro: 'var(--accent)', elite: '#88aaff' }
 
+function F({ label, hint, children, full }: { label: string; hint?: string; children: React.ReactNode; full?: boolean }) {
+  return (
+    <div style={{ marginBottom: 16, gridColumn: full ? '1 / -1' : undefined }}>
+      <label className="label">{label}</label>
+      {children}
+      {hint && <div style={{ fontSize: 11, color: 'var(--gray)', marginTop: 4, fontFamily: 'var(--font-mono)' }}>{hint}</div>}
+    </div>
+  )
+}
+
+function Grid({ children }: { children: React.ReactNode }) {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 20px' }}>{children}</div>
+  )
+}
+
 export default function InfoClubPage() {
   const supabase = createClient()
   const [clubId,   setClubId]   = useState<string | null>(null)
@@ -213,18 +229,6 @@ export default function InfoClubPage() {
   }
 
   if (loading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 300, color: 'var(--gray)' }}>Caricamento...</div>
-
-  const F = ({ label, hint, children, full }: { label: string; hint?: string; children: React.ReactNode; full?: boolean }) => (
-    <div style={{ marginBottom: 16, gridColumn: full ? '1 / -1' : undefined }}>
-      <label className="label">{label}</label>
-      {children}
-      {hint && <div style={{ fontSize: 11, color: 'var(--gray)', marginTop: 4, fontFamily: 'var(--font-mono)' }}>{hint}</div>}
-    </div>
-  )
-
-  const Grid = ({ children }: { children: React.ReactNode }) => (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 20px' }}>{children}</div>
-  )
 
   const ro = (value: string | number | null | undefined, fallback = '—') =>
     value != null && value !== '' ? String(value) : fallback
