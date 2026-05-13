@@ -6,7 +6,7 @@ import { Resend } from 'resend'
 
 export async function POST(req: NextRequest) {
   const ctx = await getUserContext()
-  if (!ctx || ctx.ruolo !== 'presidente') {
+  if (!ctx || !['presidente', 'segretario', 'team_manager'].includes(ctx.ruolo)) {
     return NextResponse.json({ error: 'Non autorizzato' }, { status: 403 })
   }
 

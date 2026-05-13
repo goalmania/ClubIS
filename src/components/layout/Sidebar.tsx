@@ -161,6 +161,7 @@ const navConfig: Record<RuoloUtente, NavSezione[]> = {
       { label: 'Archivio', href: '/dashboard/segretario/archivio', icon: 'Folder' },
       { label: 'Import dati', href: '/dashboard/segretario/import', icon: 'Upload' },
       { label: 'Impianti', href: '/dashboard/presidente/impianti', icon: 'Stadium' },
+      { label: 'Inviti Staff', href: '/dashboard/segretario/inviti', icon: 'Link' },
     ]},
     { voci: [
       { label: 'Bacheca', href: '/dashboard/segretario/messaggi', icon: 'Layout' },
@@ -249,6 +250,7 @@ const navConfig: Record<RuoloUtente, NavSezione[]> = {
       { label: 'Presenze', href: '/dashboard/team-manager/presenze', icon: 'Check' },
       { label: 'Accrediti', href: '/dashboard/team-manager/accrediti', icon: 'Ticket' },
       { label: 'Comunicazioni', href: '/dashboard/team-manager/comunicazioni', icon: 'Message' },
+      { label: 'Inviti Staff', href: '/dashboard/team-manager/inviti', icon: 'Link' },
       { label: 'Stadio', href: '/dashboard/stadio', icon: 'Stadium', feature: 'biglietteria_stadio' },
     ]},
     { titolo: 'Finanze', voci: [
