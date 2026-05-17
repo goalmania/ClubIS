@@ -53,7 +53,7 @@ export default function ImportPage() {
   const [file, setFile] = useState<File | null>(null)
   const [preview, setPreview] = useState<ReturnType<typeof parseCSV> | null>(null)
   const [importing, setImporting] = useState(false)
-  const [risultato, setRisultato] = useState<{ importati: number; saltati: number; errori: string[] } | null>(null)
+  const [risultato, setRisultato] = useState<{ importati: number; saltati: number; errori: string[]; periodo_min?: string; periodo_max?: string } | null>(null)
   const [toast, setToast] = useState<{ msg: string; tipo: 'success' | 'error' } | null>(null)
 
   const tipo = TIPI_IMPORT.find(t => t.key === tipoSel)!
@@ -276,6 +276,46 @@ export default function ImportPage() {
       {risultato && (
         <div className={`alert ${risultato.errori?.length > 0 ? 'alert-warning' : 'alert-success'}`}>
           ✓ Importati: {risultato.importati} · Saltati (duplicati): {risultato.saltati ?? 0} · Errori: {risultato.errori?.length ?? 0}
+
+          {/* Banner navigazione per movimenti contabili */}
+          {tipoSel === 'movimenti' && risultato.importati > 0 && risultato.periodo_min && (
+            <div style={{
+              marginTop: 12, padding: '10px 14px',
+              background: 'rgba(200,240,0,0.06)', border: '1px solid rgba(200,240,0,0.25)',
+              fontSize: 12, fontFamily: 'var(--font-mono)',
+            }}>
+              I movimenti sono stati registrati nel periodo{' '}
+              <strong style={{ color: 'var(--accent)' }}>{risultato.periodo_min}</strong>
+              {risultato.periodo_max !== risultato.periodo_min && (
+                <> → <strong style={{ color: 'var(--accent)' }}>{risultato.periodo_max}</strong></>
+              )}.{' '}
+              Per visualizzarli vai in{' '}
+              <a
+                href={`/dashboard/segretario/prima-nota?mese=${risultato.periodo_min}`}
+                style={{ color: 'var(--accent)', textDecoration: 'underline', cursor: 'pointer' }}
+              >
+                Prima Nota → {risultato.periodo_min}
+              </a>
+            </div>
+          )}
+
+          {/* Banner per giocatori importati */}
+          {tipoSel === 'giocatori' && risultato.importati > 0 && (
+            <div style={{
+              marginTop: 12, padding: '10px 14px',
+              background: 'rgba(200,240,0,0.06)', border: '1px solid rgba(200,240,0,0.25)',
+              fontSize: 12, fontFamily: 'var(--font-mono)',
+            }}>
+              Giocatori aggiunti con tesseramento attivo.{' '}
+              <a
+                href="/dashboard/segretario/giocatori"
+                style={{ color: 'var(--accent)', textDecoration: 'underline' }}
+              >
+                Vai a Giocatori →
+              </a>
+            </div>
+          )}
+
           {risultato.errori?.length > 0 && (
             <div style={{ marginTop: 8, fontSize: 11, fontFamily: 'var(--font-mono)' }}>
               {risultato.errori.join(' · ')}

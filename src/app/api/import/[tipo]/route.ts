@@ -123,7 +123,7 @@ export async function POST(req: Request, { params }: { params: { tipo: string } 
   const supabase = createAdminClient()
   const { clubId } = ctx
 
-  const risultati = { importati: 0, saltati: 0, errori: [] as string[] }
+  const risultati: { importati: number; saltati: number; errori: string[]; periodo_min?: string; periodo_max?: string } = { importati: 0, saltati: 0, errori: [] }
 
   if (params.tipo === 'giocatori') {
     for (const r of righe) {
@@ -204,29 +204,33 @@ export async function POST(req: Request, { params }: { params: { tipo: string } 
   }
 
   if (params.tipo === 'movimenti') {
-    // Inserimento riga per riga per avere errori granulari invece di un
-    // errore bulk che azzera tutto il batch
+    const dateImportate: string[] = []
     for (const r of righe as Record<string, unknown>[]) {
       try {
         const tipo = String(r.tipo ?? '').toLowerCase().trim()
+        const dataStr = String(r.data ?? '')
         const { error } = await supabase.from('prima_nota').insert({
           club_id:     clubId,
           tipo:        tipo === 'entrata' ? 'entrata' : 'uscita',
           categoria:   normCategoria(String(r.categoria ?? '')),
           importo:     Number(r.importo),
-          data:        r.data,
+          data:        dataStr || null,
           descrizione: String(r.descrizione ?? ''),
           controparte: r.controparte ? String(r.controparte) : null,
-          // 'note' non esiste in prima_nota — il contenuto della colonna note
-          // del CSV viene accodato alla descrizione se presente
           ...(r.note ? { descrizione: `${String(r.descrizione ?? '')} — ${String(r.note)}`.slice(0, 255) } : {}),
         })
         if (error) throw new Error(error.message)
+        if (dataStr) dateImportate.push(dataStr)
         risultati.importati++
       } catch (e: unknown) {
         const msg = e instanceof Error ? e.message : String(e)
         risultati.errori.push(`Riga ${r.data} ${r.descrizione}: ${msg}`)
       }
+    }
+    if (dateImportate.length) {
+      dateImportate.sort()
+      risultati.periodo_min = dateImportate[0].slice(0, 7)   // YYYY-MM
+      risultati.periodo_max = dateImportate[dateImportate.length - 1].slice(0, 7)
     }
   }
 

@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { PageHeader, Toast, Modal } from '@/components/ui'
 
@@ -7,13 +8,15 @@ const categorie = ['quote_iscrizione','sponsorizzazioni','proventi_gare','stipen
 
 export default function PrimaNotaPage() {
   const supabase = createClient()
+  const searchParams = useSearchParams()
   const [movimenti, setMovimenti] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [toast, setToast] = useState<{ msg: string; tipo: 'success' | 'error' } | null>(null)
   const [showForm, setShowForm] = useState(false)
 
   const oggi = new Date()
-  const [mese, setMese] = useState(oggi.toISOString().slice(0, 7))
+  const meseDefault = searchParams.get('mese') ?? oggi.toISOString().slice(0, 7)
+  const [mese, setMese] = useState(meseDefault)
   const [tipo, setTipo] = useState('entrata')
   const [categoria, setCategoria] = useState('altro')
   const [importo, setImporto] = useState('')
