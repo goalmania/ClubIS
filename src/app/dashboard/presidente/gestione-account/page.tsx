@@ -267,7 +267,8 @@ export default function GestioneAccountPage() {
       .from('utenti')
       .select('id, nome, cognome, email, ruolo, attivo, created_at, ultimo_accesso')
       .eq('club_id', utente.club_id)
-      .neq('id', user.id)          // esclude il presidente loggato
+      .neq('id', user.id)
+      .or('is_super_admin.is.null,is_super_admin.eq.false')
       .order('ruolo')
       .order('cognome')
 
