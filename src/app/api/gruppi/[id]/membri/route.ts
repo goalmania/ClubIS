@@ -101,8 +101,10 @@ export async function DELETE(
 
   // bulk delete by fk ids
   const { fk, ids } = await req.json()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const sb = supabase as any
   for (const sid of (ids ?? [])) {
-    await supabase.from('gruppi_membri').delete()
+    await sb.from('gruppi_membri').delete()
       .eq('gruppo_id', gruppoId).eq(fk, sid)
   }
   return Response.json({ ok: true })
