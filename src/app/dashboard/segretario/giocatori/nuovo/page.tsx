@@ -78,19 +78,15 @@ export default function NuovoGiocatorePage() {
   const [telefonoGenitore, setTelefonoGenitore] = useState('')
   const [relazioneGenitore,setRelazioneGenitore]= useState('padre')
 
-  // Carica squadre del club al mount
+  // Carica squadre del club al mount (auto-seed se mancanti)
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user) return
-      supabase.from('utenti').select('club_id').eq('id', user.id).single().then(({ data: utente }) => {
-        if (!utente) return
-        supabase.from('squadre').select('id, nome').eq('club_id', utente.club_id).eq('attiva', true).order('nome')
-          .then(({ data }) => {
-            setSquadre(data ?? [])
-            if (data?.length === 1) setSquadraId(data[0].id)
-          })
+    fetch('/api/squadre')
+      .then(r => r.json())
+      .then((data: { id: string; nome: string }[]) => {
+        if (!Array.isArray(data)) return
+        setSquadre(data)
+        if (data.length === 1) setSquadraId(data[0].id)
       })
-    })
   }, [])
 
   const eta = dataNascita
