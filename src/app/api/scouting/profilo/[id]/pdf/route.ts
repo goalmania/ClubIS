@@ -75,7 +75,12 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
   const { data: club } = await supabase.from('clubs').select('nome').eq('id', utente.club_id).single()
 
-  const { data: report } = await supabase.from('report_scouting').select('*').eq('id', params.id).single()
+  const { data: report } = await supabase
+    .from('report_scouting')
+    .select('*')
+    .eq('id', params.id)
+    .eq('club_richiedente_id', utente.club_id)
+    .single()
   if (!report) return new NextResponse('Report non trovato', { status: 404 })
 
   const { data: osservazioni } = await supabase

@@ -27,10 +27,14 @@ export async function GET(
   const { data: { user } } = await sessionClient.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
 
+  const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
+  if (!utente?.club_id) return NextResponse.json({ error: 'Club non trovato' }, { status: 403 })
+
   const { data: quietanza, error } = await supabase
     .from('quietanze')
     .select('*')
     .eq('id', params.id)
+    .eq('club_id', utente.club_id)
     .single()
 
   if (error || !quietanza) return NextResponse.json({ error: 'Quietanza non trovata' }, { status: 404 })

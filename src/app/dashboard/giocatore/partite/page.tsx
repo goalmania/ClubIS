@@ -28,6 +28,9 @@ export default function PartiteGiocatorePage() {
       const { data: me } = await supabase.auth.getUser()
       if (!me.user) return
 
+      const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', me.user.id).maybeSingle()
+      const clubId = utente?.club_id
+
       const { data: gioc } = await supabase
         .from('giocatori')
         .select('id')
@@ -42,11 +45,12 @@ export default function PartiteGiocatorePage() {
       const convMap: Record<string, any> = {}
       for (const c of conv ?? []) convMap[(c as any).partita_id] = c
 
-      const { data: parts } = await supabase
+      const query = supabase
         .from('partite')
         .select('id, avversario, data_ora, tipo, casa_trasferta, campo, gol_fatti, gol_subiti, stato')
         .order('data_ora', { ascending: false })
         .limit(50)
+      const { data: parts } = clubId ? await query.eq('club_id', clubId) : await query
 
       setPartite((parts ?? []).map((p: any) => ({
         ...p,
