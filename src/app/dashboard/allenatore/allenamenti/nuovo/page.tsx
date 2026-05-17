@@ -25,30 +25,24 @@ export default function NuovoAllenamentoPage() {
   const [creaPresenze, setCreaPresenze] = useState(true)
 
   useEffect(() => {
-    async function load() {
-      const { data: { user } } = await supabase.auth.getUser()
-      const { data: utente }   = await supabase.from('utenti').select('club_id').eq('id', user!.id).single()
-      const { data: sq } = await supabase
-        .from('squadre')
-        .select('id, nome, categoria_eta')
-        .eq('club_id', utente!.club_id)
-        .eq('attiva', true)
-
-      const CAT_ORDER: Record<string, number> = {
-        prima_squadra: 0, primavera: 1, juniores: 2,
-        u19: 3, u17: 4, u16: 5, u15: 6, u14: 7,
-        u12: 8, u10: 9, u8: 10, u6: 11, femminile: 12,
-      }
-      const sorted = (sq ?? []).sort((a, b) => {
-        const oa = CAT_ORDER[a.categoria_eta ?? ''] ?? 99
-        const ob = CAT_ORDER[b.categoria_eta ?? ''] ?? 99
-        if (oa !== ob) return oa - ob
-        return (a.nome ?? '').localeCompare(b.nome ?? '')
-      })
-      setSquadre(sorted)
-      if (sorted.length === 1) setSquadraId(sorted[0].id)
+    const CAT_ORDER: Record<string, number> = {
+      prima_squadra: 0, primavera: 1, juniores: 2,
+      u19: 3, u17: 4, u16: 5, u15: 6, u14: 7,
+      u12: 8, u10: 9, u8: 10, u6: 11, femminile: 12,
     }
-    load()
+    fetch('/api/squadre')
+      .then(r => r.json())
+      .then((sq: any[]) => {
+        if (!Array.isArray(sq)) return
+        const sorted = sq.sort((a, b) => {
+          const oa = CAT_ORDER[a.categoria_eta ?? ''] ?? 99
+          const ob = CAT_ORDER[b.categoria_eta ?? ''] ?? 99
+          if (oa !== ob) return oa - ob
+          return (a.nome ?? '').localeCompare(b.nome ?? '')
+        })
+        setSquadre(sorted)
+        if (sorted.length === 1) setSquadraId(sorted[0].id)
+      })
   }, [])
 
   const salva = async (e: React.FormEvent) => {
