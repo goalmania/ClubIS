@@ -15,10 +15,31 @@ const nazBadge: Record<string, string> = {
   italiano: 'badge-verde', ue: 'badge-blu', extracomunitario: 'badge-ambra'
 }
 
+const PRIMA_SQUADRA  = ['prima_squadra', 'femminile']
+const SETTORE_GIOV   = ['u14','u15','u16','u17','u19','juniores','primavera']
+const SCUOLA_CALCIO  = ['u6','u8','u10','u12']
+
+type CategoriaTab = 'tutti' | 'prima_squadra' | 'giovanili' | 'scuola_calcio'
+
+const TABS: { key: CategoriaTab; label: string }[] = [
+  { key: 'tutti',         label: 'Tutti' },
+  { key: 'prima_squadra', label: 'Prima Squadra' },
+  { key: 'giovanili',     label: 'Settore Giovanile' },
+  { key: 'scuola_calcio', label: 'Scuola Calcio' },
+]
+
+function getCategoria(categoriaEta: string | null | undefined): CategoriaTab {
+  if (!categoriaEta) return 'scuola_calcio'
+  if (PRIMA_SQUADRA.includes(categoriaEta)) return 'prima_squadra'
+  if (SETTORE_GIOV.includes(categoriaEta)) return 'giovanili'
+  return 'scuola_calcio'
+}
+
 export default function GiocatoriPage() {
   const [giocatori, setGiocatori] = useState<any[]>([])
   const [filtro, setFiltro] = useState('')
   const [ruoloFiltro, setRuoloFiltro] = useState('')
+  const [categoriaTab, setCategoriaTab] = useState<CategoriaTab>('tutti')
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
 
@@ -31,7 +52,7 @@ export default function GiocatoriPage() {
         .select(`
           id, numero_maglia, tipo, squadra_id,
           giocatori ( id, nome, cognome, data_nascita, ruolo_principale, piede, nazionalita_tipo, foto_url ),
-          squadre ( nome )
+          squadre ( nome, categoria_eta )
         `)
         .eq('club_id', utente.club_id)
         .eq('stato', 'attivo')
@@ -47,8 +68,12 @@ export default function GiocatoriPage() {
     if (!g) return false
     const nomeMatch = !filtro || matchSearch(filtro, g.nome, g.cognome)
     const ruoloMatch = ruoloFiltro === '' || g.ruolo_principale === ruoloFiltro
-    return nomeMatch && ruoloMatch
+    const tabMatch = categoriaTab === 'tutti' || getCategoria(t.squadre?.categoria_eta) === categoriaTab
+    return nomeMatch && ruoloMatch && tabMatch
   })
+
+  const countByTab = (tab: CategoriaTab) =>
+    tab === 'tutti' ? giocatori.length : giocatori.filter(t => getCategoria(t.squadre?.categoria_eta) === tab).length
 
   const calcolaEta = (nascita: string) => {
     const oggi = new Date()
@@ -66,16 +91,62 @@ export default function GiocatoriPage() {
           <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Giocatori</h1>
           <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 2 }}>
             {giocatori.length} tesserati stagione corrente
+            {categoriaTab !== 'tutti' && ` · ${countByTab(categoriaTab)} in questa categoria`}
           </p>
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
-          <button className="btn btn-secondary btn-sm">
+          <Link href="/dashboard/segretario/import" className="btn btn-secondary btn-sm">
             ↑ Importa CSV
-          </button>
+          </Link>
           <Link href="/dashboard/segretario/giocatori/nuovo" className="btn btn-primary btn-sm">
             + Aggiungi giocatore
           </Link>
         </div>
+      </div>
+
+      {/* Tabs categoria */}
+      <div style={{ display: 'flex', gap: 4, marginBottom: 16, borderBottom: '1px solid var(--border)', paddingBottom: 0 }}>
+        {TABS.map(tab => {
+          const count = countByTab(tab.key)
+          const active = categoriaTab === tab.key
+          return (
+            <button
+              key={tab.key}
+              onClick={() => setCategoriaTab(tab.key)}
+              style={{
+                padding: '8px 16px',
+                background: 'transparent',
+                border: 'none',
+                borderBottom: active ? '2px solid var(--accent)' : '2px solid transparent',
+                color: active ? 'var(--accent)' : 'var(--grigio-3)',
+                fontFamily: 'var(--font-display)',
+                fontWeight: active ? 700 : 500,
+                fontSize: 13,
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                cursor: 'pointer',
+                transition: 'all 0.15s',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                marginBottom: -1,
+              }}
+            >
+              {tab.label}
+              <span style={{
+                fontSize: 11,
+                background: active ? 'rgba(200,240,0,0.15)' : 'var(--gray-mid)',
+                color: active ? 'var(--accent)' : 'var(--grigio-4)',
+                padding: '1px 6px',
+                borderRadius: 10,
+                fontFamily: 'var(--font-mono)',
+                fontWeight: 600,
+              }}>
+                {count}
+              </span>
+            </button>
+          )
+        })}
       </div>
 
       {/* Filtri */}

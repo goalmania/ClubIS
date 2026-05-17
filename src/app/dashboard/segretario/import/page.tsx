@@ -247,7 +247,37 @@ export default function ImportPage() {
             </div>
           )}
 
-          {preview.validi.length > 0 && (
+          {preview.validi.length > 0 && tipoSel === 'famiglie' && (
+            <div style={{ marginBottom: 16, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              <div>
+                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', fontSize: 11, color: 'var(--accent)', marginBottom: 8 }}>
+                  Tesserati (bambini) che verranno creati:
+                </div>
+                {preview.validi.slice(0, 3).map((r: any, i) => (
+                  <div key={i} style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--gray)', padding: '6px 10px', background: 'var(--gray-mid)', marginBottom: 4, borderLeft: '3px solid var(--accent)' }}>
+                    {r.giocatore_cognome} {r.giocatore_nome}
+                    {r.giocatore_data_nascita && ` · ${r.giocatore_data_nascita}`}
+                  </div>
+                ))}
+                {preview.validi.length > 3 && <div style={{ fontSize: 11, color: 'var(--grigio-4)' }}>...e altri {preview.validi.length - 3}</div>}
+              </div>
+              <div>
+                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', fontSize: 11, color: '#60a5fa', marginBottom: 8 }}>
+                  Record famiglia (genitori) che verranno creati:
+                </div>
+                {preview.validi.slice(0, 3).map((r: any, i) => (
+                  <div key={i} style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--gray)', padding: '6px 10px', background: 'var(--gray-mid)', marginBottom: 4, borderLeft: '3px solid #60a5fa' }}>
+                    {r.cognome} {r.nome}
+                    {r.relazione && ` · ${r.relazione}`}
+                    {r.email && ` · ${r.email}`}
+                  </div>
+                ))}
+                {preview.validi.length > 3 && <div style={{ fontSize: 11, color: 'var(--grigio-4)' }}>...e altri {preview.validi.length - 3}</div>}
+              </div>
+            </div>
+          )}
+
+          {preview.validi.length > 0 && tipoSel !== 'famiglie' && (
             <div style={{ marginBottom: 16 }}>
               <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', fontSize: 11, color: 'var(--accent)', marginBottom: 8 }}>
                 Anteprima prime righe valide:
@@ -312,6 +342,24 @@ export default function ImportPage() {
                 style={{ color: 'var(--accent)', textDecoration: 'underline' }}
               >
                 Vai a Giocatori →
+              </a>
+            </div>
+          )}
+
+          {/* Banner per famiglie importate */}
+          {tipoSel === 'famiglie' && risultato.importati > 0 && (
+            <div style={{
+              marginTop: 12, padding: '10px 14px',
+              background: 'rgba(96,165,250,0.06)', border: '1px solid rgba(96,165,250,0.25)',
+              fontSize: 12, fontFamily: 'var(--font-mono)',
+            }}>
+              Creati {risultato.importati} tesserati (bambini) con i relativi record famiglia.
+              I tesserati sono visibili in{' '}
+              <a
+                href="/dashboard/segretario/giocatori"
+                style={{ color: '#60a5fa', textDecoration: 'underline' }}
+              >
+                Giocatori → Scuola Calcio →
               </a>
             </div>
           )}
