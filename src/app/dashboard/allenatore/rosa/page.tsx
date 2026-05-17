@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { calcolaEta, ruoloShort, formatData } from '@/lib/helpers'
@@ -10,20 +11,22 @@ export default async function AllenatoreRosaPage() {
   const { data: utente, error: utenteError } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
   if (utenteError || !utente) redirect('/auth/errore')
 
+  const admin = createAdminClient()
+
   // Prima squadra: squadre con allenatore abbinato; fallback a tutte le prima_squadra del club
-  const { data: sqAssegnate } = await supabase.from('squadre').select('id, nome, categoria_eta')
+  const { data: sqAssegnate } = await admin.from('squadre').select('id, nome, categoria_eta')
     .eq('club_id', utente.club_id).eq('allenatore_id', user.id)
     .eq('categoria_eta', 'prima_squadra').eq('attiva', true)
 
   let sq = sqAssegnate ?? []
   if (sq.length === 0) {
-    const { data: sqClub } = await supabase.from('squadre').select('id, nome, categoria_eta')
+    const { data: sqClub } = await admin.from('squadre').select('id, nome, categoria_eta')
       .eq('club_id', utente.club_id).eq('categoria_eta', 'prima_squadra').eq('attiva', true)
     sq = sqClub ?? []
   }
   const sqIds = sq.map(s => s.id)
 
-  const { data: tesserati } = await supabase
+  const { data: tesserati } = await admin
     .from('tesseramenti')
     .select('numero_maglia, squadra_id, giocatori(id, nome, cognome, data_nascita, ruolo_principale, piede, altezza_cm, peso_kg, foto_url)')
     .in('squadra_id', sqIds.length ? sqIds : ['none'])
@@ -33,14 +36,14 @@ export default async function AllenatoreRosaPage() {
   const settimanaFa = new Date(oggi); settimanaFa.setDate(oggi.getDate() - 7)
 
   // Presenze ultima settimana per ogni giocatore
-  const sessioniQuery = supabase.from('sessioni_allenamento')
+  const sessioniQuery = admin.from('sessioni_allenamento')
     .select('id').gte('data_ora', settimanaFa.toISOString())
   const { data: sessioni } = sqIds.length
     ? await sessioniQuery.in('squadra_id', sqIds)
     : await sessioniQuery.eq('club_id', utente.club_id)
 
   const sessioniIds = sessioni?.map(s => s.id) ?? []
-  const { data: presenze } = await supabase.from('presenze')
+  const { data: presenze } = await admin.from('presenze')
     .select('giocatore_id, presente')
     .in('sessione_id', sessioniIds.length ? sessioniIds : ['none'])
 
