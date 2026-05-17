@@ -172,21 +172,19 @@ export default function OnboardingPage() {
     if (!clubId) return
     setSaving(true)
 
-    const stagione = '2024-25'
-    const upserts = [
-      { club_id: clubId, nome: 'Prima Squadra', categoria_eta: 'prima_squadra', stagione, attiva: true },
+    const squadre = [
+      { nome: 'Prima Squadra', categoria_eta: 'prima_squadra' },
       ...categorieSelezionate.map(cat => ({
-        club_id: clubId,
         nome: CATEGORIE_GIOVANILI.find(c => c.id === cat)?.label ?? cat,
         categoria_eta: cat,
-        stagione,
-        attiva: true,
       })),
     ]
 
-    for (const sq of upserts) {
-      await supabase.from('squadre').upsert(sq, { onConflict: 'club_id,categoria_eta,stagione' })
-    }
+    await fetch('/api/onboarding/crea-squadre', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ squadre }),
+    })
 
     await saveStep(3)
     setStep(3)
