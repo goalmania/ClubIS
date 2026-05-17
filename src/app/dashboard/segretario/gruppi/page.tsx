@@ -98,6 +98,8 @@ export default function GruppiPage() {
       sb.from('utenti').select('id,nome,cognome,ruolo,email').eq('club_id', cid).eq('attivo', true).order('cognome'),
     ])
 
+    if (gRes.error) err(`Errore gruppi: ${gRes.error.message}`)
+
     // Deduplica giocatori per id
     const seen = new Set<string>()
     const giocatoriDedup: Giocatore[] = []

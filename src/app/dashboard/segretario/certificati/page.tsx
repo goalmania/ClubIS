@@ -1,19 +1,15 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
-import { createClient } from '@/lib/supabase/client'
 import { PageHeader, EmptyState, Modal, FormField, FormGrid, Toast } from '@/components/ui'
 
 /* ─── Pagina ─────────────────────────────────────────────────────── */
 
 export default function CertificatiPage() {
-  const supabase = createClient()
-
-  const [certificati, setCertificati]   = useState<any[]>([])
+  const [certificati, setCertificati]     = useState<any[]>([])
   const [giocatoriList, setGiocatoriList] = useState<any[]>([])
-  const [clubId, setClubId]             = useState<string | null>(null)
-  const [loading, setLoading]           = useState(true)
-  const [filtro, setFiltro]             = useState<'tutti' | 'scaduti' | 'in_scadenza' | 'validi'>('tutti')
-  const [toast, setToast]               = useState<{ msg: string; tipo: 'success' | 'error' } | null>(null)
+  const [loading, setLoading]             = useState(true)
+  const [filtro, setFiltro]               = useState<'tutti' | 'scaduti' | 'in_scadenza' | 'validi'>('tutti')
+  const [toast, setToast]                 = useState<{ msg: string; tipo: 'success' | 'error' } | null>(null)
 
   // Modal
   const [openModal, setOpenModal]       = useState(false)
@@ -32,29 +28,17 @@ export default function CertificatiPage() {
 
   const load = useCallback(async () => {
     setLoading(true)
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
-    const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-    if (!utente) return
-    setClubId(utente.club_id)
-
-    const [{ data: certs }, { data: gioc }] = await Promise.all([
-      supabase
-        .from('certificati_medici')
-        .select('*, giocatori(id, nome, cognome)')
-        .eq('club_id', utente.club_id)
-        .order('data_scadenza'),
-      supabase
-        .from('giocatori')
-        .select('id, nome, cognome')
-        .eq('club_id', utente.club_id)
-        .eq('attivo', true)
-        .order('cognome'),
-    ])
-
-    setCertificati(certs ?? [])
-    setGiocatoriList(gioc ?? [])
-    setLoading(false)
+    try {
+      const res = await fetch('/api/certificati')
+      const json = await res.json()
+      if (!res.ok) { setToast({ msg: json.error ?? 'Errore caricamento', tipo: 'error' }); return }
+      setCertificati(json.certificati ?? [])
+      setGiocatoriList(json.giocatori ?? [])
+    } catch {
+      setToast({ msg: 'Errore di rete', tipo: 'error' })
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
   useEffect(() => { load() }, [load])
@@ -143,22 +127,31 @@ export default function CertificatiPage() {
       setToast({ msg: 'Compila i campi obbligatori', tipo: 'error' }); return
     }
     setSaving(true)
-    const { error } = await supabase.from('certificati_medici').insert({
-      giocatore_id: giocatoreId,
-      club_id: clubId,
-      tipo,
-      data_rilascio: dataRilascio,
-      data_scadenza: dataScadenza,
-      medico: medico || null,
-      struttura: struttura || null,
-      note: noteModal || null,
-      documento_url: fileUrl || null,
-    })
-    setSaving(false)
-    if (error) { setToast({ msg: error.message, tipo: 'error' }); return }
-    setToast({ msg: 'Certificato aggiunto', tipo: 'success' })
-    setOpenModal(false)
-    await load()
+    try {
+      const res = await fetch('/api/certificati', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          giocatore_id: giocatoreId,
+          tipo,
+          data_rilascio: dataRilascio,
+          data_scadenza: dataScadenza,
+          medico:        medico    || null,
+          struttura:     struttura || null,
+          note:          noteModal || null,
+          documento_url: fileUrl   || null,
+        }),
+      })
+      const json = await res.json()
+      if (!res.ok) { setToast({ msg: json.error ?? 'Errore salvataggio', tipo: 'error' }); return }
+      setToast({ msg: 'Certificato aggiunto', tipo: 'success' })
+      setOpenModal(false)
+      await load()
+    } catch {
+      setToast({ msg: 'Errore di rete', tipo: 'error' })
+    } finally {
+      setSaving(false)
+    }
   }
 
   /* ── Render ────────────────────────────────────────────────────── */
