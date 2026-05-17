@@ -545,14 +545,16 @@ export default function ConsigliIntervistePage() {
 
     // Carica i membri del club (solo per l'addetto stampa, per la selezione nel form)
     if (utente.ruolo === 'ufficio_stampa' && utente.clubId) {
-      const { data: membri } = await supabase
-        .from('utenti')
-        .select('id, nome, cognome, ruolo')
-        .eq('club_id', utente.clubId)
-        .in('ruolo', ['presidente', 'ds', 'team_manager', 'allenatore', 'giocatore'])
-        .order('cognome', { ascending: true })
-
-      setMembriClub(membri ?? [])
+      const [staffData, giocatoriData] = await Promise.all([
+        fetch('/api/staff?ruoli=presidente,ds,team_manager,allenatore').then(r => r.json()).catch(() => []),
+        fetch('/api/giocatori').then(r => r.json()).catch(() => []),
+      ])
+      const staff: any[]     = Array.isArray(staffData)     ? staffData     : []
+      const giocatori: any[] = Array.isArray(giocatoriData) ? giocatoriData : []
+      const giocatoriMapped: MembroClub[] = giocatori.map((g: any) => ({
+        id: g.id, nome: g.nome, cognome: g.cognome, ruolo: 'giocatore',
+      }))
+      setMembriClub([...staff, ...giocatoriMapped])
     }
 
     // Query consigli

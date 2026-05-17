@@ -1,7 +1,6 @@
 'use client'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
 
 const TIPI_EVENTO = [
   { value: 'intervista_tv',     label: 'Intervista TV' },
@@ -30,8 +29,6 @@ interface Soggetto {
 export default function NuovaIntervistePage() {
   const router = useRouter()
   // Istanza stabile: non va nel body del componente per evitare loop nell'useEffect
-  const supabaseRef = useRef(createClient())
-
   const [saving, setSaving] = useState(false)
   const [errore, setErrore] = useState<string | null>(null)
   const [soggetti, setSoggetti] = useState<Soggetto[]>([])
@@ -52,37 +49,24 @@ export default function NuovaIntervistePage() {
 
   // Carica staff e giocatori del club — [] garantisce una sola esecuzione
   useEffect(() => {
-    const supabase = supabaseRef.current
     async function load() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-      const { data: utente } = await supabase
-        .from('utenti').select('club_id').eq('id', user.id).single()
-      if (!utente) return
-
-      const [{ data: staff }, { data: giocatori }] = await Promise.all([
-        supabase.from('utenti')
-          .select('id, nome, cognome, ruolo')
-          .eq('club_id', utente.club_id)
-          .eq('attivo', true)
-          .in('ruolo', RUOLI_STAFF)
-          .order('ruolo'),
-        supabase.from('giocatori')
-          .select('id, nome, cognome')
-          .eq('club_id', utente.club_id)
-          .eq('attivo', true)
-          .order('cognome'),
+      const [staffData, giocatoriData] = await Promise.all([
+        fetch('/api/staff?ruoli=' + RUOLI_STAFF.join(',')).then(r => r.json()).catch(() => []),
+        fetch('/api/giocatori').then(r => r.json()).catch(() => []),
       ])
 
+      const staff: any[]     = Array.isArray(staffData)     ? staffData     : []
+      const giocatori: any[] = Array.isArray(giocatoriData) ? giocatoriData : []
+
       const lista: Soggetto[] = [
-        ...(staff ?? []).map(u => ({
+        ...staff.map((u: any) => ({
           id: u.id,
           nome: u.nome,
           cognome: u.cognome,
           gruppo: 'Staff',
           ruolo: RUOLO_LABEL[u.ruolo] ?? u.ruolo,
         })),
-        ...(giocatori ?? []).map(g => ({
+        ...giocatori.map((g: any) => ({
           id: g.id,
           nome: g.nome,
           cognome: g.cognome,

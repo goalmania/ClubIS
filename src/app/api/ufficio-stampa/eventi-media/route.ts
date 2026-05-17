@@ -1,16 +1,14 @@
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserContext } from '@/lib/impersonation'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(req: NextRequest) {
-  const sessionClient = createClient()
+  const ctx = await getUserContext()
+  if (!ctx) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
 
   const supabase = createAdminClient()
-  const { data: { user } } = await sessionClient.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
-
-  const { data: utente } = await supabase.from('utenti').select('club_id, ruolo').eq('id', user.id).single()
-  if (!utente) return NextResponse.json({ error: 'Utente non trovato' }, { status: 404 })
+  const utente = { club_id: ctx.clubId, ruolo: ctx.ruolo }
+  const user = { id: ctx.userId }
 
   const url = new URL(req.url)
   const soloMiei = url.searchParams.get('soloMiei') === '1'
@@ -32,14 +30,12 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const sessionClient = createClient()
+  const ctx = await getUserContext()
+  if (!ctx) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
 
   const supabase = createAdminClient()
-  const { data: { user } } = await sessionClient.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
-
-  const { data: utente } = await supabase.from('utenti').select('club_id, ruolo').eq('id', user.id).single()
-  if (!utente) return NextResponse.json({ error: 'Utente non trovato' }, { status: 404 })
+  const utente = { club_id: ctx.clubId, ruolo: ctx.ruolo }
+  const user = { id: ctx.userId }
 
   if (utente.ruolo !== 'ufficio_stampa' && !['presidente', 'ds', 'segretario'].includes(utente.ruolo)) {
     return NextResponse.json({ error: 'Non autorizzato' }, { status: 403 })
@@ -106,14 +102,11 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
-  const sessionClient = createClient()
+  const ctx = await getUserContext()
+  if (!ctx) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
 
   const supabase = createAdminClient()
-  const { data: { user } } = await sessionClient.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
-
-  const { data: utente } = await supabase.from('utenti').select('club_id, ruolo').eq('id', user.id).single()
-  if (!utente) return NextResponse.json({ error: 'Utente non trovato' }, { status: 404 })
+  const utente = { club_id: ctx.clubId, ruolo: ctx.ruolo }
 
   const body = await req.json()
   const { id, ...updates } = body
@@ -131,16 +124,14 @@ export async function PATCH(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
-  const sessionClient = createClient()
-
-  const supabase = createAdminClient()
-  const { data: { user } } = await sessionClient.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
-
-  const { data: utente } = await supabase.from('utenti').select('club_id, ruolo').eq('id', user.id).single()
-  if (!utente || utente.ruolo !== 'ufficio_stampa') {
+  const ctx = await getUserContext()
+  if (!ctx) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
+  if (ctx.ruolo !== 'ufficio_stampa') {
     return NextResponse.json({ error: 'Non autorizzato' }, { status: 403 })
   }
+
+  const supabase = createAdminClient()
+  const utente = { club_id: ctx.clubId, ruolo: ctx.ruolo }
 
   const url = new URL(req.url)
   const id = url.searchParams.get('id')

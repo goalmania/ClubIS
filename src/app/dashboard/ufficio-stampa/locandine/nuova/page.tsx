@@ -29,12 +29,8 @@ export default function NuovaBriefPage() {
   useEffect(() => {
     const supabase = createClient()
     ;(async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-      const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-      if (!utente) return
-      const { data: sqData } = await supabase.from('squadre').select('id').eq('club_id', utente.club_id)
-      const sqIds = sqData?.map(s => s.id) ?? []
+      const squadreData = await fetch('/api/squadre').then(r => r.json()).catch(() => [])
+      const sqIds: string[] = Array.isArray(squadreData) ? squadreData.map((s: any) => s.id) : []
       if (!sqIds.length) return
       const { data: p } = await supabase
         .from('partite')

@@ -1209,6 +1209,9 @@ DO $$ BEGIN
   );
 END $$;
 
+GRANT ALL ON TABLE eventi_media TO anon, authenticated, service_role;
+GRANT ALL ON TABLE brief_locandine TO anon, authenticated, service_role;
+
 -- =========================================================
 -- ACCREDITI STADIO
 -- =========================================================
