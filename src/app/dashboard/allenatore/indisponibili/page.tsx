@@ -24,13 +24,26 @@ export default async function IndisponibiliPage() {
     sqIds = (sqClub ?? []).map(s => s.id)
   }
 
-  // ── Passo 2: giocatori della prima squadra tramite tesseramenti ──
-  const { data: tessData } = await admin
-    .from('tesseramenti')
-    .select('giocatore_id, numero_maglia, giocatori(id, nome, cognome, ruolo_principale)')
-    .in('squadra_id', sqIds.length ? sqIds : ['none'])
-    .eq('stato', 'attivo')
-    .not('giocatore_id', 'is', null)
+  // ── Passo 2: giocatori tramite tesseramenti — filtro prima squadra con fallback su tutto il club ──
+  let tessData: any[] | null = null
+  if (sqIds.length > 0) {
+    const { data } = await admin
+      .from('tesseramenti')
+      .select('giocatore_id, numero_maglia, giocatori(id, nome, cognome, ruolo_principale)')
+      .in('squadra_id', sqIds)
+      .eq('stato', 'attivo')
+      .not('giocatore_id', 'is', null)
+    tessData = data
+  }
+  if (!tessData || tessData.length === 0) {
+    const { data } = await admin
+      .from('tesseramenti')
+      .select('giocatore_id, numero_maglia, giocatori(id, nome, cognome, ruolo_principale)')
+      .eq('club_id', utente.club_id)
+      .eq('stato', 'attivo')
+      .not('giocatore_id', 'is', null)
+    tessData = data
+  }
 
   const playerIds = (tessData ?? []).map((t: any) => t.giocatore_id).filter(Boolean) as string[]
 
