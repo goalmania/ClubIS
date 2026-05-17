@@ -25,16 +25,9 @@ export default function NuovaValutazionePage() {
   useEffect(() => {
     async function load() {
       const { data: { user } } = await supabase.auth.getUser()
-      const { data: utente }   = await supabase.from('utenti').select('club_id').eq('id', user!.id).single()
-      const { data: sq } = await supabase
-        .from('squadre').select('id, categoria_eta')
-        .eq('club_id', utente!.club_id)
-        .eq('allenatore_id', user!.id)
-        .eq('attiva', true)
-
+      const sqArr: any[] = await fetch('/api/squadre').then(r => r.json()).catch(() => [])
       const sqMap: Record<string, string> = {}
-      for (const s of sq ?? []) sqMap[s.id] = s.categoria_eta ?? ''
-
+      for (const s of sqArr) sqMap[s.id] = s.categoria_eta ?? ''
       const sqIds = Object.keys(sqMap)
 
       const { data: tesserati } = await supabase

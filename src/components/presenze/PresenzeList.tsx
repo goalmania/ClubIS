@@ -18,28 +18,8 @@ export default function PresenzeList({ basePath, nuovoAllenamentoPath, soloMie =
 
   useEffect(() => {
     async function load() {
-      const { data: { user } } = await supabase.auth.getUser()
-      const { data: utente }   = await supabase.from('utenti').select('club_id').eq('id', user!.id).single()
-      if (!utente) return
-
-      let sqIds: string[] = []
-      if (soloMie) {
-        const { data: sq } = await supabase.from('squadre').select('id')
-          .eq('club_id', utente.club_id).eq('allenatore_id', user!.id)
-        const assegnate = sq?.map(s => s.id) ?? []
-        if (assegnate.length === 0) {
-          // fallback: tutte le squadre del club
-          const { data: sqAll } = await supabase.from('squadre').select('id')
-            .eq('club_id', utente.club_id).eq('attiva', true)
-          sqIds = sqAll?.map(s => s.id) ?? []
-        } else {
-          sqIds = assegnate
-        }
-      } else {
-        const { data: sqAll } = await supabase.from('squadre').select('id')
-          .eq('club_id', utente.club_id).eq('attiva', true)
-        sqIds = sqAll?.map(s => s.id) ?? []
-      }
+      const sqAll: any[] = await fetch('/api/squadre').then(r => r.json()).catch(() => [])
+      const sqIds: string[] = sqAll.map(s => s.id)
 
       const { data: sess } = await supabase
         .from('sessioni_allenamento')

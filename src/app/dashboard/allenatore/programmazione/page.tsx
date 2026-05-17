@@ -58,9 +58,11 @@ export default function ProgrammazionePage() {
     if (!utente) return
     setClubId(utente.club_id)
 
-    const [{ data: sq }, { data: alls }, { data: pars }] = await Promise.all([
-      supabase.from('squadre').select('id, nome')
-        .eq('club_id', utente.club_id).eq('allenatore_id', user.id),
+    const sq: any[] = await fetch('/api/squadre').then(r => r.json()).catch(() => [])
+    setSquadre(sq)
+    if (sq.length && !sqSel) setSqSel(sq[0].id)
+
+    const [{ data: alls }, { data: pars }] = await Promise.all([
       supabase.from('allenamenti')
         .select('id, data, ora, luogo, obiettivo, tipo')
         .eq('club_id', utente.club_id)
@@ -74,10 +76,8 @@ export default function ProgrammazionePage() {
         .lte('data_ora', fineSett.toISOString())
         .order('data_ora'),
     ])
-    setSquadre(sq ?? [])
     setAllenamenti(alls ?? [])
     setPartite(pars ?? [])
-    if (sq?.length && !sqSel) setSqSel(sq[0].id)
   }, [sqSel])
 
   useSharedData(load)

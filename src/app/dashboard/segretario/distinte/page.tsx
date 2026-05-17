@@ -31,18 +31,9 @@ export default function DistintePage() {
 
   useEffect(() => {
     const load = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { window.location.href = '/auth/login'; return }
-      const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-      if (!utente) { window.location.href = '/auth/errore'; return }
-      const clubId = utente.club_id
-
-      const { data: squadre } = await supabase
-        .from('squadre')
-        .select('id, nome, categoria_eta')
-        .eq('club_id', clubId)
-      const squadreIds = (squadre ?? []).map((s: any) => s.id)
-      const squadraMap = new Map((squadre ?? []).map((s: any) => [s.id, s]))
+      const squadre: any[] = await fetch('/api/squadre').then(r => r.json()).catch(() => [])
+      const squadreIds = squadre.map((s: any) => s.id)
+      const squadraMap = new Map(squadre.map((s: any) => [s.id, s]))
 
       const { data: pp } = squadreIds.length > 0
         ? await supabase

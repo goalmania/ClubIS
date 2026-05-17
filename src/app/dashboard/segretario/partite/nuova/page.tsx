@@ -24,10 +24,8 @@ export default function NuovaPartitaPage() {
 
   useEffect(() => {
     async function load() {
-      const { data: { user } } = await supabase.auth.getUser()
-      const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user!.id).single()
-      const { data: sq } = await supabase.from('squadre').select('id, nome, categoria_eta').eq('club_id', utente!.club_id).eq('attiva', true)
-      setSquadre(sq ?? [])
+      const sq: any[] = await fetch('/api/squadre').then(r => r.json()).catch(() => [])
+      setSquadre(Array.isArray(sq) ? sq : [])
       if (sq?.length === 1) setSquadraId(sq[0].id)
     }
     load()

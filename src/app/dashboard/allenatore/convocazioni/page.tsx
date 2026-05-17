@@ -21,12 +21,8 @@ export default function ConvocazioniPage() {
   // Carica partite future
   useEffect(() => {
     async function load() {
-      const { data: { user } } = await supabase.auth.getUser()
-      const { data: utente }   = await supabase.from('utenti').select('club_id').eq('id', user!.id).single()
-
-      const { data: sq } = await supabase
-        .from('squadre').select('id').eq('club_id', utente!.club_id).eq('attiva', true)
-      const sqIds = sq?.map(s => s.id) ?? []
+      const sq: any[] = await fetch('/api/squadre').then(r => r.json()).catch(() => [])
+      const sqIds = Array.isArray(sq) ? sq.map(s => s.id) : []
 
       const { data: pp } = await supabase
         .from('partite')

@@ -106,11 +106,7 @@ export default function AllenatorePartitePage() {
     if (!utente) return
     setClubId(utente.club_id)
 
-    const { data: squadre } = await supabase
-      .from('squadre').select('id, nome, categoria_eta')
-      .eq('club_id', utente.club_id)
-      .eq('allenatore_id', user.id)
-    const sq = squadre ?? []
+    const sq: any[] = await fetch('/api/squadre').then(r => r.json()).catch(() => [])
     setSqIds(sq)
     setForm(prev => ({ ...prev, squadraId: prev.squadraId || sq[0]?.id || '' }))
 
