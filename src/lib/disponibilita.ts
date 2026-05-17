@@ -49,16 +49,33 @@ export async function getDisponibilitaSquadra(
   supabase: any,
   clubId: string,
   _partitaId?: string,
+  squadraIds?: string[],
 ): Promise<DisponibilitaGiocatore[]> {
   const oggi   = new Date().toISOString().split('T')[0]
   const in30g  = new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0]
 
-  // 1. Tesserati attivi
-  const { data: tesserati } = await supabase
+  // 1. Tesserati attivi (filtrati per squadra se specificato, con fallback al club intero)
+  let tessQ = supabase
     .from('tesseramenti')
     .select('giocatore_id, numero_maglia, giocatori(id, nome, cognome, ruolo_principale)')
     .eq('club_id', clubId)
     .eq('stato', 'attivo')
+
+  if (squadraIds && squadraIds.length > 0) {
+    tessQ = tessQ.in('squadra_id', squadraIds)
+  }
+
+  let { data: tesserati } = await tessQ
+
+  // Fallback: se il filtro squadra non porta risultati, carica tutti i tesserati del club
+  if ((!tesserati || tesserati.length === 0) && squadraIds && squadraIds.length > 0) {
+    const { data: all } = await supabase
+      .from('tesseramenti')
+      .select('giocatore_id, numero_maglia, giocatori(id, nome, cognome, ruolo_principale)')
+      .eq('club_id', clubId)
+      .eq('stato', 'attivo')
+    tesserati = all
+  }
 
   if (!tesserati || tesserati.length === 0) return []
 

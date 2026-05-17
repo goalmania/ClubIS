@@ -26,11 +26,24 @@ export default async function AllenatoreRosaPage() {
   }
   const sqIds = sq.map(s => s.id)
 
-  const { data: tesserati } = await admin
-    .from('tesseramenti')
-    .select('numero_maglia, squadra_id, giocatori(id, nome, cognome, data_nascita, ruolo_principale, piede, altezza_cm, peso_kg, foto_url)')
-    .in('squadra_id', sqIds.length ? sqIds : ['none'])
-    .eq('stato', 'attivo')
+  // Carica tesseramenti: se sqIds vuoto o risultato vuoto → fallback su tutti i tesserati del club
+  let tesserati: any[] | null = null
+  if (sqIds.length > 0) {
+    const { data } = await admin
+      .from('tesseramenti')
+      .select('numero_maglia, squadra_id, giocatori(id, nome, cognome, data_nascita, ruolo_principale, piede, altezza_cm, peso_kg, foto_url)')
+      .in('squadra_id', sqIds)
+      .eq('stato', 'attivo')
+    tesserati = data
+  }
+  if (!tesserati || tesserati.length === 0) {
+    const { data } = await admin
+      .from('tesseramenti')
+      .select('numero_maglia, squadra_id, giocatori(id, nome, cognome, data_nascita, ruolo_principale, piede, altezza_cm, peso_kg, foto_url)')
+      .eq('club_id', utente.club_id)
+      .eq('stato', 'attivo')
+    tesserati = data
+  }
 
   const oggi = new Date()
   const settimanaFa = new Date(oggi); settimanaFa.setDate(oggi.getDate() - 7)

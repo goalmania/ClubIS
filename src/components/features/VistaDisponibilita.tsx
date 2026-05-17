@@ -35,11 +35,11 @@ const PRIORITA: Record<StatoDisponibilita, number> = {
 
 /* ─── Componente ─────────────────────────────────────────────── */
 
-type Props = { clubId: string; ruolo: string }
+type Props = { clubId: string; ruolo: string; squadraIds?: string[] }
 
-export default async function VistaDisponibilita({ clubId, ruolo }: Props) {
+export default async function VistaDisponibilita({ clubId, ruolo, squadraIds }: Props) {
   const supabase  = createClient()
-  const giocatori = await getDisponibilitaSquadra(supabase as any, clubId)
+  const giocatori = await getDisponibilitaSquadra(supabase as any, clubId, undefined, squadraIds)
   const counts    = countByStato(giocatori)
 
   // Prossima partita programmata
