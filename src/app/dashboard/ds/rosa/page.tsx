@@ -1,25 +1,43 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserContext } from '@/lib/impersonation'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { formatData, calcolaEta, ruoloShort, nazBadge } from '@/lib/helpers'
 
 export default async function DSRosaPage() {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth/login')
-  const { data: utente, error: utenteError } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-  if (utenteError || !utente) redirect('/auth/errore')
+  const ctx = await getUserContext()
+  if (!ctx) redirect('/auth/login')
+  const { clubId } = ctx
 
-  const { data: tesserati } = await supabase
-    .from('tesseramenti')
-    .select('numero_maglia, tipo, squadre(nome), giocatori(id, nome, cognome, data_nascita, ruolo_principale, piede, nazionalita_tipo, altezza_cm)')
-    .eq('club_id', utente.club_id).eq('stato', 'attivo')
-    .order('giocatori(cognome)')
+  const admin = createAdminClient()
 
-  const { data: contratti } = await supabase
+  // Prima squadra: squadre con allenatore abbinato; fallback a tutte le prima_squadra del club
+  const { data: sqAssegnate } = await admin.from('squadre').select('id')
+    .eq('club_id', clubId).eq('categoria_eta', 'prima_squadra').eq('attiva', true)
+  const sqIds = (sqAssegnate ?? []).map(s => s.id)
+
+  let tesserati: any[] | null = null
+  if (sqIds.length > 0) {
+    const { data } = await admin
+      .from('tesseramenti')
+      .select('numero_maglia, tipo, squadre(nome), giocatori(id, nome, cognome, data_nascita, ruolo_principale, piede, nazionalita_tipo, altezza_cm)')
+      .in('squadra_id', sqIds)
+      .eq('stato', 'attivo')
+    tesserati = data
+  }
+  if (!tesserati || tesserati.length === 0) {
+    const { data } = await admin
+      .from('tesseramenti')
+      .select('numero_maglia, tipo, squadre(nome), giocatori(id, nome, cognome, data_nascita, ruolo_principale, piede, nazionalita_tipo, altezza_cm)')
+      .eq('club_id', clubId)
+      .eq('stato', 'attivo')
+    tesserati = data
+  }
+
+  const { data: contratti } = await admin
     .from('contratti')
     .select('giocatore_id, data_scadenza, ingaggio_mensile')
-    .eq('club_id', utente.club_id)
+    .eq('club_id', clubId)
 
   const contrMap = new Map(contratti?.map(c => [c.giocatore_id, c]) ?? [])
 

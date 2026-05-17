@@ -111,8 +111,7 @@ export default function DSPartitePage() {
     if (!utente) return
     setClubId(utente.club_id)
 
-    const { data: sq } = await supabase.from('squadre').select('id, nome, categoria_eta').eq('club_id', utente.club_id).eq('attiva', true)
-    const sqList = sq ?? []
+    const sqList: { id: string; nome: string; categoria_eta: string }[] = await fetch('/api/squadre').then(r => r.json()).catch(() => [])
     setSquadre(sqList)
     setForm(prev => ({ ...prev, squadraId: prev.squadraId || sqList[0]?.id || '' }))
 

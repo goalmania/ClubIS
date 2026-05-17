@@ -1,4 +1,5 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserContext } from '@/lib/impersonation'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import ObiettiviWidget from '@/components/ui/ObiettiviWidget'
@@ -8,15 +9,13 @@ import ImpiantiDashboardWidget from '@/components/features/ImpiantiDashboardWidg
 import ServerFeatureGate from '@/components/ServerFeatureGate'
 
 export default async function DSDashboard() {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth/login')
+  const ctx = await getUserContext()
+  if (!ctx) redirect('/auth/login')
+  const { clubId } = ctx
 
-  const { data: utente, error: utenteError } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-  if (utenteError || !utente) redirect('/auth/errore')
-  const clubId = utente.club_id
+  const admin = createAdminClient()
 
-  const { data: club } = await supabase
+  const { data: club } = await admin
     .from('clubs')
     .select('dmscout_abbonamento_attivo, dmscout_abbonamento_scadenza')
     .eq('id', clubId)
@@ -31,22 +30,22 @@ export default async function DSDashboard() {
     { data: reportRecenti },
     { data: svincolantiPresto },
   ] = await Promise.all([
-    supabase.from('contratti')
+    admin.from('contratti')
       .select('id, data_scadenza, ingaggio_mensile, giocatore_id, giocatori(nome, cognome)')
       .eq('club_id', clubId)
       .lte('data_scadenza', tra90.toISOString().split('T')[0])
       .gte('data_scadenza', oggi.toISOString().split('T')[0])
       .order('data_scadenza')
       .limit(8),
-    supabase.from('tesseramenti')
+    admin.from('tesseramenti')
       .select('*', { count: 'exact', head: true })
       .eq('club_id', clubId).eq('stato', 'attivo'),
-    supabase.from('report_scouting')
+    admin.from('report_scouting')
       .select('id, nome_giocatore_ext, voto_globale, potenziale, esito, data_osservazione, partita_osservata')
       .eq('club_richiedente_id', clubId)
       .order('data_osservazione', { ascending: false })
       .limit(6),
-    supabase.from('contratti')
+    admin.from('contratti')
       .select('id, data_scadenza, giocatori(nome, cognome)')
       .eq('club_id', clubId)
       .lte('data_scadenza', tra90.toISOString().split('T')[0])

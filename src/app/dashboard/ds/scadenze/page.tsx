@@ -1,14 +1,14 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserContext } from '@/lib/impersonation'
 import { redirect } from 'next/navigation'
 import { formatData, giorniAlla } from '@/lib/helpers'
 
 export default async function DSScadenzePage() {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth/login')
-  const { data: utente, error: utenteError } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-  if (utenteError || !utente) redirect('/auth/errore')
-  const clubId = utente.club_id
+  const ctx = await getUserContext()
+  if (!ctx) redirect('/auth/login')
+  const { clubId } = ctx
+
+  const admin = createAdminClient()
   const oggi = new Date().toISOString().split('T')[0]
   const tra90 = new Date(); tra90.setDate(tra90.getDate() + 90)
   const tra90str = tra90.toISOString().split('T')[0]
@@ -17,13 +17,13 @@ export default async function DSScadenzePage() {
     { data: certificati },
     { data: tesseramentiScad },
   ] = await Promise.all([
-    supabase.from('contratti')
+    admin.from('contratti')
       .select('id, data_scadenza, giocatori(nome, cognome), opzione_rinnovo')
       .eq('club_id', clubId).gte('data_scadenza', oggi).lte('data_scadenza', tra90str).order('data_scadenza'),
-    supabase.from('certificati_medici')
+    admin.from('certificati_medici')
       .select('id, data_scadenza, tipo, giocatori(nome, cognome)')
       .eq('club_id', clubId).gte('data_scadenza', oggi).lte('data_scadenza', tra90str).order('data_scadenza'),
-    supabase.from('tesseramenti')
+    admin.from('tesseramenti')
       .select('id, data_fine, tipo, giocatori(nome, cognome)')
       .eq('club_id', clubId).eq('stato', 'attivo').gte('data_fine', oggi).lte('data_fine', tra90str).order('data_fine'),
   ])
