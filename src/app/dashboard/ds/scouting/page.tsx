@@ -1,4 +1,5 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserContext } from '@/lib/impersonation'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { potenzialeColore, esitoColore } from '@/lib/helpers'
@@ -6,16 +7,16 @@ import EsitoSelect from './EsitoSelect'
 import ServerFeatureGate from '@/components/ServerFeatureGate'
 
 export default async function DSScoutingPage() {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth/login')
-  const { data: utente, error: utenteError } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-  if (utenteError || !utente) redirect('/auth/errore')
+  const ctx = await getUserContext()
+  if (!ctx) redirect('/auth/login')
+  const { clubId } = ctx
 
-  const { data: report } = await supabase
+  const admin = createAdminClient()
+
+  const { data: report } = await admin
     .from('report_scouting')
     .select('*, utenti(nome, cognome)')
-    .eq('club_richiedente_id', utente.club_id)
+    .eq('club_richiedente_id', clubId)
     .order('data_osservazione', { ascending: false })
 
   const inValutazione = report?.filter(r => r.esito === 'in_valutazione') ?? []

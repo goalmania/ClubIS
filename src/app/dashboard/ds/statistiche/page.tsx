@@ -1,4 +1,5 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserContext } from '@/lib/impersonation'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
@@ -12,35 +13,39 @@ const ruoloLabel: Record<string, string> = {
 const fmt = (n: number) => n.toLocaleString('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 })
 
 export default async function DSStatistichePage() {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth/login')
-  const { data: utente, error: utenteError } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-  if (utenteError || !utente) redirect('/auth/errore')
-  const clubId = utente.club_id
+  const ctx = await getUserContext()
+  if (!ctx) redirect('/auth/login')
+  const { clubId } = ctx
+
+  const admin = createAdminClient()
 
   const oggi = new Date()
   const tra6Mesi = new Date(oggi); tra6Mesi.setMonth(oggi.getMonth() + 6)
   const inizioMese = new Date(oggi.getFullYear(), oggi.getMonth(), 1)
   const trenta = new Date(oggi); trenta.setDate(oggi.getDate() - 30)
 
-  // Trova la prima squadra del club
-  const { data: primaSquadra } = await supabase
-    .from('squadre')
-    .select('id')
-    .eq('club_id', clubId)
-    .eq('categoria_eta', 'prima_squadra')
-    .eq('attiva', true)
-    .maybeSingle()
+  // Prima squadra con fallback su tutti i tesseramenti del club
+  const { data: sqPS } = await admin.from('squadre').select('id')
+    .eq('club_id', clubId).eq('categoria_eta', 'prima_squadra').eq('attiva', true)
+  const sqIds = (sqPS ?? []).map(s => s.id)
 
-  // ID giocatori tesserati nella prima squadra (stagione corrente, stato attivo)
-  const { data: tesseratiPS } = primaSquadra
-    ? await supabase
-        .from('tesseramenti')
-        .select('giocatore_id, giocatori(id, ruolo_principale, data_nascita, nazionalita_tipo)')
-        .eq('squadra_id', primaSquadra.id)
-        .eq('stato', 'attivo')
-    : { data: null }
+  let tesseratiPS: any[] | null = null
+  if (sqIds.length > 0) {
+    const { data } = await admin
+      .from('tesseramenti')
+      .select('giocatore_id, giocatori(id, ruolo_principale, data_nascita, nazionalita_tipo)')
+      .in('squadra_id', sqIds)
+      .eq('stato', 'attivo')
+    tesseratiPS = data
+  }
+  if (!tesseratiPS || tesseratiPS.length === 0) {
+    const { data } = await admin
+      .from('tesseramenti')
+      .select('giocatore_id, giocatori(id, ruolo_principale, data_nascita, nazionalita_tipo)')
+      .eq('club_id', clubId)
+      .eq('stato', 'attivo')
+    tesseratiPS = data
+  }
 
   type GiocPS = { id: string; ruolo_principale: string | null; data_nascita: string | null; nazionalita_tipo: string | null }
   const giocatori: GiocPS[] = tesseratiPS?.map(t => t.giocatori as unknown as GiocPS).filter(Boolean) ?? []
@@ -53,26 +58,26 @@ export default async function DSStatistichePage() {
     { data: presenze },
     { data: clubs },
   ] = await Promise.all([
-    supabase.from('trattative')
+    admin.from('trattative')
       .select('tipo, stato, importo_accordo')
       .eq('club_id', clubId),
     giocatoriIds.length > 0
-      ? supabase.from('contratti')
+      ? admin.from('contratti')
           .select('data_scadenza, giocatore_id')
           .eq('club_id', clubId)
           .in('giocatore_id', giocatoriIds)
       : Promise.resolve({ data: [] }),
-    supabase.from('report_scouting')
+    admin.from('report_scouting')
       .select('esito, potenziale, created_at')
       .eq('club_richiedente_id', clubId),
     giocatoriIds.length > 0
-      ? supabase.from('presenze')
+      ? admin.from('presenze')
           .select('giocatore_id, presente')
           .eq('club_id', clubId)
           .in('giocatore_id', giocatoriIds)
           .gte('registrato_at', trenta.toISOString())
       : Promise.resolve({ data: [] }),
-    supabase.from('clubs')
+    admin.from('clubs')
       .select('nome')
       .eq('id', clubId).single(),
   ])

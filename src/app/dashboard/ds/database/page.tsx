@@ -1,19 +1,20 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserContext } from '@/lib/impersonation'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { calcolaEta, ruoloShort, potenzialeColore } from '@/lib/helpers'
 import ServerFeatureGate from '@/components/ServerFeatureGate'
 
 async function DSDatabaseContent() {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth/login')
-  const { data: utente, error: utenteError } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-  if (utenteError || !utente) redirect('/auth/errore')
-  const { data: reports } = await supabase
+  const ctx = await getUserContext()
+  if (!ctx) redirect('/auth/login')
+  const { clubId } = ctx
+
+  const admin = createAdminClient()
+  const { data: reports } = await admin
     .from('report_scouting')
     .select('*, utenti(nome, cognome)')
-    .eq('club_richiedente_id', utente.club_id)
+    .eq('club_richiedente_id', clubId)
     .order('voto_globale', { ascending: false })
   const unici: Record<string, any> = {}
   reports?.forEach(r => {
