@@ -1,4 +1,5 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserContext } from '@/lib/impersonation'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { ruoloShort } from '@/lib/helpers'
@@ -17,47 +18,61 @@ const STATO_CFG: Record<StatoMedico, { label: string; badge: string; rowBg?: str
 /* ─── Pagina ─────────────────────────────────────────────────────── */
 
 export default async function MedicoGiocatoriPage() {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth/login')
-  const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-  if (!utente) redirect('/auth/errore')
+  const ctx = await getUserContext()
+  if (!ctx) redirect('/auth/login')
+  const { clubId } = ctx
+
+  const admin = createAdminClient()
 
   const oggi  = new Date().toISOString().split('T')[0]
   const in30g = new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0]
 
+  // Prima squadra con fallback a tutti i tesserati del club
+  const { data: sqPS } = await admin.from('squadre').select('id')
+    .eq('club_id', clubId).eq('categoria_eta', 'prima_squadra').eq('attiva', true)
+  const sqIds = (sqPS ?? []).map(s => s.id)
+
+  let tesserati: any[] | null = null
+  if (sqIds.length > 0) {
+    const { data } = await admin.from('tesseramenti')
+      .select('giocatori(id, nome, cognome, ruolo_principale, data_nascita)')
+      .in('squadra_id', sqIds).eq('stato', 'attivo')
+    tesserati = data
+  }
+  if (!tesserati || tesserati.length === 0) {
+    const { data } = await admin.from('tesseramenti')
+      .select('giocatori(id, nome, cognome, ruolo_principale, data_nascita)')
+      .eq('club_id', clubId).eq('stato', 'attivo')
+    tesserati = data
+  }
+
   const [
-    { data: tesserati },
     { data: infortuni },
     { data: certsScadenza },
     { data: certsScaduti },
   ] = await Promise.all([
-    supabase
-      .from('tesseramenti')
-      .select('giocatori(id, nome, cognome, ruolo_principale, data_nascita)')
-      .eq('club_id', utente.club_id)
-      .eq('stato', 'attivo'),
-    supabase
+    admin
       .from('infortuni')
       .select('giocatore_id, gravita, data_rientro_prevista, tipo')
-      .eq('club_id', utente.club_id)
+      .eq('club_id', clubId)
       .is('data_rientro_effettiva', null),
-    supabase
+    admin
       .from('certificati_medici')
       .select('giocatore_id, data_scadenza')
-      .eq('club_id', utente.club_id)
+      .eq('club_id', clubId)
       .gte('data_scadenza', oggi)
       .lte('data_scadenza', in30g),
-    supabase
+    admin
       .from('certificati_medici')
       .select('giocatore_id, data_scadenza')
-      .eq('club_id', utente.club_id)
+      .eq('club_id', clubId)
       .lt('data_scadenza', oggi),
   ])
 
+  const seen = new Set<string>()
   const giocatori = (tesserati ?? [])
     .map(t => t.giocatori as any)
-    .filter(Boolean)
+    .filter(g => g?.id && !seen.has(g.id) && seen.add(g.id))
 
   /* ── Determina stato medico ──────────────────────────────────── */
 

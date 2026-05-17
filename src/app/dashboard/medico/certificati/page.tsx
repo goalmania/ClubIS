@@ -56,30 +56,17 @@ export default function MedicoCertificatiPage() {
     if (!utente) return
     setClubId(utente.club_id)
 
-    const [{ data: certs }, { data: gioc }] = await Promise.all([
+    const [{ data: certs }, giocatori] = await Promise.all([
       supabase
         .from('certificati_medici')
         .select('*, giocatori(id, nome, cognome, ruolo_principale)')
         .eq('club_id', utente.club_id)
         .order('data_scadenza'),
-      supabase
-        .from('tesseramenti')
-        .select('giocatori(id, nome, cognome)')
-        .eq('club_id', utente.club_id)
-        .eq('stato', 'attivo'),
+      fetch('/api/giocatori').then(r => r.json()).catch(() => []),
     ])
 
-    // deduplica: un giocatore può avere più tesseramenti attivi
-    const seen = new Set<string>()
-    const giocatori: any[] = []
-    for (const t of gioc ?? []) {
-      const g = t.giocatori as any
-      if (g && !seen.has(g.id)) { seen.add(g.id); giocatori.push(g) }
-    }
-    giocatori.sort((a, b) => (a.cognome ?? '').localeCompare(b.cognome ?? '', 'it'))
-
     setCertificati(certs ?? [])
-    setGiocatoriList(giocatori)
+    setGiocatoriList(Array.isArray(giocatori) ? giocatori : [])
     setLoading(false)
   }, [])
 

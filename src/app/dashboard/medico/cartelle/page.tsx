@@ -21,13 +21,28 @@ export default function MedicoCartellePage() {
     if (!utente) return
     setClubId(utente.club_id)
 
-    const { data: tesserati } = await supabase
-      .from('tesseramenti')
-      .select('giocatori(id, nome, cognome, ruolo_principale, data_nascita, gruppo_sanguigno, allergie, terapie_in_corso, certificati_medici(data_scadenza), infortuni(data_infortunio, data_rientro_effettiva))')
-      .eq('club_id', utente.club_id)
-      .eq('stato', 'attivo')
+    // Prima squadra con fallback a tutti i tesserati del club
+    const squadre: { id: string; categoria_eta: string }[] = await fetch('/api/squadre').then(r => r.json()).catch(() => [])
+    const sqIds = squadre.filter(s => s.categoria_eta === 'prima_squadra').map(s => s.id)
 
-    // deduplica per giocatore_id (un giocatore può avere più tesseramenti attivi)
+    let tesserati: any[] | null = null
+    if (sqIds.length > 0) {
+      const { data } = await supabase
+        .from('tesseramenti')
+        .select('giocatori(id, nome, cognome, ruolo_principale, data_nascita, gruppo_sanguigno, allergie, terapie_in_corso, certificati_medici(data_scadenza), infortuni(data_infortunio, data_rientro_effettiva))')
+        .in('squadra_id', sqIds)
+        .eq('stato', 'attivo')
+      tesserati = data
+    }
+    if (!tesserati || tesserati.length === 0) {
+      const { data } = await supabase
+        .from('tesseramenti')
+        .select('giocatori(id, nome, cognome, ruolo_principale, data_nascita, gruppo_sanguigno, allergie, terapie_in_corso, certificati_medici(data_scadenza), infortuni(data_infortunio, data_rientro_effettiva))')
+        .eq('club_id', utente.club_id)
+        .eq('stato', 'attivo')
+      tesserati = data
+    }
+
     const seen = new Set<string>()
     const unici: any[] = []
     for (const t of tesserati ?? []) {

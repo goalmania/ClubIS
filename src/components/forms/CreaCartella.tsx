@@ -23,13 +23,8 @@ export default function CreaCartella({
   const [toast, setToast]               = useState<{ msg: string; tipo: 'success' | 'error' } | null>(null)
 
   async function apri() {
-    const supabase = createClient()
-    const { data: tesserati } = await supabase
-      .from('tesseramenti')
-      .select('giocatori(id, nome, cognome)')
-      .eq('club_id', clubId)
-      .eq('stato', 'attivo')
-    setGiocatori(tesserati?.map(t => t.giocatori as any).filter(Boolean) ?? [])
+    const data = await fetch('/api/giocatori').then(r => r.json()).catch(() => [])
+    setGiocatori(Array.isArray(data) ? data : [])
     setGiocatoreId('')
     setGruppoSanguigno('')
     setAllergie('')
