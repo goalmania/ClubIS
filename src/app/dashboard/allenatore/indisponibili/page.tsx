@@ -1,26 +1,24 @@
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserContext } from '@/lib/impersonation'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
 export default async function IndisponibiliPage() {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth/login')
-  const { data: utente, error: utenteError } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-  if (utenteError || !utente) redirect('/auth/errore')
+  const ctx = await getUserContext()
+  if (!ctx) redirect('/auth/login')
+  const { clubId, userId } = ctx
 
   const admin = createAdminClient()
 
   // ── Passo 1: ID squadre prima_squadra del club (con allenatore abbinato o fallback) ──
   const { data: sqAssegnate } = await admin.from('squadre').select('id')
-    .eq('club_id', utente.club_id).eq('allenatore_id', user.id)
+    .eq('club_id', clubId).eq('allenatore_id', userId)
     .eq('categoria_eta', 'prima_squadra').eq('attiva', true)
 
   let sqIds: string[] = (sqAssegnate ?? []).map(s => s.id)
   if (sqIds.length === 0) {
     const { data: sqClub } = await admin.from('squadre').select('id')
-      .eq('club_id', utente.club_id).eq('categoria_eta', 'prima_squadra').eq('attiva', true)
+      .eq('club_id', clubId).eq('categoria_eta', 'prima_squadra').eq('attiva', true)
     sqIds = (sqClub ?? []).map(s => s.id)
   }
 
@@ -39,7 +37,7 @@ export default async function IndisponibiliPage() {
     const { data } = await admin
       .from('tesseramenti')
       .select('giocatore_id, numero_maglia, giocatori(id, nome, cognome, ruolo_principale)')
-      .eq('club_id', utente.club_id)
+      .eq('club_id', clubId)
       .eq('stato', 'attivo')
       .not('giocatore_id', 'is', null)
     tessData = data

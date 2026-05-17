@@ -1,27 +1,25 @@
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserContext } from '@/lib/impersonation'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { calcolaEta, ruoloShort, formatData } from '@/lib/helpers'
 
 export default async function AllenatoreRosaPage() {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth/login')
-  const { data: utente, error: utenteError } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-  if (utenteError || !utente) redirect('/auth/errore')
+  const ctx = await getUserContext()
+  if (!ctx) redirect('/auth/login')
+  const { clubId, userId } = ctx
 
   const admin = createAdminClient()
 
   // Prima squadra: squadre con allenatore abbinato; fallback a tutte le prima_squadra del club
   const { data: sqAssegnate } = await admin.from('squadre').select('id, nome, categoria_eta')
-    .eq('club_id', utente.club_id).eq('allenatore_id', user.id)
+    .eq('club_id', clubId).eq('allenatore_id', userId)
     .eq('categoria_eta', 'prima_squadra').eq('attiva', true)
 
   let sq = sqAssegnate ?? []
   if (sq.length === 0) {
     const { data: sqClub } = await admin.from('squadre').select('id, nome, categoria_eta')
-      .eq('club_id', utente.club_id).eq('categoria_eta', 'prima_squadra').eq('attiva', true)
+      .eq('club_id', clubId).eq('categoria_eta', 'prima_squadra').eq('attiva', true)
     sq = sqClub ?? []
   }
   const sqIds = sq.map(s => s.id)
@@ -40,7 +38,7 @@ export default async function AllenatoreRosaPage() {
     const { data } = await admin
       .from('tesseramenti')
       .select('numero_maglia, squadra_id, giocatori(id, nome, cognome, data_nascita, ruolo_principale, piede, altezza_cm, peso_kg, foto_url)')
-      .eq('club_id', utente.club_id)
+      .eq('club_id', clubId)
       .eq('stato', 'attivo')
     tesserati = data
   }
@@ -53,7 +51,7 @@ export default async function AllenatoreRosaPage() {
     .select('id').gte('data_ora', settimanaFa.toISOString())
   const { data: sessioni } = sqIds.length
     ? await sessioniQuery.in('squadra_id', sqIds)
-    : await sessioniQuery.eq('club_id', utente.club_id)
+    : await sessioniQuery.eq('club_id', clubId)
 
   const sessioniIds = sessioni?.map(s => s.id) ?? []
   const { data: presenze } = await admin.from('presenze')
