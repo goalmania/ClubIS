@@ -35,7 +35,7 @@ export default async function PresidenteDashboard() {
     supabase.from('quote_iscrizione').select('*', { count: 'exact', head: true }).eq('club_id', clubId).in('stato', ['non_pagato', 'parziale']),
     supabase.from('prima_nota').select('importo').eq('club_id', clubId).eq('tipo', 'entrata').gte('data', inizioMese),
     supabase.from('prima_nota').select('importo').eq('club_id', clubId).eq('tipo', 'uscita').gte('data', inizioMese),
-    supabase.from('partite').select('avversario, gol_fatti, gol_subiti, data_ora, casa_trasferta').eq('stato', 'giocata').order('data_ora', { ascending: false }).limit(5),
+    supabase.from('partite').select('avversario, gol_fatti, gol_subiti, data_ora, casa_trasferta').eq('club_id', clubId).eq('stato', 'giocata').order('data_ora', { ascending: false }).limit(5),
     supabase.from('certificati_medici').select('*', { count: 'exact', head: true }).eq('club_id', clubId).lte('data_scadenza', new Date(oggi.getTime() + 30 * 86400000).toISOString().split('T')[0]).gte('data_scadenza', oggi.toISOString().split('T')[0]),
     supabase.from('contratti').select('*', { count: 'exact', head: true }).eq('club_id', clubId).lte('data_scadenza', new Date(oggi.getTime() + 90 * 86400000).toISOString().split('T')[0]).gte('data_scadenza', oggi.toISOString().split('T')[0]),
     supabase.from('squadre').select('id, nome, categoria_eta').eq('club_id', clubId).eq('attiva', true),
