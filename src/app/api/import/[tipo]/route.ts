@@ -128,12 +128,13 @@ export async function POST(req: Request, { params }: { params: { tipo: string } 
   if (params.tipo === 'giocatori') {
     for (const r of righe) {
       try {
-        // Controlla duplicato per CF o cognome+nome+data_nascita
+        // Controlla duplicato SOLO nel proprio club (club_id filter obbligatorio)
         let esistente = null
         if (r.codice_fiscale && !r.codice_fiscale.startsWith('IMP-') && !r.codice_fiscale.startsWith('XX')) {
           const { data } = await supabase
             .from('giocatori')
             .select('id')
+            .eq('club_id', clubId)
             .eq('codice_fiscale', r.codice_fiscale)
             .maybeSingle()
           esistente = data
@@ -143,6 +144,7 @@ export async function POST(req: Request, { params }: { params: { tipo: string } 
           const { data: dup } = await supabase
             .from('giocatori')
             .select('id')
+            .eq('club_id', clubId)
             .eq('cognome', r.cognome)
             .eq('nome', r.nome)
             .eq('data_nascita', r.data_nascita ?? '')
@@ -158,6 +160,7 @@ export async function POST(req: Request, { params }: { params: { tipo: string } 
         const { data: g, error: gErr } = await supabase
           .from('giocatori')
           .insert({
+            club_id:           clubId,
             nome:              r.nome,
             cognome:           r.cognome,
             data_nascita:      r.data_nascita ?? null,
@@ -241,6 +244,7 @@ export async function POST(req: Request, { params }: { params: { tipo: string } 
         const { data: bimboEsistente } = await supabase
           .from('giocatori')
           .select('id')
+          .eq('club_id', clubId)
           .eq('cognome', r.giocatore_cognome)
           .eq('nome',    r.giocatore_nome)
           .maybeSingle()
@@ -251,6 +255,7 @@ export async function POST(req: Request, { params }: { params: { tipo: string } 
           const { data: g, error: gErr } = await supabase
             .from('giocatori')
             .insert({
+              club_id:          clubId,
               nome:             r.giocatore_nome,
               cognome:          r.giocatore_cognome,
               data_nascita:     r.giocatore_data_nascita ?? null,
