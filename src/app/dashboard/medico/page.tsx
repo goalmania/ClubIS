@@ -1,16 +1,16 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserContext } from '@/lib/impersonation'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import AzioniRapide from '@/components/ui/AzioniRapide'
 import ServerFeatureGate from '@/components/ServerFeatureGate'
 
 export default async function MedicoDashboard() {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth/login')
-  const { data: utente, error: utenteError } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-  if (utenteError || !utente) redirect('/auth/errore')
-  const clubId = utente.club_id
+  const ctx = await getUserContext()
+  if (!ctx) redirect('/auth/login')
+  const { clubId } = ctx
+
+  const admin = createAdminClient()
 
   const oggi = new Date()
   const oggiStr = oggi.toISOString().split('T')[0]
@@ -25,15 +25,15 @@ export default async function MedicoDashboard() {
     { data: visiteProssime },
     { data: ultimiInfortuni },
   ] = await Promise.all([
-    supabase.from('giocatori').select('*', { count: 'exact', head: true }).eq('club_id', clubId).eq('attivo', true),
-    supabase.from('certificati_medici').select('*', { count: 'exact', head: true }).eq('club_id', clubId).gt('data_scadenza', in30g),
-    supabase.from('certificati_medici').select('*', { count: 'exact', head: true }).eq('club_id', clubId).gte('data_scadenza', oggiStr).lte('data_scadenza', in30g),
-    supabase.from('certificati_medici').select('*', { count: 'exact', head: true }).eq('club_id', clubId).lt('data_scadenza', oggiStr),
-    supabase.from('infortuni').select('id, tipo, gravita, data_infortunio, data_rientro_prevista, giocatori(nome, cognome, ruolo_principale)')
+    admin.from('tesseramenti').select('*', { count: 'exact', head: true }).eq('club_id', clubId).eq('stato', 'attivo'),
+    admin.from('certificati_medici').select('*', { count: 'exact', head: true }).eq('club_id', clubId).gt('data_scadenza', in30g),
+    admin.from('certificati_medici').select('*', { count: 'exact', head: true }).eq('club_id', clubId).gte('data_scadenza', oggiStr).lte('data_scadenza', in30g),
+    admin.from('certificati_medici').select('*', { count: 'exact', head: true }).eq('club_id', clubId).lt('data_scadenza', oggiStr),
+    admin.from('infortuni').select('id, tipo, gravita, data_infortunio, data_rientro_prevista, giocatori(nome, cognome, ruolo_principale)')
       .eq('club_id', clubId).is('data_rientro_effettiva', null).order('data_infortunio', { ascending: false }),
-    supabase.from('visite_mediche').select('id, tipo, data, giocatori(nome, cognome)')
+    admin.from('visite_mediche').select('id, tipo, data, giocatori(nome, cognome)')
       .eq('club_id', clubId).gte('data', oggiStr).order('data').limit(5),
-    supabase.from('infortuni').select('id, tipo, gravita, data_infortunio, giocatori(nome, cognome)')
+    admin.from('infortuni').select('id, tipo, gravita, data_infortunio, giocatori(nome, cognome)')
       .eq('club_id', clubId).order('data_infortunio', { ascending: false }).limit(5),
   ])
 

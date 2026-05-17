@@ -35,20 +35,10 @@ export default function FormInfortunio({ open, onClose, clubId, preselectedGioca
 
   useEffect(() => {
     if (!open) return
-    supabase
-      .from('tesseramenti')
-      .select('giocatori(id, nome, cognome)')
-      .eq('club_id', clubId)
-      .eq('stato', 'attivo')
-      .then(({ data }) => {
-        setGiocatori(
-          (data ?? [])
-            .map((t: any) => t.giocatori)
-            .filter(Boolean)
-            .sort((a: any, b: any) => a.cognome.localeCompare(b.cognome))
-        )
-      })
-  }, [open, clubId])
+    fetch('/api/giocatori')
+      .then(r => r.json())
+      .then((data: GiocatoreOpt[]) => setGiocatori(Array.isArray(data) ? data : []))
+  }, [open])
 
   useEffect(() => {
     if (preselectedGiocatoreId) setGiocatoreId(preselectedGiocatoreId)

@@ -31,20 +31,10 @@ export default function FormVisita({ open, onClose, clubId, preselectedGiocatore
 
   useEffect(() => {
     if (!open) return
-    supabase
-      .from('tesseramenti')
-      .select('giocatori(id, nome, cognome)')
-      .eq('club_id', clubId)
-      .eq('stato', 'attivo')
-      .then(({ data: d }) => {
-        setGiocatori(
-          (d ?? [])
-            .map((t: any) => t.giocatori)
-            .filter(Boolean)
-            .sort((a: any, b: any) => a.cognome.localeCompare(b.cognome))
-        )
-      })
-  }, [open, clubId])
+    fetch('/api/giocatori')
+      .then(r => r.json())
+      .then((data: GiocatoreOpt[]) => setGiocatori(Array.isArray(data) ? data : []))
+  }, [open])
 
   useEffect(() => {
     if (preselectedGiocatoreId) setGiocatoreId(preselectedGiocatoreId)
