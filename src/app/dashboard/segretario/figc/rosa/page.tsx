@@ -6,6 +6,7 @@ import { PageHeader, Toast } from '@/components/ui'
 type Reparto = 'tutti' | 'portiere' | 'difensore' | 'centrocampista' | 'attaccante'
 type Formazione = '4-3-3' | '4-4-2' | '3-5-2' | '4-2-3-1' | '5-3-2'
 type Vista = 'lista' | 'tattica'
+type CategoriaTab = 'tutti' | 'prima_squadra' | 'settore_giovanile' | 'scuola_calcio'
 
 interface Giocatore {
   id: string
@@ -16,6 +17,16 @@ interface Giocatore {
   ruolo_principale: string | null
   codice_tessera_figc: string | null
   numero_maglia: number | null
+  categoria_eta?: string | null
+}
+
+const PRIMA_SQ = ['prima_squadra', 'femminile']
+const SETTORE_GIO = ['u14', 'u15', 'u16', 'u17', 'u19', 'juniores', 'primavera']
+
+function getCategoria(cat: string | null | undefined): CategoriaTab {
+  if (!cat || !PRIMA_SQ.includes(cat) && !SETTORE_GIO.includes(cat)) return 'scuola_calcio'
+  if (PRIMA_SQ.includes(cat)) return 'prima_squadra'
+  return 'settore_giovanile'
 }
 
 const FORMAZIONI: Record<Formazione, { x: number; y: number }[]> = {
@@ -143,6 +154,7 @@ export default function RosaFIGCPage() {
   const supabase = createClient()
   const [giocatori, setGiocatori] = useState<Giocatore[]>([])
   const [loading, setLoading] = useState(true)
+  const [categoriaTab, setCategoriaTab] = useState<CategoriaTab>('tutti')
   const [repSel, setRepSel] = useState<Reparto>('tutti')
   const [vista, setVista] = useState<Vista>('lista')
   const [formazione, setFormazione] = useState<Formazione>('4-3-3')
@@ -161,7 +173,7 @@ export default function RosaFIGCPage() {
     const [{ data: cl }, { data: tess }] = await Promise.all([
       supabase.from('clubs').select('nome, figc_codice').eq('id', clubId).single(),
       supabase.from('tesseramenti')
-        .select('numero_maglia, giocatori(id, nome, cognome, data_nascita, nazionalita_paese, ruolo_principale, codice_tessera_figc)')
+        .select('numero_maglia, squadre(categoria_eta), giocatori(id, nome, cognome, data_nascita, nazionalita_paese, ruolo_principale, codice_tessera_figc)')
         .eq('club_id', clubId)
         .eq('stato', 'attivo'),
     ])
@@ -171,6 +183,7 @@ export default function RosaFIGCPage() {
     const lista: Giocatore[] = (tess ?? []).map((t: any) => ({
       ...t.giocatori,
       numero_maglia: t.numero_maglia ?? null,
+      categoria_eta: (t.squadre as any)?.categoria_eta ?? null,
     }))
 
     lista.sort((a, b) => {
@@ -211,7 +224,14 @@ export default function RosaFIGCPage() {
     window.print()
   }
 
-  const filtrati = repSel === 'tutti' ? giocatori : giocatori.filter(g => reparto(g.ruolo_principale) === repSel)
+  const countCategoria = (c: CategoriaTab) =>
+    c === 'tutti' ? giocatori.length : giocatori.filter(g => getCategoria(g.categoria_eta) === c).length
+
+  const filtrati = giocatori.filter(g => {
+    const catOk = categoriaTab === 'tutti' || getCategoria(g.categoria_eta) === categoriaTab
+    const repOk = repSel === 'tutti' || reparto(g.ruolo_principale) === repSel
+    return catOk && repOk
+  })
 
   const repartoLabel: Record<Reparto, string> = {
     tutti: 'Tutti', portiere: 'Portieri', difensore: 'Difensori', centrocampista: 'Centrocampisti', attaccante: 'Attaccanti'
@@ -250,6 +270,24 @@ export default function RosaFIGCPage() {
 
       {vista === 'lista' && (
         <>
+          {/* Tab categoria */}
+          <div style={{ display: 'flex', gap: 6, marginBottom: 12, flexWrap: 'wrap' }}>
+            {([
+              { v: 'tutti' as const,            l: 'Tutte le categorie' },
+              { v: 'prima_squadra' as const,    l: 'Prima Squadra' },
+              { v: 'settore_giovanile' as const, l: 'Settore Giovanile' },
+              { v: 'scuola_calcio' as const,    l: 'Scuola Calcio' },
+            ]).map(({ v, l }) => (
+              <button
+                key={v}
+                className={`btn btn-sm ${categoriaTab === v ? 'btn-primary' : 'btn-secondary'}`}
+                onClick={() => { setCategoriaTab(v); setRepSel('tutti') }}
+              >
+                {l} ({countCategoria(v)})
+              </button>
+            ))}
+          </div>
+
           {/* Tab reparti */}
           <div style={{ display: 'flex', gap: 6, marginBottom: 20, flexWrap: 'wrap' }}>
             {(['tutti', 'portiere', 'difensore', 'centrocampista', 'attaccante'] as Reparto[]).map(r => (

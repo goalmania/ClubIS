@@ -86,6 +86,7 @@ export default function TrasferteCreateDrawer() {
     },
 
     note_libere: '',
+    numero_notti_override: null as number | null,
   })
 
   const numeroNotti = useMemo(() => {
@@ -132,6 +133,7 @@ export default function TrasferteCreateDrawer() {
         team_manager: [],
       },
       note_libere: '',
+      numero_notti_override: null,
     })
     setNewFiles([])
   }
@@ -326,7 +328,7 @@ export default function TrasferteCreateDrawer() {
         },
         alloggio: {
           hotel: form.hotel,
-          numero_notti: numeroNotti,
+          numero_notti: form.numero_notti_override ?? numeroNotti,
           costo_stimato: form.costo_alloggio_stimato,
           costo_reale: form.costo_alloggio_reale,
         },
@@ -585,8 +587,15 @@ export default function TrasferteCreateDrawer() {
                 </div>
 
                 <div>
-                  <FormField label="Numero notti (auto-calcolato)" hint="Differenza tra data rientro e data partenza">
-                    <input className="input" type="number" value={numeroNotti} readOnly />
+                  <FormField label="Numero notti" hint="Auto-calcolato dalla durata · modificabile manualmente">
+                    <input
+                      className="input"
+                      type="number"
+                      min={0}
+                      step={1}
+                      value={form.numero_notti_override ?? numeroNotti}
+                      onChange={e => setForm(prev => ({ ...prev, numero_notti_override: parseNumberOrNull(e.target.value) }))}
+                    />
                   </FormField>
                 </div>
 
