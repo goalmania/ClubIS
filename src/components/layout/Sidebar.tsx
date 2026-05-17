@@ -155,7 +155,7 @@ const navConfig: Record<RuoloUtente, NavSezione[]> = {
       { label: 'Compensi', href: '/dashboard/segretario/compensi', icon: 'Euro', feature: 'compensi_staff' },
     ]},
     { titolo: 'Gestione', voci: [
-      { label: 'Documenti', href: '/dashboard/segretario/documenti', icon: 'FileText', feature: 'genera_documenti' },
+      { label: 'Generatore Documenti', href: '/dashboard/segretario/documenti', icon: 'FileText', feature: 'genera_documenti' },
       { label: 'Compliance', href: '/dashboard/segretario/compliance', icon: 'Shield' },
       { label: 'Comunicazioni', href: '/dashboard/segretario/comunicazioni', icon: 'Message' },
       { label: 'Archivio', href: '/dashboard/segretario/archivio', icon: 'Folder' },
