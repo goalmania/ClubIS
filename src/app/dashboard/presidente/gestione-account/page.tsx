@@ -251,38 +251,23 @@ export default function GestioneAccountPage() {
     if (!user) return
     setUserId(user.id)
 
-    const { data: utente } = await supabase
-      .from('utenti')
-      .select('club_id')
-      .eq('id', user.id)
-      .single()
-
-    if (!utente?.club_id) {
-      setErrore('Impossibile caricare il profilo.')
+    // Usa l'API route che bypassa RLS e applica auto-fix is_super_admin
+    const res = await fetch('/api/utenti/club')
+    if (!res.ok) {
+      setErrore('Errore caricamento membri')
       setLoading(false)
       return
     }
-
-    const { data, error: qErr } = await supabase
-      .from('utenti')
-      .select('id, nome, cognome, email, ruolo, attivo, created_at, ultimo_accesso')
-      .eq('club_id', utente.club_id)
-      .neq('id', user.id)
-      .or('is_super_admin.is.null,is_super_admin.eq.false')
-      .order('ruolo')
-      .order('cognome')
-
-    if (qErr) {
-      setErrore(qErr.message)
-    } else {
-      setMembri(
-        (data ?? []).slice().sort((a, b) => {
-          const ro = (RUOLO_ORDER[a.ruolo] ?? 99) - (RUOLO_ORDER[b.ruolo] ?? 99)
-          if (ro !== 0) return ro
-          return `${a.cognome} ${a.nome}`.localeCompare(`${b.cognome} ${b.nome}`, 'it')
-        })
-      )
-    }
+    const data: Membro[] = await res.json()
+    // Escludi l'utente corrente (il presidente loggato) dalla lista
+    const filtrati = data.filter(m => m.id !== user.id)
+    setMembri(
+      filtrati.slice().sort((a, b) => {
+        const ro = (RUOLO_ORDER[a.ruolo] ?? 99) - (RUOLO_ORDER[b.ruolo] ?? 99)
+        if (ro !== 0) return ro
+        return `${a.cognome} ${a.nome}`.localeCompare(`${b.cognome} ${b.nome}`, 'it')
+      })
+    )
 
     setLoading(false)
   }, [supabase])

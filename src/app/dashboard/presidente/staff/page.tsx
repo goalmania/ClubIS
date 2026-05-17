@@ -1,5 +1,11 @@
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
+
+const PLATFORM_ADMIN_EMAILS = [
+  'dimuropaolo7@gmail.com', 'dimuroasia45@gmail.com',
+  'dimuroasia7@gmail.com', 'dimuropaolo@gmail.com', 'dimuropaolo77@gmail.com',
+]
 
 export default async function PresidenteStaffPage() {
   const supabase = createClient()
@@ -7,13 +13,19 @@ export default async function PresidenteStaffPage() {
   if (!user) redirect('/auth/login')
   const { data: utente, error: utenteError } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
   if (utenteError || !utente) redirect('/auth/errore')
-  const { data: staff } = await supabase
+
+  const admin = createAdminClient()
+  // Auto-fix: segna gli account piattaforma come super_admin se non ancora fatto
+  await admin.from('utenti').update({ is_super_admin: true })
+    .in('email', PLATFORM_ADMIN_EMAILS).is('is_super_admin', null)
+
+  const { data: staff } = await admin
     .from('utenti')
     .select('id, nome, cognome, ruolo, email, telefono, attivo, ultimo_accesso')
     .eq('club_id', utente.club_id)
-    .or('is_super_admin.is.null,is_super_admin.eq.false')
+    .neq('is_super_admin', true)
     .order('ruolo')
-  const { data: collaboratori } = await supabase
+  const { data: collaboratori } = await admin
     .from('collaboratori_staff')
     .select('*, utenti(nome, cognome, ruolo)')
     .eq('club_id', utente.club_id)
