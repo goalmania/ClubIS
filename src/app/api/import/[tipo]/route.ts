@@ -157,7 +157,10 @@ export async function POST(req: Request, { params }: { params: { tipo: string } 
           continue
         }
 
-        const { data: g, error: gErr } = await supabase
+        // Tenta insert con il CF originale; se viola la unique globale (CF già
+        // in uso da un altro club) ritenta con un placeholder univoco.
+        const cfOriginale = r.codice_fiscale ?? cfPlaceholder()
+        let { data: g, error: gErr } = await supabase
           .from('giocatori')
           .insert({
             club_id:           clubId,
@@ -165,7 +168,7 @@ export async function POST(req: Request, { params }: { params: { tipo: string } 
             cognome:           r.cognome,
             data_nascita:      r.data_nascita ?? null,
             luogo_nascita:     r.luogo_nascita ?? null,
-            codice_fiscale:    r.codice_fiscale ?? cfPlaceholder(),
+            codice_fiscale:    cfOriginale,
             ruolo_principale:  normRuolo(r.ruolo_principale),
             piede:             normEnum(r.piede, 'destro'),
             altezza_cm:        r.altezza_cm ?? null,
@@ -180,6 +183,35 @@ export async function POST(req: Request, { params }: { params: { tipo: string } 
           })
           .select('id')
           .single()
+
+        // CF già usato da un altro club → ritenta con placeholder
+        if (gErr?.code === '23505' && gErr.message.includes('codice_fiscale')) {
+          const retry = await supabase
+            .from('giocatori')
+            .insert({
+              club_id:           clubId,
+              nome:              r.nome,
+              cognome:           r.cognome,
+              data_nascita:      r.data_nascita ?? null,
+              luogo_nascita:     r.luogo_nascita ?? null,
+              codice_fiscale:    cfPlaceholder(),
+              ruolo_principale:  normRuolo(r.ruolo_principale),
+              piede:             normEnum(r.piede, 'destro'),
+              altezza_cm:        r.altezza_cm ?? null,
+              peso_kg:           r.peso_kg ?? null,
+              email_contatto:    r.email_contatto ?? null,
+              telefono_contatto: r.telefono_contatto ?? null,
+              nazionalita_tipo:  normEnum(r.nazionalita_tipo, 'italiano'),
+              nazionalita_paese: 'Italia',
+              iban:              r.iban ?? null,
+              codice_fiscale_figc: r.codice_fiscale_figc ?? null,
+              consenso_gdpr:     false,
+            })
+            .select('id')
+            .single()
+          g = retry.data
+          gErr = retry.error
+        }
 
         if (gErr) throw new Error(gErr.message)
 
