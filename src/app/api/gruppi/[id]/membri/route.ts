@@ -54,3 +54,56 @@ export async function GET(
     utente:    m.utente_id    ? (uMap[m.utente_id]    ?? null) : null,
   })))
 }
+
+// Aggiunge uno o più membri al gruppo
+export async function POST(
+  req: Request,
+  { params }: { params: { id: string } },
+) {
+  const gruppoId = params.id
+  const body     = await req.json()
+  // body: { entries: Array<{ fk: 'giocatore_id'|'utente_id', id: string, ruolo?: string }> }
+  const entries: Array<{ fk: string; id: string; ruolo?: string }> = body.entries ?? []
+  const supabase = createAdminClient()
+
+  for (const e of entries) {
+    const { data: exists } = await supabase
+      .from('gruppi_membri')
+      .select('id')
+      .eq('gruppo_id', gruppoId)
+      .eq(e.fk, e.id)
+      .maybeSingle()
+    if (!exists) {
+      const row: any = { gruppo_id: gruppoId, ruolo_nel_gruppo: e.ruolo || null }
+      row[e.fk] = e.id
+      await supabase.from('gruppi_membri').insert(row)
+    }
+  }
+  return Response.json({ ok: true })
+}
+
+// Rimuove un membro per id riga (DELETE /api/gruppi/[id]/membri?membroId=xxx)
+// Oppure rimuove per fk (body: { fk, ids[] }) per salvaEdit diff
+export async function DELETE(
+  req: Request,
+  { params }: { params: { id: string } },
+) {
+  const gruppoId = params.id
+  const supabase = createAdminClient()
+
+  const url = new URL(req.url)
+  const membroId = url.searchParams.get('membroId')
+
+  if (membroId) {
+    await supabase.from('gruppi_membri').delete().eq('id', membroId)
+    return Response.json({ ok: true })
+  }
+
+  // bulk delete by fk ids
+  const { fk, ids } = await req.json()
+  for (const sid of (ids ?? [])) {
+    await supabase.from('gruppi_membri').delete()
+      .eq('gruppo_id', gruppoId).eq(fk, sid)
+  }
+  return Response.json({ ok: true })
+}

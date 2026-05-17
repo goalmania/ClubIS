@@ -11,6 +11,7 @@ export default async function PresidenteStaffPage() {
     .from('utenti')
     .select('id, nome, cognome, ruolo, email, telefono, attivo, ultimo_accesso')
     .eq('club_id', utente.club_id)
+    .or('is_super_admin.is.null,is_super_admin.eq.false')
     .order('ruolo')
   const { data: collaboratori } = await supabase
     .from('collaboratori_staff')

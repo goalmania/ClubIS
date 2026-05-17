@@ -1,6 +1,5 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
-import { createClient } from '@/lib/supabase/client'
 import { PageHeader, Toast, Drawer, Modal, StatCard } from '@/components/ui'
 
 /* ── Tipi ─────────────────────────────────────────────────────────────────── */
@@ -35,10 +34,7 @@ function stagioneCorrente() {
 
 /* ════════════════════════════════════════════════════════════════════════════ */
 export default function GruppiPage() {
-  const sb = createClient()
-
   /* ── Dati principali ──────────────────────────────────────────────────── */
-  const [clubId,    setClubId]    = useState<string | null>(null)
   const [gruppi,    setGruppi]    = useState<Gruppo[]>([])
   const [giocatori, setGiocatori] = useState<Giocatore[]>([])
   const [staff,     setStaff]     = useState<Utente[]>([])
@@ -82,53 +78,28 @@ export default function GruppiPage() {
   /* ══ CARICAMENTO DATI ════════════════════════════════════════════════════ */
   const loadAll = useCallback(async () => {
     setLoading(true)
-    const { data: { user } } = await sb.auth.getUser()
-    if (!user) { setLoading(false); return }
-
-    const { data: u } = await sb.from('utenti').select('club_id').eq('id', user.id).single()
-    const cid = u?.club_id as string
-    setClubId(cid)
-
-    // Carica in parallelo
-    const [gRes, tessRes, stRes] = await Promise.all([
-      sb.from('gruppi').select('*').eq('club_id', cid).order('nome'),
-      sb.from('tesseramenti')
-        .select('numero_maglia, giocatori(id,nome,cognome,ruolo_principale,data_nascita)')
-        .eq('club_id', cid).eq('stato', 'attivo'),
-      sb.from('utenti').select('id,nome,cognome,ruolo,email').eq('club_id', cid).eq('attivo', true).order('cognome'),
-    ])
-
-    if (gRes.error) err(`Errore gruppi: ${gRes.error.message}`)
-
-    // Deduplica giocatori per id
-    const seen = new Set<string>()
-    const giocatoriDedup: Giocatore[] = []
-    for (const t of (tessRes.data ?? []) as any[]) {
-      const g = t.giocatori
-      if (!g || seen.has(g.id)) continue
-      seen.add(g.id)
-      giocatoriDedup.push({ ...g, numero_maglia: t.numero_maglia ?? null })
+    try {
+      const res  = await fetch('/api/gruppi')
+      const data = await res.json()
+      if (!res.ok) { err(data.error ?? 'Errore caricamento gruppi'); setLoading(false); return }
+      setGruppi(data.gruppi ?? [])
+      setGiocatori(data.giocatori ?? [])
+      setStaff(data.staff ?? [])
+    } catch (e) {
+      err(`Errore di rete: ${String(e)}`)
     }
-    giocatoriDedup.sort((a, b) => (a.cognome ?? '').localeCompare(b.cognome ?? ''))
-
-    setGruppi(gRes.data ?? [])
-    setGiocatori(giocatoriDedup)
-    setStaff(stRes.data ?? [])
     setLoading(false)
-  }, [sb])
+  }, [])
 
   useEffect(() => { loadAll() }, [loadAll])
 
   const loadMembri = useCallback(async (gruppoId: string) => {
     setLoadingMembri(true)
-    const { data } = await sb
-      .from('gruppi_membri')
-      .select('id, gruppo_id, giocatore_id, utente_id, ruolo_nel_gruppo, data_ingresso')
-      .eq('gruppo_id', gruppoId)
-      .order('data_ingresso')
-    setMembri(data ?? [])
+    const res  = await fetch(`/api/gruppi/${gruppoId}/membri`)
+    const data = await res.json()
+    setMembri(Array.isArray(data) ? data : [])
     setLoadingMembri(false)
-  }, [sb])
+  }, [])
 
   /* ══ HELPERS ═════════════════════════════════════════════════════════════ */
   const isStaff = (g: Gruppo | null) => g?.tipo === 'staff'
@@ -142,14 +113,16 @@ export default function GruppiPage() {
   /* ══ AZIONI GRUPPI ═══════════════════════════════════════════════════════ */
   const creaNuovoGruppo = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!nNome.trim() || !clubId) return
+    if (!nNome.trim()) return
     setSaving(true)
-    const { error } = await sb.from('gruppi').insert({
-      club_id: clubId, nome: nNome.trim(), descrizione: nDesc.trim() || null,
-      colore: nColore, tipo: nTipo, stagione: nStagione, attivo: true,
+    const res = await fetch('/api/gruppi', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nome: nNome.trim(), descrizione: nDesc.trim() || null, colore: nColore, tipo: nTipo, stagione: nStagione }),
     })
+    const data = await res.json()
     setSaving(false)
-    if (error) { err(`Errore: ${error.message}`); return }
+    if (!res.ok) { err(`Errore: ${data.error}`); return }
     ok('Gruppo creato!')
     setDrawerNew(false); setNNome(''); setNDesc('')
     loadAll()
@@ -176,14 +149,18 @@ export default function GruppiPage() {
   }
 
   const toggleAttivo = async (g: Gruppo) => {
-    await sb.from('gruppi').update({ attivo: !g.attivo }).eq('id', g.id)
+    await fetch(`/api/gruppi/${g.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ attivo: !g.attivo }),
+    })
     loadAll()
   }
 
   const eliminaGruppo = async (g: Gruppo) => {
     if (!confirm(`Eliminare "${g.nome}"? Verranno rimossi anche tutti i membri.`)) return
-    await sb.from('gruppi_membri').delete().eq('gruppo_id', g.id)
-    await sb.from('gruppi').delete().eq('id', g.id)
+    const res = await fetch(`/api/gruppi/${g.id}`, { method: 'DELETE' })
+    if (!res.ok) { const d = await res.json(); err(d.error ?? 'Errore eliminazione'); return }
     ok(`Gruppo "${g.nome}" eliminato`)
     if (gruppoSel?.id === g.id) setGruppoSel(null)
     loadAll()
@@ -193,38 +170,33 @@ export default function GruppiPage() {
   const aggiungiMembri = async () => {
     if (!gruppoSel || selIds.length === 0) return
     const fk = isStaff(gruppoSel) ? 'utente_id' : 'giocatore_id'
-    for (const sid of selIds) {
-      const row: any = { gruppo_id: gruppoSel.id, ruolo_nel_gruppo: ruoloAdd || null }
-      row[fk] = sid
-      // Controlla duplicato prima di inserire
-      const { data: exists } = await sb.from('gruppi_membri').select('id')
-        .eq('gruppo_id', gruppoSel.id).eq(fk, sid).maybeSingle()
-      if (!exists) await sb.from('gruppi_membri').insert(row)
-    }
+    const entries = selIds.map(id => ({ fk, id, ruolo: ruoloAdd || undefined }))
+    await fetch(`/api/gruppi/${gruppoSel.id}/membri`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ entries }),
+    })
     ok(`${selIds.length} membro/i aggiunto/i`)
     setModalAdd(false); setSelIds([]); setRuoloAdd(''); setCercaAdd('')
     loadMembri(gruppoSel.id)
   }
 
   const rimuoviMembro = async (membroId: string) => {
-    await sb.from('gruppi_membri').delete().eq('id', membroId)
+    if (!gruppoSel) return
+    await fetch(`/api/gruppi/${gruppoSel.id}/membri?membroId=${membroId}`, { method: 'DELETE' })
     ok('Membro rimosso')
-    if (gruppoSel) loadMembri(gruppoSel.id)
+    loadMembri(gruppoSel.id)
   }
 
   /* ── Modifica rapida da card ─────────────────────────────────────────── */
   const apriEdit = async (g: Gruppo) => {
     setModalEdit(g); setLoadingEdit(true); setCercaEdit('')
-    const { data } = await sb.from('gruppi_membri')
-      .select('id, giocatore_id, utente_id').eq('gruppo_id', g.id)
-    setEditMembri((data ?? []).map((m: any) => ({
-      id: m.id, gruppo_id: g.id,
-      giocatore_id: m.giocatore_id ?? null,
-      utente_id: m.utente_id ?? null,
-      ruolo_nel_gruppo: null, data_ingresso: null,
-    })))
+    const res  = await fetch(`/api/gruppi/${g.id}/membri`)
+    const data = await res.json()
+    const membriRaw: Membro[] = Array.isArray(data) ? data : []
+    setEditMembri(membriRaw)
     const fk = g.tipo === 'staff' ? 'utente_id' : 'giocatore_id'
-    setEditSelIds((data ?? []).map((m: any) => m[fk]).filter(Boolean))
+    setEditSelIds(membriRaw.map((m: any) => m[fk]).filter(Boolean))
     setLoadingEdit(false)
   }
 
@@ -235,13 +207,19 @@ export default function GruppiPage() {
     const aggiungi = editSelIds.filter(id => !correnti.includes(id))
     const rimuovi  = correnti.filter(id => !editSelIds.includes(id))
 
-    for (const sid of aggiungi) {
-      const row: any = { gruppo_id: modalEdit.id }; row[fk] = sid
-      await sb.from('gruppi_membri').insert(row)
+    if (aggiungi.length > 0) {
+      await fetch(`/api/gruppi/${modalEdit.id}/membri`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ entries: aggiungi.map(id => ({ fk, id })) }),
+      })
     }
-    for (const sid of rimuovi) {
-      await sb.from('gruppi_membri').delete()
-        .eq('gruppo_id', modalEdit.id).eq(fk, sid)
+    if (rimuovi.length > 0) {
+      await fetch(`/api/gruppi/${modalEdit.id}/membri`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fk, ids: rimuovi }),
+      })
     }
     ok(`Gruppo aggiornato — ${editSelIds.length} membri`)
     setModalEdit(null); setEditSelIds([]); setCercaEdit('')
@@ -250,7 +228,7 @@ export default function GruppiPage() {
 
   /* ── Export CSV ──────────────────────────────────────────────────────── */
   const esportaCSV = (g: Gruppo) => {
-    const membriGruppo = membri.filter(m => gruppoSel?.id === g.id ? true : false)
+    const membriGruppo = membri.filter(() => gruppoSel?.id === g.id)
     const header = 'Cognome,Nome,Ruolo,Maglia,Ruolo nel gruppo,Ingresso'
     const rows = membriGruppo.map(m => {
       const p = personaDi(m) as any
@@ -272,7 +250,6 @@ export default function GruppiPage() {
     const staf = isStaff(gruppoSel)
     const membriVis = membri.map(m => ({ ...m, persona: personaDi(m) }))
 
-    // Filtra per "Aggiungi" modal: escludi già presenti
     const fkCol    = staf ? 'utente_id' : 'giocatore_id'
     const presenti = new Set(membri.map(m => (m as any)[fkCol]).filter(Boolean))
     const listaAdd = (staf ? staff : giocatori).filter(p =>
@@ -282,7 +259,6 @@ export default function GruppiPage() {
 
     return (
       <div>
-        {/* Breadcrumb */}
         <button onClick={() => { setGruppoSel(null); setMembri([]) }}
           style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--grigio-4)', fontSize: 13, display: 'flex', alignItems: 'center', gap: 6, marginBottom: 20, padding: 0 }}>
           ← Tutti i gruppi
@@ -301,7 +277,6 @@ export default function GruppiPage() {
           }
         />
 
-        {/* Tabella membri */}
         <div className="card" style={{ overflow: 'hidden' }}>
           {loadingMembri ? (
             <div style={{ padding: 40, textAlign: 'center', color: 'var(--grigio-4)' }}>Caricamento...</div>
@@ -326,7 +301,7 @@ export default function GruppiPage() {
               </thead>
               <tbody>
                 {membriVis.map(m => {
-                  const p   = m.persona as any
+                  const p     = m.persona as any
                   const ruolo = p ? (staf ? p.ruolo : p.ruolo_principale) ?? '—' : '—'
                   const maglia = !staf && p?.numero_maglia ? `#${p.numero_maglia}` : '—'
                   return (
@@ -359,7 +334,6 @@ export default function GruppiPage() {
           )}
         </div>
 
-        {/* Modal aggiungi membri */}
         <Modal open={modalAdd} onClose={() => setModalAdd(false)}
           title={`Aggiungi ${staf ? 'staff' : 'giocatori'}`} width={500}>
           <div>
@@ -422,14 +396,12 @@ export default function GruppiPage() {
         }
       />
 
-      {/* KPI */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 14, marginBottom: 24 }}>
         <StatCard label="Gruppi totali" value={gruppi.length} />
         <StatCard label="Gruppi attivi" value={gruppi.filter(g => g.attivo).length} color="var(--verde)" />
         <StatCard label="Stagione corrente" value={gruppi.filter(g => g.stagione === stagCorrente).length} />
       </div>
 
-      {/* Lista / Empty state */}
       {loading ? (
         <div style={{ padding: 40, textAlign: 'center', color: 'var(--grigio-4)' }}>Caricamento...</div>
       ) : gruppi.length === 0 ? (
@@ -497,7 +469,6 @@ export default function GruppiPage() {
         </div>
       )}
 
-      {/* Modal modifica rapida */}
       <Modal open={!!modalEdit} onClose={() => { setModalEdit(null); setEditSelIds([]); setCercaEdit('') }}
         title={`Modifica membri — ${modalEdit?.nome ?? ''}`} width={520}>
         <div>
@@ -551,7 +522,6 @@ export default function GruppiPage() {
         </div>
       </Modal>
 
-      {/* Drawer nuovo gruppo */}
       <Drawer open={drawerNew} onClose={() => setDrawerNew(false)} title="Nuovo gruppo" width={480}>
         <form onSubmit={creaNuovoGruppo}>
           <div style={{ marginBottom: 14 }}>
