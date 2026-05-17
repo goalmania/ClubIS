@@ -159,8 +159,12 @@ export default function GruppiPage() {
       const res  = await fetch('/api/gruppi/auto-assign', { method: 'POST' })
       const data = await res.json()
       if (!res.ok) { err(data.error ?? 'Errore sconosciuto'); return }
-      const { gruppiCreati, giocatoriAssegnati, staffAssegnati, saltati } = data
-      ok(`✓ ${gruppiCreati} gruppi creati · ${giocatoriAssegnati} giocatori · ${staffAssegnati} staff assegnati${saltati > 0 ? ` · ${saltati} saltati` : ''}`)
+      const { gruppiCreati, giocatoriAssegnati, staffAssegnati, saltati, errori } = data
+      if (errori?.length > 0) {
+        err(`Errori: ${errori.slice(0, 2).join(' · ')}${errori.length > 2 ? ` (+${errori.length - 2})` : ''}`)
+      } else {
+        ok(`✓ ${gruppiCreati} gruppi creati · ${giocatoriAssegnati} giocatori · ${staffAssegnati} staff assegnati${saltati > 0 ? ` · ${saltati} saltati` : ''}`)
+      }
       loadAll()
     } catch (e) {
       err(`Errore di rete: ${String(e)}`)
