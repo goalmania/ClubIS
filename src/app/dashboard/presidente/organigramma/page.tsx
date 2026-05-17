@@ -1,6 +1,12 @@
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+
+const PLATFORM_ADMIN_EMAILS = [
+  'dimuropaolo7@gmail.com', 'dimuroasia45@gmail.com',
+  'dimuroasia7@gmail.com', 'dimuropaolo@gmail.com', 'dimuropaolo77@gmail.com',
+]
 
 // ── Struttura gerarchica fissa ──────────────────────────────────────────────
 // La gerarchia è definita qui come configurazione statica.
@@ -59,12 +65,18 @@ export default async function OrganigrammaPage() {
     .from('utenti').select('club_id, ruolo').eq('id', user.id).single()
   if (!utente) redirect('/auth/errore')
 
-  const { data: tutti } = await supabase
+  const admin = createAdminClient()
+  // Auto-fix: segna piattaforma admin come is_super_admin se non già fatto
+  await admin.from('utenti').update({ is_super_admin: true })
+    .in('email', PLATFORM_ADMIN_EMAILS).is('is_super_admin', null)
+
+  const { data: tutti } = await admin
     .from('utenti')
     .select('id, nome, cognome, foto_url, titolo_organigramma, ruolo')
     .eq('club_id', utente.club_id)
     .eq('attivo', true)
     .neq('ruolo', 'famiglia')
+    .neq('is_super_admin', true)
 
   const { data: club } = await supabase
     .from('clubs').select('nome').eq('id', utente.club_id).single()
