@@ -24,6 +24,13 @@ export default async function DSDashboard() {
   const oggi = new Date()
   const tra90 = new Date(oggi); tra90.setDate(oggi.getDate() + 90)
 
+  const { data: osservatoriClub } = await admin
+    .from('utenti').select('id').eq('club_id', clubId).eq('ruolo', 'osservatore')
+  const obsIds = (osservatoriClub ?? []).map(u => u.id)
+  const obsOrFilter = obsIds.length > 0
+    ? `club_richiedente_id.eq.${clubId},osservatore_id.in.(${obsIds.join(',')})`
+    : `club_richiedente_id.eq.${clubId}`
+
   const [
     { data: contratti },
     { count: totGiocatori },
@@ -42,7 +49,7 @@ export default async function DSDashboard() {
       .eq('club_id', clubId).eq('stato', 'attivo'),
     admin.from('report_scouting')
       .select('id, nome_giocatore_ext, voto_globale, potenziale, esito, data_osservazione, partita_osservata')
-      .eq('club_richiedente_id', clubId)
+      .or(obsOrFilter)
       .order('data_osservazione', { ascending: false })
       .limit(6),
     admin.from('contratti')
