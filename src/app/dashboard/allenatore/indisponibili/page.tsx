@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
@@ -9,11 +10,25 @@ export default async function IndisponibiliPage() {
   const { data: utente, error: utenteError } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
   if (utenteError || !utente) redirect('/auth/errore')
 
-  // ── Passo 1: recupera i giocatori della prima squadra tramite tesseramenti ──
-  const { data: tessData } = await supabase
+  const admin = createAdminClient()
+
+  // ── Passo 1: ID squadre prima_squadra del club (con allenatore abbinato o fallback) ──
+  const { data: sqAssegnate } = await admin.from('squadre').select('id')
+    .eq('club_id', utente.club_id).eq('allenatore_id', user.id)
+    .eq('categoria_eta', 'prima_squadra').eq('attiva', true)
+
+  let sqIds: string[] = (sqAssegnate ?? []).map(s => s.id)
+  if (sqIds.length === 0) {
+    const { data: sqClub } = await admin.from('squadre').select('id')
+      .eq('club_id', utente.club_id).eq('categoria_eta', 'prima_squadra').eq('attiva', true)
+    sqIds = (sqClub ?? []).map(s => s.id)
+  }
+
+  // ── Passo 2: giocatori della prima squadra tramite tesseramenti ──
+  const { data: tessData } = await admin
     .from('tesseramenti')
     .select('giocatore_id, numero_maglia, giocatori(id, nome, cognome, ruolo_principale)')
-    .eq('club_id', utente.club_id)
+    .in('squadra_id', sqIds.length ? sqIds : ['none'])
     .eq('stato', 'attivo')
     .not('giocatore_id', 'is', null)
 
@@ -53,17 +68,17 @@ export default async function IndisponibiliPage() {
 
   // ── Passo 2: le tre fonti di indisponibilità in parallelo ──
   const [infortunatiRes, squalificatiRes, nonIdoneiRes] = await Promise.all([
-    supabase
+    admin
       .from('infortuni')
       .select('id, tipo, gravita, data_infortunio, data_rientro_prevista, giocatore_id')
       .in('giocatore_id', playerIds)
       .is('data_rientro_effettiva', null),
-    supabase
+    admin
       .from('squalifiche')
       .select('id, motivo, partite_restanti, data_inizio, giocatore_id')
       .in('giocatore_id', playerIds)
       .gt('partite_restanti', 0),
-    supabase
+    admin
       .from('visite_mediche')
       .select('id, tipo, data, note, giocatore_id')
       .in('giocatore_id', playerIds)
