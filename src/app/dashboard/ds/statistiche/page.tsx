@@ -51,6 +51,13 @@ export default async function DSStatistichePage() {
   const giocatori: GiocPS[] = tesseratiPS?.map(t => t.giocatori as unknown as GiocPS).filter(Boolean) ?? []
   const giocatoriIds = giocatori.map(g => g.id)
 
+  const { data: osservatoriClub } = await admin
+    .from('utenti').select('id').eq('club_id', clubId).eq('ruolo', 'osservatore')
+  const obsIds = (osservatoriClub ?? []).map(u => u.id)
+  const obsOrFilter = obsIds.length > 0
+    ? `club_richiedente_id.eq.${clubId},osservatore_id.in.(${obsIds.join(',')})`
+    : `club_richiedente_id.eq.${clubId}`
+
   const [
     { data: trattative },
     { data: contratti },
@@ -69,7 +76,7 @@ export default async function DSStatistichePage() {
       : Promise.resolve({ data: [] }),
     admin.from('report_scouting')
       .select('esito, potenziale, created_at')
-      .eq('club_richiedente_id', clubId),
+      .or(obsOrFilter),
     giocatoriIds.length > 0
       ? admin.from('presenze')
           .select('giocatore_id, presente')

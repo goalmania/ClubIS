@@ -11,10 +11,18 @@ async function DSDatabaseContent() {
   const { clubId } = ctx
 
   const admin = createAdminClient()
+
+  const { data: osservatoriClub } = await admin
+    .from('utenti').select('id').eq('club_id', clubId).eq('ruolo', 'osservatore')
+  const obsIds = (osservatoriClub ?? []).map(u => u.id)
+  const orFilter = obsIds.length > 0
+    ? `club_richiedente_id.eq.${clubId},osservatore_id.in.(${obsIds.join(',')})`
+    : `club_richiedente_id.eq.${clubId}`
+
   const { data: reports } = await admin
     .from('report_scouting')
     .select('*, utenti(nome, cognome)')
-    .eq('club_richiedente_id', clubId)
+    .or(orFilter)
     .order('voto_globale', { ascending: false })
   const unici: Record<string, any> = {}
   reports?.forEach(r => {

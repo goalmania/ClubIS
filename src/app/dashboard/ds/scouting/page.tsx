@@ -13,11 +13,19 @@ export default async function DSScoutingPage() {
 
   const admin = createAdminClient()
 
-  const { data: report } = await admin
+  // Include reports by osservatori del club (anche se club_richiedente_id è null)
+  const { data: osservatoriClub } = await admin
+    .from('utenti').select('id').eq('club_id', clubId).eq('ruolo', 'osservatore')
+  const obsIds = (osservatoriClub ?? []).map(u => u.id)
+
+  const reportQuery = admin
     .from('report_scouting')
     .select('*, utenti(nome, cognome)')
-    .eq('club_richiedente_id', clubId)
     .order('data_osservazione', { ascending: false })
+  const orFilter = obsIds.length > 0
+    ? `club_richiedente_id.eq.${clubId},osservatore_id.in.(${obsIds.join(',')})`
+    : `club_richiedente_id.eq.${clubId}`
+  const { data: report } = await reportQuery.or(orFilter)
 
   const inValutazione = report?.filter(r => r.esito === 'in_valutazione') ?? []
   const ingaggiati    = report?.filter(r => r.esito === 'ingaggiato') ?? []
