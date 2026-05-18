@@ -38,13 +38,11 @@ export default async function PrintDistintaPage({ params }: { params: { partita_
       .from('partite')
       .select('avversario, data_ora, competizione, giornata, casa_trasferta, campo')
       .eq('id', params.partita_id)
-      .eq('club_id', clubId)
       .single(),
     supabase
       .from('distinte_gara')
       .select('giocatori_snapshot, staff_snapshot, generata_at')
       .eq('partita_id', params.partita_id)
-      .eq('club_id', clubId)
       .order('versione', { ascending: false })
       .limit(1)
       .maybeSingle(),
