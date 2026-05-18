@@ -58,9 +58,10 @@ export async function GET(req: NextRequest) {
 
   // Debug temporaneo: info nell'header X-Debug
   const { count: totUtenti } = await admin.from('utenti').select('id', { count: 'exact', head: true }).eq('club_id', clubId)
-  const { count: totNullClub } = await admin.from('utenti').select('id', { count: 'exact', head: true }).is('club_id', null).in('ruolo', ruoli)
+  const { data: sampleUtenti } = await admin.from('utenti').select('ruolo,attivo').eq('club_id', clubId).limit(5)
+  const sampleStr = (sampleUtenti ?? []).map((u: any) => `${u.ruolo}/${u.attivo}`).join(',')
 
-  const debugHeader = `cid=${clubId} byClub=${(byClub??[]).length} inv=${idsDaInvito.length} tot=${tutti.length} anyUtenti=${totUtenti} nullClubStaff=${totNullClub}`
+  const debugHeader = `cid=${clubId} byClub=${(byClub??[]).length} inv=${idsDaInvito.length} tot=${tutti.length} anyUtenti=${totUtenti} sample=${sampleStr}`
 
   return new Response(JSON.stringify(tutti), {
     headers: {
