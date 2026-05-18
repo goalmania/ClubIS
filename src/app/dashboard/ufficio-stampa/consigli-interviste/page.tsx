@@ -543,18 +543,16 @@ export default function ConsigliIntervistePage() {
     setClubId(utente.clubId)
     setRuolo(utente.ruolo)
 
-    // Carica i membri del club (solo per l'addetto stampa, per la selezione nel form)
+    // Carica i membri del club (solo per l'addetto stampa, per la selezione nel form).
+    // Usa /api/staff per tutti i ruoli incluso 'giocatore': in questo modo gli ID
+    // provengono da utenti.id, che è l'unico riferimento valido per la FK
+    // consigli_interviste.destinatario_specifico_id → utenti(id).
     if (utente.ruolo === 'ufficio_stampa' && utente.clubId) {
-      const [staffData, giocatoriData] = await Promise.all([
-        fetch('/api/staff?ruoli=presidente,ds,team_manager,allenatore').then(r => r.json()).catch(() => []),
-        fetch('/api/giocatori').then(r => r.json()).catch(() => []),
-      ])
-      const staff: any[]     = Array.isArray(staffData)     ? staffData     : []
-      const giocatori: any[] = Array.isArray(giocatoriData) ? giocatoriData : []
-      const giocatoriMapped: MembroClub[] = giocatori.map((g: any) => ({
-        id: g.id, nome: g.nome, cognome: g.cognome, ruolo: 'giocatore',
-      }))
-      setMembriClub([...staff, ...giocatoriMapped])
+      const membriData = await fetch('/api/staff?ruoli=presidente,ds,team_manager,allenatore,giocatore')
+        .then(r => r.ok ? r.json() : [])
+        .catch(() => [])
+      const membri: MembroClub[] = Array.isArray(membriData) ? membriData : []
+      setMembriClub(membri)
     }
 
     // Query consigli

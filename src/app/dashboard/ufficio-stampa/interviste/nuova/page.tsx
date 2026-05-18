@@ -51,8 +51,8 @@ export default function NuovaIntervistePage() {
   useEffect(() => {
     async function load() {
       const [staffData, giocatoriData] = await Promise.all([
-        fetch('/api/staff?ruoli=' + RUOLI_STAFF.join(',')).then(r => r.json()).catch(() => []),
-        fetch('/api/giocatori').then(r => r.json()).catch(() => []),
+        fetch('/api/staff?ruoli=' + RUOLI_STAFF.join(',')).then(r => r.ok ? r.json() : []).catch(() => []),
+        fetch('/api/giocatori').then(r => r.ok ? r.json() : []).catch(() => []),
       ])
 
       const staff: any[]     = Array.isArray(staffData)     ? staffData     : []
