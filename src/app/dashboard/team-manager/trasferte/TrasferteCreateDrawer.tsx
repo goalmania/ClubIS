@@ -146,7 +146,7 @@ export default function TrasferteCreateDrawer() {
         fetch('/api/user-context').then(r => r.ok ? r.json() : null).catch(() => null),
         fetch('/api/partite').then(r => r.json()).catch(() => []),
         fetch('/api/giocatori').then(r => r.json()).catch(() => []),
-        fetch('/api/staff?ruoli=presidente,ds,segretario,allenatore,osservatore,medico,team_manager').then(r => r.json()).catch(() => []),
+        fetch('/api/staff?ruoli=presidente,ds,segretario,allenatore,osservatore,medico,ufficio_stampa,team_manager').then(r => r.json()).catch(() => []),
       ])
 
       if (!ctxData?.userId) return
@@ -589,8 +589,32 @@ export default function TrasferteCreateDrawer() {
             <FormSection title="Sezione Partecipanti">
               <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
                 <div>
-                  <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 10 }}>
-                    Giocatori
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                    <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>
+                      Giocatori
+                    </div>
+                    {giocatori.length > 0 && (
+                      <button
+                        type="button"
+                        className="btn btn-ghost btn-sm"
+                        style={{ fontSize: 12, padding: '2px 10px' }}
+                        onClick={() => {
+                          const allIds = giocatori.map(p => p.id)
+                          const allSelected = allIds.every(id => form.partecipanti.giocatori.includes(id))
+                          setForm(prev => ({
+                            ...prev,
+                            partecipanti: {
+                              ...prev.partecipanti,
+                              giocatori: allSelected ? [] : allIds,
+                            },
+                          }))
+                        }}
+                      >
+                        {giocatori.every(p => form.partecipanti.giocatori.includes(p.id))
+                          ? 'Deseleziona tutti'
+                          : 'Seleziona tutti'}
+                      </button>
+                    )}
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
                     {giocatori.length === 0 ? (
