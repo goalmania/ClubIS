@@ -1,7 +1,6 @@
 'use client'
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
@@ -457,8 +456,7 @@ function ConsiglioFormModal({ initial, saving, error, membriPerRuolo, onSave, on
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function ConsigliIntervistePage() {
-  const supabase = useMemo(() => createClient(), [])
-  const router   = useRouter()
+  const router = useRouter()
 
   // Dati utente
   const [ruolo,  setRuolo]  = useState<string | null>(null)
@@ -555,28 +553,19 @@ export default function ConsigliIntervistePage() {
       setMembriClub(membri)
     }
 
-    // Query consigli
-    let query = supabase
-      .from('consigli_interviste')
-      .select('id, club_id, creato_da, destinatario_ruolo, destinatario_specifico_id, domanda, consiglio_risposta, contesto, priorita, attivo, created_at')
-      .eq('attivo', true)
-      .order('priorita', { ascending: true })
-      .order('created_at', { ascending: false })
+    // Legge consigli via API route (adminClient, bypassa RLS)
+    const consigliData = await fetch('/api/ufficio-stampa/consigli-interviste')
+      .then(r => r.ok ? r.json() : null)
+      .catch(() => null)
 
-    if (utente.clubId) {
-      query = query.eq('club_id', utente.clubId) as typeof query
-    }
-
-    const { data, error: qErr } = await query
-
-    if (qErr) {
-      setError(qErr.message)
+    if (consigliData === null) {
+      setError('Errore nel caricamento dei consigli')
     } else {
-      setConsigli(data ?? [])
+      setConsigli(Array.isArray(consigliData) ? consigliData : [])
     }
 
     setLoading(false)
-  }, [supabase, router])
+  }, [router])
 
   useEffect(() => { load() }, [load])
 
@@ -621,14 +610,19 @@ export default function ConsigliIntervistePage() {
 
   const handleDelete = useCallback(async (id: string) => {
     setDeletingId(id)
-    const { error: err } = await supabase
-      .from('consigli_interviste')
-      .update({ attivo: false })
-      .eq('id', id)
-    if (err) setError(err.message)
-    else setConsigli(prev => prev.filter(c => c.id !== id))
+    const res = await fetch('/api/ufficio-stampa/consigli-interviste', {
+      method:  'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ id }),
+    })
+    if (!res.ok) {
+      const json = await res.json().catch(() => ({}))
+      setError(json.error ?? 'Errore durante l\'eliminazione')
+    } else {
+      setConsigli(prev => prev.filter(c => c.id !== id))
+    }
     setDeletingId(null)
-  }, [supabase])
+  }, [])
 
   // ── Handlers ────────────────────────────────────────────────────────────────
 
