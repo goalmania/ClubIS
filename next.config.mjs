@@ -11,7 +11,7 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   experimental: {
-    serverComponentsExternalPackages: ['pdf-parse', 'xlsx'],
+    serverComponentsExternalPackages: ['pdfjs-dist', 'xlsx'],
   },
   async headers() {
     return [{ source: '/(.*)', headers: securityHeaders }]
