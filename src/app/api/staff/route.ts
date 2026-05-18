@@ -56,5 +56,7 @@ export async function GET(req: NextRequest) {
   const tutti = [...(byClub ?? []), ...byInviteUsers]
   tutti.sort((a, b) => a.cognome.localeCompare(b.cognome, 'it'))
 
+  console.log(`[api/staff] clubId=${clubId} ruoli=${ruoli.join(',')} byClub=${(byClub ?? []).length} byInvite=${idsDaInvito.length} totale=${tutti.length}`)
+
   return Response.json(tutti)
 }
