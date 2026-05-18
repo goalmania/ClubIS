@@ -62,23 +62,25 @@ export async function getGiocatoriEleggibili(
 
   const dataStr = partita.data_ora.split('T')[0]
 
-  // Recupera gli ID delle squadre del club per la query fallback via squadra_id.
-  // Questo copre il caso in cui tesseramenti.club_id è NULL o errato ma il link
-  // alla squadra è corretto (stessa logica di /api/giocatori).
-  const { data: squadreClub } = await supabase
+  // Solo prima squadra e juniores — stessa logica di /api/giocatori/lista.
+  const { data: squadreFiltrate } = await supabase
     .from('squadre')
     .select('id')
     .eq('club_id', clubId)
-  const squadraIds = (squadreClub ?? []).map((s: any) => s.id)
-
-  const tessBaseQuery = supabase
-    .from('tesseramenti')
-    .select('numero_maglia, giocatori(id, nome, cognome, ruolo_principale, codice_tessera_figc)')
-    .eq('stato', 'attivo')
+    .in('categoria_eta', ['prima_squadra', 'juniores'])
+  const squadraIds = (squadreFiltrate ?? []).map((s: any) => s.id)
 
   const tessQuery = squadraIds.length > 0
-    ? tessBaseQuery.or(`club_id.eq.${clubId},squadra_id.in.(${squadraIds.join(',')})`)
-    : tessBaseQuery.eq('club_id', clubId)
+    ? supabase
+        .from('tesseramenti')
+        .select('numero_maglia, giocatori(id, nome, cognome, ruolo_principale, codice_tessera_figc)')
+        .eq('stato', 'attivo')
+        .in('squadra_id', squadraIds)
+    : supabase
+        .from('tesseramenti')
+        .select('numero_maglia, giocatori(id, nome, cognome, ruolo_principale, codice_tessera_figc)')
+        .eq('stato', 'attivo')
+        .eq('club_id', clubId)
 
   const [
     { data: tesseramenti },
