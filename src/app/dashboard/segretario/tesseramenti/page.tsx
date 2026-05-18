@@ -11,17 +11,20 @@ export default async function TesseramentiPage() {
 
   const supabase = createAdminClient()
 
-  const { data: squadreClub } = await supabase.from('squadre').select('id').eq('club_id', clubId)
-  const squadraIds = (squadreClub ?? []).map((s: any) => s.id)
-
-  const baseQuery = supabase
-    .from('tesseramenti')
-    .select('id, stagione, tipo, stato, data_inizio, data_fine, numero_maglia, giocatori ( id, nome, cognome, data_nascita, ruolo_principale, codice_fiscale, nazionalita_tipo ), squadre ( nome )')
-    .order('giocatori(cognome)')
+  const { data: squadreFiltrate } = await supabase
+    .from('squadre')
+    .select('id')
+    .eq('club_id', clubId)
+    .in('categoria_eta', ['prima_squadra', 'juniores'])
+  const squadraIds = (squadreFiltrate ?? []).map((s: any) => s.id)
 
   const { data: tesseramenti } = squadraIds.length > 0
-    ? await baseQuery.or(`club_id.eq.${clubId},squadra_id.in.(${squadraIds.join(',')})`)
-    : await baseQuery.eq('club_id', clubId)
+    ? await supabase
+        .from('tesseramenti')
+        .select('id, stagione, tipo, stato, data_inizio, data_fine, numero_maglia, giocatori ( id, nome, cognome, data_nascita, ruolo_principale, codice_fiscale, nazionalita_tipo ), squadre ( nome )')
+        .in('squadra_id', squadraIds)
+        .order('giocatori(cognome)')
+    : { data: [] }
 
   const attivi  = tesseramenti?.filter(t => t.stato === 'attivo')  ?? []
   const archivio = tesseramenti?.filter(t => t.stato !== 'attivo') ?? []

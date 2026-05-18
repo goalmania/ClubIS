@@ -17,11 +17,14 @@ export async function GET() {
 
   const admin = createAdminClient()
 
-  const { data: squadreClub } = await admin
+  const { data: squadreFiltrate } = await admin
     .from('squadre')
     .select('id')
     .eq('club_id', clubId)
-  const squadraIds = (squadreClub ?? []).map((s: any) => s.id)
+    .in('categoria_eta', ['prima_squadra', 'juniores'])
+  const squadraIds = (squadreFiltrate ?? []).map((s: any) => s.id)
+
+  if (squadraIds.length === 0) return Response.json([], { status: 200 })
 
   const FIELDS = `
     id, numero_maglia, tipo, squadra_id, stato,
@@ -29,14 +32,11 @@ export async function GET() {
     squadre ( nome, categoria_eta )
   `
 
-  const baseQuery = admin
+  const { data: tesseramenti } = await admin
     .from('tesseramenti')
     .select(FIELDS)
+    .in('squadra_id', squadraIds)
     .eq('stato', 'attivo')
-
-  const { data: tesseramenti } = squadraIds.length > 0
-    ? await baseQuery.or(`club_id.eq.${clubId},squadra_id.in.(${squadraIds.join(',')})`)
-    : await baseQuery.eq('club_id', clubId)
 
   return Response.json(tesseramenti ?? [])
 }
