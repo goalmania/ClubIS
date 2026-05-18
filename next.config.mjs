@@ -12,6 +12,14 @@ const nextConfig = {
   },
   experimental: {
     serverComponentsExternalPackages: ['pdfjs-dist', 'xlsx'],
+    outputFileTracingIncludes: {
+      '/api/figc/parse-calendario-pdf': [
+        './node_modules/pdfjs-dist/legacy/build/**/*',
+      ],
+      '/api/partite/importa-pdf': [
+        './node_modules/pdfjs-dist/legacy/build/**/*',
+      ],
+    },
   },
   webpack(config, { isServer }) {
     if (isServer) {
