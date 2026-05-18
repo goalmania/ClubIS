@@ -56,14 +56,16 @@ export async function GET(req: NextRequest) {
   const tutti = [...(byClub ?? []), ...byInviteUsers]
   tutti.sort((a, b) => a.cognome.localeCompare(b.cognome, 'it'))
 
-  // Debug: conta TUTTI gli utenti con questo club_id indipendentemente dal ruolo
+  // Debug temporaneo: info nell'header X-Debug
   const { count: totUtenti } = await admin.from('utenti').select('id', { count: 'exact', head: true }).eq('club_id', clubId)
-  console.log(`[S1] clubId=${clubId}`)
-  console.log(`[S2] byClub=${(byClub??[]).length} inv=${idsDaInvito.length} tot=${tutti.length} anyUtenti=${totUtenti}`)
-  if ((byClub??[]).length===0 && (totUtenti??0)>0) {
-    const {data:sample}=await admin.from('utenti').select('ruolo,attivo').eq('club_id',clubId).limit(5)
-    console.log(`[S3] sample=${JSON.stringify(sample)}`)
-  }
+  const { count: totNullClub } = await admin.from('utenti').select('id', { count: 'exact', head: true }).is('club_id', null).in('ruolo', ruoli)
 
-  return Response.json(tutti)
+  const debugHeader = `cid=${clubId} byClub=${(byClub??[]).length} inv=${idsDaInvito.length} tot=${tutti.length} anyUtenti=${totUtenti} nullClubStaff=${totNullClub}`
+
+  return new Response(JSON.stringify(tutti), {
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Staff-Debug': debugHeader,
+    },
+  })
 }
