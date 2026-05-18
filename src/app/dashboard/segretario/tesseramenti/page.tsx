@@ -1,20 +1,27 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserContext } from '@/lib/impersonation'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { formatData, calcolaEta, ruoloShort } from '@/lib/helpers'
 
 export default async function TesseramentiPage() {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth/login')
-  const { data: utente, error: utenteError } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-  if (utenteError || !utente) redirect('/auth/errore')
+  const ctx = await getUserContext()
+  if (!ctx) redirect('/auth/login')
+  const { clubId } = ctx
 
-  const { data: tesseramenti } = await supabase
+  const supabase = createAdminClient()
+
+  const { data: squadreClub } = await supabase.from('squadre').select('id').eq('club_id', clubId)
+  const squadraIds = (squadreClub ?? []).map((s: any) => s.id)
+
+  const baseQuery = supabase
     .from('tesseramenti')
     .select('id, stagione, tipo, stato, data_inizio, data_fine, numero_maglia, giocatori ( id, nome, cognome, data_nascita, ruolo_principale, codice_fiscale, nazionalita_tipo ), squadre ( nome )')
-    .eq('club_id', utente.club_id)
     .order('giocatori(cognome)')
+
+  const { data: tesseramenti } = squadraIds.length > 0
+    ? await baseQuery.or(`club_id.eq.${clubId},squadra_id.in.(${squadraIds.join(',')})`)
+    : await baseQuery.eq('club_id', clubId)
 
   const attivi  = tesseramenti?.filter(t => t.stato === 'attivo')  ?? []
   const archivio = tesseramenti?.filter(t => t.stato !== 'attivo') ?? []

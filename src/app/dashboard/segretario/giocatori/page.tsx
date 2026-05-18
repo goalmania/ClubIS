@@ -1,6 +1,5 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { createClient } from '@/lib/supabase/client'
 import { GiocatoreConTesseramento } from '@/types/database'
 import Link from 'next/link'
 import { matchSearch } from '@/lib/search'
@@ -41,22 +40,12 @@ export default function GiocatoriPage() {
   const [ruoloFiltro, setRuoloFiltro] = useState('')
   const [categoriaTab, setCategoriaTab] = useState<CategoriaTab>('tutti')
   const [loading, setLoading] = useState(true)
-  const supabase = createClient()
 
   useEffect(() => {
     async function load() {
-      const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', (await supabase.auth.getUser()).data.user?.id!).single()
-      if (!utente) return
-      const { data } = await supabase
-        .from('tesseramenti')
-        .select(`
-          id, numero_maglia, tipo, squadra_id,
-          giocatori ( id, nome, cognome, data_nascita, ruolo_principale, piede, nazionalita_tipo, foto_url ),
-          squadre ( nome, categoria_eta )
-        `)
-        .eq('club_id', utente.club_id)
-        .eq('stato', 'attivo')
-        .order('giocatori(cognome)')
+      const res = await fetch('/api/giocatori/lista')
+      if (!res.ok) { setLoading(false); return }
+      const data = await res.json()
       setGiocatori(data ?? [])
       setLoading(false)
     }
