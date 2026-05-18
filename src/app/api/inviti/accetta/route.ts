@@ -111,10 +111,10 @@ export async function POST(req: Request) {
     }
   }
 
-  // 4. Marca invito come usato
+  // 4. Marca invito come usato (con chi l'ha accettato e quando)
   await admin
     .from('inviti_club')
-    .update({ usato: true })
+    .update({ usato: true, usato_da: userId, usato_at: new Date().toISOString() })
     .eq('id', invito.id)
 
   return NextResponse.json({ ok: true })
