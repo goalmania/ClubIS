@@ -56,7 +56,10 @@ export async function GET(req: NextRequest) {
   const tutti = [...(byClub ?? []), ...byInviteUsers]
   tutti.sort((a, b) => a.cognome.localeCompare(b.cognome, 'it'))
 
-  console.log(`[api/staff] clubId=${clubId} ruoli=${ruoli.join(',')} byClub=${(byClub ?? []).length} byInvite=${idsDaInvito.length} totale=${tutti.length}`)
+  console.log(`[staff-debug] clubId=${clubId}`)
+  console.log(`[staff-debug] byClub=${(byClub ?? []).length} byInvite=${idsDaInvito.length} totale=${tutti.length}`)
+  if ((byClub ?? []).length === 0) console.log(`[staff-debug] byClub-ids=${JSON.stringify((byClub ?? []).map((u:any)=>u.id))}`)
+  if (idsDaInvito.length === 0) console.log('[staff-debug] nessun invito trovato')
 
   return Response.json(tutti)
 }
