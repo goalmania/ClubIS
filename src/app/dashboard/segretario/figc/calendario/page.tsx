@@ -154,12 +154,63 @@ export default function ImportCalendarioFIGC() {
     const file = e.target.files?.[0]
     if (!file) return
 
-    if (file.name.toLowerCase().endsWith('.pdf') || file.type === 'application/pdf') {
+    const nome = file.name.toLowerCase()
+    if (nome.endsWith('.pdf') || file.type === 'application/pdf') {
       await elaboraPDF(file, nomeClub)
+    } else if (nome.endsWith('.xlsx') || nome.endsWith('.xls') || file.type.includes('spreadsheet')) {
+      await elaboraXLSX(file, nomeClub)
     } else {
       const reader = new FileReader()
       reader.onload = (ev) => elaboraFile(ev.target?.result as string, nomeClub)
       reader.readAsText(file, 'UTF-8')
+    }
+  }
+
+  const elaboraXLSX = async (file: File, club: string) => {
+    setParsandoPdf(true)
+    setPartite([])
+    setRisultato(null)
+    setTestoPdfGrezzo(null)
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      let res: Response
+      try {
+        res = await fetch('/api/figc/parse-calendario-xlsx', { method: 'POST', body: fd })
+      } catch (networkErr: any) {
+        setToast({ msg: 'Errore di rete durante il caricamento del file: ' + (networkErr?.message ?? 'connessione fallita'), tipo: 'error' })
+        return
+      }
+      let data: any
+      try {
+        data = await res.json()
+      } catch {
+        setToast({ msg: `Errore server (${res.status}) durante il parsing del file`, tipo: 'error' })
+        return
+      }
+      if (!res.ok) {
+        setToast({ msg: data?.error ?? `Errore ${res.status} durante il parsing del file`, tipo: 'error' })
+        return
+      }
+      if (data.testo_grezzo) setTestoPdfGrezzo(data.testo_grezzo)
+      if (!data.righe?.length) {
+        setToast({ msg: 'Nessuna partita rilevata nel file XLSX. Verifica che il formato sia quello della FIGC Serie D.', tipo: 'error' })
+        return
+      }
+      const righeConvertite: RigaPartita[] = data.righe.map((r: any) => {
+        const row: Record<string, string> = {
+          Data: r.data_ora?.slice(0, 10)?.split('-').reverse().join('/') ?? '',
+          Ora: r.data_ora?.slice(11, 16) ?? '00:00',
+          Squadra_Casa: r.avversario_casa ?? '',
+          Squadra_Ospite: r.avversario_ospite ?? '',
+          Campo: r.campo ?? '',
+          Giornata: r.giornata?.toString() ?? '',
+        }
+        return elaboraRiga(row, club)
+      })
+      setPartite(righeConvertite)
+    } finally {
+      setParsandoPdf(false)
     }
   }
 
@@ -216,8 +267,11 @@ export default function ImportCalendarioFIGC() {
   const ricaricaConNome = async () => {
     const file = fileRef.current?.files?.[0]
     if (!file) return
-    if (file.name.toLowerCase().endsWith('.pdf') || file.type === 'application/pdf') {
+    const nome = file.name.toLowerCase()
+    if (nome.endsWith('.pdf') || file.type === 'application/pdf') {
       await elaboraPDF(file, nomeClub)
+    } else if (nome.endsWith('.xlsx') || nome.endsWith('.xls') || file.type.includes('spreadsheet')) {
+      await elaboraXLSX(file, nomeClub)
     } else {
       const reader = new FileReader()
       reader.onload = (ev) => elaboraFile(ev.target?.result as string, nomeClub)
@@ -353,10 +407,10 @@ export default function ImportCalendarioFIGC() {
             <>
               <div style={{ fontSize: 32, marginBottom: 8 }}>📂</div>
               <div style={{ fontSize: 14, fontWeight: 500, color: 'var(--grigio)' }}>
-                Clicca per selezionare il file CSV o PDF
+                Clicca per selezionare il file del calendario
               </div>
               <div style={{ fontSize: 12, color: 'var(--grigio-4)', marginTop: 4 }}>
-                <strong>PDF</strong> — calendario FIGC ufficiale &nbsp;·&nbsp; <strong>CSV</strong> — colonne: Data, Ora, Squadra_Casa, Squadra_Ospite, Campo, Giornata
+                <strong>PDF</strong> — Eccellenza &nbsp;·&nbsp; <strong>XLSX</strong> — Serie D &nbsp;·&nbsp; <strong>CSV</strong> — colonne: Data, Ora, Squadra_Casa, Squadra_Ospite, Campo, Giornata
               </div>
               <div style={{ fontSize: 11, color: 'var(--grigio-4)', marginTop: 6 }}>
                 Formati data accettati: <strong>DD/MM/AAAA</strong> (FIGC standard) · AAAA-MM-GG (ISO)
@@ -364,7 +418,7 @@ export default function ImportCalendarioFIGC() {
             </>
           )}
         </div>
-        <input ref={fileRef} type="file" accept=".csv,text/csv,.pdf,application/pdf" style={{ display: 'none' }} onChange={handleFile} />
+        <input ref={fileRef} type="file" accept=".csv,text/csv,.pdf,application/pdf,.xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" style={{ display: 'none' }} onChange={handleFile} />
 
         {/* Testo grezzo PDF — mostrato quando il parser non trova partite */}
         {testoPdfGrezzo && partite.length === 0 && (
