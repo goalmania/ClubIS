@@ -51,14 +51,18 @@ export async function POST(req: NextRequest) {
   let importate = 0
   let saltate = 0
   let conflitti = 0
-  let firstError: string | null = null
+  let firstSkipReason: string | null = null
 
   for (const p of partite) {
-    if (!p.data_ora || !p.avversario) { saltate++; continue }
+    if (!p.data_ora || !p.avversario) {
+      if (!firstSkipReason) firstSkipReason = `dati mancanti: data_ora="${p.data_ora}" avversario="${p.avversario}"`
+      saltate++
+      continue
+    }
 
     const dataStr = p.data_ora.split('T')[0]
 
-    const { data: existing } = await supabase
+    const { data: existing, error: selectErr } = await supabase
       .from('partite')
       .select('id, campo')
       .eq('squadra_id', squadraId)
@@ -69,6 +73,7 @@ export async function POST(req: NextRequest) {
 
     if (existing) {
       conflitti++
+      if (!firstSkipReason) firstSkipReason = `conflitto: ${p.avversario} il ${dataStr} già presente (id=${existing.id})`
       if (modalita_conflitto === 'salta') {
         saltate++
         continue
@@ -103,12 +108,12 @@ export async function POST(req: NextRequest) {
     })
 
     if (error) {
-      if (!firstError) firstError = error.message
+      if (!firstSkipReason) firstSkipReason = `insert error: ${error.message}`
       saltate++
       continue
     }
     importate++
   }
 
-  return NextResponse.json({ importate, saltate, conflitti, _debug_error: firstError })
+  return NextResponse.json({ importate, saltate, conflitti, _debug: firstSkipReason })
 }

@@ -302,7 +302,7 @@ export default function ImportCalendarioFIGC() {
       if (!res.ok) { setToast({ msg: data.error ?? 'Errore durante l\'importazione', tipo: 'error' }); return }
       setRisultato(data)
       if (data.importate === 0) {
-        setToast({ msg: `Nessuna partita importata (${data.saltate ?? 0} saltate)${data._debug_error ? ': ' + data._debug_error : ''}`, tipo: 'error' })
+        setToast({ msg: `Nessuna partita importata (${data.saltate ?? 0} saltate)${data._debug ? ' — ' + data._debug : ''}`, tipo: 'error' })
       } else {
         setToast({ msg: `Importate ${data.importate} partite${data.saltate ? ` · ${data.saltate} saltate` : ''}`, tipo: 'success' })
       }
