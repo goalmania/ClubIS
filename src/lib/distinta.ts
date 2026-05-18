@@ -116,7 +116,7 @@ export async function getGiocatoriEleggibili(
   const sqComunicatoMap = new Map<string, SqualificaComunicatoDetail>()
   for (const s of sqComunicato ?? []) {
     if (!s.giocatore_id) continue
-    const cf = s.comunicati_figc as { numero_comunicato: string | null; data_comunicato: string | null } | null
+    const cf = s.comunicati_figc as unknown as { numero_comunicato: string | null; data_comunicato: string | null } | null
     sqComunicatoMap.set(s.giocatore_id, {
       durata: s.durata ?? '',
       tipo_sanzione: s.tipo_sanzione ?? 'squalifica',
