@@ -156,9 +156,11 @@ export async function POST(req: NextRequest) {
       const page = await doc.getPage(p)
       allLines.push(...(await extractLines(page)))
     }
-  } catch {
+  } catch (err: any) {
+    const msg = err?.message ?? String(err)
+    console.error('[parse-calendario-pdf] error:', msg, err?.stack)
     return NextResponse.json(
-      { error: 'Impossibile leggere il PDF. Assicurati che non sia protetto da password.' },
+      { error: 'Impossibile leggere il PDF. Assicurati che non sia protetto da password.', _debug: msg },
       { status: 422 },
     )
   }
