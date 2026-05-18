@@ -18,13 +18,13 @@ export async function GET(req: NextRequest) {
 
   const admin = createAdminClient()
 
-  // Query principale: utenti con club_id corretto
+  // Query principale: utenti con club_id corretto (attivo=true o NULL trattato come attivo)
   const { data: byClub } = await admin
     .from('utenti')
     .select('id, nome, cognome, ruolo')
     .eq('club_id', clubId)
     .in('ruolo', ruoli)
-    .eq('attivo', true)
+    .or('attivo.eq.true,attivo.is.null')
     .order('cognome')
 
   // Fallback: utenti che hanno accettato un invito per questo club
@@ -49,7 +49,7 @@ export async function GET(req: NextRequest) {
       .select('id, nome, cognome, ruolo')
       .in('id', mancanti)
       .in('ruolo', ruoli)
-      .eq('attivo', true)
+      .or('attivo.eq.true,attivo.is.null')
     byInviteUsers = data ?? []
   }
 
