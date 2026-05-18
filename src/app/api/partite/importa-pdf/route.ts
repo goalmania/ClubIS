@@ -93,7 +93,7 @@ function parsePDFText(text: string): PartitaEstratta[] {
 }
 
 async function extractTextFromPDF(buffer: Buffer): Promise<{ text: string; numpages: number }> {
-  const pdfjsLib = await import(/* webpackIgnore: true */ 'pdfjs-dist/legacy/build/pdf.mjs') as any
+  const pdfjsLib = await import('pdfjs-dist/legacy/build/pdf.mjs') as any
   const doc = await pdfjsLib.getDocument({
     data: new Uint8Array(buffer),
     useWorkerFetch: false,
