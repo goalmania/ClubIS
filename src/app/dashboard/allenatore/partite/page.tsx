@@ -89,8 +89,9 @@ export default function AllenatorePartitePage() {
   const [tab, setTab]             = useState<Tab>('risultati')
   const [clubId, setClubId]       = useState<string | null>(null)
   const [sqIds, setSqIds]         = useState<{ id: string; nome: string }[]>([])
-  const [bySquadra, setBySquadra] = useState<Record<string, SquadraStats>>({})
-  const [prossime, setProssime]   = useState<any[]>([])
+  const [bySquadra, setBySquadra]       = useState<Record<string, SquadraStats>>({})
+  const [prossime, setProssime]         = useState<any[]>([])
+  const [daRegistrare, setDaRegistrare] = useState<any[]>([])
 
   const [form, setForm]           = useState<FormState>(FORM_INIT)
   const [salvando, setSalvando]   = useState(false)
@@ -113,17 +114,22 @@ export default function AllenatorePartitePage() {
     const ids = sq.map((s: any) => s.id)
     const oggi = new Date().toISOString()
 
-    const [{ data: prox }, { data: partite }] = await Promise.all([
+    const [{ data: prox }, { data: daReg }, { data: partite }] = await Promise.all([
       supabase.from('partite').select('*, squadre(nome)')
         .in('squadra_id', ids.length ? ids : ['none'])
         .eq('stato', 'programmata').gte('data_ora', oggi)
         .order('data_ora', { ascending: true }),
       supabase.from('partite').select('*, squadre(nome)')
         .in('squadra_id', ids.length ? ids : ['none'])
+        .eq('stato', 'programmata').lt('data_ora', oggi)
+        .order('data_ora', { ascending: false }).limit(30),
+      supabase.from('partite').select('*, squadre(nome)')
+        .in('squadra_id', ids.length ? ids : ['none'])
         .eq('stato', 'giocata').order('data_ora', { ascending: false }).limit(60),
     ])
 
     setProssime(prox ?? [])
+    setDaRegistrare(daReg ?? [])
 
     const result: Record<string, SquadraStats> = {}
     sq.forEach((s: any) => {
@@ -247,6 +253,31 @@ export default function AllenatorePartitePage() {
                       </Link>
                     </div>
                   ))}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Partite senza risultato (importate ma data passata) */}
+          {daRegistrare.length > 0 && (
+            <div style={{ marginBottom: 24 }}>
+              <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--ambra)', marginBottom: 10 }}>
+                Da registrare ({daRegistrare.length})
+              </div>
+              {daRegistrare.map((p: any) => (
+                <div key={p.id} className="card" style={{ padding: '14px 18px', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 16 }}>
+                  <div style={{ width: 4, height: 44, borderRadius: 2, background: 'var(--ambra)', flexShrink: 0 }} />
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 15, fontWeight: 600 }}>
+                      {p.casa_trasferta === 'trasferta' ? '@ ' : 'vs '}{p.avversario}
+                    </div>
+                    <div style={{ fontSize: 13, color: 'var(--grigio-3)', marginTop: 2 }}>
+                      {new Date(p.data_ora).toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' })}
+                      {' · '}{(p.squadre as any)?.nome}
+                    </div>
+                  </div>
+                  <span className="badge badge-grigio">{p.casa_trasferta === 'casa' ? 'Casa' : 'Trasferta'}</span>
+                  <span className="badge" style={{ background: 'var(--ambra-lt)', color: 'var(--ambra)', fontSize: 10 }}>Inserisci risultato</span>
                 </div>
               ))}
             </div>

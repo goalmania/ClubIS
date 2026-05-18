@@ -24,12 +24,14 @@ export default function ConvocazioniPage() {
       const sq: any[] = await fetch('/api/squadre').then(r => r.json()).catch(() => [])
       const sqIds = Array.isArray(sq) ? sq.map(s => s.id) : []
 
+      // Mostra partite future + ultime 48h (per gestire convocazioni a ridosso della partita)
+      const cutoff = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString()
       const { data: pp } = await supabase
         .from('partite')
         .select('id, avversario, data_ora, competizione, casa_trasferta, squadra_id, squadre(nome)')
         .in('squadra_id', sqIds.length ? sqIds : ['none'])
         .in('stato', ['programmata'])
-        .gte('data_ora', new Date().toISOString())
+        .gte('data_ora', cutoff)
         .order('data_ora')
       setPartite(pp ?? [])
       setLoading(false)
