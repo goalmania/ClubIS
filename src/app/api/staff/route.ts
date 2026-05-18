@@ -4,7 +4,7 @@ import { NextRequest } from 'next/server'
 
 export const dynamic = 'force-dynamic'
 
-const ALL_STAFF_ROLES = ['presidente', 'ds', 'allenatore', 'segretario', 'team_manager', 'ufficio_stampa', 'medico', 'giocatore']
+const ALL_STAFF_ROLES = ['presidente', 'ds', 'allenatore', 'segretario', 'team_manager', 'ufficio_stampa', 'medico', 'osservatore', 'giocatore']
 
 export async function GET(req: NextRequest) {
   const ctx = await getUserContext()
