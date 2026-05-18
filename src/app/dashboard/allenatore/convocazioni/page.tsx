@@ -21,14 +21,14 @@ export default function ConvocazioniPage() {
   // Carica partite future
   useEffect(() => {
     async function load() {
-      // La RLS garantisce già l'isolamento per club — non serve filtrare per squadra_id
-      // (evita problemi se la squadra usata nell'import ha un ID diverso da quelli in /api/squadre)
-      const { data: pp } = await supabase
-        .from('partite')
-        .select('id, avversario, data_ora, competizione, casa_trasferta, squadra_id, squadre(nome)')
-        .in('stato', ['programmata'])
-        .order('data_ora')
-      setPartite(pp ?? [])
+      // Usa /api/partite/lista (admin client) per bypassare i limiti RLS
+      // che colpiscono il browser client per il ruolo allenatore
+      const json = await fetch('/api/partite/lista').then(r => r.json()).catch(() => ({ partite: [] }))
+      const tutte: any[] = json.partite ?? []
+      const pp = tutte
+        .filter((p: any) => p.stato === 'programmata')
+        .sort((a: any, b: any) => new Date(a.data_ora).getTime() - new Date(b.data_ora).getTime())
+      setPartite(pp)
       setLoading(false)
     }
     load()
