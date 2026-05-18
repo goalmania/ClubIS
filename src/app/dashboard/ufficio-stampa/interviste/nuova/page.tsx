@@ -11,13 +11,6 @@ const TIPI_EVENTO = [
   { value: 'altro',             label: 'Altro' },
 ]
 
-const RUOLI_STAFF = ['presidente', 'ds', 'allenatore', 'segretario', 'team_manager']
-
-const RUOLO_LABEL: Record<string, string> = {
-  presidente: 'Presidente', ds: 'Dir. Sportivo', allenatore: 'Allenatore',
-  segretario: 'Segretario', team_manager: 'Team Manager',
-}
-
 interface Soggetto {
   id: string
   nome: string
@@ -26,12 +19,21 @@ interface Soggetto {
   ruolo?: string
 }
 
+// Ruoli generici sempre visibili — indipendenti dal DB
+// UUIDs fittizi con formato valido; soggetti_coinvolti non ha FK constraint
+const STATIC_STAFF: Soggetto[] = [
+  { id: '00000001-0000-0000-0000-000000000000', nome: '', cognome: 'Presidente',        gruppo: 'Staff', ruolo: 'Presidente' },
+  { id: '00000002-0000-0000-0000-000000000000', nome: '', cognome: 'Direttore Sportivo', gruppo: 'Staff', ruolo: 'Dir. Sportivo' },
+  { id: '00000003-0000-0000-0000-000000000000', nome: '', cognome: 'Allenatore',         gruppo: 'Staff', ruolo: 'Allenatore' },
+  { id: '00000004-0000-0000-0000-000000000000', nome: '', cognome: 'Team Manager',       gruppo: 'Staff', ruolo: 'Team Manager' },
+]
+
 export default function NuovaIntervistePage() {
   const router = useRouter()
   // Istanza stabile: non va nel body del componente per evitare loop nell'useEffect
   const [saving, setSaving] = useState(false)
   const [errore, setErrore] = useState<string | null>(null)
-  const [soggetti, setSoggetti] = useState<Soggetto[]>([])
+  const [soggetti, setSoggetti] = useState<Soggetto[]>(STATIC_STAFF)
   const [selezionati, setSelezionati] = useState<string[]>([])
 
   const [form, setForm] = useState({
@@ -47,33 +49,22 @@ export default function NuovaIntervistePage() {
 
   const set = (k: string, v: any) => setForm(f => ({ ...f, [k]: v }))
 
-  // Carica staff e giocatori del club — [] garantisce una sola esecuzione
+  // Carica giocatori del club — [] garantisce una sola esecuzione
+  // Lo staff generico (STATIC_STAFF) è già presente nello stato iniziale
   useEffect(() => {
     async function load() {
-      const [staffData, giocatoriData] = await Promise.all([
-        fetch('/api/staff?ruoli=' + RUOLI_STAFF.join(',')).then(r => r.ok ? r.json() : []).catch(() => []),
-        fetch('/api/giocatori').then(r => r.ok ? r.json() : []).catch(() => []),
-      ])
-
-      const staff: any[]     = Array.isArray(staffData)     ? staffData     : []
+      const giocatoriData = await fetch('/api/giocatori').then(r => r.ok ? r.json() : []).catch(() => [])
       const giocatori: any[] = Array.isArray(giocatoriData) ? giocatoriData : []
 
-      const lista: Soggetto[] = [
-        ...staff.map((u: any) => ({
-          id: u.id,
-          nome: u.nome,
-          cognome: u.cognome,
-          gruppo: 'Staff',
-          ruolo: RUOLO_LABEL[u.ruolo] ?? u.ruolo,
-        })),
-        ...giocatori.map((g: any) => ({
-          id: g.id,
-          nome: g.nome,
-          cognome: g.cognome,
-          gruppo: 'Giocatori',
-        })),
-      ]
-      setSoggetti(lista)
+      const giocatoriSoggetti: Soggetto[] = giocatori.map((g: any) => ({
+        id: g.id,
+        nome: g.nome,
+        cognome: g.cognome,
+        gruppo: 'Giocatori',
+      }))
+
+      // Mantieni sempre STATIC_STAFF in testa, poi aggiungi i giocatori
+      setSoggetti([...STATIC_STAFF, ...giocatoriSoggetti])
     }
     load()
   }, [])
@@ -225,7 +216,7 @@ export default function NuovaIntervistePage() {
 
             {soggetti.length === 0 ? (
               <div style={{ fontSize: 12, color: 'var(--grigio-4)', padding: '10px 0' }}>
-                Caricamento tesserati…
+                Caricamento giocatori…
               </div>
             ) : (
               <div style={{
