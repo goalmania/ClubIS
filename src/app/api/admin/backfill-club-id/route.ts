@@ -87,3 +87,48 @@ export async function POST() {
 
   return NextResponse.json({ ok: true, fixed: results })
 }
+
+export async function GET() {
+  const ctx = await getUserContext()
+  if (!ctx?.isSuperAdmin) {
+    return NextResponse.json({ error: 'Non autorizzato' }, { status: 403 })
+  }
+
+  const sb = createAdminClient()
+
+  const { data: partite, error: ep } = await sb
+    .from('partite')
+    .select('id, club_id, squadra_id, avversario, data_ora')
+    .order('data_ora', { ascending: false })
+    .limit(10)
+
+  const { data: squadre } = await sb
+    .from('squadre')
+    .select('id, nome, club_id, attiva')
+    .limit(20)
+
+  const { data: tesseramenti, error: et } = await sb
+    .from('tesseramenti')
+    .select('id, club_id, giocatore_id')
+    .is('club_id', null)
+    .limit(5)
+
+  const { count: totPartite } = await sb
+    .from('partite')
+    .select('*', { count: 'exact', head: true })
+
+  const { count: partiteNullClub } = await sb
+    .from('partite')
+    .select('*', { count: 'exact', head: true })
+    .is('club_id', null)
+
+  return NextResponse.json({
+    totPartite,
+    partiteNullClub,
+    ultimePartite: partite,
+    squadre,
+    tesseramentiNullClub: tesseramenti,
+    errors: { partite: ep?.message, tesseramenti: et?.message },
+    userCtx: { clubId: ctx.clubId, isSuperAdmin: ctx.isSuperAdmin },
+  })
+}
