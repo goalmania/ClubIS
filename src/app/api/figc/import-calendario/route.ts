@@ -51,6 +51,7 @@ export async function POST(req: NextRequest) {
   let importate = 0
   let saltate = 0
   let conflitti = 0
+  let firstError: string | null = null
 
   for (const p of partite) {
     if (!p.data_ora || !p.avversario) { saltate++; continue }
@@ -102,12 +103,12 @@ export async function POST(req: NextRequest) {
     })
 
     if (error) {
-      console.error('[import-calendario] insert error:', error.message, JSON.stringify(p))
+      if (!firstError) firstError = error.message
       saltate++
       continue
     }
     importate++
   }
 
-  return NextResponse.json({ importate, saltate, conflitti })
+  return NextResponse.json({ importate, saltate, conflitti, _debug_error: firstError })
 }
