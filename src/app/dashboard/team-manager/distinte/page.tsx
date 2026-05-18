@@ -42,46 +42,39 @@ export default function TMDistintePage() {
 
   useEffect(() => {
     const load = async () => {
-      const { data: auth } = await supabase.auth.getUser()
-      const user = auth.user
-      if (!user) {
+      const [ctxData, sqData, giocatoriData, staffData] = await Promise.all([
+        fetch('/api/user-context').then(r => r.ok ? r.json() : null).catch(() => null),
+        fetch('/api/squadre').then(r => r.json()).catch(() => []),
+        fetch('/api/giocatori').then(r => r.json()).catch(() => []),
+        fetch('/api/staff?ruoli=team_manager,allenatore,medico,segretario').then(r => r.json()).catch(() => []),
+      ])
+
+      if (!ctxData?.clubId) {
         window.location.href = '/auth/login'
         return
       }
-      const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-      if (!utente) {
-        window.location.href = '/auth/errore'
-        return
-      }
-      const clubId = utente.club_id
+      const clubId = ctxData.clubId
       const oggi = new Date().toISOString()
 
-      const { data: sqData } = await supabase.from('squadre').select('id, nome, categoria_eta').eq('club_id', clubId)
-      const sqIds = sqData?.map(s => s.id) ?? []
+      const squadreArr: Squadra[] = Array.isArray(sqData) ? sqData : []
+      const sqIds = squadreArr.map(s => s.id)
       const sqFilter = sqIds.length ? sqIds : ['00000000-0000-0000-0000-000000000000']
-      const sqMap = new Map((sqData ?? []).map((s: any) => [s.id, s]))
-      setSquadre((sqData ?? []) as Squadra[])
+      setSquadre(squadreArr)
 
-      const [{ data: club }, { data: pp }, { data: tess }, { data: st }, { data: seg }] = await Promise.all([
+      const [{ data: club }, { data: pp }, { data: seg }] = await Promise.all([
         supabase.from('clubs').select('nome').eq('id', clubId).single(),
         supabase.from('partite').select('id, avversario, data_ora, casa_trasferta, stato, squadra_id').in('squadra_id', sqFilter).gte('data_ora', oggi).order('data_ora').limit(20),
-        supabase.from('tesseramenti').select('numero_maglia, squadra_id, giocatori(id, nome, cognome, ruolo_principale)').eq('club_id', clubId).eq('stato', 'attivo'),
-        supabase.from('utenti').select('id, nome, cognome, ruolo').eq('club_id', clubId).in('ruolo', ['team_manager', 'allenatore', 'medico', 'segretario']),
         supabase.from('utenti').select('email').eq('club_id', clubId).eq('ruolo', 'segretario').not('email', 'is', null),
       ])
 
+      // /api/giocatori restituisce oggetti piatti con numero_maglia e categoria_eta
+      const giocatoriArr: Giocatore[] = Array.isArray(giocatoriData) ? giocatoriData : []
+      const staffArr: Staff[] = Array.isArray(staffData) ? staffData : []
+
       setClubNome((club as any)?.nome ?? 'Club')
       setPartite((pp ?? []) as Partita[])
-      setGiocatori(
-        ((tess ?? []) as any[])
-          .filter(t => t.giocatori)
-          .map(t => ({
-            ...t.giocatori,
-            numero_maglia: t.numero_maglia,
-            categoria_eta: (sqMap.get(t.squadra_id) as any)?.categoria_eta ?? null,
-          })) as Giocatore[],
-      )
-      setStaff((st ?? []) as Staff[])
+      setGiocatori(giocatoriArr)
+      setStaff(staffArr)
       setSegreteriaEmails((seg ?? []).map((s: any) => s.email).filter(Boolean))
       setLoading(false)
     }

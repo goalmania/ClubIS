@@ -166,25 +166,18 @@ export default function RosaFIGCPage() {
 
   async function load() {
     setLoading(true)
-    const { data: { user } } = await supabase.auth.getUser()
-    const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user!.id).single()
-    const clubId = utente!.club_id
-
-    const [{ data: cl }, { data: tess }] = await Promise.all([
-      supabase.from('clubs').select('nome, figc_codice').eq('id', clubId).single(),
-      supabase.from('tesseramenti')
-        .select('numero_maglia, squadre(categoria_eta), giocatori(id, nome, cognome, data_nascita, nazionalita_paese, ruolo_principale, codice_tessera_figc)')
-        .eq('club_id', clubId)
-        .eq('stato', 'attivo'),
+    const [ctxData, giocatoriData] = await Promise.all([
+      fetch('/api/user-context').then(r => r.ok ? r.json() : null).catch(() => null),
+      fetch('/api/giocatori').then(r => r.json()).catch(() => []),
     ])
 
+    if (!ctxData?.clubId) { setLoading(false); return }
+
+    const { data: cl } = await supabase.from('clubs').select('nome, figc_codice').eq('id', ctxData.clubId).single()
     setClub(cl)
 
-    const lista: Giocatore[] = (tess ?? []).map((t: any) => ({
-      ...t.giocatori,
-      numero_maglia: t.numero_maglia ?? null,
-      categoria_eta: (t.squadre as any)?.categoria_eta ?? null,
-    }))
+    // /api/giocatori restituisce oggetti piatti con tutti i campi inclusi data_nascita, codice_tessera_figc ecc.
+    const lista: Giocatore[] = Array.isArray(giocatoriData) ? giocatoriData : []
 
     lista.sort((a, b) => {
       const ordine = ['portiere', 'difensore', 'centrocampista', 'attaccante']

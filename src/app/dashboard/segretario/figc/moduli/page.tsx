@@ -174,16 +174,17 @@ export default function ModuliFIGCPage() {
 
   async function init() {
     setLoading(true)
-    const { data: { user } } = await supabase.auth.getUser()
-    setUserId(user?.id ?? null)
-    const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user!.id).single()
-    const clubId = utente!.club_id
+    const [ctxData, giocatoriData] = await Promise.all([
+      fetch('/api/user-context').then(r => r.ok ? r.json() : null).catch(() => null),
+      fetch('/api/giocatori').then(r => r.json()).catch(() => []),
+    ])
 
-    const [{ data: cl }, { data: tess }, { data: logData }] = await Promise.all([
+    if (!ctxData?.clubId) { setLoading(false); return }
+    const clubId = ctxData.clubId
+    setUserId(ctxData.userId ?? null)
+
+    const [{ data: cl }, { data: logData }] = await Promise.all([
       supabase.from('clubs').select('id, nome, figc_codice').eq('id', clubId).single(),
-      supabase.from('tesseramenti')
-        .select('numero_maglia, giocatori(id, nome, cognome, data_nascita, ruolo_principale)')
-        .eq('club_id', clubId).eq('stato', 'attivo'),
       supabase.from('figc_moduli_log')
         .select('id, tipo_modulo, dati, created_at')
         .eq('club_id', clubId)
@@ -192,7 +193,8 @@ export default function ModuliFIGCPage() {
     ])
 
     setClub(cl)
-    setGiocatori((tess ?? []).map((t: any) => ({ ...t.giocatori, numero_maglia: t.numero_maglia ?? null })))
+    // /api/giocatori restituisce oggetti piatti con numero_maglia, data_nascita ecc.
+    setGiocatori(Array.isArray(giocatoriData) ? giocatoriData : [])
     setLog(logData ?? [])
 
     // Controlla quota affiliazione anno corrente
@@ -245,9 +247,9 @@ export default function ModuliFIGCPage() {
       setToast({ msg: 'Importo non valido', tipo: 'error' }); return
     }
     setSaving(true)
-    const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', userId!).single()
+    const ctxData = await fetch('/api/user-context').then(r => r.json()).catch(() => null)
     const { error } = await supabase.from('prima_nota').insert({
-      club_id: utente!.club_id,
+      club_id: ctxData?.clubId ?? club?.id,
       tipo: 'uscita',
       categoria: 'federazione',
       importo: parseFloat(importoAffiliazione),

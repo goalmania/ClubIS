@@ -1,16 +1,16 @@
-import { createClient } from '@/lib/supabase/server'
+import { getUserContext } from '@/lib/impersonation'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import TrasferteCreateDrawer from './TrasferteCreateDrawer'
 
 export default async function TMTrasfertePage() {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth/login')
-  const { data: utente, error: utenteError } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-  if (utenteError || !utente) redirect('/auth/errore')
-  const clubId = utente.club_id
+  const ctx = await getUserContext()
+  if (!ctx) redirect('/auth/login')
+  const clubId = ctx.clubId
+  if (!clubId) redirect('/auth/errore')
 
+  const supabase = createAdminClient()
   const { data: trasferte } = await supabase
     .from('trasferte')
     .select('id, destinazione, data_partenza, data_rientro, mezzo, costo_stimato, costo_effettivo, note, stato, partita_id')

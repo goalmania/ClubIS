@@ -28,10 +28,12 @@ export async function GET() {
 
   let rows: any[] | null = null
 
+  const FIELDS = 'numero_maglia, squadra_id, squadre(categoria_eta), giocatori(id, nome, cognome, ruolo_principale, data_nascita, nazionalita_paese, codice_tessera_figc)'
+
   if (sqIds.length > 0) {
     const { data } = await admin
       .from('tesseramenti')
-      .select('giocatori(id, nome, cognome, ruolo_principale)')
+      .select(FIELDS)
       .in('squadra_id', sqIds)
       .eq('stato', 'attivo')
     rows = data
@@ -41,22 +43,23 @@ export async function GET() {
   if (!rows || rows.length === 0) {
     const { data } = await admin
       .from('tesseramenti')
-      .select('giocatori(id, nome, cognome, ruolo_principale)')
+      .select(FIELDS)
       .eq('club_id', clubId)
       .eq('stato', 'attivo')
     rows = data
   }
 
-  // Deduplica per giocatore_id
-  const seen = new Set<string>()
-  const giocatori: any[] = []
+  // Deduplica per giocatore_id (tieni prima_squadra se duplicato)
+  const seen = new Map<string, any>()
   for (const t of rows ?? []) {
     const g = (t as any).giocatori
-    if (g?.id && !seen.has(g.id)) {
-      seen.add(g.id)
-      giocatori.push(g)
+    if (!g?.id) continue
+    const cat = (t as any).squadre?.categoria_eta ?? null
+    if (!seen.has(g.id)) {
+      seen.set(g.id, { ...g, numero_maglia: (t as any).numero_maglia ?? null, categoria_eta: cat })
     }
   }
+  const giocatori = Array.from(seen.values())
   giocatori.sort((a, b) => (a.cognome ?? '').localeCompare(b.cognome ?? '', 'it'))
 
   return Response.json(giocatori)

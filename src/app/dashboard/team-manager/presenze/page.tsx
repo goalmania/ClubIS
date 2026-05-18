@@ -28,48 +28,37 @@ export default function TMPresenzePage() {
 
   useEffect(() => {
     const load = async () => {
-      const { data: auth } = await supabase.auth.getUser()
-      const user = auth.user
-      if (!user) {
+      const [ctxData, giocatoriData, staffData] = await Promise.all([
+        fetch('/api/user-context').then(r => r.ok ? r.json() : null).catch(() => null),
+        fetch('/api/giocatori').then(r => r.json()).catch(() => []),
+        fetch('/api/staff?ruoli=team_manager,allenatore,medico,segretario').then(r => r.json()).catch(() => []),
+      ])
+
+      if (!ctxData?.clubId) {
         window.location.href = '/auth/login'
         return
       }
-      const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-      if (!utente) {
-        window.location.href = '/auth/errore'
-        return
-      }
-      setClubId(utente.club_id)
+      setClubId(ctxData.clubId)
 
-      const [{ data: tess }, { data: pres }, { data: st }] = await Promise.all([
-        supabase.from('tesseramenti').select('numero_maglia, giocatori(id, nome, cognome, ruolo_principale), squadre(categoria_eta)').eq('club_id', utente.club_id).eq('stato', 'attivo'),
-        supabase.from('presenze').select('giocatore_id, presente, motivo_assenza, stato').eq('club_id', utente.club_id),
-        supabase.from('utenti').select('id, nome, cognome, ruolo').eq('club_id', utente.club_id).in('ruolo', ['team_manager', 'allenatore', 'medico', 'segretario']),
-      ])
+      const { data: pres } = await supabase
+        .from('presenze')
+        .select('giocatore_id, presente, motivo_assenza, stato')
+        .eq('club_id', ctxData.clubId)
 
-      // Ordine categoria: prima_squadra=0, poi giovanili dal più grande al più piccolo
+      // /api/giocatori ritorna oggetti piatti: { id, nome, cognome, ruolo_principale, numero_maglia, categoria_eta, ... }
       const CATEGORIA_ORDER: Record<string, number> = {
         prima_squadra: 0, primavera: 1, juniores: 2,
         u19: 3, u17: 4, u16: 5, u15: 6, u14: 7,
         u12: 8, u10: 9, u8: 10, u6: 11, femminile: 12,
       }
-
-      // Deduplica per giocatore_id tenendo la categoria più alta (valore numerico più basso)
-      const seen = new Map<string, any>() // giocatore_id → { ...g, numero_maglia, categoriaOrder }
-      for (const t of (tess ?? []) as any[]) {
-        const g = t.giocatori
-        if (!g) continue
-        const cat = (t.squadre as any)?.categoria_eta ?? ''
-        const order = CATEGORIA_ORDER[cat] ?? 99
-        const existing = seen.get(g.id)
-        if (!existing || order < existing.categoriaOrder) {
-          seen.set(g.id, { ...g, numero_maglia: t.numero_maglia ?? null, categoriaOrder: order, categoria_eta: cat })
-        }
-      }
-      const players = Array.from(seen.values()).sort((a, b) => {
-        if (a.categoriaOrder !== b.categoriaOrder) return a.categoriaOrder - b.categoriaOrder
-        return (a.cognome ?? '').localeCompare(b.cognome ?? '')
-      })
+      const tessArr: any[] = Array.isArray(giocatoriData) ? giocatoriData : []
+      const st: any[] = Array.isArray(staffData) ? staffData : []
+      const players = tessArr
+        .map(g => ({ ...g, categoriaOrder: CATEGORIA_ORDER[g.categoria_eta ?? ''] ?? 99 }))
+        .sort((a, b) => {
+          if (a.categoriaOrder !== b.categoriaOrder) return a.categoriaOrder - b.categoriaOrder
+          return (a.cognome ?? '').localeCompare(b.cognome ?? '')
+        })
 
       const grouped = new Map<string, any[]>()
       ;(pres ?? []).forEach((p: any) => {
@@ -102,14 +91,14 @@ export default function TMPresenzePage() {
       return
     }
     setSaving(true)
-    const { data: auth } = await supabase.auth.getUser()
+    const ctxData = await fetch('/api/user-context').then(r => r.json()).catch(() => null)
 
     const payload: any = {
       club_id: clubId,
       data: form.data,
       stato: form.stato,
       note: form.nota || null,
-      registrato_da: auth.user?.id ?? null,
+      registrato_da: ctxData?.userId ?? null,
       presente: form.stato === 'presente',
       motivo_assenza: form.stato === 'assente' ? 'non_giustificata' : null,
     }

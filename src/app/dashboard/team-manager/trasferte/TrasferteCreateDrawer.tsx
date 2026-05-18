@@ -40,7 +40,7 @@ function wrapCostiJsonBlock(costsObj: any, userNote: string) {
 }
 
 export default function TrasferteCreateDrawer() {
-  const supabase = useMemo(() => createClient(), [])
+  const supabase = useMemo(() => createClient(), []) // used only for file uploads
   const router = useRouter()
 
   const [open, setOpen] = useState(false)
@@ -142,113 +142,29 @@ export default function TrasferteCreateDrawer() {
     if (loadingOptions) return
     setLoadingOptions(true)
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
+      const [ctxData, partiteData, giocatoriData, staffData] = await Promise.all([
+        fetch('/api/user-context').then(r => r.ok ? r.json() : null).catch(() => null),
+        fetch('/api/partite').then(r => r.json()).catch(() => []),
+        fetch('/api/giocatori').then(r => r.json()).catch(() => []),
+        fetch('/api/staff?ruoli=presidente,ds,segretario,allenatore,osservatore,medico,team_manager').then(r => r.json()).catch(() => []),
+      ])
 
-      setCurrentUserId(user.id)
+      if (!ctxData?.userId) return
+      setCurrentUserId(ctxData.userId)
 
-      const { data: utente, error: utenteError } = await supabase
-        .from('utenti')
-        .select('club_id')
-        .eq('id', user.id)
-        .single()
+      setPartite(Array.isArray(partiteData) ? partiteData as PartitaOption[] : [])
+      setGiocatori(Array.isArray(giocatoriData) ? giocatoriData as PlayerOption[] : [])
 
-      if (utenteError || !utente?.club_id) return
-      const clubId = utente.club_id
+      const allStaff: any[] = Array.isArray(staffData) ? staffData : []
+      const staffOnly = allStaff.filter(x => x.ruolo !== 'team_manager')
+      const tmOnly = allStaff.filter(x => x.ruolo === 'team_manager')
 
-      // Partite dalla tabella `partite` (vecchio sistema)
-      const { data: partiteData } = await supabase
-        .from('partite')
-        .select('id, competizione, avversario, data_ora, casa_trasferta')
-        .eq('club_id', clubId)
-        .order('data_ora', { ascending: true })
-        .limit(50)
+      setStaff(staffOnly.map(x => ({ id: x.id, nome: x.nome, cognome: x.cognome, ruolo: x.ruolo })))
+      setTeamManagers(tmOnly.map(x => ({ id: x.id, nome: x.nome, cognome: x.cognome })))
 
-      const partiteRows: PartitaOption[] = (partiteData ?? []).map((p: any) => ({
-        id: p.id,
-        competizione: p.competizione,
-        avversario: p.avversario,
-        data_ora: p.data_ora,
-        casa_trasferta: p.casa_trasferta,
-        source: 'partite',
-      }))
-
-      // Partite dal calendario (eventi_calendario tipologia='partita')
-      const { data: eventiData } = await supabase
-        .from('eventi_calendario')
-        .select('id, data_ora_inizio, luogo_testo, note')
-        .eq('club_id', clubId)
-        .eq('tipologia', 'partita')
-        .order('data_ora_inizio', { ascending: true })
-        .limit(50)
-
-      const calendarioRows: PartitaOption[] = (eventiData ?? []).map((e: any) => ({
-        id: e.id,
-        competizione: 'Calendario',
-        avversario: e.luogo_testo || e.note || 'Partita',
-        data_ora: e.data_ora_inizio,
-        casa_trasferta: 'casa',
-        source: 'calendario',
-      }))
-
-      const tutte = [...partiteRows, ...calendarioRows].sort(
-        (a, b) => new Date(a.data_ora).getTime() - new Date(b.data_ora).getTime(),
-      )
-      setPartite(tutte)
-
-      // Staff (escludo team_manager) + Team manager
-      const staffRoles = ['presidente', 'ds', 'segretario', 'allenatore', 'osservatore', 'medico', 'team_manager']
-      const { data: utentiData, error: utentiErr } = await supabase
-        .from('utenti')
-        .select('id, nome, cognome, ruolo, attivo')
-        .eq('club_id', clubId)
-        .in('ruolo', staffRoles)
-
-      if (!utentiErr && utentiData) {
-        const filtered = (utentiData as any[]).filter(x => x.attivo ?? true)
-        const staffOnly = filtered.filter(x => x.ruolo !== 'team_manager')
-        const tmOnly = filtered.filter(x => x.ruolo === 'team_manager')
-
-        setStaff(
-          staffOnly.map(x => ({ id: x.id, nome: x.nome, cognome: x.cognome, ruolo: x.ruolo })),
-        )
-        setTeamManagers(tmOnly.map(x => ({ id: x.id, nome: x.nome, cognome: x.cognome })))
-
-        // Default team manager coerente con le opzioni disponibili
-        const tmDefault =
-          tmOnly.some(x => x.id === user.id) ? [user.id] : (tmOnly[0] ? [tmOnly[0].id] : [])
-        setForm(prev => ({ ...prev, partecipanti: { ...prev.partecipanti, team_manager: tmDefault } }))
-      } else {
-        setStaff([])
-        setTeamManagers([])
-      }
-
-      // Giocatori: via tesseramenti
-      const { data: tess, error: tErr } = await supabase
-        .from('tesseramenti')
-        .select('giocatore_id')
-        .eq('club_id', clubId)
-        .eq('stato', 'attivo')
-
-      if (!tErr && tess) {
-        const ids = Array.from(new Set((tess as any[]).map(t => t.giocatore_id).filter(Boolean)))
-        if (ids.length > 0) {
-          const { data: pData, error: pErr } = await supabase
-            .from('giocatori')
-            .select('id, nome, cognome')
-            .in('id', ids)
-            .order('cognome')
-          if (!pErr && pData) {
-            setGiocatori(pData as any[])
-          } else {
-            setGiocatori([])
-          }
-        } else {
-          setGiocatori([])
-        }
-      } else {
-        setGiocatori([])
-      }
+      const tmDefault =
+        tmOnly.some((x: any) => x.id === ctxData.userId) ? [ctxData.userId] : (tmOnly[0] ? [tmOnly[0].id] : [])
+      setForm(prev => ({ ...prev, partecipanti: { ...prev.partecipanti, team_manager: tmDefault } }))
     } finally {
       setLoadingOptions(false)
     }
