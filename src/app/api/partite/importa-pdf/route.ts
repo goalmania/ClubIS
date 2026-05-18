@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-const pdfParse: (buf: Buffer) => Promise<{ text: string; numpages: number }> = require('pdf-parse') // eslint-disable-line
 
 export interface PartitaEstratta {
   data: string       // DD/MM/YYYY
@@ -93,6 +92,34 @@ function parsePDFText(text: string): PartitaEstratta[] {
   return risultati
 }
 
+async function extractTextFromPDF(buffer: Buffer): Promise<{ text: string; numpages: number }> {
+  const pdfjsLib = await import(/* webpackIgnore: true */ 'pdfjs-dist/legacy/build/pdf.mjs') as any
+  const doc = await pdfjsLib.getDocument({
+    data: new Uint8Array(buffer),
+    useWorkerFetch: false,
+    isEvalSupported: false,
+    useSystemFonts: true,
+    disableFontFace: true,
+  }).promise
+  const lines: string[] = []
+  for (let p = 1; p <= doc.numPages; p++) {
+    const page = await doc.getPage(p)
+    const content = await page.getTextContent({ includeMarkedContent: false })
+    const rows = new Map<number, { x: number; str: string }[]>()
+    for (const item of content.items) {
+      if (!('str' in item)) continue
+      const y = Math.round((item as any).transform[5])
+      if (!rows.has(y)) rows.set(y, [])
+      rows.get(y)!.push({ x: (item as any).transform[4], str: (item as any).str })
+    }
+    for (const [, items] of [...rows.entries()].sort((a, b) => b[0] - a[0])) {
+      const line = items.sort((a, b) => a.x - b.x).map(i => i.str).join(' ').trim()
+      if (line.length > 0) lines.push(line)
+    }
+  }
+  return { text: lines.join('\n'), numpages: doc.numPages }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData()
@@ -100,7 +127,7 @@ export async function POST(req: NextRequest) {
     if (!file) return NextResponse.json({ error: 'File PDF mancante' }, { status: 400 })
 
     const buffer = Buffer.from(await file.arrayBuffer())
-    const parsed = await pdfParse(buffer)
+    const parsed = await extractTextFromPDF(buffer)
     const partite = parsePDFText(parsed.text)
 
     return NextResponse.json({ partite, righe: parsed.numpages })
