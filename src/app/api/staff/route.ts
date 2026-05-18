@@ -17,7 +17,9 @@ export async function GET(req: NextRequest) {
   const ruoli = ruoliParam ? ruoliParam.split(',').filter(r => ALL_STAFF_ROLES.includes(r)) : ALL_STAFF_ROLES
 
   const admin = createAdminClient()
-  const { data, error } = await admin
+
+  // Query principale: utenti con club_id corretto
+  const { data: byClub } = await admin
     .from('utenti')
     .select('id, nome, cognome, ruolo')
     .eq('club_id', clubId)
@@ -25,6 +27,34 @@ export async function GET(req: NextRequest) {
     .eq('attivo', true)
     .order('cognome')
 
-  if (error) return Response.json({ error: error.message }, { status: 500 })
-  return Response.json(data ?? [])
+  // Fallback: utenti che hanno accettato un invito per questo club
+  // (copertura per utenti con club_id NULL creati prima di fix065)
+  const { data: byInvite } = await admin
+    .from('inviti_club')
+    .select('usato_da, ruolo')
+    .eq('club_id', clubId)
+    .eq('usato', true)
+    .not('usato_da', 'is', null)
+    .in('ruolo', ruoli)
+
+  const idsDaInvito = (byInvite ?? []).map(i => i.usato_da as string).filter(Boolean)
+  const idsGiaPresenti = new Set((byClub ?? []).map(u => u.id))
+
+  const mancanti = idsDaInvito.filter(id => !idsGiaPresenti.has(id))
+
+  let byInviteUsers: { id: string; nome: string; cognome: string; ruolo: string }[] = []
+  if (mancanti.length > 0) {
+    const { data } = await admin
+      .from('utenti')
+      .select('id, nome, cognome, ruolo')
+      .in('id', mancanti)
+      .in('ruolo', ruoli)
+      .eq('attivo', true)
+    byInviteUsers = data ?? []
+  }
+
+  const tutti = [...(byClub ?? []), ...byInviteUsers]
+  tutti.sort((a, b) => a.cognome.localeCompare(b.cognome, 'it'))
+
+  return Response.json(tutti)
 }
