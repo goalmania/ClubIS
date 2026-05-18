@@ -62,6 +62,24 @@ export async function getGiocatoriEleggibili(
 
   const dataStr = partita.data_ora.split('T')[0]
 
+  // Recupera gli ID delle squadre del club per la query fallback via squadra_id.
+  // Questo copre il caso in cui tesseramenti.club_id è NULL o errato ma il link
+  // alla squadra è corretto (stessa logica di /api/giocatori).
+  const { data: squadreClub } = await supabase
+    .from('squadre')
+    .select('id')
+    .eq('club_id', clubId)
+  const squadraIds = (squadreClub ?? []).map((s: any) => s.id)
+
+  const tessBaseQuery = supabase
+    .from('tesseramenti')
+    .select('numero_maglia, giocatori(id, nome, cognome, ruolo_principale, codice_tessera_figc)')
+    .eq('stato', 'attivo')
+
+  const tessQuery = squadraIds.length > 0
+    ? tessBaseQuery.or(`club_id.eq.${clubId},squadra_id.in.(${squadraIds.join(',')})`)
+    : tessBaseQuery.eq('club_id', clubId)
+
   const [
     { data: tesseramenti },
     { data: certificati },
@@ -69,11 +87,7 @@ export async function getGiocatoriEleggibili(
     { data: infortuni },
     { data: sqComunicato },
   ] = await Promise.all([
-    supabase
-      .from('tesseramenti')
-      .select('numero_maglia, giocatori(id, nome, cognome, ruolo_principale, codice_tessera_figc)')
-      .eq('club_id', clubId)
-      .eq('stato', 'attivo'),
+    tessQuery,
     supabase
       .from('certificati_medici')
       .select('giocatore_id, data_scadenza')
