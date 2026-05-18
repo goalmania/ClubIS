@@ -170,24 +170,13 @@ export default function SegretarioPartitePage() {
   /* ── Load ────────────────────────────────────────────────────── */
 
   const load = useCallback(async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
-    const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-    if (!utente) return
-    setClubId(utente.club_id)
-
-    const { data: club } = await supabase.from('clubs').select('nome').eq('id', utente.club_id).single()
-    if (club) setNomeClub(club.nome ?? '')
-
-    const { data: sq } = await supabase.from('squadre').select('id, nome, categoria_eta').eq('club_id', utente.club_id).eq('attiva', true)
-    setSquadre(sq ?? [])
-
-    const ids = (sq ?? []).map((s: any) => s.id)
-    const { data: p } = await supabase
-      .from('partite').select('*, squadre(nome)')
-      .in('squadra_id', ids.length ? ids : ['none'])
-      .order('data_ora', { ascending: false })
-    setPartite((p ?? []) as Partita[])
+    const res = await fetch('/api/partite/lista')
+    if (!res.ok) return
+    const json = await res.json()
+    if (json.clubId) setClubId(json.clubId)
+    if (json.nomeClub) setNomeClub(json.nomeClub)
+    setSquadre(json.squadre ?? [])
+    setPartite((json.partite ?? []) as Partita[])
   }, [])
 
   useSharedData(load)
