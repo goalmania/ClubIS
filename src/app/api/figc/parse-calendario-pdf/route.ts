@@ -54,8 +54,8 @@ function parseEccellenza(lines: string[]): RigaParsed[] {
   let giornate: number[] = []
 
   for (const line of lines) {
-    // Block separator — reset column state
-    if (/^\.------\./.test(line)) {
+    // Block separator — reset column state (line starts with "." followed by many dashes)
+    if (/^\.[-]{4,}\./.test(line)) {
       andataDate = []
       ritornoDate = []
       andataTime = []
@@ -84,8 +84,8 @@ function parseEccellenza(lines: string[]): RigaParsed[] {
       continue
     }
 
-    // Inner divider "I------I ..."
-    if (/^I[-]+I/.test(line)) continue
+    // Inner divider "I----...----I ..."
+    if (/^I[-]{4,}I/.test(line)) continue
 
     // Match row: starts with "I " and has " - " separator (team names)
     if (line.startsWith('I ') && line.includes(' - ') && andataDate.length > 0) {
