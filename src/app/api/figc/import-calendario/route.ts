@@ -86,6 +86,7 @@ export async function POST(req: NextRequest) {
       }
       if (modalita_conflitto === 'sovrascrivi') {
         await supabase.from('partite').update({
+          club_id: clubId,
           data_ora: p.data_ora,
           campo: p.campo ?? null,
           giornata: p.giornata ?? null,
@@ -97,6 +98,7 @@ export async function POST(req: NextRequest) {
     }
 
     const { error } = await supabase.from('partite').insert({
+      club_id: clubId,
       squadra_id: squadraId,
       avversario: p.avversario,
       data_ora: p.data_ora,
