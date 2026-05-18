@@ -10,6 +10,9 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  experimental: {
+    serverComponentsExternalPackages: ['pdf-parse', 'xlsx'],
+  },
   async headers() {
     return [{ source: '/(.*)', headers: securityHeaders }]
   },
