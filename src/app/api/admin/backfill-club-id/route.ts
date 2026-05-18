@@ -13,6 +13,109 @@ export async function POST() {
   const sb = createAdminClient()
   const results: Record<string, number> = {}
 
+  // 0. Backfill giocatori.club_id — questo era il passo mancante.
+  //    Catena A: giocatori → tesseramenti → squadre (se squadra_id esiste)
+  //    Catena B: giocatori → valutazioni_tecniche.club_id
+  //    Catena C: giocatori → squalifiche.club_id
+  //    Catena D: giocatori → infortuni.club_id
+  {
+    let fixed = 0
+
+    // Catena A: via tesseramenti → squadre
+    const { data: nullGioc } = await sb
+      .from('giocatori')
+      .select('id')
+      .is('club_id', null)
+
+    if (nullGioc?.length) {
+      const ids = nullGioc.map(g => g.id)
+
+      // Prende tesseramenti con squadra_id valorizzato
+      const { data: tess } = await sb
+        .from('tesseramenti')
+        .select('giocatore_id, squadra_id')
+        .in('giocatore_id', ids)
+        .not('squadra_id', 'is', null)
+
+      if (tess?.length) {
+        const squadraIds = [...new Set(tess.map(t => t.squadra_id))]
+        const { data: squadre } = await sb
+          .from('squadre')
+          .select('id, club_id')
+          .in('id', squadraIds)
+          .not('club_id', 'is', null)
+
+        const squadraMap = Object.fromEntries((squadre ?? []).map(s => [s.id, s.club_id]))
+        const giocatoreClubMap: Record<string, string> = {}
+        for (const t of tess) {
+          const cid = squadraMap[t.squadra_id]
+          if (cid) giocatoreClubMap[t.giocatore_id] = cid
+        }
+
+        for (const [gid, cid] of Object.entries(giocatoreClubMap)) {
+          await sb.from('giocatori').update({ club_id: cid }).eq('id', gid)
+          fixed++
+        }
+      }
+
+      // Catena B: via valutazioni_tecniche
+      const { data: valGioc } = await sb
+        .from('giocatori')
+        .select('id')
+        .is('club_id', null)
+      if (valGioc?.length) {
+        const remainIds = valGioc.map(g => g.id)
+        const { data: vals } = await sb
+          .from('valutazioni_tecniche')
+          .select('giocatore_id, club_id')
+          .in('giocatore_id', remainIds)
+          .not('club_id', 'is', null)
+        for (const v of vals ?? []) {
+          await sb.from('giocatori').update({ club_id: v.club_id }).eq('id', v.giocatore_id)
+          fixed++
+        }
+      }
+
+      // Catena C: via squalifiche
+      const { data: sqGioc } = await sb
+        .from('giocatori')
+        .select('id')
+        .is('club_id', null)
+      if (sqGioc?.length) {
+        const remainIds = sqGioc.map(g => g.id)
+        const { data: sq } = await sb
+          .from('squalifiche')
+          .select('giocatore_id, club_id')
+          .in('giocatore_id', remainIds)
+          .not('club_id', 'is', null)
+        for (const s of sq ?? []) {
+          await sb.from('giocatori').update({ club_id: s.club_id }).eq('id', s.giocatore_id)
+          fixed++
+        }
+      }
+
+      // Catena D: via infortuni
+      const { data: infGioc } = await sb
+        .from('giocatori')
+        .select('id')
+        .is('club_id', null)
+      if (infGioc?.length) {
+        const remainIds = infGioc.map(g => g.id)
+        const { data: inf } = await sb
+          .from('infortuni')
+          .select('giocatore_id, club_id')
+          .in('giocatore_id', remainIds)
+          .not('club_id', 'is', null)
+        for (const i of inf ?? []) {
+          await sb.from('giocatori').update({ club_id: i.club_id }).eq('id', i.giocatore_id)
+          fixed++
+        }
+      }
+    }
+
+    results.giocatori = fixed
+  }
+
   // 1. Backfill partite.club_id via squadre
   {
     const { data: rows } = await sb
