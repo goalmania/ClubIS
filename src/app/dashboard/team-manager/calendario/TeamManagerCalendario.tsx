@@ -173,14 +173,11 @@ export default function TeamManagerCalendario() {
 
     setClubId(utente.club_id)
 
-    // Squadre
-    const { data: sData, error: sErr } = await supabase
-      .from('squadre')
-      .select('id, nome, attiva')
-      .eq('club_id', utente.club_id)
-
-    if (!sErr && sData) {
-      setSquadre((sData as any[]).filter(x => x.attiva ?? true).map(x => ({ id: x.id, nome: x.nome })))
+    // Squadre — via API server-side (adminClient, bypassa RLS)
+    const sRes = await fetch('/api/squadre')
+    if (sRes.ok) {
+      const sData = await sRes.json()
+      setSquadre((sData as any[]).map(x => ({ id: x.id, nome: x.nome })))
     }
 
     // Staff: utenti tranne famiglie
@@ -195,28 +192,13 @@ export default function TeamManagerCalendario() {
       setStaff((stData as any[]).filter(x => x.attivo ?? true).map(x => ({ id: x.id, nome: x.nome, cognome: x.cognome, ruolo: x.ruolo })))
     }
 
-    // Players: via tesseramenti (stato=attivo)
-    const { data: tess, error: tErr } = await supabase
-      .from('tesseramenti')
-      .select('giocatore_id')
-      .eq('club_id', utente.club_id)
-      .eq('stato', 'attivo')
-
-    if (!tErr && tess) {
-      const ids = uniq((tess as any[]).map(t => t.giocatore_id).filter(Boolean))
-      if (ids.length > 0) {
-        const { data: pData, error: pErr } = await supabase
-          .from('giocatori')
-          .select('id, nome, cognome')
-          .in('id', ids)
-          .order('cognome')
-
-        if (!pErr && pData) {
-          setGiocatori((pData as any[]).map(p => ({ id: p.id, nome: p.nome, cognome: p.cognome })))
-        }
-      } else {
-        setGiocatori([])
-      }
+    // Giocatori — via API server-side che interroga per squadra_id (include importati con club_id NULL)
+    const gRes = await fetch('/api/giocatori/tutti')
+    if (gRes.ok) {
+      const gData = await gRes.json()
+      setGiocatori((gData as any[]).map(p => ({ id: p.id, nome: p.nome, cognome: p.cognome })))
+    } else {
+      setGiocatori([])
     }
   }
 
