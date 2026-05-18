@@ -112,6 +112,8 @@ export default function ImportCalendarioFIGC() {
   const [mostraNonRilevanti, setMostraNonRilevanti] = useState(false)
   const [modalitaConflitto, setModalitaConflitto] = useState<'salta' | 'sovrascrivi' | 'aggiorna_campo'>('salta')
   const [importing,         setImporting]         = useState(false)
+  const [parsandoPdf,       setParsandoPdf]       = useState(false)
+  const [testoPdfGrezzo,    setTestoPdfGrezzo]    = useState<string | null>(null)
   const [risultato,         setRisultato]         = useState<{ importate: number; saltate: number; conflitti: number } | null>(null)
   const [toast,             setToast]             = useState<{ msg: string; tipo: 'success' | 'error' } | null>(null)
 
@@ -162,23 +164,38 @@ export default function ImportCalendarioFIGC() {
   }
 
   const elaboraPDF = async (file: File, club: string) => {
-    setImporting(true)
+    setParsandoPdf(true)
     setPartite([])
     setRisultato(null)
+    setTestoPdfGrezzo(null)
     try {
       const fd = new FormData()
       fd.append('file', file)
-      const res = await fetch('/api/figc/parse-calendario-pdf', { method: 'POST', body: fd })
-      const data = await res.json()
+      let res: Response
+      try {
+        res = await fetch('/api/figc/parse-calendario-pdf', { method: 'POST', body: fd })
+      } catch (networkErr: any) {
+        setToast({ msg: 'Errore di rete durante il caricamento del PDF: ' + (networkErr?.message ?? 'connessione fallita'), tipo: 'error' })
+        return
+      }
+      let data: any
+      try {
+        data = await res.json()
+      } catch {
+        setToast({ msg: `Errore server (${res.status}) durante il parsing del PDF`, tipo: 'error' })
+        return
+      }
       if (!res.ok) {
-        setToast({ msg: data.error ?? 'Errore parsing PDF', tipo: 'error' })
+        setToast({ msg: data?.error ?? `Errore ${res.status} durante il parsing del PDF`, tipo: 'error' })
         return
       }
+      // Salva il testo grezzo per debug
+      if (data.testo_grezzo) setTestoPdfGrezzo(data.testo_grezzo)
+
       if (!data.righe?.length) {
-        setToast({ msg: 'Nessuna partita trovata nel PDF. Assicurati che il PDF contenga una tabella con date e squadre, oppure usa il formato CSV.', tipo: 'error' })
+        setToast({ msg: 'Nessuna partita rilevata nel PDF. Il testo estratto è mostrato qui sotto — verifica che il PDF non sia scansionato/immagine. In alternativa usa il CSV.', tipo: 'error' })
         return
       }
-      // Converti le righe PDF nel formato RigaPartita
       const righeConvertite: RigaPartita[] = data.righe.map((r: any) => {
         const row: Record<string, string> = {
           Data: r.data_ora?.slice(0, 10)?.split('-').reverse().join('/') ?? '',
@@ -192,7 +209,7 @@ export default function ImportCalendarioFIGC() {
       })
       setPartite(righeConvertite)
     } finally {
-      setImporting(false)
+      setParsandoPdf(false)
     }
   }
 
@@ -315,24 +332,51 @@ export default function ImportCalendarioFIGC() {
         </div>
         <div
           style={{
-            border: '2px dashed var(--grigio-5)', borderRadius: 10,
-            padding: '32px 20px', textAlign: 'center', cursor: 'pointer',
-            background: 'var(--grigio-6)',
+            border: `2px dashed ${parsandoPdf ? 'var(--verde)' : 'var(--grigio-5)'}`,
+            borderRadius: 10, padding: '32px 20px', textAlign: 'center',
+            cursor: parsandoPdf ? 'default' : 'pointer', background: 'var(--grigio-6)',
+            transition: 'border-color 0.2s',
           }}
-          onClick={() => fileRef.current?.click()}
+          onClick={() => !parsandoPdf && fileRef.current?.click()}
         >
-          <div style={{ fontSize: 32, marginBottom: 8 }}>📂</div>
-          <div style={{ fontSize: 14, fontWeight: 500, color: 'var(--grigio)' }}>
-            Clicca per selezionare il file CSV o PDF
-          </div>
-          <div style={{ fontSize: 12, color: 'var(--grigio-4)', marginTop: 4 }}>
-            <strong>PDF</strong> — calendario FIGC ufficiale &nbsp;·&nbsp; <strong>CSV</strong> — colonne: Data, Ora, Squadra_Casa, Squadra_Ospite, Campo, Giornata
-          </div>
-          <div style={{ fontSize: 11, color: 'var(--grigio-4)', marginTop: 6 }}>
-            Formati data accettati: <strong>DD/MM/AAAA</strong> (FIGC standard) · AAAA-MM-GG (ISO)
-          </div>
+          {parsandoPdf ? (
+            <>
+              <div style={{ fontSize: 28, marginBottom: 8 }}>⏳</div>
+              <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--verde)' }}>
+                Analisi PDF in corso…
+              </div>
+              <div style={{ fontSize: 12, color: 'var(--grigio-4)', marginTop: 4 }}>
+                Estrazione testo e rilevamento partite. Attendere.
+              </div>
+            </>
+          ) : (
+            <>
+              <div style={{ fontSize: 32, marginBottom: 8 }}>📂</div>
+              <div style={{ fontSize: 14, fontWeight: 500, color: 'var(--grigio)' }}>
+                Clicca per selezionare il file CSV o PDF
+              </div>
+              <div style={{ fontSize: 12, color: 'var(--grigio-4)', marginTop: 4 }}>
+                <strong>PDF</strong> — calendario FIGC ufficiale &nbsp;·&nbsp; <strong>CSV</strong> — colonne: Data, Ora, Squadra_Casa, Squadra_Ospite, Campo, Giornata
+              </div>
+              <div style={{ fontSize: 11, color: 'var(--grigio-4)', marginTop: 6 }}>
+                Formati data accettati: <strong>DD/MM/AAAA</strong> (FIGC standard) · AAAA-MM-GG (ISO)
+              </div>
+            </>
+          )}
         </div>
         <input ref={fileRef} type="file" accept=".csv,text/csv,.pdf,application/pdf" style={{ display: 'none' }} onChange={handleFile} />
+
+        {/* Testo grezzo PDF — mostrato quando il parser non trova partite */}
+        {testoPdfGrezzo && partite.length === 0 && (
+          <div style={{ marginTop: 16, padding: '14px 16px', background: 'var(--grigio-6)', borderRadius: 8, border: '1px solid var(--grigio-5)' }}>
+            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--grigio-3)', marginBottom: 8 }}>
+              Testo estratto dal PDF (prime 2000 caratteri) — invialo al supporto se il parsing non funziona:
+            </div>
+            <pre style={{ fontSize: 10, color: 'var(--grigio-3)', whiteSpace: 'pre-wrap', wordBreak: 'break-word', margin: 0, maxHeight: 200, overflow: 'auto' }}>
+              {testoPdfGrezzo}
+            </pre>
+          </div>
+        )}
       </div>
 
       {/* Preview */}
