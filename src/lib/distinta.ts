@@ -1,3 +1,5 @@
+import { createAdminClient } from '@/lib/supabase/admin'
+
 export interface GiocatoreElegibile {
   id: string
   nome: string
@@ -42,10 +44,14 @@ function buildMotivoSqualifica(
 }
 
 export async function getGiocatoriEleggibili(
-  supabase: any,
+  _supabase: any,
   partitaId: string,
   clubId: string
 ): Promise<{ eleggibili: GiocatoreElegibile[]; nonEleggibili: GiocatoreNonElegibile[]; squalificheManuale: number }> {
+  // Usa il client admin per bypassare RLS: il clubId è già verificato dal
+  // chiamante tramite getUserContext(), quindi il filtro esplicito è sufficiente.
+  const supabase = createAdminClient()
+
   const { data: partita } = await supabase
     .from('partite')
     .select('data_ora')

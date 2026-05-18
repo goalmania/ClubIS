@@ -1,6 +1,7 @@
-import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { getGiocatoriEleggibili } from '@/lib/distinta'
+import { getUserContext } from '@/lib/impersonation'
+import { createAdminClient } from '@/lib/supabase/admin'
 import DistintaEditor from './DistintaEditor'
 
 export default async function GeneraDistintaPage({
@@ -8,28 +9,24 @@ export default async function GeneraDistintaPage({
 }: {
   params: { partita_id: string }
 }) {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth/login')
+  const ctx = await getUserContext()
+  if (!ctx) redirect('/auth/login')
+  const clubId = ctx.clubId
 
-  const { data: utente } = await supabase
-    .from('utenti')
-    .select('club_id')
-    .eq('id', user.id)
-    .single()
-  if (!utente) redirect('/auth/errore')
-  const clubId = utente.club_id
+  const supabase = createAdminClient()
 
   const [{ data: partita }, { data: existing }, { data: allenatore }] = await Promise.all([
     supabase
       .from('partite')
       .select('id, avversario, data_ora, competizione, giornata, casa_trasferta, campo')
       .eq('id', params.partita_id)
+      .eq('club_id', clubId)
       .single(),
     supabase
       .from('distinte_gara')
       .select('giocatori_snapshot, staff_snapshot')
       .eq('partita_id', params.partita_id)
+      .eq('club_id', clubId)
       .order('versione', { ascending: false })
       .limit(1)
       .maybeSingle(),
