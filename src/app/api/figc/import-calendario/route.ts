@@ -84,7 +84,6 @@ export async function POST(req: NextRequest) {
           campo: p.campo ?? null,
           giornata: p.giornata ?? null,
           casa_trasferta: p.casa_trasferta,
-          fonte: 'figc',
         }).eq('id', existing.id)
         importate++
         continue
@@ -100,10 +99,13 @@ export async function POST(req: NextRequest) {
       casa_trasferta: p.casa_trasferta,
       tipo: 'campionato',
       stato: 'programmata',
-      fonte: 'figc',
     })
 
-    if (error) { saltate++; continue }
+    if (error) {
+      console.error('[import-calendario] insert error:', error.message, JSON.stringify(p))
+      saltate++
+      continue
+    }
     importate++
   }
 

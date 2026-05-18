@@ -301,7 +301,11 @@ export default function ImportCalendarioFIGC() {
       const data = await res.json()
       if (!res.ok) { setToast({ msg: data.error ?? 'Errore durante l\'importazione', tipo: 'error' }); return }
       setRisultato(data)
-      setToast({ msg: `Importate ${data.importate} partite`, tipo: 'success' })
+      if (data.importate === 0) {
+        setToast({ msg: `Nessuna partita importata (${data.saltate ?? 0} saltate — possibile duplicato o errore DB)`, tipo: 'error' })
+      } else {
+        setToast({ msg: `Importate ${data.importate} partite${data.saltate ? ` · ${data.saltate} saltate` : ''}`, tipo: 'success' })
+      }
     } finally {
       setImporting(false)
     }
