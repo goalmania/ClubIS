@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-// pdfjs-dist/legacy works in Node.js without native deps (no canvas, no DOMMatrix)
-import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf.mjs'
 
 export const dynamic = 'force-dynamic'
 
@@ -146,7 +144,8 @@ export async function POST(req: NextRequest) {
 
   let allLines: string[] = []
   try {
-    const doc = await (pdfjsLib as any).getDocument({
+    const pdfjsLib = await import(/* webpackIgnore: true */ 'pdfjs-dist/legacy/build/pdf.mjs') as any
+    const doc = await pdfjsLib.getDocument({
       data: new Uint8Array(buffer),
       useWorkerFetch: false,
       isEvalSupported: false,
