@@ -180,16 +180,12 @@ export default function TeamManagerCalendario() {
       setSquadre((sData as any[]).map(x => ({ id: x.id, nome: x.nome })))
     }
 
-    // Staff: utenti tranne famiglie
-    const staffRoles = ['presidente', 'ds', 'segretario', 'allenatore', 'osservatore', 'medico', 'team_manager']
-    const { data: stData, error: stErr } = await supabase
-      .from('utenti')
-      .select('id, nome, cognome, ruolo, attivo')
-      .eq('club_id', utente.club_id)
-      .in('ruolo', staffRoles)
-
-    if (!stErr && stData) {
-      setStaff((stData as any[]).filter(x => x.attivo ?? true).map(x => ({ id: x.id, nome: x.nome, cognome: x.cognome, ruolo: x.ruolo })))
+    // Staff — via API server-side (adminClient, bypassa RLS, scoped al club)
+    const stRoles = 'presidente,ds,segretario,allenatore,osservatore,medico,team_manager'
+    const stRes = await fetch(`/api/staff?ruoli=${stRoles}`)
+    if (stRes.ok) {
+      const stData = await stRes.json()
+      setStaff((stData as any[]).map(x => ({ id: x.id, nome: x.nome, cognome: x.cognome, ruolo: x.ruolo })))
     }
 
     // Giocatori — via API server-side che interroga per squadra_id (include importati con club_id NULL)
