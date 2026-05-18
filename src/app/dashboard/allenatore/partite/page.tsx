@@ -88,7 +88,7 @@ export default function AllenatorePartitePage() {
 
   const [tab, setTab]             = useState<Tab>('risultati')
   const [clubId, setClubId]       = useState<string | null>(null)
-  const [sqIds, setSqIds]         = useState<{ id: string; nome: string }[]>([])
+  const [sqIds, setSqIds]         = useState<{ id: string; nome: string; categoria_eta?: string }[]>([])
   const [bySquadra, setBySquadra]       = useState<Record<string, SquadraStats>>({})
   const [prossime, setProssime]         = useState<any[]>([])
   const [daRegistrare, setDaRegistrare] = useState<any[]>([])
@@ -101,35 +101,28 @@ export default function AllenatorePartitePage() {
   /* ── Load ────────────────────────────────────────────────────── */
 
   const load = useCallback(async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
-    const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-    if (!utente) return
-    setClubId(utente.club_id)
+    const json = await fetch('/api/partite/lista').then(r => r.json()).catch(() => ({ partite: [], squadre: [], clubId: null }))
+    const { partite: tutte, squadre: sqList, clubId: cid } = json
 
-    const sq: any[] = await fetch('/api/squadre').then(r => r.json()).catch(() => [])
+    setClubId(cid)
+
+    const sq: { id: string; nome: string; categoria_eta?: string }[] = sqList ?? []
     setSqIds(sq)
     setForm(prev => ({ ...prev, squadraId: prev.squadraId || sq[0]?.id || '' }))
 
-    const ids = sq.map((s: any) => s.id)
     const oggi = new Date().toISOString()
 
-    const [{ data: prox }, { data: daReg }, { data: partite }] = await Promise.all([
-      supabase.from('partite').select('*, squadre(nome)')
-        .in('squadra_id', ids.length ? ids : ['none'])
-        .eq('stato', 'programmata').gte('data_ora', oggi)
-        .order('data_ora', { ascending: true }),
-      supabase.from('partite').select('*, squadre(nome)')
-        .in('squadra_id', ids.length ? ids : ['none'])
-        .eq('stato', 'programmata').lt('data_ora', oggi)
-        .order('data_ora', { ascending: false }).limit(30),
-      supabase.from('partite').select('*, squadre(nome)')
-        .in('squadra_id', ids.length ? ids : ['none'])
-        .eq('stato', 'giocata').order('data_ora', { ascending: false }).limit(60),
-    ])
+    const prox   = (tutte as any[]).filter(p => p.stato === 'programmata' && p.data_ora >= oggi)
+      .sort((a: any, b: any) => new Date(a.data_ora).getTime() - new Date(b.data_ora).getTime())
+    const daReg  = (tutte as any[]).filter(p => p.stato === 'programmata' && p.data_ora < oggi)
+      .sort((a: any, b: any) => new Date(b.data_ora).getTime() - new Date(a.data_ora).getTime())
+      .slice(0, 30)
+    const partite = (tutte as any[]).filter(p => p.stato === 'giocata')
+      .sort((a: any, b: any) => new Date(b.data_ora).getTime() - new Date(a.data_ora).getTime())
+      .slice(0, 60)
 
-    setProssime(prox ?? [])
-    setDaRegistrare(daReg ?? [])
+    setProssime(prox)
+    setDaRegistrare(daReg)
 
     const result: Record<string, SquadraStats> = {}
     sq.forEach((s: any) => {
