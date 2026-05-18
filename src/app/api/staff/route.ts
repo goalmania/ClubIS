@@ -56,10 +56,14 @@ export async function GET(req: NextRequest) {
   const tutti = [...(byClub ?? []), ...byInviteUsers]
   tutti.sort((a, b) => a.cognome.localeCompare(b.cognome, 'it'))
 
-  console.log(`[staff-debug] clubId=${clubId}`)
-  console.log(`[staff-debug] byClub=${(byClub ?? []).length} byInvite=${idsDaInvito.length} totale=${tutti.length}`)
-  if ((byClub ?? []).length === 0) console.log(`[staff-debug] byClub-ids=${JSON.stringify((byClub ?? []).map((u:any)=>u.id))}`)
-  if (idsDaInvito.length === 0) console.log('[staff-debug] nessun invito trovato')
+  // Debug: conta TUTTI gli utenti con questo club_id indipendentemente dal ruolo
+  const { count: totUtenti } = await admin.from('utenti').select('id', { count: 'exact', head: true }).eq('club_id', clubId)
+  console.log(`[S1] clubId=${clubId}`)
+  console.log(`[S2] byClub=${(byClub??[]).length} inv=${idsDaInvito.length} tot=${tutti.length} anyUtenti=${totUtenti}`)
+  if ((byClub??[]).length===0 && (totUtenti??0)>0) {
+    const {data:sample}=await admin.from('utenti').select('ruolo,attivo').eq('club_id',clubId).limit(5)
+    console.log(`[S3] sample=${JSON.stringify(sample)}`)
+  }
 
   return Response.json(tutti)
 }
