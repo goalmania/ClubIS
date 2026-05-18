@@ -1,4 +1,5 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserContext } from '@/lib/impersonation'
 import { redirect } from 'next/navigation'
 import PrintToolbar from './PrintToolbar'
 
@@ -26,37 +27,36 @@ function textColor(bg: string) {
 }
 
 export default async function PrintDistintaPage({ params }: { params: { partita_id: string } }) {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth/login')
+  const ctx = await getUserContext()
+  if (!ctx) redirect('/auth/login')
+  const { clubId } = ctx
 
-  const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-  if (!utente) redirect('/auth/errore')
+  const supabase = createAdminClient()
 
   const [{ data: partita }, { data: distinta }, { data: clubBase }, { data: clubColors }] = await Promise.all([
     supabase
       .from('partite')
       .select('avversario, data_ora, competizione, giornata, casa_trasferta, campo')
       .eq('id', params.partita_id)
+      .eq('club_id', clubId)
       .single(),
     supabase
       .from('distinte_gara')
       .select('giocatori_snapshot, staff_snapshot, generata_at')
       .eq('partita_id', params.partita_id)
+      .eq('club_id', clubId)
       .order('versione', { ascending: false })
       .limit(1)
       .maybeSingle(),
-    // Campi sempre presenti
     supabase
       .from('clubs')
       .select('nome, logo_url')
-      .eq('id', utente.club_id)
+      .eq('id', clubId)
       .single(),
-    // Colori hex — aggiunti via migration 20260507_fix037; se non ancora applicata restituisce null
     supabase
       .from('clubs')
       .select('colore_primario, colore_secondario')
-      .eq('id', utente.club_id)
+      .eq('id', clubId)
       .single(),
   ])
 
