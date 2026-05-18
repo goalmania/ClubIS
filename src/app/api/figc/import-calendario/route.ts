@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { getUserContext } from '@/lib/impersonation'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -11,16 +11,12 @@ interface PartitaImport {
 }
 
 export async function POST(req: NextRequest) {
-  const sessionClient = createClient()
+  const ctx = await getUserContext()
+  if (!ctx) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
+  const clubId = ctx.clubId
+  if (!clubId) return NextResponse.json({ error: 'Club non trovato' }, { status: 400 })
 
   const supabase = createAdminClient()
-  const { data: { user } } = await sessionClient.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
-
-  const { data: utente } = await supabase
-    .from('utenti').select('club_id').eq('id', user.id).single()
-  if (!utente) return NextResponse.json({ error: 'Utente non trovato' }, { status: 400 })
-  const clubId = utente.club_id
 
   const body = await req.json()
   const { partite, modalita_conflitto = 'salta', squadra_id: squadraIdBody }: {

@@ -115,26 +115,28 @@ export default function ImportCalendarioFIGC() {
   const [risultato,         setRisultato]         = useState<{ importate: number; saltate: number; conflitti: number } | null>(null)
   const [toast,             setToast]             = useState<{ msg: string; tipo: 'success' | 'error' } | null>(null)
 
-  // Carica il nome del club e le squadre attive dal profilo utente
+  // Carica il nome del club e le squadre attive usando getUserContext (rispetta impersonazione)
   useEffect(() => {
     async function caricaClub() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-      const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-      if (!utente) return
-      const [clubRes, squadreRes] = await Promise.all([
-        supabase.from('clubs').select('nome').eq('id', utente.club_id).single(),
-        supabase.from('squadre').select('id, nome, categoria_eta').eq('club_id', utente.club_id).eq('attiva', true).order('categoria_eta'),
+      const [ctxData, squadreData] = await Promise.all([
+        fetch('/api/user-context').then(r => r.ok ? r.json() : null).catch(() => null),
+        fetch('/api/squadre').then(r => r.json()).catch(() => []),
       ])
-      if (clubRes.data?.nome) {
-        setNomeClub(clubRes.data.nome)
+      if (!ctxData?.clubId) return
+
+      // Carica il nome del club
+      const { data: clubRes } = await supabase
+        .from('clubs').select('nome').eq('id', ctxData.clubId).single()
+      if (clubRes?.nome) {
+        setNomeClub(clubRes.nome)
         setClubAutocaricato(true)
       }
-      if (squadreRes.data?.length) {
-        setSquadre(squadreRes.data)
-        // Pre-select prima squadra if available
-        const prima = squadreRes.data.find(s => s.categoria_eta === 'prima_squadra')
-        setSquadraId(prima?.id ?? squadreRes.data[0].id)
+
+      const squadreArr: Squadra[] = Array.isArray(squadreData) ? squadreData : []
+      if (squadreArr.length) {
+        setSquadre(squadreArr)
+        const prima = squadreArr.find(s => s.categoria_eta === 'prima_squadra')
+        setSquadraId(prima?.id ?? squadreArr[0].id)
       }
     }
     caricaClub()
@@ -146,19 +148,64 @@ export default function ImportCalendarioFIGC() {
     setRisultato(null)
   }
 
-  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-    const reader = new FileReader()
-    reader.onload = (ev) => elaboraFile(ev.target?.result as string, nomeClub)
-    reader.readAsText(file, 'UTF-8')
+
+    if (file.name.toLowerCase().endsWith('.pdf') || file.type === 'application/pdf') {
+      await elaboraPDF(file, nomeClub)
+    } else {
+      const reader = new FileReader()
+      reader.onload = (ev) => elaboraFile(ev.target?.result as string, nomeClub)
+      reader.readAsText(file, 'UTF-8')
+    }
   }
 
-  const ricaricaConNome = () => {
-    if (!fileRef.current?.files?.[0]) return
-    const reader = new FileReader()
-    reader.onload = (ev) => elaboraFile(ev.target?.result as string, nomeClub)
-    reader.readAsText(fileRef.current.files[0], 'UTF-8')
+  const elaboraPDF = async (file: File, club: string) => {
+    setImporting(true)
+    setPartite([])
+    setRisultato(null)
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      const res = await fetch('/api/figc/parse-calendario-pdf', { method: 'POST', body: fd })
+      const data = await res.json()
+      if (!res.ok) {
+        setToast({ msg: data.error ?? 'Errore parsing PDF', tipo: 'error' })
+        return
+      }
+      if (!data.righe?.length) {
+        setToast({ msg: 'Nessuna partita trovata nel PDF. Assicurati che il PDF contenga una tabella con date e squadre, oppure usa il formato CSV.', tipo: 'error' })
+        return
+      }
+      // Converti le righe PDF nel formato RigaPartita
+      const righeConvertite: RigaPartita[] = data.righe.map((r: any) => {
+        const row: Record<string, string> = {
+          Data: r.data_ora?.slice(0, 10)?.split('-').reverse().join('/') ?? '',
+          Ora: r.data_ora?.slice(11, 16) ?? '00:00',
+          Squadra_Casa: r.avversario_casa ?? '',
+          Squadra_Ospite: r.avversario_ospite ?? '',
+          Campo: r.campo ?? '',
+          Giornata: r.giornata?.toString() ?? '',
+        }
+        return elaboraRiga(row, club)
+      })
+      setPartite(righeConvertite)
+    } finally {
+      setImporting(false)
+    }
+  }
+
+  const ricaricaConNome = async () => {
+    const file = fileRef.current?.files?.[0]
+    if (!file) return
+    if (file.name.toLowerCase().endsWith('.pdf') || file.type === 'application/pdf') {
+      await elaboraPDF(file, nomeClub)
+    } else {
+      const reader = new FileReader()
+      reader.onload = (ev) => elaboraFile(ev.target?.result as string, nomeClub)
+      reader.readAsText(file, 'UTF-8')
+    }
   }
 
   const scaricaTemplate = () => {
@@ -264,7 +311,7 @@ export default function ImportCalendarioFIGC() {
       {/* Step 2 — upload */}
       <div className="card" style={{ padding: '20px 24px', marginBottom: 20 }}>
         <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 14, color: 'var(--grigio)' }}>
-          2. Carica file CSV FIGC
+          2. Carica file calendario FIGC
         </div>
         <div
           style={{
@@ -276,16 +323,16 @@ export default function ImportCalendarioFIGC() {
         >
           <div style={{ fontSize: 32, marginBottom: 8 }}>📂</div>
           <div style={{ fontSize: 14, fontWeight: 500, color: 'var(--grigio)' }}>
-            Clicca per selezionare il file CSV
+            Clicca per selezionare il file CSV o PDF
           </div>
           <div style={{ fontSize: 12, color: 'var(--grigio-4)', marginTop: 4 }}>
-            Colonne richieste: <code>Data, Ora, Squadra_Casa, Squadra_Ospite, Campo, Giornata</code>
+            <strong>PDF</strong> — calendario FIGC ufficiale &nbsp;·&nbsp; <strong>CSV</strong> — colonne: Data, Ora, Squadra_Casa, Squadra_Ospite, Campo, Giornata
           </div>
           <div style={{ fontSize: 11, color: 'var(--grigio-4)', marginTop: 6 }}>
             Formati data accettati: <strong>DD/MM/AAAA</strong> (FIGC standard) · AAAA-MM-GG (ISO)
           </div>
         </div>
-        <input ref={fileRef} type="file" accept=".csv,text/csv" style={{ display: 'none' }} onChange={handleFile} />
+        <input ref={fileRef} type="file" accept=".csv,text/csv,.pdf,application/pdf" style={{ display: 'none' }} onChange={handleFile} />
       </div>
 
       {/* Preview */}
