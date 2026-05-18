@@ -583,92 +583,39 @@ export default function ConsigliIntervistePage() {
   // ── Save ────────────────────────────────────────────────────────────────────
 
   const handleSave = useCallback(async (form: FormState) => {
-    if (!clubId || !userId) return
     setSaving(true)
     setFormError(null)
 
-    if (editItem) {
-      const { error: err } = await supabase
-        .from('consigli_interviste')
-        .update({
-          destinatario_ruolo:        form.destinatario_ruolo,
-          destinatario_specifico_id: form.destinatario_specifico_id,
-          domanda:                   form.domanda.trim(),
-          consiglio_risposta:        form.consiglio_risposta.trim(),
-          contesto:                  form.contesto,
-          priorita:                  form.priorita,
-        })
-        .eq('id', editItem.id)
-
-      if (err) { setFormError(err.message); setSaving(false); return }
-    } else {
-      const { data: nuovo, error: err } = await supabase
-        .from('consigli_interviste')
-        .insert({
-          club_id:                   clubId,
-          creato_da:                 userId,
-          destinatario_ruolo:        form.destinatario_ruolo,
-          destinatario_specifico_id: form.destinatario_specifico_id,
-          domanda:                   form.domanda.trim(),
-          consiglio_risposta:        form.consiglio_risposta.trim(),
-          contesto:                  form.contesto,
-          priorita:                  form.priorita,
-          attivo:                    true,
-          is_template:               false,
-        })
-        .select()
-        .single()
-
-      if (err) { setFormError(err.message); setSaving(false); return }
-
-      // Notifica interna ai destinatari (best-effort)
-      if (nuovo) {
-        // Se è per persona specifica, notifica solo quella; altrimenti tutti del ruolo
-        let destinatariIds: string[] = []
-
-        if (form.destinatario_specifico_id) {
-          destinatariIds = [form.destinatario_specifico_id]
-        } else {
-          const utenteRuoloDest = DEST_TO_UTENTE_RUOLO[form.destinatario_ruolo]
-          if (utenteRuoloDest) {
-            const { data: destinatari } = await supabase
-              .from('utenti')
-              .select('id')
-              .eq('club_id', clubId)
-              .eq('ruolo', utenteRuoloDest)
-
-            destinatariIds = destinatari?.map(d => d.id) ?? []
-          }
-        }
-
-        if (destinatariIds.length > 0) {
-          await Promise.all(
-            destinatariIds.map(destId =>
-              supabase.from('cis_notification_outbox').insert({
-                club_id:        clubId,
-                utente_id:      destId,
-                contesto_ruolo: DEST_TO_UTENTE_RUOLO[form.destinatario_ruolo],
-                canale:         'notifica_interna',
-                priorita:       form.priorita === 1 ? 'alta' : form.priorita === 2 ? 'media' : 'bassa',
-                send_at:        new Date().toISOString(),
-                titolo:         'Nuovi consigli per le tue interviste',
-                messaggio:      "L'ufficio stampa ha aggiunto nuovi consigli per le tue interviste.",
-                azione_url:     '/dashboard/ufficio-stampa/consigli-interviste',
-                payload:        JSON.stringify({ consiglio_id: nuovo.id }),
-              })
-            )
-          )
-        }
-      }
-
-      setTabAttiva(form.destinatario_ruolo)
+    const payload = {
+      destinatario_ruolo:        form.destinatario_ruolo,
+      destinatario_specifico_id: form.destinatario_specifico_id,
+      domanda:                   form.domanda.trim(),
+      consiglio_risposta:        form.consiglio_risposta.trim(),
+      contesto:                  form.contesto,
+      priorita:                  form.priorita,
+      ...(editItem ? { id: editItem.id } : {}),
     }
+
+    const res = await fetch('/api/ufficio-stampa/consigli-interviste', {
+      method:  editItem ? 'PATCH' : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload),
+    })
+
+    const json = await res.json()
+    if (!res.ok) {
+      setFormError(json.error ?? 'Errore durante il salvataggio')
+      setSaving(false)
+      return
+    }
+
+    if (!editItem) setTabAttiva(form.destinatario_ruolo)
 
     setSaving(false)
     setModalOpen(false)
     setEditItem(null)
     await load()
-  }, [editItem, clubId, userId, supabase, load])
+  }, [editItem, load])
 
   // ── Delete ──────────────────────────────────────────────────────────────────
 
