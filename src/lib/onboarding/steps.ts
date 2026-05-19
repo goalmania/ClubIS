@@ -755,6 +755,7 @@ const ONBOARDING_GIOCATORE: OnboardingStep[] = [
 export const ONBOARDING_STEPS: Record<string, OnboardingStep[]> = {
   segretario: ONBOARDING_SEGRETARIO,
   presidente: ONBOARDING_PRESIDENTE,
+  ds: ONBOARDING_DS,
   direttore_sportivo: ONBOARDING_DS,
   allenatore: ONBOARDING_ALLENATORE,
   osservatore: ONBOARDING_OSSERVATORE,
