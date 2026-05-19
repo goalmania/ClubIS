@@ -153,7 +153,7 @@ export default function MedicoCertificatiPage() {
         title="Certificati medici"
         subtitle={`${certificati.length} certificati — ${counts.scaduti + counts.in_scadenza} richiedono attenzione`}
         actions={
-          <button className="btn btn-primary btn-sm" onClick={() => apriModal()}>
+          <button data-onboarding="btn-nuovo-certificato" className="btn btn-primary btn-sm" onClick={() => apriModal()}>
             + Aggiungi certificato
           </button>
         }

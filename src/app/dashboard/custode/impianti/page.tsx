@@ -1,5 +1,9 @@
 import ImpiantiPage from '@/components/features/ImpiantiPage'
 
 export default function CustodeImpiantiPage() {
-  return <ImpiantiPage defaultTab="checklist" />
+  return (
+    <div data-onboarding="section-impianti">
+      <ImpiantiPage defaultTab="checklist" />
+    </div>
+  )
 }

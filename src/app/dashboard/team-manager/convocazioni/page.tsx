@@ -65,7 +65,7 @@ export default async function TMConvocazioniPage() {
                 )}
 
                 <div style={{ display: 'flex', gap: 8 }}>
-                  <button className="btn btn-primary btn-sm">Modifica convocati</button>
+                  <button data-onboarding="btn-nuova-convocazione" className="btn btn-primary btn-sm">Modifica convocati</button>
                   <button className="btn btn-secondary btn-sm">Invia notifica</button>
                 </div>
               </div>

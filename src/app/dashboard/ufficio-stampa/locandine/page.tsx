@@ -73,7 +73,7 @@ export default function LocandineListPage() {
           <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Brief Locandine</h1>
           <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>Form strutturati per chi realizza la grafica esternamente</p>
         </div>
-        <Link href="/dashboard/ufficio-stampa/locandine/nuova" style={{
+        <Link data-onboarding="btn-nuova-locandina" href="/dashboard/ufficio-stampa/locandine/nuova" style={{
           display: 'inline-flex', alignItems: 'center', gap: 6,
           padding: '9px 16px', background: 'var(--accent)', color: '#0a0a0a',
           fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12,

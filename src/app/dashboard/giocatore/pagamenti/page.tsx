@@ -81,7 +81,7 @@ export default function PagamentiGiocatorePage() {
 
   return (
     <div>
-      <div style={{ marginBottom: 28 }}>
+      <div data-onboarding="sezione-pagamenti" style={{ marginBottom: 28 }}>
         <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, textTransform: 'uppercase', fontSize: 26, letterSpacing: '0.04em', color: 'var(--white)' }}>
           Le mie quote
         </div>

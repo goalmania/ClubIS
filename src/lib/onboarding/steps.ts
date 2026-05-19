@@ -503,6 +503,165 @@ const ONBOARDING_FAMIGLIA: OnboardingStep[] = [
   },
 ]
 
+const ONBOARDING_MEDICO: OnboardingStep[] = [
+  {
+    id: 'cartelle-mediche',
+    title: 'Cartelle Mediche',
+    problem: 'Le cartelle mediche dei giocatori sono su carta o in archivi non condivisi con il club?',
+    solution: 'ClubIS centralizza tutte le cartelle mediche: anamnesi, infortuni, terapie e idoneità in un unico posto sicuro.',
+    route: '/dashboard/medico/cartelle',
+    targetSelector: "[data-onboarding='section-cartelle']",
+    guideText: "Qui trovi la lista di tutti i giocatori con la loro scheda sanitaria. Clicca su 'Apri cartella' per vedere o aggiornare anamnesi, allergie e annotazioni cliniche di ogni atleta.",
+  },
+  {
+    id: 'certificati',
+    title: 'Certificati Idoneità',
+    problem: 'Tieni traccia delle scadenze dei certificati di idoneità su fogli separati e rischi dimenticanze?',
+    solution: 'ClubIS monitora la scadenza di ogni certificato e ti avvisa in anticipo con un alert automatico.',
+    route: '/dashboard/medico/certificati',
+    targetSelector: "[data-onboarding='btn-nuovo-certificato']",
+    guideText: "Qui vedi tutti i certificati con la data di scadenza. Il semaforo verde/giallo/rosso ti indica immediatamente quali stanno per scadere. Clicca per aggiungerne uno nuovo.",
+  },
+  {
+    id: 'infortuni',
+    title: 'Gestione Infortuni',
+    problem: 'Quando un giocatore si infortuna, le informazioni vengono comunicate in modo frammentato via WhatsApp?',
+    solution: 'ClubIS registra ogni infortunio con diagnosi, terapia e prognosi, condivisibile con allenatore e DS in un clic.',
+    route: '/dashboard/medico/infortuni',
+    targetSelector: "[data-onboarding='btn-nuovo-infortunio']",
+    guideText: "Clicca '+ Nuovo infortunio' per registrare il tipo di trauma, la diagnosi e la prognosi in giorni. L'allenatore vedrà automaticamente il giocatore come non disponibile.",
+  },
+  {
+    id: 'visite',
+    title: 'Visite Mediche',
+    problem: 'La programmazione delle visite di controllo avviene ancora tramite telefonate e appunti cartacei?',
+    solution: 'ClubIS gestisce il calendario delle visite mediche con promemoria automatici per staff e giocatori.',
+    route: '/dashboard/medico/visite',
+    targetSelector: "[data-onboarding='btn-nuova-visita']",
+    guideText: "Programma qui le visite di controllo periodiche. Ogni visita genera un promemoria automatico al giocatore e compare nel calendario del medico.",
+  },
+]
+
+const ONBOARDING_TEAM_MANAGER: OnboardingStep[] = [
+  {
+    id: 'convocazioni',
+    title: 'Convocazioni',
+    problem: 'Gestisci ancora le convocazioni tramite messaggi WhatsApp e rischi che qualcuno non li legga?',
+    solution: 'ClubIS invia le convocazioni direttamente nell\'app e tiene traccia di chi ha confermato.',
+    route: '/dashboard/team-manager/convocazioni',
+    targetSelector: "[data-onboarding='btn-nuova-convocazione']",
+    guideText: "Clicca '+ Nuova convocazione' per selezionare i giocatori, l'orario di ritrovo e il luogo. Ogni giocatore riceverà una notifica e potrà confermare la presenza.",
+  },
+  {
+    id: 'trasferte',
+    title: 'Gestione Trasferte',
+    problem: 'La logistica delle trasferte viene organizzata con messaggi sparsi e senza un riepilogo unico?',
+    solution: 'ClubIS centralizza trasporti, alloggi e costi di ogni trasferta in un unico documento condivisibile.',
+    route: '/dashboard/team-manager/trasferte',
+    targetSelector: "[data-onboarding='btn-nuova-trasferta']",
+    guideText: "Clicca '+ Nuova trasferta' per inserire partita, mezzo di trasporto, punto di ritrovo e costi previsti. Lo staff vedrà tutto in tempo reale.",
+  },
+  {
+    id: 'materiale',
+    title: 'Materiale Sportivo',
+    problem: 'Non sai mai con precisione quante divise o palloni sono disponibili e in che stato sono?',
+    solution: 'ClubIS tiene il magazzino del materiale sportivo con quantità, stato e chi lo ha in uso.',
+    route: '/dashboard/team-manager/materiale',
+    targetSelector: "[data-onboarding='btn-aggiungi-materiale']",
+    guideText: "Aggiungi qui ogni articolo del magazzino: nome, quantità e stato (nuovo/usato/da riparare). Potrai sapere in ogni momento cosa è disponibile e cosa manca.",
+  },
+  {
+    id: 'presenze-allenamento',
+    title: 'Presenze Allenamenti',
+    problem: 'Tieni le presenze agli allenamenti su carta o in un foglio Excel che poi si perde?',
+    solution: 'ClubIS permette di registrare le presenze in pochi tap direttamente dallo spogliatoio.',
+    route: '/dashboard/team-manager/presenze-allenamento',
+    targetSelector: "[data-onboarding='section-presenze']",
+    guideText: "Seleziona la data e spunta i presenti. Il sistema calcola automaticamente le percentuali di presenza per ogni giocatore e le rende disponibili all'allenatore.",
+  },
+]
+
+const ONBOARDING_UFFICIO_STAMPA: OnboardingStep[] = [
+  {
+    id: 'articoli',
+    title: 'Articoli e Comunicati',
+    problem: 'Pubblichi comunicati e notizie del club su piattaforme diverse senza un archivio organizzato?',
+    solution: 'ClubIS centralizza tutti gli articoli e comunicati del club in un unico archivio professionale.',
+    route: '/dashboard/ufficio-stampa/articoli',
+    targetSelector: "[data-onboarding='btn-nuovo-articolo']",
+    guideText: "Clicca '+ Nuovo articolo' per creare un comunicato. Puoi inserire titolo, testo, immagini e tag. Ogni articolo viene salvato nell'archivio del club.",
+  },
+  {
+    id: 'interviste',
+    title: 'Interviste',
+    problem: 'Le interviste a giocatori e staff finiscono sparse in cartelle disorganizzate sul computer?',
+    solution: 'ClubIS archivia tutte le interviste con data, soggetto e media di riferimento, sempre trovabili.',
+    route: '/dashboard/ufficio-stampa/interviste',
+    targetSelector: "[data-onboarding='btn-nuova-intervista']",
+    guideText: "Aggiungi qui ogni intervista: chi l'ha rilasciata, quale testata, e il testo o il link al video. L'archivio è consultabile da tutti i membri dello staff autorizzati.",
+  },
+  {
+    id: 'accrediti',
+    title: 'Accrediti Stampa',
+    problem: 'Gestisci le richieste di accredito stampa per le partite ancora via email o telefono?',
+    solution: 'ClubIS centralizza gli accrediti stampa per ogni partita con lista giornalisti e fotografi.',
+    route: '/dashboard/ufficio-stampa/accrediti',
+    targetSelector: "[data-onboarding='section-accrediti']",
+    guideText: "Seleziona la partita e aggiungi gli accrediti per i giornalisti. Puoi specificare tipo (stampa, TV, foto) e il nominativo. La lista è sempre disponibile al controllo accessi.",
+  },
+  {
+    id: 'locandine',
+    title: 'Locandine e Grafica',
+    problem: 'Le locandine delle partite vengono create e inviate senza un archivio storico consultabile?',
+    solution: 'ClubIS archivia tutte le locandine e i materiali grafici del club in ordine cronologico.',
+    route: '/dashboard/ufficio-stampa/locandine',
+    targetSelector: "[data-onboarding='btn-nuova-locandina']",
+    guideText: "Carica qui le locandine delle partite e gli altri materiali grafici. Vengono salvati con la data e la partita di riferimento per un archivio sempre in ordine.",
+  },
+]
+
+const ONBOARDING_CUSTODE: OnboardingStep[] = [
+  {
+    id: 'impianti',
+    title: 'Gestione Impianti',
+    problem: 'Tieni traccia delle manutenzioni e delle anomalie dell\'impianto su carta o a memoria?',
+    solution: 'ClubIS centralizza tutte le segnalazioni e le manutenzioni dell\'impianto sportivo in un registro digitale.',
+    route: '/dashboard/custode/impianti',
+    targetSelector: "[data-onboarding='section-impianti']",
+    guideText: "Clicca per registrare una nuova segnalazione o intervento di manutenzione. Specifica l'area dell'impianto, il tipo di problema e la priorità. Lo staff di riferimento verrà notificato.",
+  },
+]
+
+const ONBOARDING_GIOCATORE: OnboardingStep[] = [
+  {
+    id: 'convocazioni',
+    title: 'Le tue Convocazioni',
+    problem: 'Scopri in ritardo le convocazioni perché arrivano via WhatsApp e non le vedi subito?',
+    solution: 'ClubIS ti mostra le convocazioni direttamente nell\'app con notifica istantanea.',
+    route: '/dashboard/giocatore/convocazioni',
+    targetSelector: "[data-onboarding='sezione-convocazioni']",
+    guideText: "Qui trovi tutte le convocazioni per le partite. Puoi vedere data, orario di ritrovo, luogo e confermare la tua presenza con un tocco.",
+  },
+  {
+    id: 'statistiche',
+    title: 'Le tue Statistiche',
+    problem: 'Non hai mai un riepilogo chiaro dei tuoi gol, assist e minuti giocati stagione per stagione?',
+    solution: 'ClubIS tiene il tuo storico completo con tutte le statistiche aggiornate dopo ogni partita.',
+    route: '/dashboard/giocatore/statistiche',
+    targetSelector: "[data-onboarding='sezione-statistiche']",
+    guideText: "Qui trovi le tue statistiche della stagione: gol, assist, presenze e minuti giocati. I dati vengono aggiornati dallo staff dopo ogni partita.",
+  },
+  {
+    id: 'pagamenti',
+    title: 'Quote e Pagamenti',
+    problem: 'Non sai mai con precisione quanto hai pagato e quanto ti resta da versare per la stagione?',
+    solution: 'ClubIS mostra la tua situazione pagamenti in tempo reale, con storico e rate future.',
+    route: '/dashboard/giocatore/pagamenti',
+    targetSelector: "[data-onboarding='sezione-pagamenti']",
+    guideText: "Qui trovi la tua quota iscrizione, i pagamenti già effettuati e le rate ancora da versare. In caso di dubbi puoi contattare direttamente la segreteria dal pannello.",
+  },
+]
+
 export const ONBOARDING_STEPS: Record<string, OnboardingStep[]> = {
   segretario: ONBOARDING_SEGRETARIO,
   presidente: ONBOARDING_PRESIDENTE,
@@ -510,4 +669,9 @@ export const ONBOARDING_STEPS: Record<string, OnboardingStep[]> = {
   allenatore: ONBOARDING_ALLENATORE,
   osservatore: ONBOARDING_OSSERVATORE,
   famiglia: ONBOARDING_FAMIGLIA,
+  medico: ONBOARDING_MEDICO,
+  team_manager: ONBOARDING_TEAM_MANAGER,
+  ufficio_stampa: ONBOARDING_UFFICIO_STAMPA,
+  custode: ONBOARDING_CUSTODE,
+  giocatore: ONBOARDING_GIOCATORE,
 }

@@ -23,7 +23,7 @@ export default async function TMTrasfertePage() {
 
   return (
     <div style={{ animation: 'fadeIn 0.3s ease' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
+      <div data-onboarding="btn-nuova-trasferta" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
           <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Trasferte</h1>
           <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>Organizzazione e budget degli spostamenti</p>

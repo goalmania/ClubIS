@@ -135,7 +135,7 @@ export default function TMMaterialePage() {
             Richieste inventario — notifiche automatiche a presidenza e segreteria
           </p>
         </div>
-        <button className="btn btn-primary btn-sm" onClick={() => setShowForm(v => !v)}>
+        <button data-onboarding="btn-aggiungi-materiale" className="btn btn-primary btn-sm" onClick={() => setShowForm(v => !v)}>
           {showForm ? '✕ Chiudi' : '+ Nuova richiesta'}
         </button>
       </div>
