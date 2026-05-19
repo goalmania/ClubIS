@@ -146,7 +146,7 @@ export function OnboardingProvider({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId])
 
-  if (!steps.length) return <>{children}</>
+  if (!steps.length) return null
 
   return (
     <OnboardingContext.Provider
