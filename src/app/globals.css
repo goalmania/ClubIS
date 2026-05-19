@@ -542,16 +542,29 @@ tbody tr:last-child td { border-bottom: none; }
 }
 
 /* ── ONBOARDING SPOTLIGHT ── */
-/*
-  Classic large-box-shadow spotlight: element stays illuminated,
-  rest of the page is dimmed. z-index set inline by OnboardingTooltip.
-*/
+@keyframes onboarding-pulse {
+  0%   { outline-color: #c8f000; outline-offset: 4px; }
+  50%  { outline-color: #e8ff40; outline-offset: 8px; }
+  100% { outline-color: #c8f000; outline-offset: 4px; }
+}
+@keyframes onboarding-glow {
+  0%   { box-shadow: 0 0 0 9999px rgba(0,0,0,0.72), 0 0 0 3px rgba(200,240,0,0.4), 0 0 20px rgba(200,240,0,0.3); }
+  50%  { box-shadow: 0 0 0 9999px rgba(0,0,0,0.72), 0 0 0 5px rgba(200,240,0,0.7), 0 0 40px rgba(200,240,0,0.5); }
+  100% { box-shadow: 0 0 0 9999px rgba(0,0,0,0.72), 0 0 0 3px rgba(200,240,0,0.4), 0 0 20px rgba(200,240,0,0.3); }
+}
+@keyframes onboarding-tooltip-glow {
+  0%   { box-shadow: 0 24px 64px rgba(0,0,0,0.9), 0 0 0 1px rgba(200,240,0,0.25), 0 0 24px rgba(200,240,0,0.08); }
+  50%  { box-shadow: 0 24px 64px rgba(0,0,0,0.9), 0 0 0 1px rgba(200,240,0,0.6),  0 0 48px rgba(200,240,0,0.2); }
+  100% { box-shadow: 0 24px 64px rgba(0,0,0,0.9), 0 0 0 1px rgba(200,240,0,0.25), 0 0 24px rgba(200,240,0,0.08); }
+}
 .onboarding-spotlight {
   border-radius: 8px;
-  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.62) !important;
   outline: 2px solid #c8f000;
   outline-offset: 4px;
-  transition: box-shadow 0.25s ease, outline 0.25s ease;
+  animation: onboarding-glow 2s ease-in-out infinite, onboarding-pulse 2s ease-in-out infinite !important;
+}
+.onboarding-tooltip-card {
+  animation: onboarding-tooltip-glow 2.5s ease-in-out infinite;
 }
 
 /* ── PRINT ── */

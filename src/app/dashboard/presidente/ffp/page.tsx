@@ -52,6 +52,7 @@ export default async function FFPBudgetPage() {
 
       {/* FFP Status Alert */}
       <div
+        data-onboarding="section-ffp-banner"
         className={ffpOk ? 'alert alert-success' : 'alert alert-danger'}
         style={{ marginBottom: 20 }}
       >
