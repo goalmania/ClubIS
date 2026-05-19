@@ -21,7 +21,21 @@ interface OnboardingContextType {
   setConfirmSkipAll: (v: boolean) => void
 }
 
-const OnboardingContext = createContext<OnboardingContextType | null>(null)
+const NOOP_CTX: OnboardingContextType = {
+  isActive: false,
+  currentStep: null,
+  currentStepIndex: 0,
+  totalSteps: 0,
+  phase: 'problem',
+  goToGuide: () => {},
+  nextStep: () => {},
+  skipStep: () => {},
+  skipAll: () => {},
+  confirmSkipAll: false,
+  setConfirmSkipAll: () => {},
+}
+
+const OnboardingContext = createContext<OnboardingContextType>(NOOP_CTX)
 
 export function OnboardingProvider({
   children,
@@ -170,7 +184,5 @@ export function OnboardingProvider({
 }
 
 export function useOnboarding() {
-  const ctx = useContext(OnboardingContext)
-  if (!ctx) throw new Error('useOnboarding must be used inside OnboardingProvider')
-  return ctx
+  return useContext(OnboardingContext)
 }
