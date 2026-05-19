@@ -12,8 +12,14 @@ export async function POST(req: NextRequest) {
 
   const { id, esito } = await req.json()
   if (!id || !esito) return NextResponse.json({ error: 'Missing fields' }, { status: 400 })
+
   const supabase = createAdminClient()
-  const { error } = await supabase.from('report_scouting').update({ esito }).eq('id', id)
+  const { error } = await supabase
+    .from('report_scouting')
+    .update({ esito })
+    .eq('id', id)
+    .eq('club_id', session.clubId)
+
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ ok: true })
 }

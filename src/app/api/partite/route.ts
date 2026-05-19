@@ -1,5 +1,6 @@
 import { getUserContext } from '@/lib/impersonation'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { NextRequest } from 'next/server'
 
 export const dynamic = 'force-dynamic'
 
@@ -51,4 +52,55 @@ export async function GET() {
   )
 
   return Response.json(tutte)
+}
+
+export async function POST(req: NextRequest) {
+  const ctx = await getUserContext()
+  if (!ctx) return Response.json({ error: 'Non autorizzato' }, { status: 401 })
+  const { clubId } = ctx
+  if (!clubId) return Response.json({ error: 'Club non trovato' }, { status: 400 })
+
+  const admin = createAdminClient()
+  const body  = await req.json()
+
+  const { data, error } = await admin
+    .from('partite')
+    .insert({
+      club_id:       clubId,
+      squadra_id:    body.squadra_id,
+      avversario:    body.avversario?.trim(),
+      data_ora:      body.data_ora,
+      campo:         body.campo?.trim() || null,
+      tipo:          body.tipo ?? 'campionato',
+      competizione:  body.competizione?.trim() || null,
+      giornata:      body.giornata ? parseInt(body.giornata) : null,
+      casa_trasferta:body.casa_trasferta ?? 'casa',
+      stato:         'programmata',
+    })
+    .select('id').single()
+
+  if (error) return Response.json({ error: error.message }, { status: 500 })
+  return Response.json({ id: data.id })
+}
+
+export async function PATCH(req: NextRequest) {
+  const ctx = await getUserContext()
+  if (!ctx) return Response.json({ error: 'Non autorizzato' }, { status: 401 })
+  const { clubId } = ctx
+  if (!clubId) return Response.json({ error: 'Club non trovato' }, { status: 400 })
+
+  const admin = createAdminClient()
+  const body  = await req.json()
+  const { id, ...payload } = body
+
+  if (!id) return Response.json({ error: 'id mancante' }, { status: 400 })
+
+  const { error } = await admin
+    .from('partite')
+    .update(payload)
+    .eq('id', id)
+    .eq('club_id', clubId)
+
+  if (error) return Response.json({ error: error.message }, { status: 500 })
+  return Response.json({ ok: true })
 }

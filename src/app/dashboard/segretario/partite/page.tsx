@@ -200,7 +200,12 @@ export default function SegretarioPartitePage() {
     if (editVal.gs !== '') payload.gol_subiti = parseInt(editVal.gs, 10)
     if (editVal.gf !== '' && editVal.gs !== '') payload.stato = 'giocata'
 
-    const { error } = await supabase.from('partite').update(payload).eq('id', editId)
+    const res = await fetch('/api/partite', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: editId, ...payload }),
+    })
+    const { error } = res.ok ? { error: null } : await res.json()
     setSalvando(false)
     setEditId(null)
     if (error) { setToast({ msg: 'Errore salvataggio', tipo: 'error' }); return }

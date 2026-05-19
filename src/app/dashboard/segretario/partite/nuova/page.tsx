@@ -1,12 +1,10 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { FormField, FormGrid, FormSection, SectionCard, Select, BackButton, Toast } from '@/components/ui'
 
 export default function NuovaPartitaPage() {
   const router = useRouter()
-  const supabase = createClient()
   const [squadre, setSquadre] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const [toast, setToast] = useState<{ msg: string; tipo: 'success' | 'error' } | null>(null)
@@ -39,18 +37,21 @@ export default function NuovaPartitaPage() {
     }
     setLoading(true)
     try {
-      const { error } = await supabase.from('partite').insert({
-        squadra_id:    squadraId,
-        avversario:    avversario.trim(),
-        data_ora:      new Date(dataOra).toISOString(),
-        campo:         campo.trim() || null,
-        tipo,
-        competizione:  competizione.trim() || null,
-        giornata:      giornata ? parseInt(giornata) : null,
-        casa_trasferta:casaTrasferta,
-        stato:         'programmata',
+      const res = await fetch('/api/partite', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          squadra_id:    squadraId,
+          avversario,
+          data_ora:      new Date(dataOra).toISOString(),
+          campo,
+          tipo,
+          competizione,
+          giornata,
+          casa_trasferta: casaTrasferta,
+        }),
       })
-      if (error) throw error
+      if (!res.ok) { const d = await res.json(); throw new Error(d.error ?? 'Errore') }
       setToast({ msg: 'Partita aggiunta', tipo: 'success' })
       setTimeout(() => router.push('/dashboard/segretario/partite'), 900)
     } catch (err: any) {
