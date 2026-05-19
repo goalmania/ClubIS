@@ -296,7 +296,7 @@ export default function NuovoReportScoutingPage() {
 
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, paddingBottom: 32 }}>
           <button type="button" className="btn btn-secondary" onClick={() => router.back()}>Annulla</button>
-          <button type="submit" className="btn btn-primary" disabled={loading}>
+          <button type="submit" className="btn btn-primary" disabled={loading} data-onboarding="btn-nuovo-report">
             {loading ? 'Salvataggio...' : 'Salva report'}
           </button>
         </div>

@@ -405,7 +405,7 @@ export default function SegretarioPartitePage() {
         </div>
         <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
           {(['calendario', 'statistiche', 'importa-pdf'] as Tab[]).map(t => (
-            <button key={t} onClick={() => setTab(t)} style={{
+            <button key={t} onClick={() => setTab(t)} {...(t === 'importa-pdf' ? { 'data-onboarding': 'btn-importa-calendario' } : {})} style={{
               padding: '8px 16px',
               fontFamily: 'var(--font-display)', fontSize: 11,
               textTransform: 'uppercase', letterSpacing: '0.08em',

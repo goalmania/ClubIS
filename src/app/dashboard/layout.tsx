@@ -9,6 +9,7 @@ import { dispatchDueNotificationsForUser, getInternalNotificationCountForUser } 
 import { getFamigliaCollegamenti } from '@/lib/famiglia'
 import RicercaGlobale from '@/components/ui/RicercaGlobale'
 import OnboardingWrapper from '@/components/ui/OnboardingWrapper'
+import OnboardingSystem from '@/components/onboarding/OnboardingSystem'
 import { ClubPlanProvider } from '@/lib/club-context'
 import type { PlanTier } from '@/lib/features'
 
@@ -192,6 +193,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           <ClubPlanProvider planTier={effectivePlanTier}>
             {children}
           </ClubPlanProvider>
+          <OnboardingSystem role={effectiveRuolo} />
         </main>
       </div>
     </div>

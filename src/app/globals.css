@@ -541,6 +541,19 @@ tbody tr:last-child td { border-bottom: none; }
   box-shadow: 0 8px 24px rgba(0,0,0,0.5);
 }
 
+/* ── ONBOARDING SPOTLIGHT ── */
+/*
+  Classic large-box-shadow spotlight: element stays illuminated,
+  rest of the page is dimmed. z-index set inline by OnboardingTooltip.
+*/
+.onboarding-spotlight {
+  border-radius: 8px;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.62) !important;
+  outline: 2px solid #c8f000;
+  outline-offset: 4px;
+  transition: box-shadow 0.25s ease, outline 0.25s ease;
+}
+
 /* ── PRINT ── */
 @media print {
   body { background: white; color: black; }

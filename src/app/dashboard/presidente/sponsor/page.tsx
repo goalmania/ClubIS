@@ -168,7 +168,7 @@ export default function SponsorPage() {
             Gestione partnership e ricavi commerciali
           </p>
         </div>
-        <button className="btn btn-primary btn-sm" onClick={apriNuovo}>+ Nuovo sponsor</button>
+        <button className="btn btn-primary btn-sm" onClick={apriNuovo} data-onboarding="btn-aggiungi-sponsor">+ Nuovo sponsor</button>
       </div>
 
       {/* KPI */}

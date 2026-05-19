@@ -195,7 +195,7 @@ export default function InvitiPage() {
 
         {/* Staff */}
         <div style={{ marginBottom: 6, fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Staff</div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 10, marginBottom: 20 }}>
+        <div data-onboarding="btn-invita-staff" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 10, marginBottom: 20 }}>
           {RUOLI_STAFF.map(({ ruolo, label, icona }) => (
             <button
               key={ruolo}

@@ -274,7 +274,7 @@ export default function FamigliaDashboard() {
       )}
 
       {/* KPI */}
-      <div style={{
+      <div data-onboarding="card-profilo-figlio" style={{
         display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)',
         gap: 1, background: 'var(--border)', marginBottom: 24,
       }}>
@@ -317,7 +317,7 @@ export default function FamigliaDashboard() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
 
         {/* Prossimi eventi */}
-        <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+        <div className="card" data-onboarding="sezione-calendario" style={{ padding: 0, overflow: 'hidden' }}>
           <div style={{
             padding: '12px 18px', borderBottom: '1px solid var(--border)',
             fontFamily: 'var(--font-display)', fontWeight: 700,
@@ -345,7 +345,7 @@ export default function FamigliaDashboard() {
         </div>
 
         {/* Ultime valutazioni */}
-        <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+        <div className="card" data-onboarding="section-valutazioni-figlio" style={{ padding: 0, overflow: 'hidden' }}>
           <div style={{
             padding: '12px 18px', borderBottom: '1px solid var(--border)',
             fontFamily: 'var(--font-display)', fontWeight: 700,

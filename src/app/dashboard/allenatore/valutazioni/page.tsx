@@ -29,7 +29,7 @@ export default async function ValutazioniPage() {
           <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Valutazioni tecniche</h1>
           <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>{valutazioni?.length ?? 0} valutazioni in archivio</p>
         </div>
-        <Link href="/dashboard/allenatore/valutazioni/nuova" className="btn btn-primary btn-sm">+ Nuova valutazione</Link>
+        <Link href="/dashboard/allenatore/valutazioni/nuova" className="btn btn-primary btn-sm" data-onboarding="btn-nuova-valutazione">+ Nuova valutazione</Link>
       </div>
 
       <div className="card" style={{ overflow: 'hidden' }}>

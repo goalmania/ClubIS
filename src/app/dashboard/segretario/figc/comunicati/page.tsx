@@ -336,6 +336,7 @@ export default function ComunicatiFIGCPage() {
                     className="btn btn-primary"
                     onClick={analizza}
                     disabled={loading || !testo.trim()}
+                    data-onboarding="btn-carica-cu"
                   >
                     {loading ? 'Analisi in corso…' : 'Analizza comunicato →'}
                   </button>

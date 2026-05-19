@@ -85,7 +85,7 @@ function ReportContent() {
           <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Report mensile</h1>
           <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>{meseLabel}</p>
         </div>
-        <button className="btn btn-primary btn-sm" onClick={() => window.print()}>🖨 Stampa</button>
+        <button className="btn btn-primary btn-sm" onClick={() => window.print()} data-onboarding="btn-genera-report">🖨 Stampa</button>
       </div>
       {sezioni.map(sez => (
         <div key={sez} className="card" style={{ padding: 0, overflow: 'hidden', marginBottom: 16 }}>
