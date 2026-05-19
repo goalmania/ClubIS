@@ -147,7 +147,7 @@ export default function PortafoglioFIGCPage() {
         title="Portafoglio FIGC"
         subtitle="Traccia il saldo stimato del portafoglio per i tesseramenti"
         actions={
-          <button className="btn btn-primary btn-sm" onClick={() => setModalOpen(true)}>
+          <button data-onboarding="btn-registra-ricarica" className="btn btn-primary btn-sm" onClick={() => setModalOpen(true)}>
             + Registra ricarica
           </button>
         }

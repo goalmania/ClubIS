@@ -196,6 +196,7 @@ export default function ScadenzeFIGCPage() {
               </button>
             )}
             <button
+              data-onboarding="btn-nuova-scadenza"
               onClick={apriNuova}
               style={{
                 padding: '9px 18px', background: 'var(--accent)', color: '#0a0a0a',
