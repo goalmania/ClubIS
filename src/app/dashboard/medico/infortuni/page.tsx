@@ -88,7 +88,7 @@ export default function MedicoInfortuniPage() {
           <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Infortuni</h1>
           <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>Registro e tracking recupero</p>
         </div>
-        <button className="btn btn-primary btn-sm" onClick={() => setOpenDrawer(true)}>
+        <button data-onboarding="btn-nuovo-infortunio" className="btn btn-primary btn-sm" onClick={() => setOpenDrawer(true)}>
           + Registra infortunio
         </button>
       </div>

@@ -50,7 +50,7 @@ export default function MedicoVisitePage() {
               <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Visite mediche</h1>
               <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>Agenda visite e idoneità agonistica</p>
             </div>
-            <button className="btn btn-primary btn-sm" onClick={() => setOpenDrawer(true)}>
+            <button data-onboarding="btn-nuova-visita" className="btn btn-primary btn-sm" onClick={() => setOpenDrawer(true)}>
               + Pianifica visita
             </button>
           </div>

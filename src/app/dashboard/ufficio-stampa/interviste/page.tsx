@@ -49,7 +49,7 @@ export default function IntervistePage() {
             Programmazione interviste e impegni con le emittenti
           </p>
         </div>
-        <Link href="/dashboard/ufficio-stampa/interviste/nuova" style={{
+        <Link data-onboarding="btn-nuova-intervista" href="/dashboard/ufficio-stampa/interviste/nuova" style={{
           display: 'inline-flex', alignItems: 'center', gap: 6,
           padding: '9px 16px', background: 'var(--accent)', color: '#0a0a0a',
           fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12,

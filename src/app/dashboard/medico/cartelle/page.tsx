@@ -59,7 +59,7 @@ export default function MedicoCartellePage() {
 
   return (
     <FeatureGate feature="cartelle_cliniche" featureLabel="Cartelle Cliniche">
-    <div style={{ animation: 'fadeIn 0.3s ease' }}>
+    <div data-onboarding="section-cartelle" style={{ animation: 'fadeIn 0.3s ease' }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
           <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>
