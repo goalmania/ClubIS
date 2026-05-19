@@ -54,25 +54,23 @@ export default function TMDistintePage() {
         return
       }
       const clubId = ctxData.clubId
-      const oggi = new Date().toISOString()
 
       const squadreArr: Squadra[] = Array.isArray(sqData) ? sqData : []
-      const sqIds = squadreArr.map(s => s.id)
-      const sqFilter = sqIds.length ? sqIds : ['00000000-0000-0000-0000-000000000000']
       setSquadre(squadreArr)
 
-      const [{ data: club }, { data: pp }, { data: seg }] = await Promise.all([
+      const [{ data: club }, ppData, { data: seg }] = await Promise.all([
         supabase.from('clubs').select('nome').eq('id', clubId).single(),
-        supabase.from('partite').select('id, avversario, data_ora, casa_trasferta, stato, squadra_id').in('squadra_id', sqFilter).gte('data_ora', oggi).order('data_ora').limit(20),
+        fetch('/api/partite').then(r => r.json()).catch(() => []),
         supabase.from('utenti').select('email').eq('club_id', clubId).eq('ruolo', 'segretario').not('email', 'is', null),
       ])
+      const pp = Array.isArray(ppData) ? ppData : []
 
       // /api/giocatori restituisce oggetti piatti con numero_maglia e categoria_eta
       const giocatoriArr: Giocatore[] = Array.isArray(giocatoriData) ? giocatoriData : []
       const staffArr: Staff[] = Array.isArray(staffData) ? staffData : []
 
       setClubNome((club as any)?.nome ?? 'Club')
-      setPartite((pp ?? []) as Partita[])
+      setPartite(pp as Partita[])
       setGiocatori(giocatoriArr)
       setStaff(staffArr)
       setSegreteriaEmails((seg ?? []).map((s: any) => s.email).filter(Boolean))
@@ -83,6 +81,17 @@ export default function TMDistintePage() {
 
   const toggle = (id: string, list: string[], setter: (value: string[]) => void) => {
     setter(list.includes(id) ? list.filter(x => x !== id) : [...list, id])
+  }
+
+  const giocatoriFiltrati = giocatori.filter(g => categoriaFiltro === 'tutti' || getCat(g.categoria_eta) === categoriaFiltro)
+  const tuttiSelezionati = giocatoriFiltrati.length > 0 && giocatoriFiltrati.every(g => convocati.includes(g.id))
+  const selezionaTutti = () => {
+    if (tuttiSelezionati) {
+      setConvocati(prev => prev.filter(id => !giocatoriFiltrati.some(g => g.id === id)))
+    } else {
+      const ids = giocatoriFiltrati.map(g => g.id)
+      setConvocati(prev => Array.from(new Set([...prev, ...ids])))
+    }
   }
 
   const generaPdf = async () => {
@@ -175,7 +184,17 @@ export default function TMDistintePage() {
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 14 }}>
           <div>
-            <label style={labelStyle}>Convocati ({convocati.length})</label>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+              <label style={labelStyle}>Convocati ({convocati.length})</label>
+              <button onClick={selezionaTutti} style={{
+                padding: '2px 8px', borderRadius: 10, fontSize: 10, cursor: 'pointer',
+                border: '1px solid var(--grigio-5)',
+                background: tuttiSelezionati ? 'rgba(200,240,0,0.12)' : 'transparent',
+                color: tuttiSelezionati ? 'var(--accent)' : 'var(--grigio-3)',
+              }}>
+                {tuttiSelezionati ? 'Deseleziona tutti' : 'Seleziona tutti'}
+              </button>
+            </div>
             {/* Filtro categoria giocatori */}
             <div style={{ display: 'flex', gap: 4, marginBottom: 8, flexWrap: 'wrap' }}>
               {(['tutti', 'prima_squadra', 'settore_giovanile', 'scuola_calcio'] as CategoriaTab[]).map(c => (
@@ -190,9 +209,7 @@ export default function TMDistintePage() {
               ))}
             </div>
             <div className="card" style={{ maxHeight: 220, overflow: 'auto', padding: 10 }}>
-              {giocatori
-                .filter(g => categoriaFiltro === 'tutti' || getCat(g.categoria_eta) === categoriaFiltro)
-                .map(g => (
+              {giocatoriFiltrati.map(g => (
                 <label key={g.id} style={{ display: 'flex', gap: 8, fontSize: 13, marginBottom: 6, color: 'var(--text-secondary)' }}>
                   <input type="checkbox" checked={convocati.includes(g.id)} onChange={() => toggle(g.id, convocati, setConvocati)} />
                   #{g.numero_maglia ?? '-'} {g.cognome} {g.nome} ({g.ruolo_principale ?? 'n/d'})
