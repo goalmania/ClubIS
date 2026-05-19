@@ -209,7 +209,7 @@ export default function FornitoriPage() {
           >
             + Movimento
           </button>
-          <button onClick={openNuovo} className="btn btn-primary btn-sm">
+          <button data-onboarding="btn-nuovo-fornitore" onClick={openNuovo} className="btn btn-primary btn-sm">
             + Nuovo
           </button>
         </div>

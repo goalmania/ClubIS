@@ -163,7 +163,7 @@ export default function SqualifichePage() {
           <Link href="/dashboard/allenatore/indisponibili" className="btn btn-ghost btn-sm">
             Vista allenatore
           </Link>
-          <button className="btn btn-primary btn-sm" onClick={() => setModalOpen(true)}>
+          <button data-onboarding="btn-inserisci-squalifica" className="btn btn-primary btn-sm" onClick={() => setModalOpen(true)}>
             + Inserisci squalifica
           </button>
         </div>

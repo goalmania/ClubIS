@@ -11,7 +11,7 @@ export default async function AccreditiPage() {
 
   return (
     <div>
-      <div style={{ marginBottom: 24 }}>
+      <div data-onboarding="section-accrediti" style={{ marginBottom: 24 }}>
         <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>
           Accrediti
         </h1>
