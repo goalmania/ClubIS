@@ -1,9 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { FormField, FormGrid, FormSection, SectionCard, Select, BackButton, Toast } from '@/components/ui'
-import { stagioneCorrente } from '@/lib/helpers'
 
 const ruoliOptions = [
   { value: 'portiere',                label: 'Portiere' },
@@ -34,8 +32,6 @@ const categoriaEtaOptions = [
 
 export default function NuovoGiocatorePage() {
   const router = useRouter()
-  const supabase = createClient()
-
   const [loading, setLoading] = useState(false)
   const [toast, setToast]     = useState<{ msg: string; tipo: 'success' | 'error' } | null>(null)
   const [errori, setErrori]   = useState<Record<string, string>>({})
@@ -113,71 +109,48 @@ export default function NuovoGiocatorePage() {
     setLoading(true)
 
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-      const { data: utente }   = await supabase.from('utenti').select('club_id').eq('id', user!.id).single()
-      if (!utente) throw new Error('Club non trovato')
-
-      // 1 — Inserisci giocatore
-      const { data: giocatore, error: errG } = await supabase
-        .from('giocatori')
-        .insert({
-          club_id:           utente.club_id,
-          nome:              nome.trim(),
-          cognome:           cognome.trim(),
+      const res = await fetch('/api/giocatori', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nome,
+          cognome,
           data_nascita:      dataNascita,
-          luogo_nascita:     luogoNascita.trim() || null,
-          codice_fiscale:    codiceFiscale.trim().toUpperCase(),
-          nazionalita_tipo:  nazionalita,
-          nazionalita_paese: paeseNascita.trim() || 'Italia',
-          ruolo_principale:  ruoloPrincipale || null,
-          ruolo_secondario:  ruoloSecondario || null,
-          piede:             piede,
-          altezza_cm:        altezza ? parseInt(altezza) : null,
-          peso_kg:           peso ? parseInt(peso) : null,
-          email_contatto:    emailContatto.trim() || null,
-          telefono_contatto: telefonoContatto.trim() || null,
+          luogo_nascita:     luogoNascita,
+          codice_fiscale:    codiceFiscale,
+          nazionalita,
+          nazionalita_paese: paeseNascita,
+          ruolo_principale:  ruoloPrincipale,
+          ruolo_secondario:  ruoloSecondario,
+          piede,
+          altezza,
+          peso,
+          email_contatto:    emailContatto,
+          telefono_contatto: telefonoContatto,
           consenso_gdpr:     consensoGdpr,
-          consenso_data:     consensoGdpr ? new Date().toISOString() : null,
           consenso_immagini: consensoImmagini,
-        })
-        .select('id')
-        .single()
+          // Tesseramento
+          squadra_id:        squadraId || null,
+          tipo_tesseramento: tipoTesseramento,
+          data_inizio:       dataInizioTess,
+          numero_maglia:     numeroMaglia,
+          // Famiglia (se minore)
+          nome_genitore:     isMinore ? nomeGenitore     : undefined,
+          cognome_genitore:  isMinore ? cognomeGenitore  : undefined,
+          email_genitore:    isMinore ? emailGenitore    : undefined,
+          telefono_genitore: isMinore ? telefonoGenitore : undefined,
+          relazione_genitore:isMinore ? relazioneGenitore: undefined,
+        }),
+      })
 
-      if (errG) {
-        if (errG.code === '23505') {
+      if (!res.ok) {
+        const data = await res.json()
+        if (data.error === 'DUPLICATE_CF') {
           setErrori({ codiceFiscale: 'Codice fiscale già presente nel sistema' })
           setLoading(false)
           return
         }
-        throw errG
-      }
-
-      const giocatoreId = giocatore!.id
-
-      // 2 — Tesseramento
-      await supabase.from('tesseramenti').insert({
-        giocatore_id:  giocatoreId,
-        club_id:       utente.club_id,
-        squadra_id:    squadraId || null,
-        stagione:      stagioneCorrente(),
-        tipo:          tipoTesseramento,
-        data_inizio:   dataInizioTess,
-        numero_maglia: numeroMaglia ? parseInt(numeroMaglia) : null,
-        stato:         'attivo',
-      })
-
-      // 3 — Famiglia (se minore e dati presenti)
-      if (isMinore && nomeGenitore.trim() && emailGenitore.trim()) {
-        await supabase.from('famiglie').insert({
-          giocatore_id:      giocatoreId,
-          nome:              nomeGenitore.trim(),
-          cognome:           cognomeGenitore.trim(),
-          relazione:         relazioneGenitore,
-          email:             emailGenitore.trim(),
-          telefono:          telefonoGenitore.trim() || null,
-          consenso_dati:     consensoGdpr,
-          consenso_immagini: consensoImmagini,
-        })
+        throw new Error(data.error ?? 'Errore durante il salvataggio')
       }
 
       setToast({ msg: `${nome} ${cognome} aggiunto con successo`, tipo: 'success' })
