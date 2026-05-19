@@ -123,8 +123,8 @@ export async function POST() {
       .from('giocatori').select('id, data_nascita').in('id', ids)
     giocatori = g ?? []
   } else {
-    // Fallback: tutti i giocatori nel DB (nessun tesseramento ancora)
-    const { data: g } = await supabase.from('giocatori').select('id, data_nascita')
+    // Fallback: giocatori del club corrente (nessun tesseramento ancora)
+    const { data: g } = await supabase.from('giocatori').select('id, data_nascita').eq('club_id', clubId)
     giocatori = g ?? []
   }
 

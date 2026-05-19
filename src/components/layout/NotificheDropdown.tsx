@@ -116,7 +116,9 @@ export default function NotificheDropdown({ userId, clubId, initialCount }: Prop
           filter: `destinatario_id=eq.${userId}`,
         },
         (payload) => {
-          const nuova = payload.new as Notifica
+          const nuova = payload.new as Notifica & { club_id?: string }
+          // Scarta notifiche di altri club (il filtro postgres_changes non supporta AND)
+          if ((nuova as any).club_id && (nuova as any).club_id !== clubId) return
           // Aggiorna badge
           setNonLette(prev => prev + 1)
           // Aggiorna lista se aperta
@@ -129,7 +131,7 @@ export default function NotificheDropdown({ userId, clubId, initialCount }: Prop
       .subscribe()
 
     return () => { supabase.removeChannel(channel) }
-  }, [userId, supabase])
+  }, [userId, clubId, supabase])
 
   // ── Chiudi cliccando fuori ─────────────────────────────────────────────
   useEffect(() => {

@@ -60,6 +60,7 @@ export async function PATCH(req: NextRequest) {
       .update({ letta: true })
       .eq('id', body.id)
       .eq('destinatario_id', ctx.userId)
+      .eq('club_id', ctx.clubId)
 
     return Response.json({ ok: true })
   }
@@ -93,6 +94,7 @@ export async function DELETE(req: NextRequest) {
     .delete()
     .eq('id', id)
     .eq('destinatario_id', ctx.userId)
+    .eq('club_id', ctx.clubId)
 
   return Response.json({ ok: true })
 }
