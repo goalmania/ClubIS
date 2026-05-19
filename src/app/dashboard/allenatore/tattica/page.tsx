@@ -290,14 +290,14 @@ export default function TatticaPage() {
     const supabase = createClient()
     if (!clubId) return
     await supabase.from('schemi_tattici').update({ is_default: false }).eq('club_id', clubId)
-    await supabase.from('schemi_tattici').update({ is_default: true }).eq('id', id)
+    await supabase.from('schemi_tattici').update({ is_default: true }).eq('id', id).eq('club_id', clubId!)
     setSchemiSalvati(s => s.map(x => ({ ...x, is_default: x.id === id })))
     setToast({ msg: 'Schema impostato come predefinito', tipo: 'success' })
   }
 
   const eliminaSchema = async (id: string) => {
     const supabase = createClient()
-    await supabase.from('schemi_tattici').delete().eq('id', id)
+    await supabase.from('schemi_tattici').delete().eq('id', id).eq('club_id', clubId!)
     setSchemiSalvati(s => s.filter(x => x.id !== id))
   }
 

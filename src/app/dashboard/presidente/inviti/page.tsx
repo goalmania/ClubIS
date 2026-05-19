@@ -131,7 +131,7 @@ export default function InvitiPage() {
 
   async function revocaInvito(id: string) {
     const supabase = createClient()
-    await supabase.from('inviti_club').delete().eq('id', id)
+    await supabase.from('inviti_club').delete().eq('id', id).eq('club_id', clubId!)
     setInviti(prev => prev.filter(i => i.id !== id))
   }
 

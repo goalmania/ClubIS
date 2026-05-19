@@ -125,13 +125,13 @@ export default function MessaggiPage() {
 
   const fixPost = async (id: string, fissato: boolean | null) => {
     if (!clubId) return
-    await supabase.from('messaggi').update({ fissato: !fissato }).eq('id', id)
+    await supabase.from('messaggi').update({ fissato: !fissato }).eq('id', id).eq('club_id', clubId)
     await reload(clubId)
   }
 
   const eliminaPost = async (id: string) => {
     if (!clubId || !confirm('Eliminare questo post?')) return
-    await supabase.from('messaggi').delete().eq('id', id)
+    await supabase.from('messaggi').delete().eq('id', id).eq('club_id', clubId)
     setMessaggi(prev => prev.filter(m => m.id !== id))
   }
 

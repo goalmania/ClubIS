@@ -25,6 +25,7 @@ type Osservazione = {
 
 type Report = {
   id: string
+  club_id?: string
   nome_giocatore_ext?: string
   club_attuale_ext?: string
   data_osservazione: string
@@ -139,7 +140,7 @@ export default function ProfiloGiocatoreScoutingPage() {
 
   async function saveReport() {
     setSaving(true)
-    await supabase.from('report_scouting').update(editForm).eq('id', id)
+    await supabase.from('report_scouting').update(editForm).eq('id', id).eq('club_id', report!.club_id!)
     await load()
     setSaving(false)
     setEditOpen(false)

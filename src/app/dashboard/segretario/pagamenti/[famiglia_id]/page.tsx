@@ -156,7 +156,7 @@ export default function FamigliaDettaglio() {
       metodo_pagamento: formPagamento.metodo,
       ricevuta_numero: ricevutaNumero,
       note: formPagamento.note || null,
-    }).eq('id', modalRata.id)
+    }).eq('id', modalRata.id).eq('club_id', clubId)
 
     setSavingPagamento(false)
     if (error) { setToast({ msg: 'Errore nel salvataggio', tipo: 'error' }); return }
@@ -204,7 +204,7 @@ export default function FamigliaDettaglio() {
     if (!famiglia || !giocatore || !club) return
 
     // Aggiorna ultimo_sollecito_at
-    await supabase.from('rate_pagamento').update({ ultimo_sollecito_at: new Date().toISOString() }).eq('id', rata.id)
+    await supabase.from('rate_pagamento').update({ ultimo_sollecito_at: new Date().toISOString() }).eq('id', rata.id).eq('club_id', clubId)
 
     const mailto = generaSollecito({
       rata: { id: rata.id, numero_rata: rata.numero_rata, importo: Number(rata.importo), scadenza: rata.scadenza },

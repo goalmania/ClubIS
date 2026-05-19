@@ -112,7 +112,7 @@ export default function IscrizioniPage() {
       await supabase.from('richieste_iscrizione').update({
         stato: 'approvata', giocatore_id: g!.id, famiglia_id: f!.id,
         updated_at: new Date().toISOString(),
-      }).eq('id', r.id)
+      }).eq('id', r.id).eq('club_id', clubId!)
 
       setToast({ msg: `${r.nome} ${r.cognome} approvato/a — giocatore creato`, tipo: 'success' })
       if (clubId) loadData(clubId)
@@ -128,7 +128,7 @@ export default function IscrizioniPage() {
     await supabase.from('richieste_iscrizione').update({
       stato: 'rifiutata', note_segreteria: noteRifiuto,
       updated_at: new Date().toISOString(),
-    }).eq('id', rifiutoId)
+    }).eq('id', rifiutoId).eq('club_id', clubId)
     setRifiutoId(null); setNoteRifiuto('')
     setToast({ msg: 'Richiesta rifiutata', tipo: 'success' })
     loadData(clubId)
@@ -159,7 +159,7 @@ export default function IscrizioniPage() {
 
   const toggleModulo = async (id: string, attivo: boolean) => {
     if (!clubId) return
-    await supabase.from('moduli_iscrizione').update({ attivo: !attivo }).eq('id', id)
+    await supabase.from('moduli_iscrizione').update({ attivo: !attivo }).eq('id', id).eq('club_id', clubId)
     loadData(clubId)
   }
 

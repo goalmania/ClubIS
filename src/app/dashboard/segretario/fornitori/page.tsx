@@ -152,7 +152,7 @@ export default function FornitoriPage() {
 
   const archivia = async (id: string) => {
     if (!clubId || !confirm('Archiviare questo fornitore/cliente?')) return
-    await supabase.from('fornitori_clienti').update({ attivo: false }).eq('id', id)
+    await supabase.from('fornitori_clienti').update({ attivo: false }).eq('id', id).eq('club_id', clubId)
     await reload(clubId)
     if (selected?.id === id) setSelected(null)
   }
@@ -163,7 +163,7 @@ export default function FornitoriPage() {
     setSaveError(null)
     let error
     if (editPag) {
-      ;({ error } = await supabase.from('pagamenti_fornitore').update(pagForm).eq('id', editPag))
+      ;({ error } = await supabase.from('pagamenti_fornitore').update(pagForm).eq('id', editPag).eq('club_id', clubId))
     } else {
       ;({ error } = await supabase.from('pagamenti_fornitore').insert({ ...pagForm, club_id: clubId, fornitore_id: pagFornitore }))
     }
@@ -360,7 +360,7 @@ export default function FornitoriPage() {
                       const newStato = p.stato === 'da_pagare' ? 'pagato' : 'da_pagare'
                       const updates: Record<string, unknown> = { stato: newStato }
                       if (newStato === 'pagato') updates.data_pagamento = new Date().toISOString().split('T')[0]
-                      await supabase.from('pagamenti_fornitore').update(updates).eq('id', p.id)
+                      await supabase.from('pagamenti_fornitore').update(updates).eq('id', p.id).eq('club_id', clubId)
                       if (clubId) await reload(clubId)
                     }}
                     style={{ padding: '4px 8px', background: 'transparent', border: '1px solid var(--border-solid)', borderRadius: 2, color: 'var(--gray)', fontSize: 10, fontFamily: 'var(--font-mono)', cursor: 'pointer' }}

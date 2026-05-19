@@ -125,7 +125,7 @@ export default function ConfigurazioneFinanziariaPage() {
       err = error
     } else if (contoId) {
       if (contoForm.predefinito) await supabase.from('conti_corrente').update({ predefinito: false }).eq('club_id', clubId)
-      const { error } = await supabase.from('conti_corrente').update(contoForm).eq('id', contoId)
+      const { error } = await supabase.from('conti_corrente').update(contoForm).eq('id', contoId).eq('club_id', clubId)
       err = error
     }
 
@@ -142,7 +142,7 @@ export default function ConfigurazioneFinanziariaPage() {
 
   const eliminaConto = async (id: string) => {
     if (!clubId || !confirm('Eliminare questo conto corrente?')) return
-    await supabase.from('conti_corrente').update({ attivo: false }).eq('id', id)
+    await supabase.from('conti_corrente').update({ attivo: false }).eq('id', id).eq('club_id', clubId)
     await reload(clubId)
   }
 
@@ -157,7 +157,7 @@ export default function ConfigurazioneFinanziariaPage() {
       const { error } = await supabase.from('causali_pagamento').insert({ ...causaleForm, club_id: clubId, attivo: true })
       err = error
     } else if (causaleId) {
-      const { error } = await supabase.from('causali_pagamento').update(causaleForm).eq('id', causaleId)
+      const { error } = await supabase.from('causali_pagamento').update(causaleForm).eq('id', causaleId).eq('club_id', clubId)
       err = error
     }
 

@@ -134,7 +134,7 @@ export default function ScontiPage() {
   }
 
   const toggleAttivo = async (s: Sconto) => {
-    await supabase.from('sconti_listino').update({ attivo: !s.attivo }).eq('id', s.id)
+    await supabase.from('sconti_listino').update({ attivo: !s.attivo }).eq('id', s.id).eq('club_id', clubId)
     await carica()
   }
 
