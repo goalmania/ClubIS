@@ -149,7 +149,7 @@ export default function ConvocazioniPage() {
       </div>
 
       {/* Selettore partita */}
-      <div className="card" style={{ padding: '16px 18px', marginBottom: 20 }}>
+      <div className="card" style={{ padding: '16px 18px', marginBottom: 20 }} data-onboarding="btn-nuova-convocazione">
         <label className="label">Partita</label>
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
           <select

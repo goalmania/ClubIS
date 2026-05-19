@@ -48,7 +48,7 @@ export default function PresenzeList({ basePath, nuovoAllenamentoPath, soloMie =
         title="Presenze allenamenti"
         subtitle="Seleziona una sessione per registrare o consultare le presenze"
         actions={nuovoAllenamentoPath ? (
-          <Link href={nuovoAllenamentoPath} className="btn btn-primary btn-sm">+ Nuovo allenamento</Link>
+          <Link href={nuovoAllenamentoPath} className="btn btn-primary btn-sm" data-onboarding="btn-nuova-sessione">+ Nuovo allenamento</Link>
         ) : undefined}
       />
 

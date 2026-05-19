@@ -62,7 +62,7 @@ export default function OsservatoreReportPage() {
             {reports.length} osservazioni totali{mediaVoto ? ` · Voto medio: ${mediaVoto}` : ''}
           </p>
         </div>
-        <Link href="/dashboard/osservatore/nuovo-report" className="btn btn-primary btn-sm">+ Nuovo report</Link>
+        <Link href="/dashboard/osservatore/nuovo-report" className="btn btn-primary btn-sm" data-onboarding="btn-export-pdf">+ Nuovo report</Link>
       </div>
 
       <div className="card" style={{ overflow: 'hidden' }}>

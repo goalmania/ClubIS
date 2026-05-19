@@ -181,7 +181,7 @@ export default function DistintePage() {
                       {distinta ? (
                         <Link href={`/dashboard/segretario/distinte/${p.id}/stampa`} className="btn btn-ghost btn-sm">Vedi</Link>
                       ) : (
-                        <Link href={`/dashboard/segretario/distinte/${p.id}`} className="btn btn-primary btn-sm">Genera distinta</Link>
+                        <Link href={`/dashboard/segretario/distinte/${p.id}`} className="btn btn-primary btn-sm" data-onboarding="btn-genera-distinta">Genera distinta</Link>
                       )}
                     </td>
                   </tr>

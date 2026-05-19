@@ -65,7 +65,7 @@ export default async function TesseramentiPage() {
           <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Tesseramenti</h1>
           <p style={{ fontSize:14, color:'var(--grigio-3)', marginTop:4 }}>{attivi.length} attivi · {archivio.length} archiviati</p>
         </div>
-        <Link href="/dashboard/segretario/giocatori/nuovo" className="btn btn-primary btn-sm">+ Nuovo tesseramento</Link>
+        <Link href="/dashboard/segretario/giocatori/nuovo" className="btn btn-primary btn-sm" data-onboarding="btn-nuovo-tesseramento">+ Nuovo tesseramento</Link>
       </div>
       <div style={{ display:'grid', gridTemplateColumns:'repeat(4, 1fr)', gap:14, marginBottom:24 }}>
         {[

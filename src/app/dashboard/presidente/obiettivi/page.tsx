@@ -175,7 +175,7 @@ export default function ObiettiviPage() {
                 Goal tracking sportivo, economico e strategico
               </p>
             </div>
-            <button className="btn btn-primary btn-sm" onClick={() => apriNuovo()}>+ Nuovo obiettivo</button>
+            <button className="btn btn-primary btn-sm" onClick={() => apriNuovo()} data-onboarding="btn-nuovo-obiettivo">+ Nuovo obiettivo</button>
           </div>
 
           {/* KPI */}

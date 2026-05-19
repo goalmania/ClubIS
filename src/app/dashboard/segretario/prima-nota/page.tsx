@@ -124,7 +124,7 @@ export default function PrimaNotaPage() {
         actions={
           <div style={{ display: 'flex', gap: 10 }}>
             <input type="month" className="input" style={{ width: 160 }} value={mese} onChange={e => setMese(e.target.value)} />
-            <button className="btn btn-primary btn-sm" onClick={() => setShowForm(!showForm)}>
+            <button className="btn btn-primary btn-sm" onClick={() => setShowForm(!showForm)} data-onboarding="btn-nuova-entrata">
               {showForm ? 'Chiudi' : '+ Movimento'}
             </button>
           </div>

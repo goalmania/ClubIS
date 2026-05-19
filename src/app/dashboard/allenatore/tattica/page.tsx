@@ -320,7 +320,7 @@ export default function TatticaPage() {
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 260px', gap: 20 }}>
         {/* Campo SVG */}
-        <div style={{
+        <div data-onboarding="campo-tattico" style={{
           position: 'relative', aspectRatio: '7/10', maxHeight: 680,
           background: 'linear-gradient(180deg, #1a4d2e 0%, #0f3d22 100%)',
           borderRadius: 12, border: '2px solid var(--border)', overflow: 'hidden',

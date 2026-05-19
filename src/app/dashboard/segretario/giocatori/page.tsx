@@ -87,7 +87,7 @@ export default function GiocatoriPage() {
           <Link href="/dashboard/segretario/import" className="btn btn-secondary btn-sm">
             ↑ Importa CSV
           </Link>
-          <Link href="/dashboard/segretario/giocatori/nuovo" className="btn btn-primary btn-sm">
+          <Link href="/dashboard/segretario/giocatori/nuovo" className="btn btn-primary btn-sm" data-onboarding="btn-aggiungi-giocatore">
             + Aggiungi giocatore
           </Link>
         </div>
