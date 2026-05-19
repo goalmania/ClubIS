@@ -279,7 +279,7 @@ export default function ComplianceCampionatoPage() {
           )}
 
           {/* Barra di progresso */}
-          <div className="card" style={{ padding: '18px 24px', marginBottom: 24 }}>
+          <div className="card" data-onboarding="section-compliance" style={{ padding: '18px 24px', marginBottom: 24 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
               <div style={{ fontWeight: 700, fontSize: 15 }}>
                 {soddisfatti}/{tutti} requisiti soddisfatti

@@ -150,14 +150,13 @@ export default function OnboardingTooltip() {
     zIndex: 9999,
     width: 340,
     maxWidth: 'calc(100vw - 32px)',
-    background: '#0f1923',
-    border: '1px solid rgba(200,240,0,0.3)',
+    background: '#000',
+    border: '1px solid rgba(200,240,0,0.4)',
     borderRadius: 16,
-    boxShadow: '0 24px 64px rgba(0,0,0,0.7)',
     padding: '18px 20px 14px',
     opacity: visible ? 1 : 0,
-    transform: visible ? 'translateY(0)' : 'translateY(8px)',
-    transition: 'opacity 0.22s ease, transform 0.22s ease',
+    transform: visible ? 'translateY(0) scale(1)' : 'translateY(10px) scale(0.97)',
+    transition: 'opacity 0.25s ease, transform 0.25s cubic-bezier(0.34,1.56,0.64,1)',
     ...(phase === 'problem' ? { bottom: 24, right: 24 } : guideStyle),
   }
 
@@ -191,8 +190,8 @@ export default function OnboardingTooltip() {
         >
           <div
             style={{
-              background: '#0f1923',
-              border: '1px solid rgba(200,240,0,0.3)',
+              background: '#000',
+              border: '1px solid rgba(200,240,0,0.4)',
               borderRadius: 16,
               padding: '28px 32px',
               width: 340,
@@ -243,7 +242,7 @@ export default function OnboardingTooltip() {
       )}
 
       {/* Tooltip card */}
-      <div ref={tooltipRef} style={tooltipStyle}>
+      <div ref={tooltipRef} className="onboarding-tooltip-card" style={tooltipStyle}>
         {/* Progress bar */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
           <div

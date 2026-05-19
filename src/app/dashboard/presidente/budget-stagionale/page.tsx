@@ -635,7 +635,7 @@ export default function BudgetStagionalePage() {
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <span style={{ fontFamily: 'var(--font-mono)', fontSize: 13, color: 'var(--verde)', fontWeight: 700 }}>{fmt(totEntratePrev)}</span>
                 {canEdit && !addingE && !editIdE && (
-                  <button className="btn btn-primary btn-sm" onClick={() => setAddingE(true)}>+ Aggiungi</button>
+                  <button className="btn btn-primary btn-sm" onClick={() => setAddingE(true)} data-onboarding="btn-aggiungi-budget-entrata">+ Aggiungi</button>
                 )}
               </div>
             </div>

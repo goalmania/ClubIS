@@ -97,7 +97,7 @@ export default function PresidenteFinanzePage() {
         <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Finanze</h1>
         <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>Ultimi 6 mesi</p>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 28 }}>
+      <div data-onboarding="section-rendiconto" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 28 }}>
         {[
           { l: 'Entrate totali',   v: fmt(totEntrate),     c: 'var(--verde)' },
           { l: 'Uscite totali',    v: fmt(totUscite),      c: 'var(--rosso)' },

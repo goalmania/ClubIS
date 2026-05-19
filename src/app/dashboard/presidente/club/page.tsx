@@ -274,7 +274,7 @@ export default function InfoClubPage() {
                 </button>
               </>
             ) : (
-              <button onClick={() => setEditing(true)} className="btn btn-secondary btn-sm">Modifica</button>
+              <button onClick={() => setEditing(true)} className="btn btn-secondary btn-sm" data-onboarding="btn-modifica-club">Modifica</button>
             )}
           </div>
         )}
