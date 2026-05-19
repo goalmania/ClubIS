@@ -274,7 +274,7 @@ export default function ModuliFIGCPage() {
   if (loading) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--grigio-4)' }}>Caricamento...</div>
 
   return (
-    <div>
+    <div data-onboarding="section-moduli-figc">
       <PageHeader
         title="Moduli FIGC"
         subtitle="Genera e stampa i moduli ufficiali federali"

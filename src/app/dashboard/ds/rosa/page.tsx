@@ -58,7 +58,7 @@ export default async function DSRosaPage() {
           <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Gestione rosa</h1>
           <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>{tesserati?.length ?? 0} giocatori tesserati</p>
         </div>
-        <Link href="/dashboard/segretario/giocatori/nuovo" className="btn btn-primary btn-sm">+ Aggiungi giocatore</Link>
+        <Link data-onboarding="btn-aggiungi-giocatore-ds" href="/dashboard/segretario/giocatori/nuovo" className="btn btn-primary btn-sm">+ Aggiungi giocatore</Link>
       </div>
 
       {/* KPI rosa */}

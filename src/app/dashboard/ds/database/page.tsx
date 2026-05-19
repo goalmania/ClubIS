@@ -41,7 +41,7 @@ async function DSDatabaseContent() {
             {lista.length} profili unici da {reports?.length ?? 0} osservazioni totali
           </p>
         </div>
-        <Link href="/dashboard/ds/scouting/nuovo" className="btn btn-primary btn-sm">+ Nuova osservazione</Link>
+        <Link data-onboarding="btn-nuova-osservazione-db" href="/dashboard/ds/scouting/nuovo" className="btn btn-primary btn-sm">+ Nuova osservazione</Link>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 24 }}>
         {[

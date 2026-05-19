@@ -167,7 +167,7 @@ export default async function DSStatistichePage() {
   )
 
   return (
-    <div style={{ animation: 'fadeIn 0.3s ease' }}>
+    <div data-onboarding="section-statistiche-ds" style={{ animation: 'fadeIn 0.3s ease' }}>
       <div style={{ marginBottom: 24 }}>
         <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Statistiche DS</h1>
         <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>

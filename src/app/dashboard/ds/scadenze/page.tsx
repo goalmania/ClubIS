@@ -33,7 +33,7 @@ export default async function DSScadenzePage() {
   }
   const totale = (contratti?.length ?? 0) + (certificati?.length ?? 0) + (tesseramentiScad?.length ?? 0)
   return (
-    <div>
+    <div data-onboarding="section-scadenze-ds">
       <div style={{ marginBottom: 24 }}>
         <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Scadenze</h1>
         <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>{totale} scadenze nei prossimi 90 giorni</p>

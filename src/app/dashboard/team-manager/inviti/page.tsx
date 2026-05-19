@@ -132,7 +132,7 @@ export default function InvitiPage() {
   return (
     <div>
       {/* Header */}
-      <div style={{ marginBottom: 28 }}>
+      <div data-onboarding="section-inviti-staff" style={{ marginBottom: 28 }}>
         <div style={{
           fontFamily: 'var(--font-display)', fontWeight: 900,
           textTransform: 'uppercase', fontSize: 26, letterSpacing: '0.04em',

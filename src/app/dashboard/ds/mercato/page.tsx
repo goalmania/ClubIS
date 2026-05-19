@@ -179,7 +179,7 @@ export default function DSMercatoPage() {
           <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Mercato</h1>
           <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>Pipeline trattative</p>
         </div>
-        <button className="btn btn-primary btn-sm" onClick={() => setOpenDrawer(true)}>
+        <button data-onboarding="btn-nuova-trattativa" className="btn btn-primary btn-sm" onClick={() => setOpenDrawer(true)}>
           + Nuova trattativa
         </button>
       </div>
