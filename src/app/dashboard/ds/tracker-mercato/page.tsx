@@ -147,7 +147,7 @@ export default function TrackerMercatoDS() {
 
   return (
     <FeatureGate feature="trattative_mercato" featureLabel="Tracker Movimenti Mercato">
-        <div style={{ padding: '28px 32px', maxWidth: 1100, animation: 'fadeIn .3s ease' }}>
+        <div data-onboarding="section-tracker-mercato" style={{ padding: '28px 32px', maxWidth: 1100, animation: 'fadeIn .3s ease' }}>
 
           {/* header */}
           <div style={{ marginBottom: 28 }}>

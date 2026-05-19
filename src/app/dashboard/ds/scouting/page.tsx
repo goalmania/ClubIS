@@ -40,7 +40,7 @@ export default async function DSScoutingPage() {
             {report?.length ?? 0} report totali · {inValutazione.length} in valutazione · {ingaggiati.length} ingaggiati
           </p>
         </div>
-        <Link href="/dashboard/ds/scouting/nuovo" className="btn btn-primary btn-sm">+ Nuovo report</Link>
+        <Link data-onboarding="btn-nuovo-report-scouting" href="/dashboard/ds/scouting/nuovo" className="btn btn-primary btn-sm">+ Nuovo report</Link>
       </div>
 
       <div className="card" style={{ overflow: 'hidden' }}>

@@ -117,7 +117,7 @@ export default function BudgetMercatoDS() {
 
   return (
     <FeatureGate feature="budget_mercato_ds" featureLabel="Budget Mercato DS">
-        <div style={{ padding: '28px 32px', maxWidth: 1000, animation: 'fadeIn .3s ease' }}>
+        <div data-onboarding="section-budget-mercato" style={{ padding: '28px 32px', maxWidth: 1000, animation: 'fadeIn .3s ease' }}>
 
           {/* header */}
           <div style={{ marginBottom: 28 }}>

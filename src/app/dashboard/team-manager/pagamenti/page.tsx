@@ -169,7 +169,7 @@ export default function TeamManagerPagamentiPage() {
             Prima nota club — entrate e uscite condivise con presidenza e segreteria
           </p>
         </div>
-        <button className="btn btn-primary btn-sm" onClick={() => setOpenTemplate(true)}>
+        <button data-onboarding="btn-nuovo-movimento-tm" className="btn btn-primary btn-sm" onClick={() => setOpenTemplate(true)}>
           + Nuovo movimento
         </button>
       </div>
