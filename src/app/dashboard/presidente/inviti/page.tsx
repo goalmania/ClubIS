@@ -1,6 +1,5 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { createClient } from '@/lib/supabase/client'
 
 const RUOLI_STAFF = [
   { ruolo: 'segretario',    label: 'Segretario',          icona: '📋' },
@@ -42,33 +41,13 @@ export default function InvitiPage() {
   useEffect(() => {
     let mounted = true
     async function load() {
-      const supabase = createClient()
-      const { data: me } = await supabase.auth.getUser()
-      if (!me.user) return
-
-      const { data: utente } = await supabase
-        .from('utenti').select('club_id').eq('id', me.user.id).maybeSingle()
-      if (!utente?.club_id) return
-
-      setClubId(utente.club_id)
-
-      const [invitiRes, giocRes] = await Promise.all([
-        supabase
-          .from('inviti_club')
-          .select('id, ruolo, token, usato, scadenza, created_at, giocatore_id')
-          .eq('club_id', utente.club_id)
-          .order('created_at', { ascending: false }),
-        supabase
-          .from('giocatori')
-          .select('id, nome, cognome')
-          .eq('club_id', utente.club_id)
-          .eq('attivo', true)
-          .order('cognome'),
-      ])
-
+      const res = await fetch('/api/inviti')
+      if (!res.ok) return
+      const data = await res.json()
       if (mounted) {
-        setInviti(invitiRes.data ?? [])
-        setGiocatori(giocRes.data ?? [])
+        setClubId(data.clubId)
+        setInviti(data.inviti ?? [])
+        setGiocatori(data.giocatori ?? [])
         setLoading(false)
       }
     }
@@ -130,8 +109,7 @@ export default function InvitiPage() {
   }
 
   async function revocaInvito(id: string) {
-    const supabase = createClient()
-    await supabase.from('inviti_club').delete().eq('id', id).eq('club_id', clubId!)
+    await fetch(`/api/inviti/${id}`, { method: 'DELETE' })
     setInviti(prev => prev.filter(i => i.id !== id))
   }
 
