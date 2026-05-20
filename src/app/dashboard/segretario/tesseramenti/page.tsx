@@ -11,20 +11,12 @@ export default async function TesseramentiPage() {
 
   const supabase = createAdminClient()
 
-  const { data: squadreFiltrate } = await supabase
-    .from('squadre')
-    .select('id')
+  // Recupera tutti i tesseramenti del club, inclusi quelli senza squadra assegnata
+  const { data: tesseramenti } = await supabase
+    .from('tesseramenti')
+    .select('id, stagione, tipo, stato, data_inizio, data_fine, numero_maglia, giocatori ( id, nome, cognome, data_nascita, ruolo_principale, codice_fiscale, nazionalita_tipo ), squadre ( nome )')
     .eq('club_id', clubId)
-    .in('categoria_eta', ['prima_squadra', 'juniores'])
-  const squadraIds = (squadreFiltrate ?? []).map((s: any) => s.id)
-
-  const { data: tesseramenti } = squadraIds.length > 0
-    ? await supabase
-        .from('tesseramenti')
-        .select('id, stagione, tipo, stato, data_inizio, data_fine, numero_maglia, giocatori ( id, nome, cognome, data_nascita, ruolo_principale, codice_fiscale, nazionalita_tipo ), squadre ( nome )')
-        .in('squadra_id', squadraIds)
-        .order('giocatori(cognome)')
-    : { data: [] }
+    .order('stato')
 
   const attivi  = tesseramenti?.filter(t => t.stato === 'attivo')  ?? []
   const archivio = tesseramenti?.filter(t => t.stato !== 'attivo') ?? []
