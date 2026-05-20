@@ -4,8 +4,6 @@ import { GiocatoreConTesseramento } from '@/types/database'
 import Link from 'next/link'
 import { matchSearch } from '@/lib/search'
 
-type Squadra = { id: string; nome: string; categoria_eta: string }
-
 const ruoloLabel: Record<string, string> = {
   portiere: 'POR', difensore_centrale: 'DC', terzino: 'TRZ',
   centrocampista_difensivo: 'CDM', centrocampista: 'CEN',
@@ -29,71 +27,42 @@ const TABS: { key: CategoriaTab; label: string }[] = [
   { key: 'scuola_calcio', label: 'Scuola Calcio' },
 ]
 
-function getCategoria(categoriaEta: string | null | undefined, dataNascita?: string | null): CategoriaTab {
-  if (categoriaEta) {
-    if (PRIMA_SQUADRA.includes(categoriaEta)) return 'prima_squadra'
-    if (SETTORE_GIOV.includes(categoriaEta)) return 'giovanili'
-    return 'scuola_calcio'
-  }
-  // Nessuna squadra assegnata → categorizza per età
-  if (dataNascita) {
-    const oggi = new Date()
-    const d = new Date(dataNascita)
-    let eta = oggi.getFullYear() - d.getFullYear()
-    if (oggi.getMonth() < d.getMonth() || (oggi.getMonth() === d.getMonth() && oggi.getDate() < d.getDate())) eta--
-    if (eta >= 20) return 'prima_squadra'
-    if (eta >= 14) return 'giovanili'
-    return 'scuola_calcio'
-  }
-  return 'prima_squadra'
+function getCategoria(categoriaEta: string | null | undefined): CategoriaTab {
+  if (!categoriaEta) return 'scuola_calcio'
+  if (PRIMA_SQUADRA.includes(categoriaEta)) return 'prima_squadra'
+  if (SETTORE_GIOV.includes(categoriaEta)) return 'giovanili'
+  return 'scuola_calcio'
 }
 
 export default function GiocatoriPage() {
   const [giocatori, setGiocatori] = useState<any[]>([])
-  const [squadre, setSquadre] = useState<Squadra[]>([])
   const [filtro, setFiltro] = useState('')
   const [ruoloFiltro, setRuoloFiltro] = useState('')
   const [categoriaTab, setCategoriaTab] = useState<CategoriaTab>('tutti')
   const [loading, setLoading] = useState(true)
-  const [spostando, setSpostando] = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
-      const [resG, resS] = await Promise.all([
-        fetch('/api/giocatori/lista'),
-        fetch('/api/squadre'),
-      ])
-      if (resG.ok) setGiocatori(await resG.json() ?? [])
-      if (resS.ok) setSquadre(await resS.json() ?? [])
+      const res = await fetch('/api/giocatori/lista')
+      if (!res.ok) { setLoading(false); return }
+      const data = await res.json()
+      setGiocatori(data ?? [])
       setLoading(false)
     }
     load()
   }, [])
-
-  async function spostaSquadra(tesseramentoId: string, squadraId: string | null) {
-    setSpostando(tesseramentoId)
-    await fetch(`/api/tesseramenti/${tesseramentoId}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ squadra_id: squadraId || null }),
-    })
-    // Ricarica lista aggiornata
-    const res = await fetch('/api/giocatori/lista')
-    if (res.ok) setGiocatori(await res.json() ?? [])
-    setSpostando(null)
-  }
 
   const filtered = giocatori.filter(t => {
     const g = t.giocatori
     if (!g) return false
     const nomeMatch = !filtro || matchSearch(filtro, g.nome, g.cognome)
     const ruoloMatch = ruoloFiltro === '' || g.ruolo_principale === ruoloFiltro
-    const tabMatch = categoriaTab === 'tutti' || getCategoria(t.squadre?.categoria_eta, g.data_nascita) === categoriaTab
+    const tabMatch = categoriaTab === 'tutti' || getCategoria(t.squadre?.categoria_eta) === categoriaTab
     return nomeMatch && ruoloMatch && tabMatch
   })
 
   const countByTab = (tab: CategoriaTab) =>
-    tab === 'tutti' ? giocatori.length : giocatori.filter(t => getCategoria(t.squadre?.categoria_eta, t.giocatori?.data_nascita) === tab).length
+    tab === 'tutti' ? giocatori.length : giocatori.filter(t => getCategoria(t.squadre?.categoria_eta) === tab).length
 
   const calcolaEta = (nascita: string) => {
     const oggi = new Date()
@@ -118,7 +87,7 @@ export default function GiocatoriPage() {
           <Link href="/dashboard/segretario/import" className="btn btn-secondary btn-sm">
             ↑ Importa CSV
           </Link>
-          <Link href="/dashboard/segretario/giocatori/nuovo" className="btn btn-primary btn-sm" data-onboarding="btn-aggiungi-giocatore">
+          <Link href="/dashboard/segretario/giocatori/nuovo" className="btn btn-primary btn-sm">
             + Aggiungi giocatore
           </Link>
         </div>
@@ -269,23 +238,8 @@ export default function GiocatoriPage() {
                           {g.nazionalita_tipo?.toUpperCase().slice(0, 3) ?? '—'}
                         </span>
                       </td>
-                      <td>
-                        <select
-                          value={t.squadra_id ?? ''}
-                          disabled={spostando === t.id}
-                          onChange={e => spostaSquadra(t.id, e.target.value || null)}
-                          style={{
-                            background: 'var(--gray-mid)', color: 'var(--white)',
-                            border: '1px solid var(--border)', borderRadius: 2,
-                            fontSize: 12, padding: '3px 6px', cursor: 'pointer',
-                            opacity: spostando === t.id ? 0.5 : 1,
-                          }}
-                        >
-                          <option value="">— non assegnato —</option>
-                          {squadre.map(s => (
-                            <option key={s.id} value={s.id}>{s.nome}</option>
-                          ))}
-                        </select>
+                      <td style={{ fontSize: 13, color: 'var(--grigio-3)' }}>
+                        {t.squadre?.nome ?? '—'}
                       </td>
                       <td>
                         <span className="badge badge-grigio" style={{ fontSize: 11 }}>{t.tipo}</span>

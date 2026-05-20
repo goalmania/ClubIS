@@ -236,7 +236,7 @@ export default function RosaFIGCPage() {
   if (loading) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--grigio-4)' }}>Caricamento rosa...</div>
 
   return (
-    <div data-onboarding="campo-figc">
+    <div>
       <PageHeader
         title="Rosa FIGC"
         subtitle={`${club?.nome ?? ''}${club?.figc_codice ? ` — Cod. FIGC: ${club.figc_codice}` : ''}`}

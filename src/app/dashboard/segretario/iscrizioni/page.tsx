@@ -100,7 +100,6 @@ export default function IscrizioniPage() {
       // 3. Crea famiglia
       const { data: f, error: fErr } = await supabase.from('famiglie').insert({
         giocatore_id: g!.id,
-        club_id: clubId,
         nome: r.genitore_nome, cognome: r.genitore_cognome,
         email: r.genitore_email, telefono: r.genitore_telefono,
         relazione: r.relazione ?? 'genitore',

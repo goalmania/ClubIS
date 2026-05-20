@@ -11,12 +11,20 @@ export default async function TesseramentiPage() {
 
   const supabase = createAdminClient()
 
-  // Recupera tutti i tesseramenti del club, inclusi quelli senza squadra assegnata
-  const { data: tesseramenti } = await supabase
-    .from('tesseramenti')
-    .select('id, stagione, tipo, stato, data_inizio, data_fine, numero_maglia, giocatori ( id, nome, cognome, data_nascita, ruolo_principale, codice_fiscale, nazionalita_tipo ), squadre ( nome )')
+  const { data: squadreFiltrate } = await supabase
+    .from('squadre')
+    .select('id')
     .eq('club_id', clubId)
-    .order('stato')
+    .in('categoria_eta', ['prima_squadra', 'juniores'])
+  const squadraIds = (squadreFiltrate ?? []).map((s: any) => s.id)
+
+  const { data: tesseramenti } = squadraIds.length > 0
+    ? await supabase
+        .from('tesseramenti')
+        .select('id, stagione, tipo, stato, data_inizio, data_fine, numero_maglia, giocatori ( id, nome, cognome, data_nascita, ruolo_principale, codice_fiscale, nazionalita_tipo ), squadre ( nome )')
+        .in('squadra_id', squadraIds)
+        .order('giocatori(cognome)')
+    : { data: [] }
 
   const attivi  = tesseramenti?.filter(t => t.stato === 'attivo')  ?? []
   const archivio = tesseramenti?.filter(t => t.stato !== 'attivo') ?? []
@@ -57,7 +65,7 @@ export default async function TesseramentiPage() {
           <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Tesseramenti</h1>
           <p style={{ fontSize:14, color:'var(--grigio-3)', marginTop:4 }}>{attivi.length} attivi · {archivio.length} archiviati</p>
         </div>
-        <Link href="/dashboard/segretario/giocatori/nuovo" className="btn btn-primary btn-sm" data-onboarding="btn-nuovo-tesseramento">+ Nuovo tesseramento</Link>
+        <Link href="/dashboard/segretario/giocatori/nuovo" className="btn btn-primary btn-sm">+ Nuovo tesseramento</Link>
       </div>
       <div style={{ display:'grid', gridTemplateColumns:'repeat(4, 1fr)', gap:14, marginBottom:24 }}>
         {[

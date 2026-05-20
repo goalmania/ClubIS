@@ -100,7 +100,7 @@ export default async function OrganigrammaPage() {
           </p>
         </div>
         {canEdit && (
-          <Link href="/dashboard/presidente/organigramma/modifica" className="btn btn-secondary btn-sm" data-onboarding="btn-modifica-organigramma">
+          <Link href="/dashboard/presidente/organigramma/modifica" className="btn btn-secondary btn-sm">
             Modifica organigramma
           </Link>
         )}

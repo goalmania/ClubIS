@@ -8,7 +8,7 @@ export default async function TeamManagerAccreditiPage() {
   if (ctx.ruolo !== 'team_manager' && !ctx.isSuperAdmin) redirect('/dashboard')
 
   return (
-    <div data-onboarding="section-accrediti-tm">
+    <div>
       <div style={{ marginBottom: 24 }}>
         <h1 style={{
           fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900,

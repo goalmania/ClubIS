@@ -1,12 +1,10 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getUserContext } from '@/lib/impersonation'
 
-// Genera un codice fiscale placeholder univoco ≤ 16 caratteri (limite VARCHAR(16))
-// Combina timestamp + 4 cifre random per evitare collisioni su insert batch
+// Genera un codice fiscale placeholder ≤ 16 caratteri (limite VARCHAR(16))
+// Formato: "XX" + ultimi 14 caratteri del timestamp → es. "XX46134567890123" (16 chars)
 function cfPlaceholder(): string {
-  const ts = String(Date.now()).slice(-10)
-  const rnd = String(Math.floor(Math.random() * 9000) + 1000)
-  return `XX${ts}${rnd}` // 2 + 10 + 4 = 16 chars
+  return `XX${String(Date.now()).slice(-14)}`
 }
 
 // Normalizza un valore enum: lowercase + gestione alias italiani
@@ -232,56 +230,38 @@ export async function POST(req: Request, { params }: { params: { tipo: string } 
         risultati.importati++
       } catch (e: unknown) {
         const msg = e instanceof Error ? e.message : String(e)
-        console.error('[import/giocatori] riga fallita:', r.cognome, r.nome, '→', msg)
-        risultati.errori.push(`Riga ${r.cognome} ${r.nome}: ${msg}`)
+        risultati.errori.push(`${r.cognome} ${r.nome}: ${msg}`)
       }
     }
   }
 
   if (params.tipo === 'movimenti') {
-    if (!clubId) return Response.json({ error: 'club_id mancante' }, { status: 400 })
     const dateImportate: string[] = []
     for (const r of righe as Record<string, unknown>[]) {
       try {
-        const tipoMov = String(r.tipo ?? '').toLowerCase().trim()
+        const tipo = String(r.tipo ?? '').toLowerCase().trim()
         const dataStr = String(r.data ?? '')
-        const descrizioneBase = String(r.descrizione ?? '').trim()
-        const descrizione = r.note
-          ? `${descrizioneBase} — ${String(r.note)}`.slice(0, 255)
-          : descrizioneBase
-
-        if (!dataStr) throw new Error('data mancante')
-        if (!tipoMov)  throw new Error('tipo mancante (entrata/uscita)')
-        if (!descrizione) throw new Error('descrizione mancante')
-
-        const payload: Record<string, unknown> = {
+        const { error } = await supabase.from('prima_nota').insert({
           club_id:     clubId,
-          tipo:        tipoMov === 'entrata' ? 'entrata' : 'uscita',
+          tipo:        tipo === 'entrata' ? 'entrata' : 'uscita',
           categoria:   normCategoria(String(r.categoria ?? '')),
           importo:     Number(r.importo),
-          data:        dataStr,
-          descrizione,
-          stornato:    false,
-          sorgente:    'import',
-        }
-        if (r.controparte) payload.controparte = String(r.controparte)
-
-        const { error } = await supabase.from('prima_nota').insert(payload)
-        if (error) {
-          console.error('[import/movimenti] insert error:', error.message, '| payload:', JSON.stringify(payload))
-          throw new Error(error.message)
-        }
+          data:        dataStr || null,
+          descrizione: String(r.descrizione ?? ''),
+          controparte: r.controparte ? String(r.controparte) : null,
+          ...(r.note ? { descrizione: `${String(r.descrizione ?? '')} — ${String(r.note)}`.slice(0, 255) } : {}),
+        })
+        if (error) throw new Error(error.message)
         if (dataStr) dateImportate.push(dataStr)
         risultati.importati++
       } catch (e: unknown) {
         const msg = e instanceof Error ? e.message : String(e)
-        console.error('[import/movimenti] riga fallita:', r.data, r.descrizione, '→', msg)
-        risultati.errori.push(`Riga ${r.data} — ${r.descrizione}: ${msg}`)
+        risultati.errori.push(`Riga ${r.data} ${r.descrizione}: ${msg}`)
       }
     }
     if (dateImportate.length) {
       dateImportate.sort()
-      risultati.periodo_min = dateImportate[0].slice(0, 7)
+      risultati.periodo_min = dateImportate[0].slice(0, 7)   // YYYY-MM
       risultati.periodo_max = dateImportate[dateImportate.length - 1].slice(0, 7)
     }
   }
@@ -356,7 +336,6 @@ export async function POST(req: Request, { params }: { params: { tipo: string } 
           .from('famiglie')
           .insert({
             giocatore_id: giocatoreId,
-            club_id:      clubId,
             cognome:      r.cognome,
             nome:         r.nome,
             relazione:    String(r.relazione ?? 'genitore').toLowerCase(),

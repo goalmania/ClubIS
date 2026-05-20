@@ -17,18 +17,25 @@ export async function GET() {
 
   const admin = createAdminClient()
 
+  const { data: squadreFiltrate } = await admin
+    .from('squadre')
+    .select('id')
+    .eq('club_id', clubId)
+    .in('categoria_eta', ['prima_squadra', 'juniores'])
+  const squadraIds = (squadreFiltrate ?? []).map((s: any) => s.id)
+
+  if (squadraIds.length === 0) return Response.json([], { status: 200 })
+
   const FIELDS = `
     id, numero_maglia, tipo, squadra_id, stato,
     giocatori ( id, nome, cognome, data_nascita, ruolo_principale, piede, nazionalita_tipo, foto_url ),
     squadre ( nome, categoria_eta )
   `
 
-  // Recupera tutti i tesseramenti attivi del club, inclusi quelli senza squadra assegnata
-  // (i giocatori importati da CSV hanno squadra_id = null finché non vengono assegnati)
   const { data: tesseramenti } = await admin
     .from('tesseramenti')
     .select(FIELDS)
-    .eq('club_id', clubId)
+    .in('squadra_id', squadraIds)
     .eq('stato', 'attivo')
 
   return Response.json(tesseramenti ?? [])

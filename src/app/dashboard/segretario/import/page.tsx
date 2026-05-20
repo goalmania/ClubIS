@@ -1,5 +1,5 @@
 'use client'
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import { parseCSV } from '@/lib/import/csv-parser'
 import { SCHEMA_GIOCATORI, SCHEMA_MOVIMENTI, SCHEMA_FAMIGLIE } from '@/lib/import/schemas'
 import { PageHeader, Toast } from '@/components/ui'
@@ -24,7 +24,13 @@ const TIPI_IMPORT = [
     icon: '💰',
     schema: SCHEMA_MOVIMENTI,
     colonne: 'data (GG/MM/AAAA) · tipo (entrata / uscita) · categoria (Quote Associative / Sponsor / Affitto Impianti / Trasferte / Arbitraggi / Utenze / Divise / Attrezzatura Sportiva / Donazioni / Formazione / Comunicazioni / Tornei) · importo · descrizione · controparte · note',
-    template: null as unknown as string, // calcolato dinamicamente in componente
+    template: [
+      'data,tipo,categoria,importo,descrizione,controparte,note',
+      '03/01/2025,entrata,Quote Associative,150.00,Quota mensile gennaio,Rossi Mario,Pagamento puntuale',
+      '05/01/2025,uscita,Affitto Impianti,800.00,Affitto campo sportivo comunale gennaio,Comune,Contratto annuale rinnovato',
+      '10/01/2025,entrata,Sponsor,500.00,Sponsorizzazione maglia - logo laterale,Bar Centrale,Accordo semestrale',
+      '15/01/2025,uscita,Arbitraggi,90.00,Compenso arbitro gara casalinga,AIA Sezione Bari,Liquidazione immediata',
+    ].join('\n'),
   },
   {
     key: 'famiglie',
@@ -43,23 +49,6 @@ const TIPI_IMPORT = [
 
 export default function ImportPage() {
   const [tipoSel, setTipoSel] = useState('giocatori')
-
-  // Template movimenti con date dell'anno corrente
-  const templateMovimenti = useMemo(() => {
-    const y = new Date().getFullYear()
-    const m = String(new Date().getMonth() + 1).padStart(2, '0')
-    return [
-      'data,tipo,categoria,importo,descrizione,controparte,note',
-      `03/${m}/${y},entrata,Quote Associative,150.00,Quota mensile,Rossi Mario,`,
-      `05/${m}/${y},uscita,Affitto Impianti,800.00,Affitto campo sportivo,Comune,`,
-      `10/${m}/${y},entrata,Sponsor,500.00,Sponsorizzazione maglia,Bar Centrale,`,
-      `15/${m}/${y},uscita,Arbitraggi,90.00,Compenso arbitro,AIA Sezione Bari,`,
-    ].join('\n')
-  }, [])
-
-  const TIPI_IMPORT_EFFETTIVI = TIPI_IMPORT.map(t =>
-    t.key === 'movimenti' ? { ...t, template: templateMovimenti } : t
-  )
   const [testo, setTesto] = useState('')
   const [file, setFile] = useState<File | null>(null)
   const [preview, setPreview] = useState<ReturnType<typeof parseCSV> | null>(null)
@@ -67,7 +56,7 @@ export default function ImportPage() {
   const [risultato, setRisultato] = useState<{ importati: number; saltati: number; errori: string[]; periodo_min?: string; periodo_max?: string } | null>(null)
   const [toast, setToast] = useState<{ msg: string; tipo: 'success' | 'error' } | null>(null)
 
-  const tipo = TIPI_IMPORT_EFFETTIVI.find(t => t.key === tipoSel)!
+  const tipo = TIPI_IMPORT.find(t => t.key === tipoSel)!
 
   const analizzaPreview = (txt: string) => {
     if (txt.trim().length < 10) return
@@ -130,7 +119,7 @@ export default function ImportPage() {
 
       {/* Selezione tipo */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12, marginBottom: 24 }}>
-        {TIPI_IMPORT_EFFETTIVI.map(t => (
+        {TIPI_IMPORT.map(t => (
           <div
             key={t.key}
             onClick={() => cambioTipo(t.key)}
@@ -376,24 +365,8 @@ export default function ImportPage() {
           )}
 
           {risultato.errori?.length > 0 && (
-            <div style={{ marginTop: 12 }}>
-              <div style={{
-                fontFamily: 'var(--font-display)', fontWeight: 700,
-                textTransform: 'uppercase', fontSize: 11, color: '#ef4444', marginBottom: 6,
-              }}>
-                Righe fallite ({risultato.errori.length}):
-              </div>
-              <div style={{
-                maxHeight: 200, overflowY: 'auto',
-                background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.3)',
-                padding: '8px 12px',
-              }}>
-                {risultato.errori.map((e, i) => (
-                  <div key={i} style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: '#ef4444', padding: '2px 0', borderBottom: i < risultato.errori.length - 1 ? '1px solid rgba(239,68,68,0.15)' : 'none' }}>
-                    {e}
-                  </div>
-                ))}
-              </div>
+            <div style={{ marginTop: 8, fontSize: 11, fontFamily: 'var(--font-mono)' }}>
+              {risultato.errori.join(' · ')}
             </div>
           )}
         </div>
