@@ -98,7 +98,8 @@ function BarChart({ dati }: { dati: MeseData[] }) {
 // ── Pagina ────────────────────────────────────────────────────────────────────
 export default function RendicontoPage() {
   const supabase = createClient()
-  const [anno, setAnno] = useState(new Date().getFullYear())
+  const annoSalvato = typeof window !== 'undefined' ? Number(localStorage.getItem('rendiconto_anno')) || new Date().getFullYear() : new Date().getFullYear()
+  const [anno, setAnno] = useState(annoSalvato)
   const [dati, setDati] = useState<MeseData[]>([])
   const [loading, setLoading] = useState(true)
   const [clubId, setClubId] = useState<string | null>(null)
@@ -209,7 +210,7 @@ export default function RendicontoPage() {
         actions={
           <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
             <select className="input" style={{ width: 120 }} value={anno}
-              onChange={e => setAnno(parseInt(e.target.value))}>
+              onChange={e => { const y = parseInt(e.target.value); localStorage.setItem('rendiconto_anno', String(y)); setAnno(y) }}>
               {[anno - 1, anno, anno + 1].map(y => <option key={y} value={y}>{y}</option>)}
             </select>
             <button className="btn btn-secondary btn-sm no-print" onClick={() => window.print()}>
