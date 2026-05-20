@@ -239,32 +239,49 @@ export async function POST(req: Request, { params }: { params: { tipo: string } 
   }
 
   if (params.tipo === 'movimenti') {
+    if (!clubId) return Response.json({ error: 'club_id mancante' }, { status: 400 })
     const dateImportate: string[] = []
     for (const r of righe as Record<string, unknown>[]) {
       try {
-        const tipo = String(r.tipo ?? '').toLowerCase().trim()
+        const tipoMov = String(r.tipo ?? '').toLowerCase().trim()
         const dataStr = String(r.data ?? '')
-        const { error } = await supabase.from('prima_nota').insert({
+        const descrizioneBase = String(r.descrizione ?? '').trim()
+        const descrizione = r.note
+          ? `${descrizioneBase} — ${String(r.note)}`.slice(0, 255)
+          : descrizioneBase
+
+        if (!dataStr) throw new Error('data mancante')
+        if (!tipoMov)  throw new Error('tipo mancante (entrata/uscita)')
+        if (!descrizione) throw new Error('descrizione mancante')
+
+        const payload: Record<string, unknown> = {
           club_id:     clubId,
-          tipo:        tipo === 'entrata' ? 'entrata' : 'uscita',
+          tipo:        tipoMov === 'entrata' ? 'entrata' : 'uscita',
           categoria:   normCategoria(String(r.categoria ?? '')),
           importo:     Number(r.importo),
-          data:        dataStr || null,
-          descrizione: String(r.descrizione ?? ''),
-          controparte: r.controparte ? String(r.controparte) : null,
-          ...(r.note ? { descrizione: `${String(r.descrizione ?? '')} — ${String(r.note)}`.slice(0, 255) } : {}),
-        })
-        if (error) throw new Error(error.message)
+          data:        dataStr,
+          descrizione,
+          stornato:    false,
+          sorgente:    'import',
+        }
+        if (r.controparte) payload.controparte = String(r.controparte)
+
+        const { error } = await supabase.from('prima_nota').insert(payload)
+        if (error) {
+          console.error('[import/movimenti] insert error:', error.message, '| payload:', JSON.stringify(payload))
+          throw new Error(error.message)
+        }
         if (dataStr) dateImportate.push(dataStr)
         risultati.importati++
       } catch (e: unknown) {
         const msg = e instanceof Error ? e.message : String(e)
-        risultati.errori.push(`Riga ${r.data} ${r.descrizione}: ${msg}`)
+        console.error('[import/movimenti] riga fallita:', r.data, r.descrizione, '→', msg)
+        risultati.errori.push(`Riga ${r.data} — ${r.descrizione}: ${msg}`)
       }
     }
     if (dateImportate.length) {
       dateImportate.sort()
-      risultati.periodo_min = dateImportate[0].slice(0, 7)   // YYYY-MM
+      risultati.periodo_min = dateImportate[0].slice(0, 7)
       risultati.periodo_max = dateImportate[dateImportate.length - 1].slice(0, 7)
     }
   }

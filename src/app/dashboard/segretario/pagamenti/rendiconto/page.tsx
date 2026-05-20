@@ -156,7 +156,7 @@ export default function RendicontoPage() {
         .from('prima_nota')
         .select('tipo, importo, data, stornato')
         .eq('club_id', cid)
-        .eq('stornato', false)
+        .not('stornato', 'eq', true)
         .gte('data', `${anno}-01-01`)
         .lte('data', `${anno}-12-31`),
     ])
