@@ -70,28 +70,48 @@ export function OnboardingProvider({
     if (!user) return
     setUserId(user.id)
 
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('onboarding_progress')
       .select('onboarding_completed, completed_steps')
       .eq('user_id', user.id)
       .eq('role', role)
       .maybeSingle()
 
+    console.log('[OnboardingContext] checkStatus — user:', user.id, 'role:', role, 'data:', data, 'error:', error)
+
+    // Se c'è un errore DB (tabella non esiste, permessi, ecc.) NON attivare il tutorial
+    if (error) {
+      console.warn('[OnboardingContext] Errore query onboarding_progress, tutorial disattivato:', error.message)
+      return
+    }
+
     if (!data) {
-      await supabase
+      // Nessun record: primo accesso — inserisco e attivo il tutorial
+      console.log('[OnboardingContext] Primo accesso, inserisco record e attivo tutorial')
+      const { error: insertError } = await supabase
         .from('onboarding_progress')
         .insert({ user_id: user.id, role })
+
+      if (insertError) {
+        console.warn('[OnboardingContext] Errore insert onboarding_progress, tutorial disattivato:', insertError.message)
+        return
+      }
+
       setIsActive(true)
       setStepIndex(0)
       setPhase('problem')
       return
     }
 
-    if (data.onboarding_completed) return
+    if (data.onboarding_completed) {
+      console.log('[OnboardingContext] onboarding_completed = true, tutorial disattivato')
+      return
+    }
 
     const done: string[] = data.completed_steps ?? []
     setCompletedSteps(done)
     const nextIdx = steps.findIndex((s) => !done.includes(s.id))
+    console.log('[OnboardingContext] completed_steps:', done, 'nextIdx:', nextIdx)
     if (nextIdx === -1) {
       await markCompleted(user.id)
       return

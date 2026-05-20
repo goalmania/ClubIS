@@ -78,6 +78,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
     .eq('id', effectiveClubId)
     .maybeSingle()
 
+  console.log('[DashboardLayout] club_id:', effectiveClubId, 'onboarding_completed:', club?.onboarding_completed ?? null, 'club null?', club === null)
+
   let internalNotUnread = 0
   try {
     await dispatchDueNotificationsForUser(supabase as any, user.id)
