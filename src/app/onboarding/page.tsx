@@ -221,11 +221,23 @@ export default function OnboardingPage() {
   async function handleComplete() {
     if (!clubId) return
     setSaving(true)
-    await supabase.from('clubs').update({
-      onboarding_completed: true,
-      onboarding_step: 4,
-    }).eq('id', clubId)
-    router.push('/dashboard/presidente')
+
+    try {
+      const res = await fetch('/api/onboarding/completa', { method: 'POST' })
+      const json = await res.json()
+
+      if (!res.ok) {
+        console.error('[Onboarding] handleComplete errore API:', json)
+        setSaving(false)
+        return
+      }
+
+      console.log('[Onboarding] onboarding_completed salvato con successo:', json)
+      router.push('/dashboard/presidente')
+    } catch (err) {
+      console.error('[Onboarding] handleComplete eccezione:', err)
+      setSaving(false)
+    }
   }
 
   // ── Render ───────────────────────────────────────────────────────────────
