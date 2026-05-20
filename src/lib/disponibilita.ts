@@ -45,6 +45,16 @@ export interface DisponibilitaGiocatore {
 
 /* ─── Funzione principale ────────────────────────────────────── */
 
+const PRIMA_SQUADRA_CATEGORIE = ['prima_squadra', 'femminile']
+
+function calcolaEta(dataNascita: string): number {
+  const oggi = new Date()
+  const d = new Date(dataNascita)
+  let eta = oggi.getFullYear() - d.getFullYear()
+  if (oggi.getMonth() < d.getMonth() || (oggi.getMonth() === d.getMonth() && oggi.getDate() < d.getDate())) eta--
+  return eta
+}
+
 export async function getDisponibilitaSquadra(
   supabase: any,
   clubId: string,
@@ -54,10 +64,10 @@ export async function getDisponibilitaSquadra(
   const oggi   = new Date().toISOString().split('T')[0]
   const in30g  = new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0]
 
-  // 1. Tesserati attivi (filtrati per squadra se specificato, con fallback al club intero)
+  // 1. Tesserati attivi con dati squadra e data nascita per filtro categoria
   let tessQ = supabase
     .from('tesseramenti')
-    .select('giocatore_id, numero_maglia, giocatori(id, nome, cognome, ruolo_principale)')
+    .select('giocatore_id, numero_maglia, squadra_id, giocatori(id, nome, cognome, ruolo_principale, data_nascita), squadre(categoria_eta)')
     .eq('club_id', clubId)
     .eq('stato', 'attivo')
 
@@ -65,19 +75,26 @@ export async function getDisponibilitaSquadra(
     tessQ = tessQ.in('squadra_id', squadraIds)
   }
 
-  let { data: tesserati } = await tessQ
+  let { data: tuttiTesserati } = await tessQ
 
-  // Fallback: se il filtro squadra non porta risultati, carica tutti i tesserati del club
-  if ((!tesserati || tesserati.length === 0) && squadraIds && squadraIds.length > 0) {
-    const { data: all } = await supabase
-      .from('tesseramenti')
-      .select('giocatore_id, numero_maglia, giocatori(id, nome, cognome, ruolo_principale)')
-      .eq('club_id', clubId)
-      .eq('stato', 'attivo')
-    tesserati = all
+  if (!tuttiTesserati || tuttiTesserati.length === 0) return []
+
+  // Se non è specificato un filtro per squadra, mostra solo Prima Squadra:
+  // - giocatori assegnati a squadra con categoria prima_squadra/femminile
+  // - giocatori senza squadra con età >= 20
+  let tesserati = tuttiTesserati
+  if (!squadraIds || squadraIds.length === 0) {
+    tesserati = tuttiTesserati.filter((t: any) => {
+      const catEta = t.squadre?.categoria_eta
+      if (catEta) return PRIMA_SQUADRA_CATEGORIE.includes(catEta)
+      // Nessuna squadra: usa età
+      const dataNascita = t.giocatori?.data_nascita
+      if (!dataNascita) return true // includi se età sconosciuta
+      return calcolaEta(dataNascita) >= 20
+    })
   }
 
-  if (!tesserati || tesserati.length === 0) return []
+  if (tesserati.length === 0) return []
 
   const gIds = tesserati.map((t: any) => t.giocatore_id)
 
