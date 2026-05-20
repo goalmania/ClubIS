@@ -1,10 +1,12 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getUserContext } from '@/lib/impersonation'
 
-// Genera un codice fiscale placeholder ≤ 16 caratteri (limite VARCHAR(16))
-// Formato: "XX" + ultimi 14 caratteri del timestamp → es. "XX46134567890123" (16 chars)
+// Genera un codice fiscale placeholder univoco ≤ 16 caratteri (limite VARCHAR(16))
+// Combina timestamp + 4 cifre random per evitare collisioni su insert batch
 function cfPlaceholder(): string {
-  return `XX${String(Date.now()).slice(-14)}`
+  const ts = String(Date.now()).slice(-10)
+  const rnd = String(Math.floor(Math.random() * 9000) + 1000)
+  return `XX${ts}${rnd}` // 2 + 10 + 4 = 16 chars
 }
 
 // Normalizza un valore enum: lowercase + gestione alias italiani
@@ -230,7 +232,8 @@ export async function POST(req: Request, { params }: { params: { tipo: string } 
         risultati.importati++
       } catch (e: unknown) {
         const msg = e instanceof Error ? e.message : String(e)
-        risultati.errori.push(`${r.cognome} ${r.nome}: ${msg}`)
+        console.error('[import/giocatori] riga fallita:', r.cognome, r.nome, '→', msg)
+        risultati.errori.push(`Riga ${r.cognome} ${r.nome}: ${msg}`)
       }
     }
   }
