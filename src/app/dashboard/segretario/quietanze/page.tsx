@@ -78,15 +78,11 @@ export default function QuietanzePage() {
     const clubId = utente!.club_id
 
     const [
-      { data: tesseramentiData },
+      tesseramentiRes,
       { data: quoteData },
       { data: quietanzeData },
     ] = await Promise.all([
-      supabase
-        .from('tesseramenti')
-        .select('giocatore_id, giocatori(id, nome, cognome, codice_fiscale, data_nascita, luogo_nascita)')
-        .eq('club_id', clubId)
-        .eq('stato', 'attivo'),
+      fetch('/api/giocatori/lista').then(r => r.json()),
       supabase
         .from('quote_iscrizione')
         .select('id, giocatore_id, importo_totale, importo_pagato, stato')
@@ -102,10 +98,17 @@ export default function QuietanzePage() {
 
     const quoteMap = new Map((quoteData ?? []).map((q: any) => [q.giocatore_id, q as QuotaRow]))
 
-    const rows: PlayerRow[] = (tesseramentiData ?? []).map((t: any) => ({
-      giocatore_id: t.giocatore_id,
-      giocatore: t.giocatori ?? null,
-      quota: quoteMap.get(t.giocatore_id) ?? null,
+    const rows: PlayerRow[] = (Array.isArray(tesseramentiRes) ? tesseramentiRes : []).map((t: any) => ({
+      giocatore_id: t.giocatori?.id ?? t.giocatore_id,
+      giocatore: t.giocatori ? {
+        id: t.giocatori.id,
+        nome: t.giocatori.nome,
+        cognome: t.giocatori.cognome,
+        codice_fiscale: t.giocatori.codice_fiscale ?? '',
+        data_nascita: t.giocatori.data_nascita ?? '',
+        luogo_nascita: null,
+      } : null,
+      quota: quoteMap.get(t.giocatori?.id ?? t.giocatore_id) ?? null,
     }))
 
     rows.sort((a, b) =>
