@@ -61,7 +61,6 @@ export async function POST(req: NextRequest) {
     .from('tesseramenti')
     .select('giocatore_id')
     .eq('club_id', clubId)
-    .eq('stagione', STAGIONE)
     .eq('stato', 'attivo')
 
   if (!bulk && giocatore_id) {
