@@ -56,10 +56,10 @@ export async function POST(req: NextRequest) {
 
   const quoteLookup = new Map((quoteData ?? []).map((q: any) => [q.giocatore_id, Number(q.importo_totale)]))
 
-  // Load active players from tesseramenti
+  // Load active players from tesseramenti (prima squadra only)
   let tessQuery = supabase
     .from('tesseramenti')
-    .select('giocatore_id')
+    .select('giocatore_id, squadre(categoria_eta), giocatori(data_nascita)')
     .eq('club_id', clubId)
     .eq('stato', 'attivo')
 
@@ -70,7 +70,21 @@ export async function POST(req: NextRequest) {
   const { data: tesseramenti, error: tessError } = await tessQuery
   if (tessError) return NextResponse.json({ error: tessError.message }, { status: 500 })
 
-  const nuovi = (tesseramenti ?? []).filter((t: any) => !esistentiSet.has(t.giocatore_id))
+  const PRIMA_SQUADRA = ['prima_squadra', 'femminile']
+  const isPrimaSquadra = (t: any) => {
+    const catEta = (t.squadre as any)?.categoria_eta
+    if (PRIMA_SQUADRA.includes(catEta)) return true
+    if (!catEta) {
+      const dob = (t.giocatori as any)?.data_nascita
+      if (dob) {
+        const eta = new Date().getFullYear() - new Date(dob).getFullYear()
+        return eta >= 20
+      }
+    }
+    return false
+  }
+
+  const nuovi = (tesseramenti ?? []).filter((t: any) => isPrimaSquadra(t) && !esistentiSet.has(t.giocatore_id))
 
   if (nuovi.length === 0) {
     return NextResponse.json({ created: 0, message: 'Nessuna nuova quietanza da generare' })

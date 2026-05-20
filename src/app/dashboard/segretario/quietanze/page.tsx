@@ -98,7 +98,18 @@ export default function QuietanzePage() {
 
     const quoteMap = new Map((quoteData ?? []).map((q: any) => [q.giocatore_id, q as QuotaRow]))
 
-    const rows: PlayerRow[] = (Array.isArray(tesseramentiRes) ? tesseramentiRes : []).map((t: any) => ({
+    const PRIMA_SQUADRA = ['prima_squadra', 'femminile']
+    const isPrimaSquadra = (t: any) => {
+      const catEta = t.squadre?.categoria_eta
+      if (PRIMA_SQUADRA.includes(catEta)) return true
+      if (!catEta && t.giocatori?.data_nascita) {
+        const eta = new Date().getFullYear() - new Date(t.giocatori.data_nascita).getFullYear()
+        return eta >= 20
+      }
+      return false
+    }
+
+    const rows: PlayerRow[] = (Array.isArray(tesseramentiRes) ? tesseramentiRes : []).filter(isPrimaSquadra).map((t: any) => ({
       giocatore_id: t.giocatori?.id ?? t.giocatore_id,
       giocatore: t.giocatori ? {
         id: t.giocatori.id,
