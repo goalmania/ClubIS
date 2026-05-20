@@ -17,8 +17,8 @@ function buildNumeroQuietanza(anno: number, seq: number): string {
 
 export async function POST(req: NextRequest) {
   const sessionClient = createClient()
-
   const supabase = createAdminClient()
+
   const { data: { user } } = await sessionClient.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
 
@@ -31,13 +31,13 @@ export async function POST(req: NextRequest) {
 
   const clubId = utente.club_id
   const body = await req.json().catch(() => ({}))
-  const { bulk, quota_id } = body as { bulk?: boolean; quota_id?: string }
+  const { bulk, giocatore_id } = body as { bulk?: boolean; giocatore_id?: string }
 
   const STAGIONE = stagioneCorrente()
   const { da: periodo_da, a: periodo_a } = periodoFromStagione(STAGIONE)
   const annoBase = parseInt(STAGIONE.split('-')[0], 10)
 
-  // Load existing quietanze for numbering
+  // Load existing quietanze to skip duplicates and for numbering
   const { data: esistenti } = await supabase
     .from('quietanze')
     .select('id, giocatore_id')
@@ -47,33 +47,42 @@ export async function POST(req: NextRequest) {
   const esistentiSet = new Set((esistenti ?? []).map((q: any) => q.giocatore_id))
   let prossimo = (esistenti?.length ?? 0) + 1
 
-  // Load quotes to process
-  let quoteQuery = supabase
+  // Load quote_iscrizione to get importo (optional, falls back to 0)
+  const { data: quoteData } = await supabase
     .from('quote_iscrizione')
-    .select('id, giocatore_id, importo_totale, importo_pagato')
+    .select('giocatore_id, importo_totale')
     .eq('club_id', clubId)
     .eq('stagione', STAGIONE)
-    .in('stato', ['pagato', 'parziale'])
 
-  if (!bulk && quota_id) {
-    quoteQuery = quoteQuery.eq('id', quota_id)
+  const quoteLookup = new Map((quoteData ?? []).map((q: any) => [q.giocatore_id, Number(q.importo_totale)]))
+
+  // Load active players from tesseramenti
+  let tessQuery = supabase
+    .from('tesseramenti')
+    .select('giocatore_id')
+    .eq('club_id', clubId)
+    .eq('stagione', STAGIONE)
+    .eq('stato', 'attivo')
+
+  if (!bulk && giocatore_id) {
+    tessQuery = tessQuery.eq('giocatore_id', giocatore_id)
   }
 
-  const { data: quote, error: quoteError } = await quoteQuery
-  if (quoteError) return NextResponse.json({ error: quoteError.message }, { status: 500 })
+  const { data: tesseramenti, error: tessError } = await tessQuery
+  if (tessError) return NextResponse.json({ error: tessError.message }, { status: 500 })
 
-  const nuove = (quote ?? []).filter((q: any) => !esistentiSet.has(q.giocatore_id))
+  const nuovi = (tesseramenti ?? []).filter((t: any) => !esistentiSet.has(t.giocatore_id))
 
-  if (nuove.length === 0) {
+  if (nuovi.length === 0) {
     return NextResponse.json({ created: 0, message: 'Nessuna nuova quietanza da generare' })
   }
 
-  const inserimenti = nuove.map((q: any) => ({
+  const inserimenti = nuovi.map((t: any) => ({
     club_id: clubId,
-    giocatore_id: q.giocatore_id,
+    giocatore_id: t.giocatore_id,
     stagione: STAGIONE,
     tipo: 'quota_tesseramento',
-    importo_totale: Number(q.importo_totale),
+    importo_totale: quoteLookup.get(t.giocatore_id) ?? 0,
     periodo_da,
     periodo_a,
     numero_quietanza: buildNumeroQuietanza(annoBase, prossimo++),

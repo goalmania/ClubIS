@@ -8,20 +8,21 @@ import { stagioneCorrente } from '@/lib/helpers'
 
 type FiltroStato = 'tutti' | 'da_generare' | 'generata' | 'firmata'
 
+interface GiocatoreInfo {
+  id: string
+  nome: string
+  cognome: string
+  codice_fiscale: string
+  data_nascita: string
+  luogo_nascita: string | null
+}
+
 interface QuotaRow {
   id: string
   giocatore_id: string
   importo_totale: number
   importo_pagato: number
   stato: string
-  giocatore: {
-    id: string
-    nome: string
-    cognome: string
-    codice_fiscale: string
-    data_nascita: string
-    luogo_nascita: string | null
-  } | null
 }
 
 interface QuietanzaRow {
@@ -33,6 +34,12 @@ interface QuietanzaRow {
   firmata: boolean
   firma_data: string | null
   stagione: string
+}
+
+interface PlayerRow {
+  giocatore_id: string
+  giocatore: GiocatoreInfo | null
+  quota: QuotaRow | null
 }
 
 const fmt = (n: number) =>
@@ -54,7 +61,7 @@ function KpiCard({ label, value, sub, colore }: {
 
 export default function QuietanzePage() {
   const supabase = createClient()
-  const [quote, setQuote] = useState<QuotaRow[]>([])
+  const [players, setPlayers] = useState<PlayerRow[]>([])
   const [quietanze, setQuietanze] = useState<QuietanzaRow[]>([])
   const [loading, setLoading] = useState(true)
   const [generando, setGenerando] = useState(false)
@@ -70,14 +77,23 @@ export default function QuietanzePage() {
     const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user!.id).single()
     const clubId = utente!.club_id
 
-    const [{ data: quoteData }, { data: quietanzeData }] = await Promise.all([
+    const [
+      { data: tesseramentiData },
+      { data: quoteData },
+      { data: quietanzeData },
+    ] = await Promise.all([
       supabase
-        .from('quote_iscrizione')
-        .select('id, giocatore_id, importo_totale, importo_pagato, stato, giocatori(id, nome, cognome, codice_fiscale, data_nascita, luogo_nascita)')
+        .from('tesseramenti')
+        .select('giocatore_id, giocatori(id, nome, cognome, codice_fiscale, data_nascita, luogo_nascita)')
         .eq('club_id', clubId)
         .eq('stagione', STAGIONE_CORRENTE)
-        .neq('stato', 'esonerato')
-        .order('giocatori(cognome)'),
+        .eq('stato', 'attivo'),
+      supabase
+        .from('quote_iscrizione')
+        .select('id, giocatore_id, importo_totale, importo_pagato, stato')
+        .eq('club_id', clubId)
+        .eq('stagione', STAGIONE_CORRENTE)
+        .neq('stato', 'esonerato'),
       supabase
         .from('quietanze')
         .select('id, giocatore_id, numero_quietanza, tipo, importo_totale, firmata, firma_data, stagione')
@@ -85,10 +101,19 @@ export default function QuietanzePage() {
         .eq('stagione', STAGIONE_CORRENTE),
     ])
 
-    setQuote((quoteData ?? []).map((q: any) => ({
-      ...q,
-      giocatore: q.giocatori ?? null,
-    })))
+    const quoteMap = new Map((quoteData ?? []).map((q: any) => [q.giocatore_id, q as QuotaRow]))
+
+    const rows: PlayerRow[] = (tesseramentiData ?? []).map((t: any) => ({
+      giocatore_id: t.giocatore_id,
+      giocatore: t.giocatori ?? null,
+      quota: quoteMap.get(t.giocatore_id) ?? null,
+    }))
+
+    rows.sort((a, b) =>
+      (a.giocatore?.cognome ?? '').localeCompare(b.giocatore?.cognome ?? '', 'it')
+    )
+
+    setPlayers(rows)
     setQuietanze(quietanzeData ?? [])
     setLoading(false)
   }
@@ -112,12 +137,12 @@ export default function QuietanzePage() {
     }
   }
 
-  async function generaSingola(quotaId: string) {
+  async function generaSingola(giocatoreId: string) {
     try {
       const res = await fetch('/api/quietanze/genera', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ quota_id: quotaId }),
+        body: JSON.stringify({ giocatore_id: giocatoreId }),
       })
       const json = await res.json()
       if (!res.ok) throw new Error(json.error ?? 'Errore generazione')
@@ -149,16 +174,16 @@ export default function QuietanzePage() {
     return map
   }, [quietanze])
 
-  const righe = useMemo(() => quote.map(q => ({
-    quota: q,
-    quietanza: quietanzeByGiocatore.get(q.giocatore_id) ?? null,
-  })), [quote, quietanzeByGiocatore])
+  const righe = useMemo(() => players.map(p => ({
+    player: p,
+    quietanza: quietanzeByGiocatore.get(p.giocatore_id) ?? null,
+  })), [players, quietanzeByGiocatore])
 
-  const righeFiltrate = useMemo(() => righe.filter(({ quota, quietanza }) => {
+  const righeFiltrate = useMemo(() => righe.filter(({ player, quietanza }) => {
     if (filtro === 'da_generare' && quietanza) return false
     if (filtro === 'generata' && (quietanza == null || quietanza.firmata)) return false
     if (filtro === 'firmata' && !quietanza?.firmata) return false
-    if (cerca && !matchSearch(cerca, quota.giocatore?.cognome, quota.giocatore?.nome)) return false
+    if (cerca && !matchSearch(cerca, player.giocatore?.cognome, player.giocatore?.nome)) return false
     return true
   }), [righe, filtro, cerca])
 
@@ -267,28 +292,34 @@ export default function QuietanzePage() {
               {righeFiltrate.length === 0 ? (
                 <tr>
                   <td colSpan={6} style={{ textAlign: 'center', padding: '40px', color: 'var(--grigio-4)' }}>
-                    {filtro === 'tutti' ? 'Nessun giocatore iscritto per questa stagione' : 'Nessuna riga con questo filtro'}
+                    {filtro === 'tutti' ? 'Nessun giocatore tesserat per questa stagione' : 'Nessuna riga con questo filtro'}
                   </td>
                 </tr>
-              ) : righeFiltrate.map(({ quota, quietanza }) => (
-                <tr key={quota.id}>
+              ) : righeFiltrate.map(({ player, quietanza }) => (
+                <tr key={player.giocatore_id}>
                   <td>
                     <div style={{ fontWeight: 600, fontSize: 13 }}>
-                      {quota.giocatore?.cognome ?? '—'} {quota.giocatore?.nome ?? ''}
+                      {player.giocatore?.cognome ?? '—'} {player.giocatore?.nome ?? ''}
                     </div>
-                    {quota.giocatore?.codice_fiscale && (
+                    {player.giocatore?.codice_fiscale && (
                       <div style={{ fontSize: 11, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>
-                        {quota.giocatore.codice_fiscale}
+                        {player.giocatore.codice_fiscale}
                       </div>
                     )}
                   </td>
                   <td>
-                    <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
-                      {fmt(Number(quota.importo_totale))}
-                    </div>
-                    <div style={{ fontSize: 11, color: 'var(--grigio-4)' }}>
-                      {fmt(Number(quota.importo_pagato))} pagati
-                    </div>
+                    {player.quota ? (
+                      <>
+                        <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
+                          {fmt(Number(player.quota.importo_totale))}
+                        </div>
+                        <div style={{ fontSize: 11, color: 'var(--grigio-4)' }}>
+                          {fmt(Number(player.quota.importo_pagato))} pagati
+                        </div>
+                      </>
+                    ) : (
+                      <span style={{ color: 'var(--grigio-4)', fontSize: 12 }}>—</span>
+                    )}
                   </td>
                   <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
                     {quietanza?.numero_quietanza ?? '—'}
@@ -310,7 +341,7 @@ export default function QuietanzePage() {
                       {!quietanza ? (
                         <button
                           className="btn btn-secondary btn-sm"
-                          onClick={() => generaSingola(quota.id)}
+                          onClick={() => generaSingola(player.giocatore_id)}
                         >
                           Genera
                         </button>
