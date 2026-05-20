@@ -131,10 +131,11 @@ export default function ImportPage() {
       <PageHeader title="Import dati" subtitle="Carica CSV per importare massivamente giocatori, movimenti o famiglie" />
 
       {/* Selezione tipo */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12, marginBottom: 24 }}>
+      <div data-onboarding="import-tipi-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12, marginBottom: 24 }}>
         {TIPI_IMPORT_EFFETTIVI.map(t => (
           <div
             key={t.key}
+            data-onboarding={`import-card-${t.key}`}
             onClick={() => cambioTipo(t.key)}
             style={{
               padding: '16px 20px',
