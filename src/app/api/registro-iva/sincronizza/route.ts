@@ -72,17 +72,16 @@ export async function POST(req: NextRequest) {
       id, importo, data_pagamento,
       quota_id(
         stagione,
+        club_id,
         giocatori(nome, cognome)
       )
     `)
     .not('data_pagamento', 'is', null)
 
-  // Filtriamo i pagamenti il cui quota_id appartiene a questo club
-  // (pagamenti non ha club_id diretto, filtriamo via quota_id)
+  // Filtriamo solo i pagamenti il cui quota appartiene a questo club
   const pagamentiDelClub = (pagamentiDiretti ?? []).filter((p: any) => {
     const quota = (p as any).quota_id
-    // quota è null se la FK non si risolve o quota non è di questo club
-    return quota != null
+    return quota != null && quota.club_id === clubId
   })
 
   const pagamentiMancanti = pagamentiDelClub.filter((p: any) => !registratiSet.has(p.id))
