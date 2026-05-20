@@ -86,7 +86,6 @@ export default function QuietanzePage() {
         .from('tesseramenti')
         .select('giocatore_id, giocatori(id, nome, cognome, codice_fiscale, data_nascita, luogo_nascita)')
         .eq('club_id', clubId)
-        .eq('stagione', STAGIONE_CORRENTE)
         .eq('stato', 'attivo'),
       supabase
         .from('quote_iscrizione')
