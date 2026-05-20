@@ -60,7 +60,7 @@ export default async function VistaDisponibilita({ clubId, ruolo, squadraIds }: 
   /* ── Render ─────────────────────────────────────────────────── */
 
   return (
-    <div data-onboarding="section-disponibilita-rosa">
+    <div>
       {/* ── Header ──────────────────────────────────────────── */}
       <div style={{ marginBottom: 24 }}>
         <div style={{

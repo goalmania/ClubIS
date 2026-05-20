@@ -191,7 +191,6 @@ export default function QuietanzePage() {
               Export iscrizione campionato
             </button>
             <button
-              data-onboarding="btn-genera-quietanze"
               className="btn btn-primary btn-sm"
               onClick={generaTutte}
               disabled={generando}

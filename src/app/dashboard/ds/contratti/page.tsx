@@ -9,9 +9,7 @@ export default async function DsContrattiPage() {
   if (ctx.ruolo === 'presidente') redirect('/dashboard/presidente')
   return (
     <ServerFeatureGate feature="contratti_tesserati" featureLabel="Contratti Tesserati">
-      <div data-onboarding="section-contratti-ds">
-        <ContrattiView clubId={ctx.clubId} ruolo={ctx.ruolo} />
-      </div>
+      <ContrattiView clubId={ctx.clubId} ruolo={ctx.ruolo} />
     </ServerFeatureGate>
   )
 }

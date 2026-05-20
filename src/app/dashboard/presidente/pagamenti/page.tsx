@@ -360,7 +360,7 @@ export default function PresidentePagamentiPage() {
           <Link href="/dashboard/segretario/pagamenti" className="btn btn-secondary btn-sm">
             Gestione rate →
           </Link>
-          <button className="btn btn-primary btn-sm" onClick={() => setModalOpen(true)} data-onboarding="btn-nuovo-pagamento">
+          <button className="btn btn-primary btn-sm" onClick={() => setModalOpen(true)}>
             + Nuovo movimento
           </button>
         </div>

@@ -15,9 +15,7 @@ export default function PrimaNotaPage() {
   const [showForm, setShowForm] = useState(false)
 
   const oggi = new Date()
-  const meseDefault = searchParams.get('mese')
-    ?? (typeof window !== 'undefined' ? localStorage.getItem('prima_nota_mese') : null)
-    ?? oggi.toISOString().slice(0, 7)
+  const meseDefault = searchParams.get('mese') ?? oggi.toISOString().slice(0, 7)
   const [mese, setMese] = useState(meseDefault)
   const [tipo, setTipo] = useState('entrata')
   const [categoria, setCategoria] = useState('altro')
@@ -34,10 +32,7 @@ export default function PrimaNotaPage() {
   const [stornoData, setStornoData] = useState(oggi.toISOString().split('T')[0])
   const [stornoSaving, setStornoSaving] = useState(false)
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') localStorage.setItem('prima_nota_mese', mese)
-    load()
-  }, [mese])
+  useEffect(() => { load() }, [mese])
 
   async function getClubId() {
     const { data: { user } } = await supabase.auth.getUser()
@@ -129,7 +124,7 @@ export default function PrimaNotaPage() {
         actions={
           <div style={{ display: 'flex', gap: 10 }}>
             <input type="month" className="input" style={{ width: 160 }} value={mese} onChange={e => setMese(e.target.value)} />
-            <button className="btn btn-primary btn-sm" onClick={() => setShowForm(!showForm)} data-onboarding="btn-nuova-entrata">
+            <button className="btn btn-primary btn-sm" onClick={() => setShowForm(!showForm)}>
               {showForm ? 'Chiudi' : '+ Movimento'}
             </button>
           </div>

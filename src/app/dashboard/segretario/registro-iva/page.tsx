@@ -121,7 +121,6 @@ export default function RegistroIvaPage() {
         actions={
           <div style={{ display: 'flex', gap: 10 }}>
             <button
-              data-onboarding="btn-sincronizza-iva"
               className="btn btn-secondary btn-sm"
               onClick={sincronizza}
               disabled={sincronizzando}

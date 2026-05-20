@@ -73,7 +73,6 @@ export async function POST(req: NextRequest) {
   if (body.nome_genitore?.trim() && body.email_genitore?.trim()) {
     await admin.from('famiglie').insert({
       giocatore_id:      giocatore.id,
-      club_id:           clubId,
       nome:              body.nome_genitore.trim(),
       cognome:           body.cognome_genitore?.trim() || '',
       relazione:         body.relazione_genitore ?? 'padre',
