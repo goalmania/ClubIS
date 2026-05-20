@@ -365,8 +365,24 @@ export default function ImportPage() {
           )}
 
           {risultato.errori?.length > 0 && (
-            <div style={{ marginTop: 8, fontSize: 11, fontFamily: 'var(--font-mono)' }}>
-              {risultato.errori.join(' · ')}
+            <div style={{ marginTop: 12 }}>
+              <div style={{
+                fontFamily: 'var(--font-display)', fontWeight: 700,
+                textTransform: 'uppercase', fontSize: 11, color: '#ef4444', marginBottom: 6,
+              }}>
+                Righe fallite ({risultato.errori.length}):
+              </div>
+              <div style={{
+                maxHeight: 200, overflowY: 'auto',
+                background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.3)',
+                padding: '8px 12px',
+              }}>
+                {risultato.errori.map((e, i) => (
+                  <div key={i} style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: '#ef4444', padding: '2px 0', borderBottom: i < risultato.errori.length - 1 ? '1px solid rgba(239,68,68,0.15)' : 'none' }}>
+                    {e}
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
