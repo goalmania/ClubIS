@@ -51,8 +51,9 @@ export default function RegistroIvaPage() {
 
   useSharedData(async () => { await load() })
 
-  async function load() {
+  async function load(annoParam?: number) {
     setLoading(true)
+    const targetAnno = annoParam ?? anno
     const { data: { user } } = await supabase.auth.getUser()
     const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user!.id).single()
     const clubId = utente!.club_id
@@ -61,8 +62,8 @@ export default function RegistroIvaPage() {
       .from('registro_iva')
       .select('id, numero_progressivo, data_operazione, tipo, natura, controparte, imponibile, iva, totale, regime, note')
       .eq('club_id', clubId)
-      .gte('data_operazione', `${anno}-01-01`)
-      .lte('data_operazione', `${anno}-12-31`)
+      .gte('data_operazione', `${targetAnno}-01-01`)
+      .lte('data_operazione', `${targetAnno}-12-31`)
       .order('numero_progressivo')
 
     setRighe(data ?? [])
@@ -76,7 +77,23 @@ export default function RegistroIvaPage() {
       const json = await res.json()
       if (!res.ok) throw new Error(json.error ?? 'Errore sincronizzazione')
       setToast({ msg: `${json.created} registrazioni create`, tipo: 'success' })
-      await load()
+
+      // Trova l'anno più recente con dati e posizionati su quello
+      const { data: { user } } = await supabase.auth.getUser()
+      const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user!.id).single()
+      const { data: lastRow } = await supabase
+        .from('registro_iva')
+        .select('data_operazione')
+        .eq('club_id', utente!.club_id)
+        .order('data_operazione', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+
+      const targetAnno = lastRow
+        ? new Date(lastRow.data_operazione).getFullYear()
+        : anno
+      setAnno(targetAnno)
+      await load(targetAnno)
     } catch (e: any) {
       setToast({ msg: e.message, tipo: 'error' })
     } finally {
@@ -162,7 +179,7 @@ export default function RegistroIvaPage() {
           className="input"
           style={{ width: 100 }}
           value={anno}
-          onChange={e => { setAnno(Number(e.target.value)); setTimeout(load, 0) }}
+          onChange={e => { const a = Number(e.target.value); setAnno(a); load(a) }}
         >
           {[2024, 2025, 2026, 2027].map(a => (
             <option key={a} value={a}>{a}</option>
