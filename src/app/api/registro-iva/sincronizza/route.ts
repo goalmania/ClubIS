@@ -109,5 +109,34 @@ export async function POST(req: NextRequest) {
     if (!error) created++
   }
 
+  // ── 3. Entrate da prima_nota non ancora nel registro ────────────────────────
+  const { data: entrataPN } = await supabase
+    .from('prima_nota')
+    .select('id, importo, data, descrizione, categoria, controparte, sorgente')
+    .eq('club_id', clubId)
+    .eq('tipo', 'entrata')
+    .not('stornato', 'eq', true)
+    .not('data', 'is', null)
+
+  const entrateMancanti = (entrataPN ?? []).filter((e: any) => !registratiSet.has(e.id))
+
+  for (const e of entrateMancanti) {
+    const data = e.data as string
+    const stagione = stagioneDaData(data)
+    const natura = e.descrizione || e.categoria || `Entrata ${stagione}`
+
+    const { error } = await inserisciRegistroIva(supabase as any, {
+      club_id: clubId,
+      data_operazione: data,
+      tipo: 'entrata',
+      natura,
+      controparte: e.controparte ?? undefined,
+      importo: Number(e.importo),
+      riferimento_pagamento_id: e.id,
+    })
+
+    if (!error) created++
+  }
+
   return NextResponse.json({ created })
 }
