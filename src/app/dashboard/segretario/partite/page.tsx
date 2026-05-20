@@ -1,5 +1,5 @@
 'use client'
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { useSharedData } from '@/hooks/useSharedData'
@@ -7,7 +7,7 @@ import { Toast } from '@/components/ui'
 
 /* ─── Tipi ───────────────────────────────────────────────────────── */
 
-type Tab = 'calendario' | 'statistiche' | 'importa-pdf'
+type Tab = 'calendario' | 'statistiche'
 type StatoPartita = 'programmata' | 'giocata' | 'annullata' | 'rinviata'
 
 interface Partita {
@@ -37,15 +37,6 @@ interface SquadraStats {
   nome: string
   categoria_eta: string
   lista: Partita[]
-}
-
-interface PartitaEstratta {
-  data: string
-  ora: string
-  squadraCasa: string
-  squadraOspite: string
-  campo?: string
-  giornata?: number
 }
 
 /* ─── Helpers stats ──────────────────────────────────────────────── */
@@ -157,14 +148,6 @@ export default function SegretarioPartitePage() {
   const [editVal, setEditVal]   = useState<EditState>({ gf: '', gs: '', stato: 'giocata' })
   const [salvando, setSalvando] = useState(false)
 
-  // PDF import
-  const fileRef                 = useRef<HTMLInputElement>(null)
-  const [pdfLoading, setPdfLoading] = useState(false)
-  const [pdfPartite, setPdfPartite] = useState<PartitaEstratta[]>([])
-  const [pdfModalita, setPdfModalita] = useState<'salta' | 'sovrascrivi' | 'aggiorna_campo'>('salta')
-  const [importando, setImportando] = useState(false)
-  const [risultatoImport, setRisultatoImport] = useState<{ importate: number; saltate: number; conflitti: number } | null>(null)
-
   const [toast, setToast] = useState<{ msg: string; tipo: 'success' | 'error' } | null>(null)
 
   /* ── Load ────────────────────────────────────────────────────── */
@@ -211,63 +194,6 @@ export default function SegretarioPartitePage() {
     if (error) { setToast({ msg: 'Errore salvataggio', tipo: 'error' }); return }
     setToast({ msg: 'Risultato aggiornato', tipo: 'success' })
     await load()
-  }
-
-  /* ── PDF import ──────────────────────────────────────────────── */
-
-  async function handlePdfFile(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (!file) return
-    setPdfLoading(true)
-    setPdfPartite([])
-    setRisultatoImport(null)
-    try {
-      const fd = new FormData()
-      fd.append('file', file)
-      const res = await fetch('/api/partite/importa-pdf', { method: 'POST', body: fd })
-      const data = await res.json()
-      if (!res.ok) { setToast({ msg: data.error ?? 'Errore parsing PDF', tipo: 'error' }); return }
-      setPdfPartite(data.partite ?? [])
-      if (data.partite?.length === 0) setToast({ msg: 'Nessuna partita rilevata nel PDF', tipo: 'error' })
-    } finally {
-      setPdfLoading(false)
-    }
-  }
-
-  async function importaPDF() {
-    if (!pdfPartite.length || !squadre.length || !clubId) return
-    setImportando(true)
-    try {
-      const nomeNorm = nomeClub.toLowerCase()
-      const partiteConvertite = pdfPartite.map(p => {
-        const casaNorm = p.squadraCasa.toLowerCase()
-        const ct = casaNorm.includes(nomeNorm.slice(0, 5)) || nomeNorm.includes(casaNorm.slice(0, 5))
-          ? 'casa' as const : 'trasferta' as const
-        const avversario = ct === 'casa' ? p.squadraOspite : p.squadraCasa
-        const [dd, mm, yyyy] = p.data.split('/')
-        return {
-          data_ora: `${yyyy}-${mm}-${dd}T${p.ora}:00`,
-          avversario,
-          casa_trasferta: ct,
-          campo: p.campo,
-          giornata: p.giornata,
-        }
-      })
-
-      const res = await fetch('/api/figc/import-calendario', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ partite: partiteConvertite, modalita_conflitto: pdfModalita }),
-      })
-      const data = await res.json()
-      if (!res.ok) { setToast({ msg: data.error ?? 'Errore importazione', tipo: 'error' }); return }
-      setRisultatoImport(data)
-      setToast({ msg: `Importate ${data.importate} partite`, tipo: 'success' })
-      setPdfPartite([])
-      await load()
-    } finally {
-      setImportando(false)
-    }
   }
 
   /* ── Derived data ────────────────────────────────────────────── */
@@ -404,8 +330,8 @@ export default function SegretarioPartitePage() {
           </p>
         </div>
         <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-          {(['calendario', 'statistiche', 'importa-pdf'] as Tab[]).map(t => (
-            <button key={t} onClick={() => setTab(t)} {...(t === 'importa-pdf' ? { 'data-onboarding': 'btn-importa-calendario' } : {})} style={{
+          {(['calendario', 'statistiche'] as Tab[]).map(t => (
+            <button key={t} onClick={() => setTab(t)} style={{
               padding: '8px 16px',
               fontFamily: 'var(--font-display)', fontSize: 11,
               textTransform: 'uppercase', letterSpacing: '0.08em',
@@ -415,9 +341,26 @@ export default function SegretarioPartitePage() {
               border: tab === t ? 'none' : '1px solid var(--grigio-5)',
               cursor: 'pointer',
             }}>
-              {t === 'calendario' ? 'Calendario' : t === 'statistiche' ? 'Statistiche' : 'Importa PDF'}
+              {t === 'calendario' ? 'Calendario' : 'Statistiche'}
             </button>
           ))}
+          <Link
+            href="/dashboard/segretario/figc/calendario"
+            data-onboarding="btn-importa-calendario"
+            style={{
+              padding: '8px 16px',
+              fontFamily: 'var(--font-display)', fontSize: 11,
+              textTransform: 'uppercase', letterSpacing: '0.08em',
+              fontWeight: 500,
+              background: 'transparent',
+              color: 'var(--grigio-3)',
+              border: '1px solid var(--grigio-5)',
+              cursor: 'pointer',
+              textDecoration: 'none',
+            }}
+          >
+            Importa PDF
+          </Link>
           <Link href="/dashboard/segretario/partite/nuova" className="btn btn-primary btn-sm" style={{ marginLeft: 8 }}>
             + Nuova
           </Link>
@@ -611,123 +554,8 @@ export default function SegretarioPartitePage() {
         </>
       )}
 
-      {/* ── Tab 3: Importa PDF ───────────────────────────────────── */}
-      {tab === 'importa-pdf' && (
-        <div>
-          <div className="card" style={{ padding: '20px 24px', marginBottom: 16 }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--white)', marginBottom: 4 }}>
-              Importa calendario da PDF
-            </div>
-            <p style={{ fontSize: 13, color: 'var(--grigio-3)', marginBottom: 16 }}>
-              Carica il PDF del calendario ufficiale (es. comunicato FIGC). Il sistema estrarrà automaticamente le partite.
-              Funziona con i formati più comuni. Per risultati ottimali usa il CSV tramite{' '}
-              <Link href="/dashboard/segretario/figc/calendario" style={{ color: 'var(--accent)' }}>Import Calendario FIGC</Link>.
-            </p>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
-              <div>
-                <label style={lblStyle}>Nome club nel PDF</label>
-                <input
-                  className="input"
-                  value={nomeClub}
-                  onChange={e => setNomeClub(e.target.value)}
-                  placeholder="Come appare nel PDF es. A.S.D. Esempio"
-                  style={{ width: '100%' }}
-                />
-                <div style={{ fontSize: 11, color: 'var(--grigio-4)', marginTop: 4 }}>
-                  Usato per rilevare casa/trasferta
-                </div>
-              </div>
-              <div>
-                <label style={lblStyle}>Conflitti (stessa data)</label>
-                <select className="input" value={pdfModalita} onChange={e => setPdfModalita(e.target.value as typeof pdfModalita)} style={{ width: '100%' }}>
-                  <option value="salta">Salta — lascia invariata</option>
-                  <option value="aggiorna_campo">Aggiorna solo campo</option>
-                  <option value="sovrascrivi">Sovrascrivi</option>
-                </select>
-              </div>
-            </div>
-
-            <div
-              style={{ border: '2px dashed var(--grigio-5)', borderRadius: 8, padding: '28px 20px', textAlign: 'center', cursor: 'pointer', background: 'var(--grigio-6)' }}
-              onClick={() => fileRef.current?.click()}
-            >
-              {pdfLoading ? (
-                <div style={{ fontSize: 14, color: 'var(--grigio-3)' }}>Analisi PDF in corso…</div>
-              ) : (
-                <>
-                  <div style={{ fontSize: 28, marginBottom: 8 }}>📄</div>
-                  <div style={{ fontSize: 14, fontWeight: 500, color: 'var(--grigio)' }}>Clicca per selezionare il PDF</div>
-                  <div style={{ fontSize: 12, color: 'var(--grigio-4)', marginTop: 4 }}>Calendario FIGC, comunicati, calendari di campionato</div>
-                </>
-              )}
-            </div>
-            <input ref={fileRef} type="file" accept=".pdf,application/pdf" style={{ display: 'none' }} onChange={handlePdfFile} />
-          </div>
-
-          {pdfPartite.length > 0 && (
-            <div className="card" style={{ overflow: 'hidden', padding: 0, marginBottom: 16 }}>
-              <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--grigio-5)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <span style={{ fontSize: 14, fontWeight: 600 }}>Partite rilevate</span>
-                  <span className="badge badge-verde">{pdfPartite.length} trovate</span>
-                </div>
-                <button className="btn btn-primary btn-sm" onClick={importaPDF} disabled={importando}>
-                  {importando ? 'Importazione…' : `Importa ${pdfPartite.length} partite`}
-                </button>
-              </div>
-              <div className="table-wrap">
-                <table>
-                  <thead>
-                    <tr><th>G</th><th>Data</th><th>Ora</th><th>Casa</th><th>Ospite</th><th>Campo</th></tr>
-                  </thead>
-                  <tbody>
-                    {pdfPartite.map((p, i) => (
-                      <tr key={i}>
-                        <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-4)' }}>{p.giornata ?? '—'}</td>
-                        <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{p.data}</td>
-                        <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{p.ora}</td>
-                        <td style={{ fontWeight: 500, fontSize: 13 }}>{p.squadraCasa}</td>
-                        <td style={{ fontSize: 13 }}>{p.squadraOspite}</td>
-                        <td style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{p.campo ?? '—'}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {risultatoImport && (
-            <div className="card" style={{ padding: '20px 24px', borderLeft: '3px solid var(--verde)' }}>
-              <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 12 }}>Importazione completata</div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
-                {[
-                  { l: 'Importate', v: risultatoImport.importate, c: 'var(--verde)' },
-                  { l: 'Saltate', v: risultatoImport.saltate },
-                  { l: 'Conflitti', v: risultatoImport.conflitti, c: risultatoImport.conflitti > 0 ? 'var(--ambra)' : undefined },
-                ].map(s => (
-                  <div key={s.l} className="stat-card" style={{ padding: '10px 14px' }}>
-                    <div className="stat-label" style={{ fontSize: 10 }}>{s.l}</div>
-                    <div className="stat-value" style={{ fontSize: 24, color: (s as any).c }}>{s.v}</div>
-                  </div>
-                ))}
-              </div>
-              <button className="btn btn-secondary btn-sm" style={{ marginTop: 14 }} onClick={() => setTab('calendario')}>
-                Vedi calendario →
-              </button>
-            </div>
-          )}
-        </div>
-      )}
-
       {toast && <Toast msg={toast.msg} tipo={toast.tipo} onClose={() => setToast(null)} />}
     </div>
   )
 }
 
-const lblStyle: React.CSSProperties = {
-  display: 'block', fontSize: 11, fontFamily: 'var(--font-display)',
-  textTransform: 'uppercase', letterSpacing: '0.08em',
-  color: 'var(--grigio-3)', marginBottom: 6, fontWeight: 600,
-}
