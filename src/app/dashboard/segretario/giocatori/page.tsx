@@ -28,7 +28,7 @@ const TABS: { key: CategoriaTab; label: string }[] = [
 ]
 
 function getCategoria(categoriaEta: string | null | undefined): CategoriaTab {
-  if (!categoriaEta) return 'scuola_calcio'
+  if (!categoriaEta) return 'prima_squadra' // senza squadra assegnata → Prima Squadra (default import)
   if (PRIMA_SQUADRA.includes(categoriaEta)) return 'prima_squadra'
   if (SETTORE_GIOV.includes(categoriaEta)) return 'giovanili'
   return 'scuola_calcio'
