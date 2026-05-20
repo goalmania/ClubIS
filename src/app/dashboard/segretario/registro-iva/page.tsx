@@ -51,22 +51,45 @@ export default function RegistroIvaPage() {
 
   useSharedData(async () => { await load() })
 
-  async function load(annoParam?: number) {
-    setLoading(true)
-    const targetAnno = annoParam ?? anno
-    const { data: { user } } = await supabase.auth.getUser()
-    const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user!.id).single()
-    const clubId = utente!.club_id
-
+  async function queryAnno(clubId: string, a: number): Promise<RegistroRow[]> {
     const { data } = await supabase
       .from('registro_iva')
       .select('id, numero_progressivo, data_operazione, tipo, natura, controparte, imponibile, iva, totale, regime, note')
       .eq('club_id', clubId)
-      .gte('data_operazione', `${targetAnno}-01-01`)
-      .lte('data_operazione', `${targetAnno}-12-31`)
+      .gte('data_operazione', `${a}-01-01`)
+      .lte('data_operazione', `${a}-12-31`)
       .order('numero_progressivo')
+    return data ?? []
+  }
 
-    setRighe(data ?? [])
+  async function load(annoParam?: number) {
+    setLoading(true)
+    const { data: { user } } = await supabase.auth.getUser()
+    const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user!.id).single()
+    const clubId = utente!.club_id
+
+    const targetAnno = annoParam ?? anno
+    let rows = await queryAnno(clubId, targetAnno)
+
+    // Se load iniziale senza anno esplicito e non ci sono dati, trova l'anno più recente
+    if (rows.length === 0 && annoParam === undefined) {
+      const { data: lastRow } = await supabase
+        .from('registro_iva')
+        .select('data_operazione')
+        .eq('club_id', clubId)
+        .order('data_operazione', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+      if (lastRow) {
+        const bestAnno = new Date(lastRow.data_operazione).getFullYear()
+        if (bestAnno !== targetAnno) {
+          setAnno(bestAnno)
+          rows = await queryAnno(clubId, bestAnno)
+        }
+      }
+    }
+
+    setRighe(rows)
     setLoading(false)
   }
 
