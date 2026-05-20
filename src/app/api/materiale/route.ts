@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
 
   let query = supabase
     .from('materiale_sportivo')
-    .select('id, tipo, descrizione, quantita, stato, urgenza, richiedente, data_richiesta, note, created_at')
+    .select('id, tipo, descrizione, quantita, stato, urgenza, richiedente, data_richiesta, note, costo_totale, created_at')
     .eq('club_id', ctx.clubId)
     .order('data_richiesta', { ascending: false })
 
@@ -48,6 +48,7 @@ export async function POST(req: NextRequest) {
       richiedente:    body.richiedente ?? null,
       stato:          'in_attesa',
       note:           body.note ?? null,
+      costo_totale:   body.costo_totale ? parseFloat(body.costo_totale) : null,
       data_richiesta: new Date().toISOString(),
     })
     .select()
@@ -98,10 +99,11 @@ export async function PATCH(req: NextRequest) {
 
   const body = await req.json()
   const aggiornamenti: Record<string, unknown> = {}
-  if (body.stato    !== undefined) aggiornamenti.stato    = body.stato
-  if (body.note     !== undefined) aggiornamenti.note     = body.note
-  if (body.urgenza  !== undefined) aggiornamenti.urgenza  = body.urgenza
-  if (body.quantita !== undefined) aggiornamenti.quantita = body.quantita
+  if (body.stato        !== undefined) aggiornamenti.stato        = body.stato
+  if (body.note         !== undefined) aggiornamenti.note         = body.note
+  if (body.urgenza      !== undefined) aggiornamenti.urgenza      = body.urgenza
+  if (body.quantita     !== undefined) aggiornamenti.quantita     = body.quantita
+  if (body.costo_totale !== undefined) aggiornamenti.costo_totale = body.costo_totale ? parseFloat(body.costo_totale) : null
 
   const { data, error } = await supabase
     .from('materiale_sportivo')

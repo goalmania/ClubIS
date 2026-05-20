@@ -19,6 +19,7 @@ type RichiestaMateriale = {
   richiedente?: string | null
   data_richiesta: string | null
   note: string | null
+  costo_totale?: number | null
 }
 
 const STATI: MaterialeStato[]   = ['in_attesa', 'approvata', 'consegnata', 'rifiutata']
@@ -49,10 +50,11 @@ export default function TMMaterialePage() {
   const [showForm, setShowForm]           = useState(false)
   const [toast, setToast]                 = useState<{ msg: string; tipo: 'success' | 'error' } | null>(null)
   const [form, setForm]                   = useState({
-    tipo:      '',
-    quantita:  1,
-    urgenza:   'media' as MaterialeUrgenza,
-    note:      '',
+    tipo:         '',
+    quantita:     1,
+    urgenza:      'media' as MaterialeUrgenza,
+    note:         '',
+    costo_totale: '' as string,
   })
 
   // Carica nome del TM loggato (solo una volta)
@@ -90,11 +92,12 @@ export default function TMMaterialePage() {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify({
-        tipo:        form.tipo.trim(),
-        quantita:    form.quantita,
-        urgenza:     form.urgenza,
-        richiedente: richiedente,
-        note:        form.note.trim() || null,
+        tipo:         form.tipo.trim(),
+        quantita:     form.quantita,
+        urgenza:      form.urgenza,
+        richiedente:  richiedente,
+        note:         form.note.trim() || null,
+        costo_totale: form.costo_totale ? parseFloat(form.costo_totale) : null,
       }),
     })
     const json = await res.json()
@@ -104,7 +107,7 @@ export default function TMMaterialePage() {
     }
     setRows(prev => [json.richiesta, ...prev])
     setCatalogo(prev => Array.from(new Set([...prev, json.richiesta.tipo].filter(Boolean))))
-    setForm({ tipo: '', quantita: 1, urgenza: 'media', note: '' })
+    setForm({ tipo: '', quantita: 1, urgenza: 'media', note: '', costo_totale: '' })
     setShowForm(false)
     setToast({ msg: '✓ Richiesta inviata — notifica inviata a presidente e segreteria', tipo: 'success' })
   }
@@ -146,7 +149,7 @@ export default function TMMaterialePage() {
           <div style={{ fontWeight: 600, fontSize: 14, color: 'var(--text-primary)', marginBottom: 14 }}>
             📦 Nuova richiesta materiale
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '2fr 100px 140px', gap: 12, marginBottom: 12 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '2fr 100px 140px 130px', gap: 12, marginBottom: 12 }}>
             <div>
               <label style={labelStyle}>Tipo di materiale *</label>
               <input
@@ -182,6 +185,18 @@ export default function TMMaterialePage() {
                   <option key={u} value={u}>{URGENZA_META[u].label}</option>
                 ))}
               </select>
+            </div>
+            <div>
+              <label style={labelStyle}>Costo stimato (€)</label>
+              <input
+                className="input"
+                type="number"
+                step="0.01"
+                min={0}
+                value={form.costo_totale}
+                onChange={e => setForm(v => ({ ...v, costo_totale: e.target.value }))}
+                placeholder="0.00"
+              />
             </div>
           </div>
           <div style={{ marginBottom: 12 }}>
@@ -279,6 +294,9 @@ export default function TMMaterialePage() {
                     </div>
                     <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                       Qty: <strong>{m.quantita ?? 1}</strong>
+                      {m.costo_totale != null && m.costo_totale > 0 && (
+                        <> · <strong style={{ color: 'var(--accent-orange)' }}>€ {Number(m.costo_totale).toFixed(2)}</strong></>
+                      )}
                       {m.richiedente && <> · {m.richiedente}</>}
                       {m.data_richiesta && (
                         <> · {new Date(m.data_richiesta).toLocaleDateString('it-IT')}</>
