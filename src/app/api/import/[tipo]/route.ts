@@ -356,6 +356,7 @@ export async function POST(req: Request, { params }: { params: { tipo: string } 
           .from('famiglie')
           .insert({
             giocatore_id: giocatoreId,
+            club_id:      clubId,
             cognome:      r.cognome,
             nome:         r.nome,
             relazione:    String(r.relazione ?? 'genitore').toLowerCase(),
