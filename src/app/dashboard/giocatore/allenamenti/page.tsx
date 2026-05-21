@@ -28,31 +28,29 @@ export default function AllenamentiPage() {
       const { data: me } = await supabase.auth.getUser()
       if (!me.user) return
 
-      // Legge club_id dall'utente loggato (sicuro: RLS permette id = auth.uid())
+      // Prima cerca club_id in utenti (per cross-club isolation se disponibile)
       const { data: utente } = await supabase
         .from('utenti')
         .select('club_id')
         .eq('id', me.user.id)
         .maybeSingle()
 
-      if (!utente?.club_id) { setLoading(false); return }
+      // Cerca il record giocatore: se utenti ha club_id lo usa come filtro,
+      // altrimenti cerca solo per auth_user_id (giocatori senza record utenti)
+      let giocQuery = supabase.from('giocatori').select('id, club_id').eq('auth_user_id', me.user.id)
+      if (utente?.club_id) giocQuery = giocQuery.eq('club_id', utente.club_id)
+      const { data: gioc } = await giocQuery.maybeSingle()
 
-      // Filtra per club_id oltre che per auth_user_id: evita duplicati cross-club
-      const { data: gioc } = await supabase
-        .from('giocatori')
-        .select('id')
-        .eq('auth_user_id', me.user.id)
-        .eq('club_id', utente.club_id)
-        .maybeSingle()
-
-      if (!gioc) { setLoading(false); return }
+      if (!gioc?.id) { setLoading(false); return }
+      const clubId = gioc.club_id ?? utente?.club_id
+      if (!clubId) { setLoading(false); return }
 
       // Squadra attiva del giocatore (per filtrare solo le sue sessioni)
       const { data: tess } = await supabase
         .from('tesseramenti')
         .select('squadra_id')
         .eq('giocatore_id', gioc.id)
-        .eq('club_id', utente.club_id)
+        .eq('club_id', clubId)
         .eq('stato', 'attivo')
         .maybeSingle()
 

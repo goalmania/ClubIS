@@ -50,16 +50,11 @@ export default function PagamentiGiocatorePage() {
         .eq('id', me.user.id)
         .maybeSingle()
 
-      if (!utente?.club_id) { setLoading(false); return }
+      let giocQuery = supabase.from('giocatori').select('id, club_id').eq('auth_user_id', me.user.id)
+      if (utente?.club_id) giocQuery = giocQuery.eq('club_id', utente.club_id)
+      const { data: gioc } = await giocQuery.maybeSingle()
 
-      const { data: gioc } = await supabase
-        .from('giocatori')
-        .select('id')
-        .eq('auth_user_id', me.user.id)
-        .eq('club_id', utente.club_id)
-        .maybeSingle()
-
-      if (!gioc) { setLoading(false); return }
+      if (!gioc?.id) { setLoading(false); return }
 
       const { data: q } = await supabase
         .from('quote_iscrizione')
