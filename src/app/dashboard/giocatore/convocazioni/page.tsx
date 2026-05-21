@@ -35,10 +35,19 @@ export default function ConvocazioniPage() {
       const { data: me } = await supabase.auth.getUser()
       if (!me.user) return
 
+      const { data: utente } = await supabase
+        .from('utenti')
+        .select('club_id')
+        .eq('id', me.user.id)
+        .maybeSingle()
+
+      if (!utente?.club_id) { setLoading(false); return }
+
       const { data: gioc } = await supabase
         .from('giocatori')
         .select('id')
         .eq('auth_user_id', me.user.id)
+        .eq('club_id', utente.club_id)
         .maybeSingle()
 
       if (!gioc) { setLoading(false); return }

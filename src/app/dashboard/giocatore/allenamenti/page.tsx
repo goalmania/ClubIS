@@ -28,21 +28,47 @@ export default function AllenamentiPage() {
       const { data: me } = await supabase.auth.getUser()
       if (!me.user) return
 
+      // Legge club_id dall'utente loggato (sicuro: RLS permette id = auth.uid())
+      const { data: utente } = await supabase
+        .from('utenti')
+        .select('club_id')
+        .eq('id', me.user.id)
+        .maybeSingle()
+
+      if (!utente?.club_id) { setLoading(false); return }
+
+      // Filtra per club_id oltre che per auth_user_id: evita duplicati cross-club
       const { data: gioc } = await supabase
         .from('giocatori')
-        .select('id, squadra_id:tesseramenti(squadra_id)')
+        .select('id')
         .eq('auth_user_id', me.user.id)
+        .eq('club_id', utente.club_id)
         .maybeSingle()
 
       if (!gioc) { setLoading(false); return }
 
-      // Carica sessioni delle ultime 8 settimane
+      // Squadra attiva del giocatore (per filtrare solo le sue sessioni)
+      const { data: tess } = await supabase
+        .from('tesseramenti')
+        .select('squadra_id')
+        .eq('giocatore_id', gioc.id)
+        .eq('club_id', utente.club_id)
+        .eq('stato', 'attivo')
+        .maybeSingle()
+
+      // Carica sessioni delle ultime 8 settimane (solo la sua squadra se disponibile)
       const da = new Date(Date.now() - 56 * 86400000).toISOString()
-      const { data: sess } = await supabase
+      let query = supabase
         .from('sessioni_allenamento')
         .select('id, data_ora, tipologia, obiettivo, campo, durata_minuti, stato')
         .gte('data_ora', da)
         .order('data_ora', { ascending: false })
+
+      if (tess?.squadra_id) {
+        query = query.eq('squadra_id', tess.squadra_id)
+      }
+
+      const { data: sess } = await query
 
       // Carica presenze del giocatore
       const sessIds = (sess ?? []).map((s: any) => s.id)

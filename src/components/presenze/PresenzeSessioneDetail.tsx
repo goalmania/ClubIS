@@ -56,7 +56,7 @@ export default function PresenzeSessioneDetail({ sessioneId, readonly = false }:
     async function load() {
       const { data: sess } = await supabase
         .from('sessioni_allenamento')
-        .select('id, data_ora, tipologia, campo, durata_minuti, stato, squadra_id, squadre(nome, categoria_eta)')
+        .select('id, data_ora, tipologia, campo, durata_minuti, stato, squadra_id, club_id, squadre(nome, categoria_eta)')
         .eq('id', sessioneId)
         .single()
       setSessione(sess)
@@ -114,8 +114,10 @@ export default function PresenzeSessioneDetail({ sessioneId, readonly = false }:
       }).eq('id', esistente.presence_id)
     } else {
       const { data: nuovo } = await supabase.from('presenze').insert({
-        sessione_id: sessioneId, giocatore_id: giocatoreId,
-        presente: stato === 'presente',
+        sessione_id:   sessioneId,
+        giocatore_id:  giocatoreId,
+        club_id:       (sessione as any)?.club_id ?? null,
+        presente:      stato === 'presente',
         motivo_assenza: stato === 'presente' ? null : (motivo ?? null),
         registrato_da: user?.id,
       }).select('id').single()

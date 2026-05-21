@@ -9,6 +9,7 @@ export default function NuovoAllenamentoPage() {
   const supabase = createClient()
 
   const [squadre,  setSquadre]  = useState<any[]>([])
+  const [clubId,   setClubId]   = useState<string | null>(null)
   const [loading,  setLoading]  = useState(false)
   const [toast,    setToast]    = useState<{ msg: string; tipo: 'success' | 'error' } | null>(null)
 
@@ -30,6 +31,13 @@ export default function NuovoAllenamentoPage() {
       u19: 3, u17: 4, u16: 5, u15: 6, u14: 7,
       u12: 8, u10: 9, u8: 10, u6: 11, femminile: 12,
     }
+    // Recupera club_id per includerlo nell'insert
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) {
+        supabase.from('utenti').select('club_id').eq('id', user.id).maybeSingle()
+          .then(({ data }) => { if (data?.club_id) setClubId(data.club_id) })
+      }
+    })
     fetch('/api/squadre')
       .then(r => r.json())
       .then((sq: any[]) => {
@@ -58,6 +66,7 @@ export default function NuovoAllenamentoPage() {
         .from('sessioni_allenamento')
         .insert({
           squadra_id:    squadraId,
+          club_id:       clubId,
           allenatore_id: user!.id,
           data_ora:      new Date(dataOra).toISOString(),
           durata_minuti: parseInt(durata),
@@ -83,9 +92,10 @@ export default function NuovoAllenamentoPage() {
         if (tesserati && tesserati.length > 0) {
           await supabase.from('presenze').insert(
             tesserati.map(t => ({
-              sessione_id:  sessione!.id,
-              giocatore_id: t.giocatore_id,
-              presente:     false,
+              sessione_id:   sessione!.id,
+              giocatore_id:  t.giocatore_id,
+              club_id:       clubId,
+              presente:      false,
               registrato_da: user!.id,
             }))
           )

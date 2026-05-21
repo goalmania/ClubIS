@@ -40,19 +40,28 @@ export default function ValutazioniPage() {
       const { data: me } = await supabase.auth.getUser()
       if (!me.user) return
 
+      const { data: utente } = await supabase
+        .from('utenti')
+        .select('club_id')
+        .eq('id', me.user.id)
+        .maybeSingle()
+
+      if (!utente?.club_id) { setLoading(false); return }
+
       const { data: gioc } = await supabase
         .from('giocatori')
         .select('id')
         .eq('auth_user_id', me.user.id)
+        .eq('club_id', utente.club_id)
         .maybeSingle()
 
       if (!gioc) { setLoading(false); return }
 
+      // Il giocatore vede tutte le proprie valutazioni (RLS lo permette via policy valutazioni_giocatore)
       const { data } = await supabase
         .from('valutazioni_tecniche')
         .select('id, data, tecnica, tattica, fisico, mentale, note, utenti!allenatore_id(nome, cognome)')
         .eq('giocatore_id', gioc.id)
-        .eq('visibile_famiglia', true)
         .order('data', { ascending: false })
 
       setValutazioni((data ?? []).map((v: any) => ({
