@@ -1,12 +1,12 @@
 'use client'
 export const dynamic = 'force-dynamic'
-import { useState, useEffect } from 'react'
+import { Suspense, useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 const LS_EMAIL = 'cis_ricordami_email'
 
-export default function LoginPage() {
+function LoginContent() {
   const [email,     setEmail]     = useState('')
   const [password,  setPassword]  = useState('')
   const [ricordami, setRicordami] = useState(false)
@@ -147,6 +147,14 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginContent />
+    </Suspense>
   )
 }
 
