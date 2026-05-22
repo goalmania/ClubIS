@@ -153,6 +153,15 @@ export async function POST(req: NextRequest) {
             is_super_admin: false,
           }, { onConflict: 'id' })
 
+          // Aggiungi il presidente fondatore in user_clubs
+          await db.from('user_clubs').upsert({
+            user_id:     userId,
+            club_id:     newClub.id,
+            role:        'presidente',
+            status:      'accepted',
+            accepted_at: new Date().toISOString(),
+          }, { onConflict: 'user_id,club_id' })
+
           // Invia magic link per completare registrazione
           await db.auth.admin.generateLink({
             type: 'magiclink',

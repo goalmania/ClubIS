@@ -143,6 +143,10 @@ export function parseComunicatoLND(testo: string): SanzioneEstratta[] {
   let currentTipo:   SanzioneEstratta['tipo_sanzione'] | null = null
   let currentDurata  = ''
 
+  // Stato per ammende società multi-riga (formato LND/CR: AMMENDA:\nSOCIETÀ\n€ importo)
+  let awaitingAmmendaSocieta = false
+  let pendingAmmendaSocieta: string | null = null
+
   // Parole che segnalano inizio di una nuova sezione non-giocatori
   const SEZIONE_RESET = /^(SOCIET[AÀ]|ALLENATORI|DIRIGENTI|CALCIATORI|CAMPIONATO|GARE\s+DEL|PROVVEDIMENTI|IN\s+BASE|LE\s+AMMENDE|ECCELLENZA|PROMOZIONE|PRIMA\s+CAT|SECONDA\s+CAT|TERZA\s+CAT|INIBIZIONE|IL\s+SEGRETARIO|IL\s+PRESIDENTE|COORDINATE|PUBBLICATO)/i
 
@@ -150,12 +154,33 @@ export function parseComunicatoLND(testo: string): SanzioneEstratta[] {
     const line = rawLine.trim()
     if (!line) continue
 
+    // 0) Header "AMMENDA:" (sezione ammende società nel Giudice Sportivo LND)
+    //    Formato: AMMENDA:\n<NOME SOCIETÀ>\n€ <importo> <descrizione>
+    if (/^AMMEND[AE][:\s]*$/i.test(line)) {
+      awaitingAmmendaSocieta = true
+      pendingAmmendaSocieta  = null
+      continue
+    }
+
+    // 0b) Riga dopo AMMENDA: → nome della società
+    if (awaitingAmmendaSocieta) {
+      // La riga con '€' o quella che inizia con cifra è l'importo, non il nome
+      if (!line.startsWith('€') && !/^[\x80\d]/.test(line)) {
+        pendingAmmendaSocieta  = line
+        awaitingAmmendaSocieta = false
+        continue
+      }
+      // Se arriva subito l'euro (caso raro), lascia cadere la pendenza
+      awaitingAmmendaSocieta = false
+    }
+
     // 1) Riga che inizia con un header ma potrebbe avere anche un giocatore nella stessa riga
     //    (es. "SQUALIFICA FINO AL 23/ 5/2026  ADAMO LORENZO (NOVOLI CALCIO 1942)")
     const header = parseHeader(line)
     if (header) {
       currentTipo   = header.tipo
       currentDurata = header.durata
+      pendingAmmendaSocieta = null
       // Cerca comunque giocatori nella stessa riga (dopo l'header)
       const players = parsePlayerLine(line)
       for (const p of players) add(p.cognome, p.nome, p.societa, currentTipo, currentDurata)
@@ -179,13 +204,16 @@ export function parseComunicatoLND(testo: string): SanzioneEstratta[] {
       }
     }
 
-    // 4) Ammenda società:  €/<char128>/\x80  IMPORTO  NOME SOCIETÀ
+    // 4) Ammenda società:  €/<char128>/\x80  IMPORTO  [descrizione o nome società]
     //    Il byte 0x80 (latin1) viene da \200 octal nel PDF (Windows-1252 €)
-    const mAmm = line.match(/^(?:€|\x80|€)\s*([\d.,]+)\s+(.+)$/)
+    const mAmm = line.match(/^(?:€|\x80|€)\s*([\d.,]+)\s*(.*)$/)
     if (mAmm) {
       const importo = mAmm[1].replace(',', '.')
-      const societa = mAmm[2].trim()
+      // Usa la società rilevata dalla riga precedente (formato multi-riga LND)
+      // o come fallback quella inline (formato a riga singola)
+      const societa = pendingAmmendaSocieta ?? mAmm[2].trim()
       add('', '', societa, 'ammenda', `€ ${importo}`)
+      pendingAmmendaSocieta = null
       continue
     }
   }

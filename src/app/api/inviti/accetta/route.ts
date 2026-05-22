@@ -111,7 +111,18 @@ export async function POST(req: Request) {
     }
   }
 
-  // 4. Marca invito come usato (con chi l'ha accettato e quando)
+  // 4. Aggiungi membership in user_clubs
+  await admin
+    .from('user_clubs')
+    .upsert({
+      user_id:     userId,
+      club_id:     invito.club_id,
+      role:        invito.ruolo,
+      status:      'accepted',
+      accepted_at: new Date().toISOString(),
+    }, { onConflict: 'user_id,club_id' })
+
+  // 5. Marca invito come usato (con chi l'ha accettato e quando)
   await admin
     .from('inviti_club')
     .update({ usato: true, usato_da: userId, usato_at: new Date().toISOString() })

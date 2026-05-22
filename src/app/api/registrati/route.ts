@@ -116,6 +116,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: `Errore creazione profilo: ${utenteError.message}` }, { status: 500 })
   }
 
+  // Aggiungi il presidente fondatore in user_clubs
+  await db.from('user_clubs').insert({
+    user_id:     authData.user.id,
+    club_id:     club.id,
+    role:        'presidente',
+    status:      'accepted',
+    accepted_at: new Date().toISOString(),
+  })
+
   // Registra per anti-abuso
   await db.from('trial_registrations').insert({
     email: emailNorm,

@@ -12,6 +12,7 @@ import OnboardingWrapper from '@/components/ui/OnboardingWrapper'
 import OnboardingSystem from '@/components/onboarding/OnboardingSystem'
 import { ClubPlanProvider } from '@/lib/club-context'
 import type { PlanTier } from '@/lib/features'
+import { getUserClubs, readActiveClubCookie, resolveActiveClub } from '@/lib/multi-club'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = createClient()
@@ -70,7 +71,13 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const impersonation = utente.is_super_admin ? readImpersonation() : null
 
   const effectiveRuolo = (impersonation?.ruolo ?? utente.ruolo ?? 'segretario') as RuoloUtente
+
+  // utente.club_id è sempre il club attivo (viene aggiornato da /api/club/switch
+  // e da /api/inviti/accetta-esistente). Nessuna risoluzione via cookie necessaria.
   const effectiveClubId = impersonation?.clubId ?? utente.club_id
+
+  // Carica tutti i club dell'utente (solo per mostrare il selettore nella sidebar)
+  const userClubs = !impersonation ? await getUserClubs(user.id) : []
 
   const { data: club } = await supabase
     .from('clubs')
@@ -160,6 +167,13 @@ export default async function DashboardLayout({ children }: { children: React.Re
           notifiche={internalNotUnread ?? 0}
           isSuperAdmin={utente.is_super_admin ?? false}
           planTier={effectivePlanTier}
+          userClubs={userClubs.map(c => ({
+            club_id:   c.club_id,
+            nome:      c.nome,
+            categoria: c.categoria,
+            logo_url:  c.logo_url,
+          }))}
+          activeClubId={effectiveClubId}
         />
         <main style={{
           flex: 1,

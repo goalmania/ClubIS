@@ -3,7 +3,6 @@ import { useState, useMemo } from 'react'
 import { parseCSV } from '@/lib/import/csv-parser'
 import { SCHEMA_GIOCATORI, SCHEMA_MOVIMENTI, SCHEMA_FAMIGLIE } from '@/lib/import/schemas'
 import { PageHeader, Toast } from '@/components/ui'
-import ImportOnboardingModal from '@/components/onboarding/ImportOnboardingModal'
 
 const TIPI_IMPORT = [
   {
@@ -127,15 +126,13 @@ export default function ImportPage() {
 
   return (
     <div>
-      <ImportOnboardingModal />
       <PageHeader title="Import dati" subtitle="Carica CSV per importare massivamente giocatori, movimenti o famiglie" />
 
       {/* Selezione tipo */}
-      <div data-onboarding="import-tipi-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12, marginBottom: 24 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12, marginBottom: 24 }}>
         {TIPI_IMPORT_EFFETTIVI.map(t => (
           <div
             key={t.key}
-            data-onboarding={`import-card-${t.key}`}
             onClick={() => cambioTipo(t.key)}
             style={{
               padding: '16px 20px',

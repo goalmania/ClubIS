@@ -61,6 +61,7 @@ export async function getUserContext(): Promise<UserContext | null> {
 
   const impersonation = utente.is_super_admin ? readImpersonation() : null
 
+  // utenti.club_id è sempre il club attivo — aggiornato da /api/club/switch
   let clubId: string = impersonation?.clubId ?? utente.club_id
   let giocatoreId: string | undefined = impersonation?.giocatoreId ?? utente.giocatore_figlio_id ?? undefined
 

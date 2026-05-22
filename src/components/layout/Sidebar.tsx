@@ -5,6 +5,7 @@ import { RuoloUtente } from '@/types/database'
 import clsx from 'clsx'
 import { useScadenzeFIGCCount } from '@/hooks/useScadenzeFIGCCount'
 import { canAccess, type Feature, type PlanTier } from '@/lib/features'
+import ClubSwitcher, { type ClubOption } from '@/components/layout/ClubSwitcher'
 
 const Icon = {
   Home:      () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
@@ -331,9 +332,11 @@ interface SidebarProps {
   notifiche?: number
   isSuperAdmin?: boolean
   planTier?: PlanTier
+  userClubs?: ClubOption[]
+  activeClubId?: string
 }
 
-export default function Sidebar({ ruolo, utente, club, notifiche = 0, isSuperAdmin = false, planTier = 'starter' }: SidebarProps) {
+export default function Sidebar({ ruolo, utente, club, notifiche = 0, isSuperAdmin = false, planTier = 'starter', userClubs, activeClubId }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
   const sezioni = navConfig[ruolo] ?? navConfig.segretario
@@ -371,6 +374,11 @@ export default function Sidebar({ ruolo, utente, club, notifiche = 0, isSuperAdm
       height: '100vh',
       overflowY: 'auto',
     }}>
+      {/* Selettore multi-club (visibile solo se l'utente ha 2+ club) */}
+      {userClubs && userClubs.length > 1 && activeClubId && (
+        <ClubSwitcher clubs={userClubs} activeClubId={activeClubId} />
+      )}
+
       {/* Header club */}
       <div style={{ padding: '18px 16px 14px', borderBottom: '1px solid var(--border-solid)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>

@@ -41,6 +41,7 @@ interface SqualificaAttiva {
   id: string
   giocatore_id: string
   partite_restanti: number
+  data_fine: string | null
   tipo?: string
 }
 
@@ -85,12 +86,15 @@ export default function FigcSqualifichePage() {
 
   async function init() {
     setLoading(true)
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
-    const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-    if (!utente) return
-    const cid = utente.club_id
+    const ctxRes = await fetch('/api/user-context')
+    if (!ctxRes.ok) return
+    const ctx = await ctxRes.json()
+    const cid: string = ctx.clubId
+    if (!cid) return
     setClubId(cid)
+
+    // Ripara silenziosamente eventuali squalifiche salvate con club_id errato
+    await fetch('/api/figc/comunicati/sync-squalifiche', { method: 'POST' })
 
     const today = new Date().toISOString().split('T')[0]
 
@@ -113,9 +117,10 @@ export default function FigcSqualifichePage() {
         .limit(10),
       supabase
         .from('squalifiche')
-        .select('id, giocatore_id, partite_restanti')
+        .select('id, giocatore_id, partite_restanti, data_fine')
         .eq('club_id', cid)
-        .gt('partite_restanti', 0),
+        .gt('partite_restanti', 0)
+        .or(`data_fine.is.null,data_fine.gte.${today}`),
       supabase
         .from('infortuni')
         .select('giocatore_id')
@@ -189,7 +194,7 @@ export default function FigcSqualifichePage() {
 
   async function conferma(sq: SqualificaComunicato, comunicatoRef: string | null) {
     const gId = overrides[sq.id] ?? sq.giocatore_id
-    if (!gId) { setToast({ msg: 'Associa prima un giocatore', tipo: 'error' }); return }
+    if (!gId && sq.tipo_sanzione !== 'ammenda') { setToast({ msg: 'Associa prima un giocatore', tipo: 'error' }); return }
     const dataInizio = dataInizioMap[sq.id] ?? new Date().toISOString().split('T')[0]
 
     setConfermando(p => ({ ...p, [sq.id]: true }))
@@ -315,17 +320,17 @@ export default function FigcSqualifichePage() {
 
           {/* ─── SEZIONE 2: Monitor Squalifiche + Review ─── */}
           {comunicati.length > 0 && (() => {
-            // Solo sanzioni effettivamente del club:
-            //   • ammende (nessun giocatore, riguardano la società)
-            //   • squalifiche/diffide dove il giocatore abbinato è nella nostra rosa
-            // Questo filtra anche i falsi positivi già salvati nel DB (vecchi upload)
-            // dove la sola similarità di nome aveva incluso giocatori di altri club.
+            // Mostra tutte le sanzioni dei comunicati di questo club:
+            //   • ammende società
+            //   • squalifiche/diffide già abbinate a un giocatore della rosa
+            //   • squalifiche/diffide non ancora abbinate (giocatore_id null → da associare)
             const rosaIds = new Set(rosa.map(g => g.id))
             const tutteSanzioni = comunicati.flatMap(c =>
               c.squalifiche
                 .filter(s =>
                   s.tipo_sanzione === 'ammenda' ||
-                  (s.giocatore_id != null && rosaIds.has(s.giocatore_id))
+                  s.giocatore_id === null ||
+                  rosaIds.has(s.giocatore_id!)
                 )
                 .map(s => ({ ...s, _comunicato: c }))
             )
@@ -391,47 +396,55 @@ export default function FigcSqualifichePage() {
 
                             {/* Associazione giocatore + data inizio */}
                             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                              {autoMatch && giocatoreMatch && (
-                                <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--verde)' }}>
-                                  → {giocatoreMatch.cognome} {giocatoreMatch.nome}
+                              {sq.tipo_sanzione === 'ammenda' ? (
+                                <div style={{ fontSize: 12, color: 'var(--grigio-4)', fontStyle: 'italic' }}>
+                                  Ammenda società — nessun giocatore da associare
                                 </div>
-                              )}
-                              <select
-                                className="input"
-                                style={{ width: '100%', fontSize: 12 }}
-                                value={overrides[sq.id] ?? sq.giocatore_id ?? ''}
-                                onChange={e => setOverrides(p => ({ ...p, [sq.id]: e.target.value }))}
-                              >
-                                <option value="">
-                                  {autoMatch && giocatoreMatch
-                                    ? `✓ ${giocatoreMatch.cognome} ${giocatoreMatch.nome}`
-                                    : 'Seleziona giocatore...'}
-                                </option>
-                                {[...rosa]
-                                  .sort((a, b) => a.cognome.localeCompare(b.cognome))
-                                  .map(g => (
-                                    <option key={g.id} value={g.id}>
-                                      {g.cognome} {g.nome}
-                                      {g.numero_maglia != null ? ` (#${g.numero_maglia})` : ''}
+                              ) : (
+                                <>
+                                  {autoMatch && giocatoreMatch && (
+                                    <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--verde)' }}>
+                                      → {giocatoreMatch.cognome} {giocatoreMatch.nome}
+                                    </div>
+                                  )}
+                                  <select
+                                    className="input"
+                                    style={{ width: '100%', fontSize: 12 }}
+                                    value={overrides[sq.id] ?? sq.giocatore_id ?? ''}
+                                    onChange={e => setOverrides(p => ({ ...p, [sq.id]: e.target.value }))}
+                                  >
+                                    <option value="">
+                                      {autoMatch && giocatoreMatch
+                                        ? `✓ ${giocatoreMatch.cognome} ${giocatoreMatch.nome}`
+                                        : 'Seleziona giocatore...'}
                                     </option>
-                                  ))}
-                              </select>
-                              <div>
-                                <label className="label" style={{ fontSize: 11 }}>Data inizio</label>
-                                <input
-                                  className="input"
-                                  type="date"
-                                  style={{ width: '100%', marginTop: 2, fontSize: 12 }}
-                                  value={dataInizioMap[sq.id] ?? new Date().toISOString().split('T')[0]}
-                                  onChange={e => setDataInizioMap(p => ({ ...p, [sq.id]: e.target.value }))}
-                                />
-                              </div>
+                                    {[...rosa]
+                                      .sort((a, b) => a.cognome.localeCompare(b.cognome))
+                                      .map(g => (
+                                        <option key={g.id} value={g.id}>
+                                          {g.cognome} {g.nome}
+                                          {g.numero_maglia != null ? ` (#${g.numero_maglia})` : ''}
+                                        </option>
+                                      ))}
+                                  </select>
+                                  <div>
+                                    <label className="label" style={{ fontSize: 11 }}>Data inizio</label>
+                                    <input
+                                      className="input"
+                                      type="date"
+                                      style={{ width: '100%', marginTop: 2, fontSize: 12 }}
+                                      value={dataInizioMap[sq.id] ?? new Date().toISOString().split('T')[0]}
+                                      onChange={e => setDataInizioMap(p => ({ ...p, [sq.id]: e.target.value }))}
+                                    />
+                                  </div>
+                                </>
+                              )}
                             </div>
 
                             <button
                               className="btn btn-primary btn-sm"
                               onClick={() => conferma(sq, c.numero_comunicato)}
-                              disabled={confermando[sq.id] || (!gId && !overrides[sq.id])}
+                              disabled={confermando[sq.id] || (sq.tipo_sanzione !== 'ammenda' && !gId && !overrides[sq.id])}
                               style={{ flexShrink: 0 }}
                             >
                               {confermando[sq.id] ? '...' : 'Conferma'}

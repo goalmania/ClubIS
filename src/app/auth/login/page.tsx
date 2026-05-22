@@ -2,7 +2,7 @@
 export const dynamic = 'force-dynamic'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 const LS_EMAIL = 'cis_ricordami_email'
 
@@ -12,8 +12,9 @@ export default function LoginPage() {
   const [ricordami, setRicordami] = useState(false)
   const [errore,    setErrore]    = useState('')
   const [loading,   setLoading]   = useState(false)
-  const supabase = createClient()
-  const router   = useRouter()
+  const supabase     = createClient()
+  const router       = useRouter()
+  const searchParams = useSearchParams()
 
   // Pre-fill email se salvata
   useEffect(() => {
@@ -36,7 +37,10 @@ export default function LoginPage() {
     } catch { /* localStorage non disponibile */ }
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) { setErrore('Email o password non corretti.'); setLoading(false); return }
-    router.push('/dashboard')
+    // Redirect a redirect_to se presente e sicuro (solo path interni)
+    const redirectTo = searchParams.get('redirect_to')
+    const dest = redirectTo && redirectTo.startsWith('/') ? redirectTo : '/dashboard'
+    router.push(dest)
     router.refresh()
   }
 
