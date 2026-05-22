@@ -1,8 +1,9 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import { Suspense } from 'react'
 
 const RUOLO_LABEL: Record<string, string> = {
   segretario:   'Segretario',
@@ -36,28 +37,31 @@ function Wrapper({ children }: { children: React.ReactNode }) {
   )
 }
 
-export default function UniscitiPage() {
+function UniscitiContent() {
   const { token } = useParams<{ token: string }>()
   const router = useRouter()
+  const searchParams = useSearchParams()
 
-  const [stato, setStato]         = useState<'loading'|'ok'|'usato'|'scaduto'|'errore'>('loading')
-  const [info, setInfo]           = useState<InvitoInfo | null>(null)
-  const [isLogged, setIsLogged]   = useState<boolean | null>(null)
+  // ?accetta=1 indica che l'utente è tornato dal login e vuole accettare l'invito
+  const modoAccetta = searchParams.get('accetta') === '1'
+
+  const [stato, setStato]       = useState<'loading'|'ok'|'usato'|'scaduto'|'errore'>('loading')
+  const [info, setInfo]         = useState<InvitoInfo | null>(null)
 
   // Stato form nuovo account
-  const [nome, setNome]           = useState('')
-  const [cognome, setCognome]     = useState('')
-  const [email, setEmail]         = useState('')
-  const [password, setPassword]   = useState('')
-  const [errore, setErrore]       = useState('')
-  const [invio, setInvio]         = useState(false)
-  const [successo, setSuccesso]   = useState(false)
+  const [nome, setNome]         = useState('')
+  const [cognome, setCognome]   = useState('')
+  const [email, setEmail]       = useState('')
+  const [password, setPassword] = useState('')
+  const [errore, setErrore]     = useState('')
+  const [invio, setInvio]       = useState(false)
+  const [successo, setSuccesso] = useState(false)
 
-  // Verifica info invito + sessione utente
   useEffect(() => {
     if (!token) return
 
     const supabase = createClient()
+
     Promise.all([
       fetch(`/api/inviti/info/${token}`).then(r => r.json()),
       supabase.auth.getUser(),
@@ -66,16 +70,20 @@ export default function UniscitiPage() {
         if (data.error.includes('stato utilizzato')) setStato('usato')
         else if (data.error.includes('scadut'))      setStato('scaduto')
         else setStato('errore')
-      } else {
-        setInfo(data)
-        setStato('ok')
+        return
       }
-      setIsLogged(!!user)
-    }).catch(() => setStato('errore'))
-  }, [token])
+      setInfo(data)
+      setStato('ok')
 
-  // ── Caso A: Utente GIÀ loggato → accetta con account esistente ───────────
-  const accettaConAccountEsistente = async () => {
+      // Se tornato dal login con ?accetta=1, auto-accetta l'invito
+      if (modoAccetta && user) {
+        accettaEsistente()
+      }
+    }).catch(() => setStato('errore'))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, modoAccetta])
+
+  const accettaEsistente = async () => {
     setErrore(''); setInvio(true)
     const res = await fetch('/api/inviti/accetta-esistente', {
       method: 'POST',
@@ -92,7 +100,6 @@ export default function UniscitiPage() {
     setTimeout(() => router.push('/dashboard'), 2000)
   }
 
-  // ── Caso B: Nuovo utente → crea account ──────────────────────────────────
   const creaAccount = async (e: React.FormEvent) => {
     e.preventDefault(); setErrore(''); setInvio(true)
     const res = await fetch('/api/inviti/accetta', {
@@ -106,8 +113,26 @@ export default function UniscitiPage() {
   }
 
   // ── Rendering ─────────────────────────────────────────────────────────────
-  if (stato === 'loading' || isLogged === null) {
+  if (stato === 'loading') {
     return <Wrapper><p style={{ textAlign:'center', color:'var(--gray)', fontFamily:'var(--font-mono)', fontSize:13 }}>Verifica invito...</p></Wrapper>
+  }
+
+  // Se in modalità accetta + utente loggato: mostra spinner di accettazione
+  if (modoAccetta && stato === 'ok') {
+    return (
+      <Wrapper>
+        <p style={{ textAlign:'center', color:'var(--gray)', fontFamily:'var(--font-mono)', fontSize:13 }}>
+          {invio ? 'Accettazione in corso...' : successo ? 'Club aggiunto! Redirect...' : 'Aggiunta club al tuo account...'}
+        </p>
+        {errore && (
+          <div style={{ marginTop:16, padding:'10px 14px', background:'rgba(255,60,60,0.08)', border:'1px solid rgba(255,60,60,0.3)', borderRadius:2, fontSize:12, color:'#ff6060', textAlign:'center' }}>
+            {errore}
+            <br />
+            <Link href="/auth/login" style={{ color:'var(--accent)', marginTop:8, display:'inline-block' }}>Torna al login</Link>
+          </div>
+        )}
+      </Wrapper>
+    )
   }
 
   if (stato !== 'ok') {
@@ -136,9 +161,7 @@ export default function UniscitiPage() {
         <div style={{ fontFamily:'var(--font-display)', fontWeight:900, fontSize:20, textTransform:'uppercase', color:'var(--accent)', marginBottom:10 }}>
           Benvenuto in {info?.club_nome}!
         </div>
-        <div style={{ fontSize:13, color:'var(--gray)' }}>
-          {isLogged ? 'Redirect alla dashboard...' : 'Account creato! Redirect al login...'}
-        </div>
+        <div style={{ fontSize:13, color:'var(--gray)' }}>Account creato! Redirect al login...</div>
       </div>
     </Wrapper>
   )
@@ -152,44 +175,7 @@ export default function UniscitiPage() {
     </div>
   )
 
-  // ── Utente già loggato ────────────────────────────────────────────────────
-  if (isLogged) {
-    return (
-      <Wrapper>
-        {Header}
-        <div style={{ background:'#111', border:'1px solid var(--border-solid)', borderRadius:2, padding:'28px' }}>
-          <div style={{ marginBottom:22 }}>
-            <div style={{ fontFamily:'var(--font-display)', fontWeight:700, fontSize:17, textTransform:'uppercase', color:'var(--white)', marginBottom:8 }}>
-              Aggiungi club al tuo account
-            </div>
-            <div style={{ fontSize:13, color:'var(--gray)', lineHeight:1.7 }}>
-              Sei invitato come <span style={{ color:'var(--accent)', fontWeight:600 }}>{RUOLO_LABEL[info?.ruolo ?? ''] ?? info?.ruolo}</span>
-              {info?.giocatore_nome && <> — atleta <strong style={{ color:'var(--white)' }}>{info.giocatore_nome}</strong></>}.
-              <br />
-              Accetta per aggiungere <strong style={{ color:'var(--white)' }}>{info?.club_nome}</strong> al tuo account.
-            </div>
-          </div>
-          {errore && (
-            <div style={{ marginBottom:16, padding:'10px 14px', background:'rgba(255,60,60,0.08)', border:'1px solid rgba(255,60,60,0.3)', borderRadius:2, fontSize:12, color:'#ff6060' }}>
-              {errore}
-            </div>
-          )}
-          <button
-            onClick={accettaConAccountEsistente}
-            disabled={invio}
-            style={{ width:'100%', padding:'12px 0', background: invio ? '#333' : 'var(--accent)', color:'#000', border:'none', borderRadius:2, fontFamily:'var(--font-mono)', fontSize:12, fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', cursor: invio ? 'not-allowed' : 'pointer' }}
-          >
-            {invio ? 'Accettazione in corso...' : `Accetta invito — ${info?.club_nome} →`}
-          </button>
-          <div style={{ textAlign:'center', marginTop:20, fontSize:12, color:'var(--gray)' }}>
-            Non sei tu? <Link href="/auth/logout" style={{ color:'var(--accent)' }}>Esci</Link>
-          </div>
-        </div>
-      </Wrapper>
-    )
-  }
-
-  // ── Utente non loggato: form creazione account ────────────────────────────
+  // ── Form creazione account (default per tutti) ────────────────────────────
   return (
     <Wrapper>
       {Header}
@@ -229,7 +215,7 @@ export default function UniscitiPage() {
         <div style={{ borderTop:'1px solid var(--border-solid)', marginTop:20, paddingTop:16, textAlign:'center' }}>
           <div style={{ fontSize:12, color:'var(--gray)', marginBottom:8 }}>Hai già un account ClubIS?</div>
           <Link
-            href={`/auth/login?redirect_to=/unisciti/${token}`}
+            href={`/auth/login?redirect_to=/unisciti/${token}?accetta=1`}
             style={{ display:'inline-block', padding:'9px 20px', border:'1px solid var(--border-solid)', borderRadius:2, fontSize:12, fontFamily:'var(--font-mono)', color:'var(--white)', textDecoration:'none', letterSpacing:'0.05em' }}
           >
             Accedi con account esistente →
@@ -237,5 +223,17 @@ export default function UniscitiPage() {
         </div>
       </div>
     </Wrapper>
+  )
+}
+
+export default function UniscitiPage() {
+  return (
+    <Suspense fallback={
+      <div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', background:'var(--black)' }}>
+        <p style={{ color:'var(--gray)', fontFamily:'var(--font-mono)', fontSize:13 }}>Caricamento...</p>
+      </div>
+    }>
+      <UniscitiContent />
+    </Suspense>
   )
 }
