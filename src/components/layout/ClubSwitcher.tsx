@@ -1,5 +1,4 @@
 'use client'
-import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
 export interface ClubOption {
@@ -15,7 +14,6 @@ interface ClubSwitcherProps {
 }
 
 export default function ClubSwitcher({ clubs, activeClubId }: ClubSwitcherProps) {
-  const router = useRouter()
   const [switching, setSwitching] = useState(false)
 
   if (clubs.length <= 1) return null
@@ -31,7 +29,8 @@ export default function ClubSwitcher({ clubs, activeClubId }: ClubSwitcherProps)
         body: JSON.stringify({ club_id: newClubId }),
       })
       if (res.ok) {
-        router.refresh()
+        // Hard reload per svuotare tutto lo stato client (evita cross-club data leakage)
+        window.location.href = '/dashboard'
       }
     } finally {
       setSwitching(false)
