@@ -61,7 +61,6 @@ export default async function PrintDistintaPage({ params }: { params: { partita_
   const club = clubRaw
   const categoria = club?.categoria ?? ''
   const isSerieD = categoria === 'serie_d'
-  const isLND    = CAT_LND.includes(categoria)
 
   const primario  = hex(club?.colore_primario, '#1a1a2e')
   const testoPrim = textColor(primario)
@@ -338,10 +337,9 @@ export default async function PrintDistintaPage({ params }: { params: { partita_
     )
   }
 
-  // ── ECCELLENZA / CATEGORIE LND ──────────────────────────────────────────
-  if (isLND) {
-    const TOTAL_ROWS = 20
-    const righeVuote = Math.max(0, TOTAL_ROWS - giocatori.length)
+  // ── TUTTE LE CATEGORIE NON SERIE D ─────────────────────────────────────
+  const TOTAL_ROWS = 20
+  const righeVuote = Math.max(0, TOTAL_ROWS - giocatori.length)
 
     return (
       <>
@@ -576,168 +574,7 @@ export default async function PrintDistintaPage({ params }: { params: { partita_
         </div>
       </>
     )
-  }
-
-  // ── FORMATO BRANDED (categorie non LND, non Serie D) ───────────────────
-  const ROWS_DEFAULT = 18
-  const righeVuote = Math.max(0, ROWS_DEFAULT - giocatori.length)
-
-  const RUOLO_LABEL: Record<string, string> = {
-    portiere: 'POR', difensore_centrale: 'DC', terzino: 'TRZ',
-    centrocampista_difensivo: 'CDM', centrocampista: 'CEN', mezzala: 'MEZ',
-    regista: 'REG', trequartista: 'TRQ', ala: 'ALA',
-    seconda_punta: '2P', centravanti: 'ATT',
-  }
-
-  return (
-    <>
-      <style>{globalStyles}</style>
-      <PrintToolbar />
-
-      <div id="print-root" style={{
-        width: '210mm', margin: '60px auto 32px',
-        background: '#fff', color: '#000',
-        fontFamily: 'Arial, Helvetica, sans-serif',
-        fontSize: 11, boxShadow: '0 2px 24px rgba(0,0,0,0.18)',
-        padding: '12mm 12mm 10mm',
-      }}>
-
-        <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 0 }}>
-          <tbody>
-            <tr>
-              <td style={{ verticalAlign: 'middle', width: '55%', paddingBottom: 8 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  {club?.logo_url ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={club.logo_url} alt="Logo" style={{ width: 58, height: 58, objectFit: 'contain' }} />
-                  ) : (
-                    <div style={{
-                      width: 58, height: 58, border: `2px solid ${primario}`, borderRadius: 6,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: 8, fontWeight: 700, textAlign: 'center', lineHeight: 1.2, color: primario,
-                    }}>LOGO<br/>CLUB</div>
-                  )}
-                  <div>
-                    <div style={{ fontSize: 16, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.02em', color: '#000' }}>
-                      {club?.nome ?? 'Club'}
-                    </div>
-                    <div style={{ fontSize: 9, color: '#555', textTransform: 'uppercase', letterSpacing: '0.07em', marginTop: 3 }}>
-                      {partita.competizione ?? 'Campionato'}
-                      {partita.giornata ? ` — Giornata ${partita.giornata}` : ''}
-                    </div>
-                  </div>
-                </div>
-              </td>
-              <td style={{ verticalAlign: 'middle', textAlign: 'right', paddingBottom: 8 }}>
-                <div style={{ display: 'inline-block', background: primario, color: testoPrim, padding: '8px 18px', textAlign: 'center' }}>
-                  <div style={{ fontSize: 13, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.07em' }}>Distinta di Gara</div>
-                  <div style={{ fontSize: 8, marginTop: 2, textTransform: 'uppercase', letterSpacing: '0.07em', opacity: 0.85 }}>Modulo Ufficiale</div>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div style={{ height: 4, background: primario, marginBottom: 10 }} />
-
-        <table style={{ width: '100%', borderCollapse: 'collapse', border: `1px solid ${primario}`, marginBottom: 12 }}>
-          <tbody>
-            <tr style={{ background: primario, color: testoPrim }}>
-              <td style={{ ...cellInfo, borderColor: primario, fontWeight: 700, fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.07em' }} colSpan={4}>Informazioni Gara</td>
-            </tr>
-            <tr>
-              <td style={{ ...cellInfo, width: 90, fontWeight: 700, background: '#f7f7f7' }}>Avversario</td>
-              <td style={{ ...cellInfo, fontWeight: 700, fontSize: 12 }}>{partita.avversario}</td>
-              <td style={{ ...cellInfo, width: 70, fontWeight: 700, background: '#f7f7f7' }}>Tipo</td>
-              <td style={cellInfo}>{partita.casa_trasferta === 'casa' ? 'Gara Casalinga' : partita.casa_trasferta === 'trasferta' ? 'Gara in Trasferta' : '—'}</td>
-            </tr>
-            <tr>
-              <td style={{ ...cellInfo, fontWeight: 700, background: '#f7f7f7' }}>Data</td>
-              <td style={cellInfo}>{fmtData}</td>
-              <td style={{ ...cellInfo, fontWeight: 700, background: '#f7f7f7' }}>Ora</td>
-              <td style={cellInfo}>{fmtOra}</td>
-            </tr>
-            <tr>
-              <td style={{ ...cellInfo, fontWeight: 700, background: '#f7f7f7' }}>Campo</td>
-              <td style={cellInfo} colSpan={3}>{partita.campo ?? '—'}</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 4 }}>
-          Elenco Calciatori ({giocatori.length} / {ROWS_DEFAULT})
-        </div>
-        <table style={{ width: '100%', borderCollapse: 'collapse', border: `1px solid ${primario}` }}>
-          <thead>
-            <tr style={{ background: primario, color: testoPrim }}>
-              <th style={{ ...thS, borderColor: primario }}>N°</th>
-              <th style={{ ...thS, textAlign: 'left', width: '35%', borderColor: primario }}>Cognome e Nome</th>
-              <th style={{ ...thS, borderColor: primario }}>Ruolo</th>
-              <th style={{ ...thS, width: '20%', borderColor: primario }}>Tessera FIGC</th>
-              <th style={{ ...thS, width: '4%', borderColor: primario }}>C</th>
-              <th style={{ ...thS, width: '18%', borderColor: primario }}>Firma</th>
-            </tr>
-          </thead>
-          <tbody>
-            {giocatori.map((g: any, i: number) => (
-              <tr key={g.id ?? i} style={{ background: i % 2 === 0 ? '#fff' : '#f9f9f9' }}>
-                <td style={{ ...tdS, textAlign: 'center', fontWeight: 700, fontSize: 12 }}>{g.numero_maglia ?? '—'}</td>
-                <td style={{ ...tdS, fontWeight: 600 }}>{(g.cognome ?? '').toUpperCase()} {g.nome ?? ''}</td>
-                <td style={{ ...tdS, textAlign: 'center', fontFamily: 'monospace' }}>{RUOLO_LABEL[g.ruolo_principale ?? ''] ?? g.ruolo_principale ?? '—'}</td>
-                <td style={{ ...tdS, textAlign: 'center', fontFamily: 'monospace', fontSize: 10 }}>{g.codice_tessera_figc ?? ''}</td>
-                <td style={{ ...tdS, textAlign: 'center' }}></td>
-                <td style={{ ...tdS, height: 20 }}></td>
-              </tr>
-            ))}
-            {Array.from({ length: righeVuote }).map((_, i) => (
-              <tr key={`v${i}`} style={{ background: (giocatori.length + i) % 2 === 0 ? '#fff' : '#f9f9f9' }}>
-                <td style={{ ...tdS, height: 20 }}></td>
-                <td style={tdS}></td><td style={tdS}></td>
-                <td style={tdS}></td><td style={tdS}></td><td style={tdS}></td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        <div style={{ marginTop: 10 }}>
-          <div style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 4 }}>Staff Tecnico e Dirigenziale</div>
-          <table style={{ width: '100%', borderCollapse: 'collapse', border: `1px solid ${primario}` }}>
-            <tbody>
-              <tr>
-                {[['Allenatore', staff.allenatore], ['Vice All.', staff.vice_allenatore], ['Medico', staff.medico], ['Dirigente Acc.', staff.dirigente]].map(([role, name]) => (
-                  <td key={role} style={{ border: `1px solid ${primario}`, padding: '4px 8px', width: '25%', verticalAlign: 'top' }}>
-                    <div style={{ fontSize: 8, color: '#555', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{role}</div>
-                    <div style={{ fontSize: 11, fontWeight: 600, marginTop: 2, minHeight: 13 }}>{name ?? ''}</div>
-                  </td>
-                ))}
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div style={{ marginTop: 20, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
-          {[{ role: 'Allenatore', name: staff.allenatore }, { role: 'Dirigente Accompagnatore', name: staff.dirigente }, { role: 'Segretario', name: '' }].map(({ role, name }) => (
-            <div key={role} style={{ textAlign: 'center' }}>
-              <div style={{ borderBottom: `1.5px solid ${primario}`, height: 34, marginBottom: 5 }} />
-              <div style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{role}</div>
-              {name && <div style={{ fontSize: 9, color: '#444', marginTop: 2 }}>{name}</div>}
-            </div>
-          ))}
-        </div>
-
-        <div style={{ marginTop: 14, borderTop: `1px solid ${primario}`, paddingTop: 5, display: 'flex', justifyContent: 'space-between', fontSize: 8, color: '#777' }}>
-          <span>Ai sensi del Regolamento Gare FIGC e delle norme federali vigenti, il sottoscritto dichiara la correttezza dei dati riportati.</span>
-          <span style={{ whiteSpace: 'nowrap', marginLeft: 12 }}>Generata il {new Date(distinta.generata_at).toLocaleDateString('it-IT')} · ClubIS</span>
-        </div>
-      </div>
-    </>
-  )
 }
-
-// ── Stili branded ────────────────────────────────────────────────────────
-const cellInfo: React.CSSProperties = { border: '1px solid #ccc', padding: '4px 8px', fontSize: 11, verticalAlign: 'middle' }
-const thS: React.CSSProperties = { padding: '5px 6px', fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', textAlign: 'center', border: '1px solid #555' }
-const tdS: React.CSSProperties = { padding: '3px 6px', fontSize: 11, border: '1px solid #ddd', verticalAlign: 'middle' }
 
 // ── Stili Serie D ────────────────────────────────────────────────────────
 const sdTh: React.CSSProperties = { padding: '3px 4px', fontWeight: 700, fontSize: 7, textAlign: 'center', border: '1px solid #555', textTransform: 'uppercase', letterSpacing: '0.03em' }
