@@ -466,8 +466,8 @@ export default function BudgetStagionalePage() {
             Pianificazione finanziaria — entrate e uscite previste vs effettive
           </p>
         </div>
-        {/* Selettore stagione */}
-        <div style={{ display: 'flex', gap: 6 }}>
+        {/* Selettore stagione + export */}
+        <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
           {STAGIONI.map(s => (
             <button key={s} onClick={() => setStagione(s)} style={{
               padding: '6px 14px', fontFamily: 'var(--font-mono)', fontSize: 12, cursor: 'pointer',
@@ -478,6 +478,13 @@ export default function BudgetStagionalePage() {
               {s}
             </button>
           ))}
+          <button
+            className="btn btn-secondary btn-sm"
+            style={{ marginLeft: 6 }}
+            onClick={() => window.open(`/api/budget-stagionale/export-pdf?stagione=${encodeURIComponent(stagione)}`, '_blank')}
+          >
+            ↓ Esporta PDF
+          </button>
         </div>
       </div>
 

@@ -129,6 +129,12 @@ export default function PrimaNotaPage() {
         actions={
           <div style={{ display: 'flex', gap: 10 }}>
             <input type="month" className="input" style={{ width: 160 }} value={mese} onChange={e => setMese(e.target.value)} />
+            <button
+              className="btn btn-secondary btn-sm"
+              onClick={() => window.open(`/api/prima-nota/export-pdf?mese=${mese}`, '_blank')}
+            >
+              ↓ Esporta PDF
+            </button>
             <button className="btn btn-primary btn-sm" onClick={() => setShowForm(!showForm)} data-onboarding="btn-nuova-entrata">
               {showForm ? 'Chiudi' : '+ Movimento'}
             </button>

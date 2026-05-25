@@ -118,6 +118,12 @@ export default function GiocatoriPage() {
           <Link href="/dashboard/segretario/import" className="btn btn-secondary btn-sm">
             ↑ Importa CSV
           </Link>
+          <button
+            className="btn btn-secondary btn-sm"
+            onClick={() => window.open('/api/giocatori/export-pdf', '_blank')}
+          >
+            ↓ Esporta PDF
+          </button>
           <Link href="/dashboard/segretario/giocatori/nuovo" className="btn btn-primary btn-sm" data-onboarding="btn-aggiungi-giocatore">
             + Aggiungi giocatore
           </Link>
