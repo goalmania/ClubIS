@@ -126,7 +126,15 @@ export default function TMPresenzePage() {
           <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Presenze</h1>
           <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>Riepilogo presenze agli allenamenti per giocatore</p>
         </div>
-        <button className="btn btn-primary btn-sm" onClick={() => setShowForm(v => !v)}>+ </button>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <button
+            className="btn btn-secondary btn-sm"
+            onClick={() => window.open('/api/presenze/export-pdf', '_blank')}
+          >
+            ↓ Esporta PDF
+          </button>
+          <button className="btn btn-primary btn-sm" onClick={() => setShowForm(v => !v)}>+</button>
+        </div>
       </div>
 
       {showForm && (

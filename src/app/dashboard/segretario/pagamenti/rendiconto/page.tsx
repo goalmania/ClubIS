@@ -213,8 +213,11 @@ export default function RendicontoPage() {
               onChange={e => { const y = parseInt(e.target.value); localStorage.setItem('rendiconto_anno', String(y)); setAnno(y) }}>
               {[anno - 1, anno, anno + 1].map(y => <option key={y} value={y}>{y}</option>)}
             </select>
-            <button className="btn btn-secondary btn-sm no-print" onClick={() => window.print()}>
-              Stampa / PDF
+            <button
+              className="btn btn-secondary btn-sm no-print"
+              onClick={() => window.open(`/api/rendiconto/export-pdf?anno=${anno}`, '_blank')}
+            >
+              ↓ Esporta PDF
             </button>
           </div>
         }

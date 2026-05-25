@@ -28,7 +28,12 @@ export default async function TMTrasfertePage() {
           <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Trasferte</h1>
           <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>Organizzazione e budget degli spostamenti</p>
         </div>
-        <TrasferteCreateDrawer />
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+          <a href="/api/trasferte/export-pdf" target="_blank" rel="noreferrer" className="btn btn-secondary btn-sm">
+            ↓ Esporta PDF lista
+          </a>
+          <TrasferteCreateDrawer />
+        </div>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginBottom: 24 }}>
@@ -59,6 +64,7 @@ export default async function TMTrasfertePage() {
                 <th style={{ ...thStyle, textAlign: 'right' }}>Stimato</th>
                 <th style={{ ...thStyle, textAlign: 'right' }}>Effettivo</th>
                 <th style={thStyle}>Stato</th>
+                <th style={thStyle}></th>
               </tr>
             </thead>
             <tbody>
@@ -80,6 +86,12 @@ export default async function TMTrasfertePage() {
                     <span className={`badge ${t.stato === 'completata' ? 'badge-verde' : t.stato === 'annullata' ? 'badge-rosso' : 'badge-blu'}`}>
                       {t.stato ?? 'programmata'}
                     </span>
+                  </td>
+                  <td style={tdStyle}>
+                    <a href={`/api/trasferte/${t.id}/export-pdf`} target="_blank" rel="noreferrer"
+                      style={{ fontSize: 11, color: 'var(--accent)', textDecoration: 'none', fontFamily: 'var(--font-mono)' }}>
+                      ↓ PDF
+                    </a>
                   </td>
                 </tr>
               ))}

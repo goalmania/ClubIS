@@ -521,7 +521,20 @@ export default function TeamManagerCalendario() {
         title="Calendario"
         subtitle="CRUD eventi · filtri · drag-and-drop"
         actions={
-          <button
+          <div style={{ display: 'flex', gap: 10 }}>
+            <button
+              className="btn btn-secondary btn-sm"
+              type="button"
+              onClick={() => {
+                const range = rangeRef.current
+                const start = range?.start ?? new Date().toISOString()
+                const end = range?.end ?? new Date().toISOString()
+                window.open(`/api/cis/calendario/export-pdf?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`, '_blank')
+              }}
+            >
+              ↓ Esporta PDF
+            </button>
+            <button
             className="btn btn-primary btn-sm"
             type="button"
             onClick={() => {
@@ -547,6 +560,7 @@ export default function TeamManagerCalendario() {
           >
             + Nuovo evento
           </button>
+          </div>
         }
       />
 

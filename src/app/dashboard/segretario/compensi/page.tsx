@@ -185,7 +185,17 @@ export default function CompensiPage() {
       <PageHeader
         title="Compensi collaboratori"
         subtitle={`Gestione compensi sportivi — Riforma Sport D.Lgs. 36/2021 — Anno ${annoCorrente}`}
-        actions={<button data-onboarding="btn-nuovo-compenso" className="btn btn-primary btn-sm" onClick={() => setDrawerOpen(true)}>+ Nuovo compenso</button>}
+        actions={
+          <div style={{ display: 'flex', gap: 10 }}>
+            <button
+              className="btn btn-secondary btn-sm"
+              onClick={() => window.open(`/api/compensi/export-pdf?anno=${filtroAnno}`, '_blank')}
+            >
+              ↓ Esporta PDF
+            </button>
+            <button data-onboarding="btn-nuovo-compenso" className="btn btn-primary btn-sm" onClick={() => setDrawerOpen(true)}>+ Nuovo compenso</button>
+          </div>
+        }
       />
 
       {/* KPI */}
