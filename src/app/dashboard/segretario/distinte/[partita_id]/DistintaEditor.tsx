@@ -94,7 +94,7 @@ export default function DistintaEditor({ partita, eleggibili, nonEleggibili, sta
       return
     }
     const ok = await salva()
-    if (ok) window.open(`/print/distinta/${partita.id}`, '_blank')
+    if (ok) window.open(`/api/distinte/pdf/${partita.id}`, '_blank')
   }
 
   const fmtData = (d: string) =>

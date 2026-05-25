@@ -122,6 +122,8 @@ const navConfig: Record<RuoloUtente, NavSezione[]> = {
       { label: 'Disponibilità rosa', href: '/dashboard/segretario/disponibilita', icon: 'Check' },
       { label: 'Partite', href: '/dashboard/segretario/partite', icon: 'Trophy' },
       { label: 'Distinte gara', href: '/dashboard/segretario/distinte', icon: 'Clipboard' },
+      { label: 'Squalifiche', href: '/dashboard/segretario/squalifiche', icon: 'AlertTriangle' },
+      { label: 'Rapporti arbitrali', href: '/dashboard/segretario/rapporto-arbitrale', icon: 'FileText' },
       { label: 'Accrediti', href: '/dashboard/segretario/accrediti', icon: 'Ticket' },
       { label: 'Stadio', href: '/dashboard/stadio', icon: 'Stadium', feature: 'biglietteria_stadio' },
     ]},
@@ -260,6 +262,7 @@ const navConfig: Record<RuoloUtente, NavSezione[]> = {
     ]},
     { titolo: 'Squadra', voci: [
       { label: 'Distinte gara', href: '/dashboard/team-manager/distinte', icon: 'FileText' },
+      { label: 'Rapporti arbitrali', href: '/dashboard/team-manager/rapporto-arbitrale', icon: 'FileText' },
       { label: 'Presenze', href: '/dashboard/team-manager/presenze', icon: 'Check' },
       { label: 'Accrediti', href: '/dashboard/team-manager/accrediti', icon: 'Ticket' },
       { label: 'Comunicazioni', href: '/dashboard/team-manager/comunicazioni', icon: 'Message' },
