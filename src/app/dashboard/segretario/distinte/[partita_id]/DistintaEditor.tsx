@@ -36,8 +36,10 @@ const RUOLO_SHORT: Record<string, string> = {
   ala: 'ALA', seconda_punta: '2AP', centravanti: 'ATT',
 }
 
+const CAT_LND = ['eccellenza', 'promozione', 'prima_categoria', 'seconda_categoria', 'terza_categoria']
+
 export default function DistintaEditor({ partita, eleggibili, nonEleggibili, staffDefault, preselectedIds, squalificheManuale = 0, categoriaClub }: Props) {
-  const MAX_SELEZIONATI = categoriaClub === 'serie_d' ? 20 : 18
+  const MAX_SELEZIONATI = categoriaClub === 'serie_d' ? 22 : CAT_LND.includes(categoriaClub ?? '') ? 20 : 18
   const router = useRouter()
   const [selected, setSelected] = useState<Set<string>>(
     new Set(preselectedIds ?? [])
