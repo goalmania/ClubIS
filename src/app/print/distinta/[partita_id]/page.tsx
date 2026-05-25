@@ -41,34 +41,33 @@ export default async function PrintDistintaPage({ params }: { params: { partita_
 
   const supabase = createAdminClient()
 
-  // Prima recupera la partita per avere il club_id corretto (indipendente dall'impersonation)
-  const { data: partita } = await supabase
-    .from('partite')
-    .select('avversario, data_ora, competizione, giornata, casa_trasferta, campo, club_id')
-    .eq('id', params.partita_id)
-    .single()
-
-  if (!partita) redirect('/dashboard/segretario/distinte')
-
-  // Usa il club_id della partita come fonte di verità — più robusto dell'impersonation
-  const matchClubId = (partita as any).club_id ?? clubId
-
-  const [{ data: distinta }, { data: clubRaw }] = await Promise.all([
+  // Recupera la partita e la distinta in parallelo
+  const [{ data: partita }, { data: distinta }] = await Promise.all([
+    supabase
+      .from('partite')
+      .select('avversario, data_ora, competizione, giornata, casa_trasferta, campo')
+      .eq('id', params.partita_id)
+      .single(),
     supabase
       .from('distinte_gara')
-      .select('giocatori_snapshot, staff_snapshot, generata_at')
+      .select('giocatori_snapshot, staff_snapshot, generata_at, club_id')
       .eq('partita_id', params.partita_id)
       .order('versione', { ascending: false })
       .limit(1)
       .maybeSingle(),
-    supabase
-      .from('clubs')
-      .select('nome, logo_url, colore_primario, categoria')
-      .eq('id', matchClubId)
-      .single(),
   ])
 
+  if (!partita) redirect('/dashboard/segretario/distinte')
   if (!distinta) redirect(`/dashboard/segretario/distinte/${params.partita_id}`)
+
+  // Usa il club_id della distinta (sempre corretto) con fallback all'utente
+  const resolvedClubId = (distinta as any).club_id ?? clubId
+
+  const { data: clubRaw } = await supabase
+    .from('clubs')
+    .select('nome, logo_url, colore_primario, categoria')
+    .eq('id', resolvedClubId)
+    .single()
 
   const club = clubRaw
   const categoria = club?.categoria ?? ''
