@@ -157,15 +157,15 @@ const navConfig: Record<RuoloUtente, NavSezione[]> = {
     ]},
     { titolo: 'Squadra', voci: [
       { label: 'Calendario', href: '/dashboard/segretario/calendario', icon: 'Calendar' },
-      { label: 'Trasferte', href: '/dashboard/segretario/trasferte', icon: 'MapPin' },
-      { label: 'Materiale', href: '/dashboard/segretario/materiale', icon: 'Package' },
+      { label: 'Trasferte', href: '/dashboard/segretario/trasferte', icon: 'Map' },
+      { label: 'Materiale', href: '/dashboard/segretario/materiale', icon: 'Folder' },
       { label: 'Presenze Allenamento', href: '/dashboard/segretario/presenze-allenamento', icon: 'Check' },
     ]},
     { titolo: 'Area Medica', voci: [
       { label: 'Stato Medico', href: '/dashboard/segretario/stato-medico', icon: 'Heart' },
       { label: 'Cartelle Mediche', href: '/dashboard/segretario/cartelle', icon: 'Folder' },
       { label: 'Infortuni', href: '/dashboard/segretario/infortuni', icon: 'AlertTriangle' },
-      { label: 'Visite Mediche', href: '/dashboard/segretario/visite', icon: 'Stethoscope' },
+      { label: 'Visite Mediche', href: '/dashboard/segretario/visite', icon: 'Activity' },
     ]},
     { titolo: 'Gestione', voci: [
       { label: 'Generatore Documenti', href: '/dashboard/segretario/documenti', icon: 'FileText', feature: 'genera_documenti' },
