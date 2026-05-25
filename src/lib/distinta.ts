@@ -4,9 +4,11 @@ export interface GiocatoreElegibile {
   id: string
   nome: string
   cognome: string
+  data_nascita: string | null
   numero_maglia: number | null
   ruolo_principale: string | null
   codice_tessera_figc: string | null
+  numero_matricola_figc: string | null
 }
 
 export interface GiocatoreNonElegibile {
@@ -73,12 +75,12 @@ export async function getGiocatoriEleggibili(
   const tessQuery = squadraIds.length > 0
     ? supabase
         .from('tesseramenti')
-        .select('numero_maglia, giocatori(id, nome, cognome, ruolo_principale, codice_tessera_figc)')
+        .select('numero_maglia, giocatori(id, nome, cognome, data_nascita, ruolo_principale, codice_tessera_figc, numero_matricola_figc)')
         .eq('stato', 'attivo')
         .in('squadra_id', squadraIds)
     : supabase
         .from('tesseramenti')
-        .select('numero_maglia, giocatori(id, nome, cognome, ruolo_principale, codice_tessera_figc)')
+        .select('numero_maglia, giocatori(id, nome, cognome, data_nascita, ruolo_principale, codice_tessera_figc, numero_matricola_figc)')
         .eq('stato', 'attivo')
         .eq('club_id', clubId)
 
@@ -163,9 +165,11 @@ export async function getGiocatoriEleggibili(
       id: g.id,
       nome: g.nome,
       cognome: g.cognome,
+      data_nascita: g.data_nascita ?? null,
       numero_maglia: (t as any).numero_maglia ?? null,
       ruolo_principale: g.ruolo_principale ?? null,
       codice_tessera_figc: g.codice_tessera_figc ?? null,
+      numero_matricola_figc: g.numero_matricola_figc ?? null,
     }
 
     const motivi: string[] = []

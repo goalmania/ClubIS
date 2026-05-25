@@ -27,6 +27,7 @@ interface Props {
   staffDefault: StaffForm
   preselectedIds: string[] | null
   squalificheManuale?: number
+  categoriaClub?: string | null
 }
 
 const RUOLO_SHORT: Record<string, string> = {
@@ -35,9 +36,8 @@ const RUOLO_SHORT: Record<string, string> = {
   ala: 'ALA', seconda_punta: '2AP', centravanti: 'ATT',
 }
 
-const MAX_SELEZIONATI = 18
-
-export default function DistintaEditor({ partita, eleggibili, nonEleggibili, staffDefault, preselectedIds, squalificheManuale = 0 }: Props) {
+export default function DistintaEditor({ partita, eleggibili, nonEleggibili, staffDefault, preselectedIds, squalificheManuale = 0, categoriaClub }: Props) {
+  const MAX_SELEZIONATI = categoriaClub === 'serie_d' ? 20 : 18
   const router = useRouter()
   const [selected, setSelected] = useState<Set<string>>(
     new Set(preselectedIds ?? [])

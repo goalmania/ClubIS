@@ -15,7 +15,7 @@ export default async function GeneraDistintaPage({
 
   const supabase = createAdminClient()
 
-  const [{ data: partita }, { data: existing }, { data: allenatore }] = await Promise.all([
+  const [{ data: partita }, { data: existing }, { data: allenatore }, { data: clubInfo }] = await Promise.all([
     supabase
       .from('partite')
       .select('id, avversario, data_ora, competizione, giornata, casa_trasferta, campo')
@@ -36,6 +36,11 @@ export default async function GeneraDistintaPage({
       .eq('club_id', clubId)
       .eq('ruolo', 'allenatore')
       .maybeSingle(),
+    supabase
+      .from('clubs')
+      .select('categoria')
+      .eq('id', clubId)
+      .single(),
   ])
 
   if (!partita) redirect('/dashboard/segretario/distinte')
@@ -65,6 +70,7 @@ export default async function GeneraDistintaPage({
       staffDefault={staffDefault as any}
       preselectedIds={preselectedIds}
       squalificheManuale={squalificheManuale}
+      categoriaClub={clubInfo?.categoria ?? null}
     />
   )
 }
