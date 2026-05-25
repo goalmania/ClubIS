@@ -717,9 +717,9 @@ export default function RimborsiPage() {
                             value={nuoviIban[cf]?.iban ?? ''}
                             onChange={e => setNuoviIban(prev => ({ ...prev, [cf]: { ...prev[cf], iban: e.target.value.toUpperCase() } }))}
                           />
-                          {nuoviIban[cf]?.iban && nuoviIban[cf].iban.replace(/\s/g,'').length >= 15 && (
+                          {nuoviIban[cf]?.iban && nuoviIban[cf].iban.replace(/\s/g,'').length >= 5 && (
                             <small style={{ fontSize: 10, color: validaIBAN(nuoviIban[cf].iban) ? 'var(--verde)' : 'var(--rosso)', display: 'block', marginTop: 3 }}>
-                              {validaIBAN(nuoviIban[cf].iban) ? `✓ ${formattaIBAN(nuoviIban[cf].iban)}` : '✗ IBAN non valido'}
+                              {validaIBAN(nuoviIban[cf].iban) ? `✓ ${formattaIBAN(nuoviIban[cf].iban)}` : '✗ IBAN non valido (formato: IT60 X054 2811 1010 0000 0123 456)'}
                             </small>
                           )}
                         </div>
@@ -734,10 +734,15 @@ export default function RimborsiPage() {
                     </div>
                   ))}
                 </div>
+                {ibanMancanti.some(({ cf }) => !nuoviIban[cf]?.iban || !nuoviIban[cf]?.intestatario || !validaIBAN(nuoviIban[cf]?.iban ?? '')) && (
+                  <div style={{ fontSize: 12, color: 'var(--rosso)', marginBottom: 10, fontFamily: 'var(--font-mono)' }}>
+                    ✗ Inserisci un IBAN valido e il nome intestatario per tutti i collaboratori prima di procedere.
+                  </div>
+                )}
                 <div style={{ display: 'flex', gap: 10 }}>
                   <button className="btn btn-secondary" onClick={() => setSepaStep('select')}>← Indietro</button>
                   <button className="btn btn-primary"
-                    disabled={ibanMancanti.some(({ cf }) => !nuoviIban[cf]?.iban || !nuoviIban[cf]?.intestatario || !validaIBAN(nuoviIban[cf].iban))}
+                    disabled={ibanMancanti.some(({ cf }) => !nuoviIban[cf]?.iban || !nuoviIban[cf]?.intestatario || !validaIBAN(nuoviIban[cf]?.iban ?? ''))}
                     onClick={() => setSepaStep('preview')}>
                     Avanti: preview →
                   </button>
