@@ -3,18 +3,9 @@ import { getUserContext } from '@/lib/impersonation'
 import { redirect } from 'next/navigation'
 import PrintToolbar from './PrintToolbar'
 
-const RUOLO_LABEL: Record<string, string> = {
-  portiere: 'POR', difensore_centrale: 'DC', terzino: 'TRZ',
-  centrocampista_difensivo: 'CDM', centrocampista: 'CEN', mezzala: 'MEZ',
-  regista: 'REG', trequartista: 'TRQ', ala: 'ALA',
-  seconda_punta: '2P', centravanti: 'ATT',
-}
-
 // Righe per categoria
-const ROWS_DEFAULT   = 18
-const ROWS_LND       = 20   // Eccellenza, Promozione, Prima/Seconda/Terza cat.
-const SERIE_D_MAIN   = 18   // Titolari Serie D
-const SERIE_D_RIS    = 4    // Riserve Serie D
+const SERIE_D_MAIN = 18
+const SERIE_D_RIS  = 4
 
 // Categorie che usano il modulo LND (Eccellenza e inferiori)
 const CAT_LND = ['eccellenza', 'promozione', 'prima_categoria', 'seconda_categoria', 'terza_categoria']
@@ -28,10 +19,10 @@ function textColor(bg: string) {
   const b = parseInt(bg.slice(5, 7), 16)
   return (0.299 * r + 0.587 * g + 0.114 * b) / 255 > 0.55 ? '#000000' : '#ffffff'
 }
-function fmtDN(d: string | null) {
-  if (!d) return ''
+function fmtDN(d: string | null): [string, string, string] {
+  if (!d) return ['', '', '']
   const [y, m, dd] = d.split('-')
-  return `${dd}/${m}/${y?.slice(2)}`
+  return [dd ?? '', m ?? '', y?.slice(2) ?? '']
 }
 
 export default async function PrintDistintaPage({ params }: { params: { partita_id: string } }) {
@@ -41,16 +32,15 @@ export default async function PrintDistintaPage({ params }: { params: { partita_
 
   const supabase = createAdminClient()
 
-  // Recupera la partita e la distinta in parallelo
   const [{ data: partita }, { data: distinta }] = await Promise.all([
     supabase
       .from('partite')
-      .select('avversario, data_ora, competizione, giornata, casa_trasferta, campo')
+      .select('avversario, data_ora, competizione, giornata, casa_trasferta, campo, club_id')
       .eq('id', params.partita_id)
       .single(),
     supabase
       .from('distinte_gara')
-      .select('giocatori_snapshot, staff_snapshot, generata_at, club_id')
+      .select('giocatori_snapshot, staff_snapshot, generata_at')
       .eq('partita_id', params.partita_id)
       .order('versione', { ascending: false })
       .limit(1)
@@ -60,8 +50,7 @@ export default async function PrintDistintaPage({ params }: { params: { partita_
   if (!partita) redirect('/dashboard/segretario/distinte')
   if (!distinta) redirect(`/dashboard/segretario/distinte/${params.partita_id}`)
 
-  // Usa il club_id della distinta (sempre corretto) con fallback all'utente
-  const resolvedClubId = (distinta as any).club_id ?? clubId
+  const resolvedClubId = (partita as any).club_id ?? clubId
 
   const { data: clubRaw } = await supabase
     .from('clubs')
@@ -71,8 +60,8 @@ export default async function PrintDistintaPage({ params }: { params: { partita_
 
   const club = clubRaw
   const categoria = club?.categoria ?? ''
-  const isSerieD  = categoria === 'serie_d'
-  const isLND     = CAT_LND.includes(categoria)
+  const isSerieD = categoria === 'serie_d'
+  const isLND    = CAT_LND.includes(categoria)
 
   const primario  = hex(club?.colore_primario, '#1a1a2e')
   const testoPrim = textColor(primario)
@@ -100,7 +89,7 @@ export default async function PrintDistintaPage({ params }: { params: { partita_
     }
   `
 
-  // ── SERIE D ────────────────────────────────────────────────────────
+  // ── SERIE D ────────────────────────────────────────────────────────────
   if (isSerieD) {
     const titolari  = giocatori.slice(0, SERIE_D_MAIN)
     const riserve   = giocatori.slice(SERIE_D_MAIN)
@@ -117,108 +106,111 @@ export default async function PrintDistintaPage({ params }: { params: { partita_
           width: '210mm', margin: '60px auto 32px',
           background: '#fff', color: '#000',
           fontFamily: 'Arial, Helvetica, sans-serif',
-          fontSize: 8.5, boxShadow: '0 2px 24px rgba(0,0,0,0.18)',
-          padding: '7mm 7mm 5mm',
+          fontSize: 8, boxShadow: '0 2px 24px rgba(0,0,0,0.18)',
+          padding: '6mm 7mm 5mm',
         }}>
 
-          {/* ── Intestazione ───────────────────────────────────────── */}
-          <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 3 }}>
+          {/* ── Copia rapporto (top right) */}
+          <div style={{ textAlign: 'right', fontSize: 7, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 2 }}>
+            COPIA DA ALLEGARE AL RAPPORTO DI GARA
+          </div>
+
+          {/* ── Intestazione ──────────────────────────────────────────────── */}
+          <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 4 }}>
             <tbody>
               <tr>
                 {/* Logo SERIE D */}
-                <td style={{ verticalAlign: 'middle', width: 56 }}>
+                <td style={{ verticalAlign: 'middle', width: 58, paddingRight: 6 }}>
                   <div style={{
-                    width: 50, height: 50, borderRadius: '50%',
+                    width: 52, height: 52, borderRadius: '50%',
                     background: '#000', color: '#fff',
                     display: 'flex', flexDirection: 'column',
                     alignItems: 'center', justifyContent: 'center',
-                    fontSize: 7, fontWeight: 900, lineHeight: 1.1,
-                    textTransform: 'uppercase', letterSpacing: '0.05em',
+                    lineHeight: 1.1,
                   }}>
-                    <span style={{ fontSize: 9 }}>SERIE</span>
-                    <span style={{ fontSize: 16 }}>D</span>
+                    <span style={{ fontSize: 8, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em' }}>SERIE</span>
+                    <span style={{ fontSize: 18, fontWeight: 900 }}>D</span>
                   </div>
                 </td>
 
                 {/* Info gara */}
-                <td style={{ verticalAlign: 'top', paddingLeft: 6 }}>
+                <td style={{ verticalAlign: 'top' }}>
                   <table style={{ borderCollapse: 'collapse', width: '100%', fontSize: 8 }}>
                     <tbody>
                       <tr>
-                        <td style={{ fontWeight: 700, paddingRight: 4, whiteSpace: 'nowrap' }}>SOCIETÀ:</td>
-                        <td style={{ borderBottom: '1px solid #000', width: '70%', fontWeight: 600 }}>{club?.nome ?? ''}</td>
+                        <td style={{ fontWeight: 700, paddingRight: 4, whiteSpace: 'nowrap', width: 1 }}>SOCIETÀ</td>
+                        <td style={{ borderBottom: '1px solid #000', fontWeight: 600, paddingBottom: 1 }}>{club?.nome ?? ''}</td>
                       </tr>
                       <tr>
-                        <td style={{ fontWeight: 700, paddingRight: 4, whiteSpace: 'nowrap', paddingTop: 2 }}>Elenco calciatori che partecipano alla gara:</td>
-                        <td style={{ borderBottom: '1px solid #000', fontWeight: 600, paddingTop: 2 }}>{partita.avversario}</td>
+                        <td style={{ fontWeight: 700, paddingRight: 4, whiteSpace: 'nowrap', paddingTop: 3 }}>Elenco dei calciatori che partecipano alla gara</td>
+                        <td style={{ borderBottom: '1px solid #000', paddingTop: 3, fontWeight: 600 }}>{partita.avversario}</td>
                       </tr>
                       <tr>
-                        <td style={{ fontWeight: 700, paddingRight: 4, whiteSpace: 'nowrap', paddingTop: 2 }}>valevole per:</td>
-                        <td style={{ borderBottom: '1px solid #000', paddingTop: 2 }}>
+                        <td style={{ fontWeight: 700, paddingRight: 4, whiteSpace: 'nowrap', paddingTop: 3 }}>valevole per</td>
+                        <td style={{ borderBottom: '1px solid #000', paddingTop: 3 }}>
                           {partita.competizione ?? 'Campionato Nazionale Serie D'}
                           {partita.giornata ? ` — Giornata ${partita.giornata}` : ''}
                         </td>
                       </tr>
                       <tr>
-                        <td style={{ fontWeight: 700, paddingRight: 4, paddingTop: 2, whiteSpace: 'nowrap' }}>in programma il:</td>
-                        <td style={{ paddingTop: 2 }}>
-                          <span style={{ borderBottom: '1px solid #000', paddingRight: 16 }}>{fmtData}</span>
-                          <span style={{ fontWeight: 700, marginLeft: 10 }}>ore:</span>
-                          <span style={{ borderBottom: '1px solid #000', paddingLeft: 4, paddingRight: 16 }}>{fmtOra}</span>
+                        <td style={{ fontWeight: 700, paddingRight: 4, paddingTop: 3, whiteSpace: 'nowrap' }}>in programma</td>
+                        <td style={{ paddingTop: 3 }}>
+                          <span style={{ borderBottom: '1px solid #000', paddingRight: 60 }}>{fmtData}</span>
+                          <span style={{ fontWeight: 700, marginLeft: 10 }}>a</span>
+                          <span style={{ borderBottom: '1px solid #000', paddingLeft: 6, paddingRight: 60, marginLeft: 4 }}>{partita.campo ?? ''}</span>
                         </td>
                       </tr>
                       <tr>
-                        <td style={{ fontWeight: 700, paddingRight: 4, paddingTop: 2, whiteSpace: 'nowrap' }}>campo:</td>
-                        <td style={{ borderBottom: '1px solid #000', paddingTop: 2 }}>{partita.campo ?? ''}</td>
+                        <td style={{ fontWeight: 700, paddingRight: 4, paddingTop: 3, whiteSpace: 'nowrap' }}>campo</td>
+                        <td style={{ paddingTop: 3 }}>
+                          <span style={{ borderBottom: '1px solid #000', paddingRight: 80 }}>{partita.campo ?? ''}</span>
+                          <span style={{ fontWeight: 700, marginLeft: 10 }}>ore</span>
+                          <span style={{ borderBottom: '1px solid #000', paddingLeft: 6, paddingRight: 40, marginLeft: 4 }}>{fmtOra}</span>
+                        </td>
                       </tr>
                     </tbody>
                   </table>
-                </td>
-
-                {/* Copia */}
-                <td style={{ verticalAlign: 'top', textAlign: 'right', width: 120, fontSize: 7, paddingLeft: 8 }}>
-                  <div style={{ border: '1px solid #000', padding: '3px 5px', display: 'inline-block', textAlign: 'center' }}>
-                    <div style={{ fontWeight: 700, textTransform: 'uppercase', fontSize: 6.5 }}>Copia da allegare al</div>
-                    <div style={{ fontWeight: 900, fontSize: 8, textTransform: 'uppercase' }}>Rapporto di Gara</div>
-                  </div>
                 </td>
               </tr>
             </tbody>
           </table>
 
-          {/* ── Tabella calciatori ─────────────────────────────────── */}
+          {/* ── Tabella calciatori ──────────────────────────────────────── */}
           <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid #000', fontSize: 7.5 }}>
             <thead>
               <tr style={{ background: '#000', color: '#fff' }}>
-                <th style={{ ...sdTh, width: 20 }} rowSpan={2}>N°</th>
-                <th style={{ ...sdTh, textAlign: 'left' }} rowSpan={2}>Cognome e Nome</th>
+                <th style={{ ...sdTh, width: 18 }} rowSpan={2}>N°</th>
                 <th style={{ ...sdTh }} colSpan={3}>Data di nascita</th>
-                <th style={{ ...sdTh, width: 22 }} rowSpan={2}>Cap.<br/>V.C.</th>
+                <th style={{ ...sdTh, textAlign: 'left' }} rowSpan={2}>Cognome e Nome</th>
+                <th style={{ ...sdTh, width: 24 }} rowSpan={2}>Cap.<br/>V.C.<br/>Under</th>
                 <th style={{ ...sdTh, width: 52 }} rowSpan={2}>N° Matricola<br/>F.I.G.C.</th>
                 <th style={{ ...sdTh }} colSpan={3}>Documento d&apos;identificazione</th>
               </tr>
               <tr style={{ background: '#d0d0d0', color: '#000' }}>
-                <th style={{ ...sdSubTh, width: 18 }}>G</th>
-                <th style={{ ...sdSubTh, width: 18 }}>M</th>
-                <th style={{ ...sdSubTh, width: 22 }}>A</th>
-                <th style={{ ...sdSubTh, width: 32 }}>Tipo</th>
-                <th style={{ ...sdSubTh, width: 62 }}>Numero</th>
-                <th style={{ ...sdSubTh }}>Rilasciato da</th>
+                <th style={{ ...sdSubTh, width: 16 }}>G</th>
+                <th style={{ ...sdSubTh, width: 16 }}>M</th>
+                <th style={{ ...sdSubTh, width: 20 }}>A</th>
+                <th style={{ ...sdSubTh, width: 30 }}>Tipo</th>
+                <th style={{ ...sdSubTh, width: 60 }}>Numero</th>
+                <th style={{ ...sdSubTh }}>Rilasciato</th>
               </tr>
             </thead>
             <tbody>
-              {titolari.map((g: any, i: number) => (
-                <tr key={g.id ?? i}>
-                  <td style={{ ...sdTd, textAlign: 'center', fontWeight: 700 }}>{g.numero_maglia ?? i + 1}</td>
-                  <td style={{ ...sdTd, fontWeight: 600 }}>{(g.cognome ?? '').toUpperCase()} {g.nome ?? ''}</td>
-                  {fmtDN(g.data_nascita).split('/').map((v, j) => (
-                    <td key={j} style={{ ...sdTd, textAlign: 'center', fontFamily: 'monospace' }}>{v}</td>
-                  ))}
-                  <td style={{ ...sdTd }}></td>
-                  <td style={{ ...sdTd, textAlign: 'center', fontFamily: 'monospace', fontSize: 7.5 }}>{g.numero_matricola_figc ?? ''}</td>
-                  <td style={sdTd}></td><td style={sdTd}></td><td style={sdTd}></td>
-                </tr>
-              ))}
+              {titolari.map((g: any, i: number) => {
+                const [dd, mm, aa] = fmtDN(g.data_nascita)
+                return (
+                  <tr key={g.id ?? i}>
+                    <td style={{ ...sdTd, textAlign: 'center', fontWeight: 700 }}>{g.numero_maglia ?? i + 1}</td>
+                    <td style={{ ...sdTd, textAlign: 'center', fontFamily: 'monospace' }}>{dd}</td>
+                    <td style={{ ...sdTd, textAlign: 'center', fontFamily: 'monospace' }}>{mm}</td>
+                    <td style={{ ...sdTd, textAlign: 'center', fontFamily: 'monospace' }}>{aa}</td>
+                    <td style={{ ...sdTd, fontWeight: 600 }}>{(g.cognome ?? '').toUpperCase()} {g.nome ?? ''}</td>
+                    <td style={sdTd}></td>
+                    <td style={{ ...sdTd, textAlign: 'center', fontFamily: 'monospace', fontSize: 7 }}>{g.numero_matricola_figc ?? ''}</td>
+                    <td style={sdTd}></td><td style={sdTd}></td><td style={sdTd}></td>
+                  </tr>
+                )
+              })}
               {Array.from({ length: vuotiMain }).map((_, i) => (
                 <tr key={`vm${i}`}>
                   <td style={{ ...sdTd, height: 14 }}></td>
@@ -230,24 +222,31 @@ export default async function PrintDistintaPage({ params }: { params: { partita_
 
               {/* Riserve */}
               <tr>
-                <td colSpan={10} style={{ background: '#000', color: '#fff', fontWeight: 700, fontSize: 7, textTransform: 'uppercase', padding: '2px 5px', letterSpacing: '0.05em' }}>
+                <td colSpan={10} style={{
+                  background: '#000', color: '#fff', fontWeight: 700,
+                  fontSize: 7, textTransform: 'uppercase', padding: '2px 5px',
+                  letterSpacing: '0.05em',
+                }}>
                   Calciatori di Riserva
                 </td>
               </tr>
-              {riserve.map((g: any, i: number) => (
-                <tr key={`ris${g.id ?? i}`} style={{ background: '#fafafa' }}>
-                  <td style={{ ...sdTd, textAlign: 'center', fontWeight: 700 }}>{g.numero_maglia ?? SERIE_D_MAIN + i + 1}</td>
-                  <td style={{ ...sdTd, fontWeight: 600 }}>{(g.cognome ?? '').toUpperCase()} {g.nome ?? ''}</td>
-                  {fmtDN(g.data_nascita).split('/').map((v, j) => (
-                    <td key={j} style={{ ...sdTd, textAlign: 'center', fontFamily: 'monospace' }}>{v}</td>
-                  ))}
-                  <td style={sdTd}></td>
-                  <td style={{ ...sdTd, textAlign: 'center', fontFamily: 'monospace', fontSize: 7.5 }}>{g.numero_matricola_figc ?? ''}</td>
-                  <td style={sdTd}></td><td style={sdTd}></td><td style={sdTd}></td>
-                </tr>
-              ))}
+              {riserve.map((g: any, i: number) => {
+                const [dd, mm, aa] = fmtDN(g.data_nascita)
+                return (
+                  <tr key={`ris${g.id ?? i}`}>
+                    <td style={{ ...sdTd, textAlign: 'center', fontWeight: 700 }}>{g.numero_maglia ?? SERIE_D_MAIN + i + 1}</td>
+                    <td style={{ ...sdTd, textAlign: 'center', fontFamily: 'monospace' }}>{dd}</td>
+                    <td style={{ ...sdTd, textAlign: 'center', fontFamily: 'monospace' }}>{mm}</td>
+                    <td style={{ ...sdTd, textAlign: 'center', fontFamily: 'monospace' }}>{aa}</td>
+                    <td style={{ ...sdTd, fontWeight: 600 }}>{(g.cognome ?? '').toUpperCase()} {g.nome ?? ''}</td>
+                    <td style={sdTd}></td>
+                    <td style={{ ...sdTd, textAlign: 'center', fontFamily: 'monospace', fontSize: 7 }}>{g.numero_matricola_figc ?? ''}</td>
+                    <td style={sdTd}></td><td style={sdTd}></td><td style={sdTd}></td>
+                  </tr>
+                )
+              })}
               {Array.from({ length: vuotiRis }).map((_, i) => (
-                <tr key={`vr${i}`} style={{ background: '#fafafa' }}>
+                <tr key={`vr${i}`}>
                   <td style={{ ...sdTd, height: 14 }}></td>
                   <td style={sdTd}></td><td style={sdTd}></td><td style={sdTd}></td>
                   <td style={sdTd}></td><td style={sdTd}></td><td style={sdTd}></td>
@@ -257,39 +256,44 @@ export default async function PrintDistintaPage({ params }: { params: { partita_
             </tbody>
           </table>
 
-          {/* ── Staff ──────────────────────────────────────────────── */}
+          {/* ── Persone ammesse nel recinto di gioco ───────────────────── */}
           <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid #000', borderTop: 'none', fontSize: 7.5 }}>
             <thead>
-              <tr style={{ background: '#555', color: '#fff' }}>
-                <th style={{ ...sdTh, textAlign: 'left', width: '35%' }}>Persone ammesse nel recinto di gioco</th>
+              <tr style={{ background: '#000', color: '#fff' }}>
+                <th style={{ ...sdTh, textAlign: 'left', width: '38%' }}>Persone ammesse nel recinto di gioco</th>
                 <th style={{ ...sdTh, width: '20%' }}>N° Tessera F.I.G.C.</th>
                 <th style={{ ...sdTh }} colSpan={3}>Documento d&apos;identificazione</th>
               </tr>
               <tr style={{ background: '#d0d0d0', color: '#000' }}>
                 <th style={sdSubTh}></th>
                 <th style={sdSubTh}></th>
-                <th style={{ ...sdSubTh, width: 32 }}>Tipo</th>
-                <th style={{ ...sdSubTh, width: 62 }}>Numero</th>
-                <th style={sdSubTh}>Rilasciato da</th>
+                <th style={{ ...sdSubTh, width: 30 }}>Tipo</th>
+                <th style={{ ...sdSubTh, width: 60 }}>Numero</th>
+                <th style={sdSubTh}>Rilasciato</th>
               </tr>
             </thead>
             <tbody>
-              {[
-                ['Dirigente Accompagnatore Ufficiale', staff.dirigente],
-                [isCasa ? 'Dirigente addetto all\'arbitro (solo gare in casa)' : 'Dirigente addetto all\'arbitro', ''],
-                ['Medico Sociale', staff.medico],
-                ['Allenatore', staff.allenatore],
-                ['Allenatore in seconda', staff.vice_allenatore],
+              {([
+                ['Dirigente Accompagnatore Ufficiale', staff.dirigente ?? ''],
+                [isCasa
+                  ? 'Dirigente addetto all\'Arbitro\n(solo Campionato Nazionale Serie D per gare disputate in casa)'
+                  : 'Dirigente addetto all\'Arbitro',
+                  ''],
+                ['Medico Sociale', staff.medico ?? ''],
+                ['Allenatore', staff.allenatore ?? ''],
+                ['Allenatore in seconda', staff.vice_allenatore ?? ''],
                 ['Massaggiatore', ''],
-              ].map(([ruolo, nome]) => (
+              ] as [string, string][]).map(([ruolo, nome]) => (
                 <tr key={ruolo}>
-                  <td style={{ ...sdTd, fontSize: 7.5 }}>
-                    <span style={{ fontWeight: 600 }}>{ruolo}</span>
-                    {ruolo.includes('arbitro') && !isCasa
-                      ? <span style={{ color: '#888', fontSize: 6.5 }}> (solo Campionato Nazionale Serie D per gare in casa)</span>
-                      : null}
+                  <td style={{ ...sdTd, fontSize: 7, lineHeight: 1.3 }}>
+                    {ruolo.split('\n').map((line, i) => (
+                      <span key={i} style={{ display: 'block', fontWeight: i === 0 ? 600 : 400, color: i === 0 ? '#000' : '#555', fontSize: i === 0 ? 7 : 6 }}>
+                        {line}
+                      </span>
+                    ))}
+                    {nome ? <span style={{ color: '#444', fontSize: 6.5 }}>{nome}</span> : null}
                   </td>
-                  <td style={{ ...sdTd, fontWeight: 600 }}>{nome ?? ''}</td>
+                  <td style={sdTd}></td>
                   <td style={sdTd}></td>
                   <td style={sdTd}></td>
                   <td style={sdTd}></td>
@@ -298,30 +302,35 @@ export default async function PrintDistintaPage({ params }: { params: { partita_
             </tbody>
           </table>
 
-          {/* ── Dichiarazione + Firme ──────────────────────────────── */}
+          {/* ── Nota ammissione ──────────────────────────────────────────── */}
+          <div style={{ border: '1px solid #000', borderTop: 'none', padding: '2px 5px', fontSize: 6.5, lineHeight: 1.4 }}>
+            Le persone qui sopra elencate possono essere ammesse solo se munite delle prescritte tessere F.I.G.C. valide per l&apos;annata in corso.
+          </div>
+
+          {/* ── Dichiarazione + Firme ──────────────────────────────────── */}
           <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: 5, fontSize: 7 }}>
             <tbody>
               <tr>
-                <td style={{ width: '55%', paddingRight: 10, verticalAlign: 'bottom', lineHeight: 1.35 }}>
+                <td style={{ width: '52%', paddingRight: 10, verticalAlign: 'bottom', lineHeight: 1.4 }}>
                   Il sottoscritto Dirigente Accompagnatore Ufficiale dichiara, ai sensi dell&apos;Art. 61 N.O.I.F., che i calciatori sopraelencati sono regolarmente tesserati e partecipano alla gara sotto la responsabilità della società.
                 </td>
                 <td style={{ width: '22%', textAlign: 'center' }}>
-                  <div style={{ borderBottom: '1px solid #000', height: 26, marginBottom: 3 }} />
+                  <div style={{ borderBottom: '1px solid #000', height: 28, marginBottom: 3 }} />
                   <div style={{ fontWeight: 700, textTransform: 'uppercase', fontSize: 7 }}>L&apos;Arbitro</div>
                 </td>
-                <td style={{ width: '23%', textAlign: 'center', paddingLeft: 8 }}>
-                  <div style={{ borderBottom: '1px solid #000', height: 26, marginBottom: 3 }} />
+                <td style={{ width: '26%', textAlign: 'center', paddingLeft: 8 }}>
+                  <div style={{ borderBottom: '1px solid #000', height: 28, marginBottom: 3 }} />
                   <div style={{ fontWeight: 700, textTransform: 'uppercase', fontSize: 7 }}>Il Dirigente Accompagnatore Ufficiale</div>
                 </td>
               </tr>
             </tbody>
           </table>
 
-          {/* ── Note quadruplice copia ─────────────────────────────── */}
-          <div style={{ marginTop: 4, fontSize: 6.5, color: '#333', lineHeight: 1.4, borderTop: '1px solid #ccc', paddingTop: 3 }}>
+          {/* ── Note quadruplice copia ──────────────────────────────────── */}
+          <div style={{ marginTop: 4, fontSize: 6.5, color: '#000', lineHeight: 1.4, borderTop: '1px solid #000', paddingTop: 3 }}>
             Questa distinta deve essere consegnata all&apos;arbitro in <strong>quadruplice copia</strong>, prima dell&apos;inizio della gara, unitamente all&apos;ultimo tabulato dei calciatori tesserati rilasciato dalla F.I.G.C., alle tessere federali, laddove previste, ed ai documenti d&apos;identificazione.
           </div>
-          <div style={{ marginTop: 3, display: 'flex', justifyContent: 'flex-end', fontSize: 6.5, color: '#aaa' }}>
+          <div style={{ marginTop: 2, display: 'flex', justifyContent: 'flex-end', fontSize: 6, color: '#aaa' }}>
             Generata il {new Date(distinta.generata_at).toLocaleDateString('it-IT')} · ClubIS
           </div>
         </div>
@@ -329,9 +338,9 @@ export default async function PrintDistintaPage({ params }: { params: { partita_
     )
   }
 
-  // ── ECCELLENZA / CATEGORIE LND ──────────────────────────────────────
+  // ── ECCELLENZA / CATEGORIE LND ──────────────────────────────────────────
   if (isLND) {
-    const TOTAL_ROWS = ROWS_LND
+    const TOTAL_ROWS = 20
     const righeVuote = Math.max(0, TOTAL_ROWS - giocatori.length)
 
     return (
@@ -343,182 +352,225 @@ export default async function PrintDistintaPage({ params }: { params: { partita_
           width: '210mm', margin: '60px auto 32px',
           background: '#fff', color: '#000',
           fontFamily: 'Arial, Helvetica, sans-serif',
-          fontSize: 8.5, boxShadow: '0 2px 24px rgba(0,0,0,0.18)',
-          padding: '8mm 8mm 6mm',
+          fontSize: 8, boxShadow: '0 2px 24px rgba(0,0,0,0.18)',
+          padding: '6mm 7mm 5mm',
         }}>
 
-          {/* ── Intestazione ───────────────────────────────────────── */}
-          <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 4 }}>
+          {/* ── Intestazione ───────────────────────────────────────────── */}
+          <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 5 }}>
             <tbody>
               <tr>
-                <td style={{ verticalAlign: 'middle', width: 56 }}>
-                  {club?.logo_url ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={club.logo_url} alt="Logo" style={{ width: 50, height: 50, objectFit: 'contain' }} />
-                  ) : (
-                    <div style={{ width: 50, height: 50, border: '1px solid #000', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 7, fontWeight: 700 }}>LOGO</div>
-                  )}
-                </td>
-                <td style={{ verticalAlign: 'middle', textAlign: 'center' }}>
-                  <div style={{ fontSize: 7, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#333' }}>
-                    Lega Nazionale Dilettanti — F.I.G.C.
+                {/* Logo ITALIA / FIGC sinistra */}
+                <td style={{ width: 68, verticalAlign: 'middle', textAlign: 'center' }}>
+                  <div style={{
+                    width: 60, height: 60, border: '2px solid #003087', borderRadius: 4,
+                    display: 'flex', flexDirection: 'column', alignItems: 'center',
+                    justifyContent: 'center', color: '#003087',
+                  }}>
+                    <div style={{ fontSize: 6.5, fontWeight: 900, letterSpacing: '0.12em' }}>★ ★ ★ ★</div>
+                    <div style={{ fontSize: 10, fontWeight: 900, textTransform: 'uppercase', lineHeight: 1 }}>ITALIA</div>
+                    <div style={{ fontSize: 14, marginTop: 1 }}>⚽</div>
                   </div>
-                  <div style={{ fontSize: 14, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#000', marginTop: 2 }}>
+                </td>
+                {/* Titolo */}
+                <td style={{ textAlign: 'center', verticalAlign: 'middle' }}>
+                  <div style={{ fontSize: 18, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                     DISTINTA ELENCO GIOCATORI
                   </div>
-                  <div style={{ fontSize: 8, color: '#444', marginTop: 2 }}>
-                    {partita.competizione ?? 'Campionato'}
-                    {partita.giornata ? ` — Giornata ${partita.giornata}` : ''}
+                </td>
+                {/* Logo FIGC destra */}
+                <td style={{ width: 68, verticalAlign: 'middle', textAlign: 'center' }}>
+                  <div style={{
+                    width: 60, height: 60, border: '2px solid #003087', borderRadius: 4,
+                    display: 'flex', flexDirection: 'column', alignItems: 'center',
+                    justifyContent: 'center', color: '#003087',
+                  }}>
+                    <div style={{ fontSize: 6.5, fontWeight: 900, letterSpacing: '0.12em' }}>★ ★ ★ ★</div>
+                    <div style={{ fontSize: 14, fontWeight: 900, lineHeight: 1 }}>FIGC</div>
                   </div>
                 </td>
-                <td style={{ width: 56 }} />
               </tr>
             </tbody>
           </table>
 
-          <div style={{ height: 2, background: '#000', marginBottom: 4 }} />
+          {/* ── Denominazione Società ───────────────────────────────────── */}
+          <div style={{ marginBottom: 6, fontSize: 8.5 }}>
+            <em>Denominazione Società e Timbro:</em>
+            <span style={{
+              borderBottom: '1px solid #000', display: 'inline-block',
+              minWidth: 220, marginLeft: 8, fontWeight: 600,
+            }}>{club?.nome ?? ''}</span>
+          </div>
 
-          {/* ── Dati gara ──────────────────────────────────────────── */}
-          <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid #000', marginBottom: 4, fontSize: 8.5 }}>
+          {/* ── Dati gara ──────────────────────────────────────────────── */}
+          <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid #000', marginBottom: 0, fontSize: 8 }}>
             <tbody>
               <tr>
-                <td style={{ ...sdCell, width: '60%' }}>
-                  <span style={{ fontWeight: 700 }}>Denominazione Società: </span>
-                  <span style={{ fontWeight: 600 }}>{club?.nome ?? ''}</span>
-                </td>
-                <td style={{ ...sdCell }}>
-                  <span style={{ fontWeight: 700 }}>Campionato disputato il: </span>{fmtData}
-                </td>
-              </tr>
-              <tr>
-                <td style={{ ...sdCell }}>
-                  <span style={{ fontWeight: 700 }}>Avversario: </span>
+                <td style={{ border: '1px solid #000', padding: '3px 6px', width: '50%' }}>
+                  Distinta Giocatori partecipanti alla gara:&nbsp;
+                  <span style={{ borderBottom: '1px solid #000', display: 'inline-block', minWidth: 50 }}></span>
+                  <span style={{ margin: '0 4px' }}>-</span>
                   <span style={{ fontWeight: 600 }}>{partita.avversario}</span>
                 </td>
-                <td style={{ ...sdCell }}>
-                  <span style={{ fontWeight: 700 }}>Ore: </span>{fmtOra}
-                  {partita.campo ? <><span style={{ fontWeight: 700, marginLeft: 12 }}>Campo: </span>{partita.campo}</> : null}
+                <td style={{ border: '1px solid #000', padding: '3px 6px' }}>
+                  &nbsp;
+                </td>
+              </tr>
+              <tr>
+                <td style={{ border: '1px solid #000', padding: '3px 6px' }}>
+                  Campionato&nbsp;
+                  <span style={{ fontWeight: 600 }}>
+                    {partita.competizione ?? ''}{partita.giornata ? ` — Giornata ${partita.giornata}` : ''}
+                  </span>
+                </td>
+                <td style={{ border: '1px solid #000', padding: '3px 6px' }}>
+                  da disputare il:&nbsp;
+                  <span style={{ fontWeight: 600 }}>{fmtData}</span>
+                  <span style={{ marginLeft: 12 }}>a:</span>
+                  <span style={{ fontWeight: 600, marginLeft: 4 }}>{partita.campo ?? ''}</span>
+                  <span style={{ marginLeft: 12, fontWeight: 600 }}>{fmtOra}</span>
                 </td>
               </tr>
             </tbody>
           </table>
 
-          {/* ── Tabella giocatori ──────────────────────────────────── */}
-          <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid #000', fontSize: 7.5 }}>
+          {/* ── Tabella giocatori ──────────────────────────────────────── */}
+          <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid #000', borderTop: 'none', fontSize: 7 }}>
             <thead>
-              <tr style={{ background: '#000', color: '#fff' }}>
-                <th style={{ ...sdTh, width: 18 }}>N°</th>
-                <th style={{ ...sdTh, textAlign: 'left', width: '27%' }}>Cognome e Nome</th>
-                <th style={{ ...sdTh, width: 44 }}>Data<br/>Nasc.</th>
-                <th style={{ ...sdTh, width: '22%' }} colSpan={3}>Documento di Identificazione</th>
-                <th style={{ ...sdTh, width: '17%' }}>Tessera / Doc.<br/>FIGC n°</th>
-                <th style={{ ...sdTh, width: 40 }}>Matricola<br/>F.I.G.C.</th>
-                <th style={{ ...sdTh, width: 22 }}>Amm.</th>
-                <th style={{ ...sdTh, width: 22 }}>Esp.</th>
+              <tr style={{ background: '#fff', color: '#000' }}>
+                <th style={{ ...lndTh, width: 26 }} rowSpan={2}>N.<br/>Maglia</th>
+                <th style={{ ...lndTh }} colSpan={3}>Data Nascita</th>
+                <th style={{ ...lndTh, textAlign: 'left' }} rowSpan={2}>Cognome e Nome</th>
+                <th style={{ ...lndTh, width: 36 }} rowSpan={2}>Capit.<br/>Libero</th>
+                <th style={{ ...lndTh, width: 52 }} rowSpan={2}>Matricola<br/>F.I.G.C.</th>
+                <th style={{ ...lndTh }} colSpan={3}>Documento di identificazione</th>
+                <th style={{ ...lndTh, width: 26 }} rowSpan={2}>Espulsi</th>
+                <th style={{ ...lndTh, width: 32 }} rowSpan={2}>Ammoniti</th>
               </tr>
-              <tr style={{ background: '#e0e0e0', color: '#000' }}>
-                <th style={sdSubTh}></th>
-                <th style={sdSubTh}></th>
-                <th style={sdSubTh}>(GG/MM/AA)</th>
-                <th style={{ ...sdSubTh, width: 28 }}>Tipo</th>
-                <th style={{ ...sdSubTh, width: 52 }}>Numero</th>
-                <th style={sdSubTh}>Rilasciato da</th>
-                <th style={sdSubTh}></th>
-                <th style={sdSubTh}></th>
-                <th style={sdSubTh}></th>
-                <th style={sdSubTh}></th>
+              <tr style={{ background: '#fff', color: '#000' }}>
+                <th style={{ ...lndSubTh, width: 16 }}>G</th>
+                <th style={{ ...lndSubTh, width: 16 }}>M</th>
+                <th style={{ ...lndSubTh, width: 20 }}>A</th>
+                <th style={{ ...lndSubTh, width: 28 }}>Tipo</th>
+                <th style={{ ...lndSubTh, width: 52 }}>Numero</th>
+                <th style={{ ...lndSubTh }}>Rilasciato</th>
               </tr>
             </thead>
             <tbody>
-              {giocatori.map((g: any, i: number) => (
-                <tr key={g.id ?? i} style={{ background: i % 2 === 0 ? '#fff' : '#f6f6f6' }}>
-                  <td style={{ ...sdTd, textAlign: 'center', fontWeight: 700 }}>{i + 1}</td>
-                  <td style={{ ...sdTd, fontWeight: 600 }}>{(g.cognome ?? '').toUpperCase()} {g.nome ?? ''}</td>
-                  <td style={{ ...sdTd, textAlign: 'center', fontFamily: 'monospace' }}>{fmtDN(g.data_nascita)}</td>
-                  <td style={sdTd}></td><td style={sdTd}></td><td style={sdTd}></td>
-                  <td style={{ ...sdTd, textAlign: 'center', fontFamily: 'monospace', fontSize: 7.5 }}>{g.codice_tessera_figc ?? ''}</td>
-                  <td style={{ ...sdTd, textAlign: 'center', fontFamily: 'monospace', fontSize: 7.5 }}>{g.numero_matricola_figc ?? ''}</td>
-                  <td style={sdTd}></td><td style={sdTd}></td>
-                </tr>
-              ))}
-              {Array.from({ length: righeVuote }).map((_, i) => (
-                <tr key={`v${i}`} style={{ background: (giocatori.length + i) % 2 === 0 ? '#fff' : '#f6f6f6' }}>
-                  <td style={{ ...sdTd, textAlign: 'center', color: '#ccc', fontSize: 7 }}>{giocatori.length + i + 1}</td>
-                  <td style={{ ...sdTd, height: 14 }}></td>
-                  <td style={sdTd}></td><td style={sdTd}></td><td style={sdTd}></td>
-                  <td style={sdTd}></td><td style={sdTd}></td><td style={sdTd}></td>
-                  <td style={sdTd}></td><td style={sdTd}></td>
-                </tr>
-              ))}
+              {giocatori.map((g: any, i: number) => {
+                const [dd, mm, aa] = fmtDN(g.data_nascita)
+                const isRow12 = i + 1 === 12
+                return (
+                  <tr key={g.id ?? i} style={{ background: isRow12 ? '#e0e0e0' : '#fff' }}>
+                    <td style={{ ...lndTd, textAlign: 'center', fontWeight: 700 }}>{g.numero_maglia ?? i + 1}</td>
+                    <td style={{ ...lndTd, textAlign: 'center', fontFamily: 'monospace' }}>{dd}</td>
+                    <td style={{ ...lndTd, textAlign: 'center', fontFamily: 'monospace' }}>{mm}</td>
+                    <td style={{ ...lndTd, textAlign: 'center', fontFamily: 'monospace' }}>{aa}</td>
+                    <td style={{ ...lndTd, fontWeight: 600 }}>{(g.cognome ?? '').toUpperCase()} {g.nome ?? ''}</td>
+                    <td style={lndTd}></td>
+                    <td style={{ ...lndTd, textAlign: 'center', fontFamily: 'monospace', fontSize: 6.5 }}>{g.numero_matricola_figc ?? ''}</td>
+                    <td style={lndTd}></td>
+                    <td style={lndTd}></td>
+                    <td style={lndTd}></td>
+                    <td style={lndTd}></td>
+                    <td style={lndTd}></td>
+                  </tr>
+                )
+              })}
+              {Array.from({ length: righeVuote }).map((_, i) => {
+                const rowNum = giocatori.length + i + 1
+                const isRow12 = rowNum === 12
+                return (
+                  <tr key={`v${i}`} style={{ background: isRow12 ? '#e0e0e0' : '#fff' }}>
+                    <td style={{ ...lndTd, textAlign: 'center', color: '#999', fontSize: 6.5, height: 14 }}>{rowNum}</td>
+                    <td style={lndTd}></td><td style={lndTd}></td><td style={lndTd}></td>
+                    <td style={lndTd}></td><td style={lndTd}></td><td style={lndTd}></td>
+                    <td style={lndTd}></td><td style={lndTd}></td><td style={lndTd}></td>
+                    <td style={lndTd}></td><td style={lndTd}></td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
 
-          {/* ── Staff ──────────────────────────────────────────────── */}
+          {/* ── Sezione Dirigente accompagnatore ───────────────────────── */}
           <table style={{ width: '100%', borderCollapse: 'collapse', border: '1px solid #000', borderTop: 'none', fontSize: 7.5 }}>
-            <thead>
-              <tr style={{ background: '#000', color: '#fff' }}>
-                <th style={{ ...sdTh, textAlign: 'left', width: '22%' }}>Ruolo</th>
-                <th style={{ ...sdTh, textAlign: 'left', width: '32%' }}>Cognome e Nome</th>
-                <th style={{ ...sdTh, width: '23%' }}>Documento d&apos;identità</th>
-                <th style={{ ...sdTh, width: '23%' }}>Tessera Imp. F.I.G.C. n°</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[
-                ['Dirigente addetto arbitro', staff.dirigente],
-                ['Allenatore',               staff.allenatore],
-                ['Medico Sociale',            staff.medico],
-                ['Massaggiatore',             ''],
-              ].map(([ruolo, nome]) => (
-                <tr key={ruolo}>
-                  <td style={{ ...sdTd, fontWeight: 600 }}>{ruolo}</td>
-                  <td style={{ ...sdTd }}>{nome ?? ''}</td>
-                  <td style={sdTd}></td>
-                  <td style={sdTd}></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          {/* ── Dirigente + Firme ──────────────────────────────────── */}
-          <div style={{ border: '1px solid #000', borderTop: 'none', padding: '3px 5px', fontSize: 7.5 }}>
-            <span style={{ fontWeight: 700 }}>Dirigente accompagnatore ufficiale della squadra Signor: </span>
-            <span style={{ borderBottom: '1px solid #000', display: 'inline-block', minWidth: 180 }}>{staff.dirigente ?? ''}</span>
-          </div>
-
-          <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: 5, fontSize: 7 }}>
             <tbody>
               <tr>
-                <td style={{ width: '50%', paddingRight: 8, verticalAlign: 'bottom', lineHeight: 1.35 }}>
-                  Il sottoscritto Dirigente accompagnatore ufficiale dichiara che i giocatori non compresi nell&apos;ultimo elenco dei calciatori tesserati che si allega per visione, partecipano alla gara sotto la responsabilità propria e della Società di appartenenza, giusto quanto disposto dall&apos;art.61 n°5 delle N.O.I.F.
+                <td colSpan={4} style={{ border: '1px solid #000', padding: '3px 6px' }}>
+                  <strong>Dirigente accompagnatore ufficiale della squadra Signor:</strong>{' '}
+                  <span style={{ borderBottom: '1px solid #000', display: 'inline-block', minWidth: 180 }}>{staff.dirigente ?? ''}</span>
                 </td>
-                <td style={{ width: '25%', textAlign: 'center' }}>
-                  <div style={{ borderBottom: '1px solid #000', height: 26, marginBottom: 3 }} />
-                  <div style={{ fontWeight: 700, textTransform: 'uppercase', fontSize: 7 }}>Dirigente Arbitro</div>
-                  <div style={{ fontSize: 6.5, color: '#555' }}>Firma</div>
+              </tr>
+              <tr>
+                <td style={{ border: '1px solid #000', padding: '3px 6px', width: '38%' }}>
+                  Documento d&apos;identità:
                 </td>
-                <td style={{ width: '25%', textAlign: 'center', paddingLeft: 8 }}>
-                  <div style={{ borderBottom: '1px solid #000', height: 26, marginBottom: 3 }} />
-                  <div style={{ fontWeight: 700, textTransform: 'uppercase', fontSize: 7 }}>Il Dirigente Accompagnatore</div>
-                  <div style={{ fontSize: 6.5, color: '#555' }}>Firma</div>
+                <td style={{ border: '1px solid #000', padding: '3px 6px', width: '12%' }}></td>
+                <td style={{ border: '1px solid #000', padding: '3px 6px', width: '32%' }}>
+                  Tessera Impersonale F.I.G.C. n°:
+                </td>
+                <td style={{ border: '1px solid #000', padding: '3px 6px', width: '18%' }}></td>
+              </tr>
+              {([
+                ['Dirigente addetto arbitro:', ''],
+                ['Allenatore', staff.allenatore ?? ''],
+                ['Medico Sociale', staff.medico ?? ''],
+                ['Massaggiatore', ''],
+              ] as [string, string][]).map(([ruolo, nome]) => (
+                <tr key={ruolo}>
+                  <td style={{ border: '1px solid #000', padding: '3px 6px', fontSize: 7.5 }} colSpan={2}>
+                    {ruolo}{nome ? <span style={{ marginLeft: 4, fontWeight: 600 }}>{nome}</span> : null}
+                  </td>
+                  <td style={{ border: '1px solid #000', padding: '3px 6px', fontSize: 7.5 }} colSpan={2}>
+                    Documento e/o Tessera FIGC n°
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {/* ── Dichiarazione ──────────────────────────────────────────── */}
+          <div style={{ fontSize: 6.5, marginTop: 4, lineHeight: 1.45 }}>
+            Il sottoscritto Dirigente accompagnatore ufficiale dichiara che i giocatori non compresi nell&apos;ultimo elenco dei calciatori tesserati che si allega per visione, partecipano alla gara sotto la responsabilità propria e della Società di appartenenza, giusto quanto disposto dall&apos;art.61 n°5 delle N.O.I.F.
+          </div>
+
+          {/* ── Firme ──────────────────────────────────────────────────── */}
+          <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: 4 }}>
+            <tbody>
+              <tr>
+                <td style={{ width: '50%', paddingRight: 10 }}>
+                  <div style={{ background: '#c8c8c8', textAlign: 'center', padding: '2px 4px', fontWeight: 700, fontSize: 7, textTransform: 'uppercase', marginBottom: 14 }}>
+                    DIRIGENTE ARBITRO
+                  </div>
+                  <div style={{ borderBottom: '1px solid #000', height: 0 }} />
+                  <div style={{ fontSize: 6.5, marginTop: 2 }}>Firma</div>
+                </td>
+                <td style={{ width: '50%', paddingLeft: 10 }}>
+                  <div style={{ background: '#c8c8c8', textAlign: 'center', padding: '2px 4px', fontWeight: 700, fontSize: 7, textTransform: 'uppercase', marginBottom: 14 }}>
+                    IL DIRIGENTE ACCOMPAGNATORE
+                  </div>
+                  <div style={{ borderBottom: '1px solid #000', height: 0 }} />
+                  <div style={{ fontSize: 6.5, marginTop: 2 }}>Firma</div>
                 </td>
               </tr>
             </tbody>
           </table>
 
-          <div style={{ marginTop: 4, border: '1px solid #aaa', padding: '3px 5px', fontSize: 6.5, color: '#333' }}>
+          {/* ── Note finali ────────────────────────────────────────────── */}
+          <div style={{ marginTop: 5, fontSize: 6.5, lineHeight: 1.45 }}>
             Questo elenco deve essere consegnato all&apos;arbitro in <strong>QUADRUPLICE COPIA</strong>, prima dell&apos;inizio della gara, unitamente ai vari documenti (identità e tessere FIGC e/o riconoscimento calciatori).
           </div>
-          <div style={{ marginTop: 3, fontSize: 6.5, color: '#444', display: 'flex', gap: 14, alignItems: 'center', flexWrap: 'wrap' }}>
-            <span style={{ fontWeight: 700 }}>COPIA DA ALLEGARE AL:</span>
+          <div style={{ marginTop: 3, fontSize: 6.5, fontWeight: 700 }}>
+            COPIA DA ALLEGARE AL:{' '}
             {['Rapporto di gara', 'Copia Arbitro', 'Copia annotazioni ammoniti/espulsi', 'Copia Società avversaria'].map(label => (
-              <span key={label} style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-                <span style={{ display: 'inline-block', width: 8, height: 8, border: '1px solid #000' }} />
+              <span key={label} style={{ display: 'inline-flex', alignItems: 'center', gap: 3, marginLeft: 8, fontWeight: 400 }}>
+                <span style={{ display: 'inline-block', width: 8, height: 8, border: '1px solid #000', verticalAlign: 'middle' }} />
                 {label}
               </span>
             ))}
           </div>
-          <div style={{ marginTop: 3, display: 'flex', justifyContent: 'flex-end', fontSize: 6.5, color: '#aaa' }}>
+          <div style={{ marginTop: 2, display: 'flex', justifyContent: 'flex-end', fontSize: 6, color: '#aaa' }}>
             Generata il {new Date(distinta.generata_at).toLocaleDateString('it-IT')} · ClubIS
           </div>
         </div>
@@ -526,8 +578,16 @@ export default async function PrintDistintaPage({ params }: { params: { partita_
     )
   }
 
-  // ── FORMATO BRANDED (categorie non LND) ────────────────────────────
+  // ── FORMATO BRANDED (categorie non LND, non Serie D) ───────────────────
+  const ROWS_DEFAULT = 18
   const righeVuote = Math.max(0, ROWS_DEFAULT - giocatori.length)
+
+  const RUOLO_LABEL: Record<string, string> = {
+    portiere: 'POR', difensore_centrale: 'DC', terzino: 'TRZ',
+    centrocampista_difensivo: 'CDM', centrocampista: 'CEN', mezzala: 'MEZ',
+    regista: 'REG', trequartista: 'TRQ', ala: 'ALA',
+    seconda_punta: '2P', centravanti: 'ATT',
+  }
 
   return (
     <>
@@ -542,7 +602,6 @@ export default async function PrintDistintaPage({ params }: { params: { partita_
         padding: '12mm 12mm 10mm',
       }}>
 
-        {/* ── Intestazione ───────────────────────────────────────────── */}
         <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 0 }}>
           <tbody>
             <tr>
@@ -675,13 +734,17 @@ export default async function PrintDistintaPage({ params }: { params: { partita_
   )
 }
 
-// ── Stili condivisi branded ──────────────────────────────────────────
+// ── Stili branded ────────────────────────────────────────────────────────
 const cellInfo: React.CSSProperties = { border: '1px solid #ccc', padding: '4px 8px', fontSize: 11, verticalAlign: 'middle' }
 const thS: React.CSSProperties = { padding: '5px 6px', fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', textAlign: 'center', border: '1px solid #555' }
 const tdS: React.CSSProperties = { padding: '3px 6px', fontSize: 11, border: '1px solid #ddd', verticalAlign: 'middle' }
 
-// ── Stili LND / Serie D ──────────────────────────────────────────────
-const sdCell: React.CSSProperties = { border: '1px solid #000', padding: '3px 6px', verticalAlign: 'middle' }
+// ── Stili Serie D ────────────────────────────────────────────────────────
 const sdTh: React.CSSProperties = { padding: '3px 4px', fontWeight: 700, fontSize: 7, textAlign: 'center', border: '1px solid #555', textTransform: 'uppercase', letterSpacing: '0.03em' }
 const sdSubTh: React.CSSProperties = { padding: '2px 4px', fontWeight: 600, fontSize: 6.5, textAlign: 'center', border: '1px solid #aaa', color: '#333' }
-const sdTd: React.CSSProperties = { padding: '2px 4px', fontSize: 8, border: '1px solid #ccc', verticalAlign: 'middle' }
+const sdTd: React.CSSProperties = { padding: '2px 4px', fontSize: 7.5, border: '1px solid #ccc', verticalAlign: 'middle' }
+
+// ── Stili LND ────────────────────────────────────────────────────────────
+const lndTh: React.CSSProperties = { padding: '3px 3px', fontWeight: 700, fontSize: 6.5, textAlign: 'center', border: '1px solid #000', textTransform: 'uppercase', lineHeight: 1.2, background: '#fff' }
+const lndSubTh: React.CSSProperties = { padding: '2px 3px', fontWeight: 600, fontSize: 6, textAlign: 'center', border: '1px solid #000', background: '#fff' }
+const lndTd: React.CSSProperties = { padding: '2px 3px', fontSize: 7, border: '1px solid #000', verticalAlign: 'middle' }

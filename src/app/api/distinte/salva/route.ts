@@ -1,20 +1,14 @@
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserContext } from '@/lib/impersonation'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(req: NextRequest) {
-  const sessionClient = createClient()
+  const ctx = await getUserContext()
+  if (!ctx) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const { userId: user_id, clubId } = ctx
 
   const supabase = createAdminClient()
-  const { data: { user } } = await sessionClient.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-
-  const { data: utente } = await supabase
-    .from('utenti')
-    .select('club_id')
-    .eq('id', user.id)
-    .single()
-  if (!utente) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
   const body = await req.json()
   const { partita_id, giocatori, staff } = body
@@ -27,11 +21,11 @@ export async function POST(req: NextRequest) {
     .from('distinte_gara')
     .upsert(
       {
-        club_id: utente.club_id,
+        club_id: clubId,
         partita_id,
         giocatori_snapshot: giocatori,
         staff_snapshot: staff ?? {},
-        generata_da: user.id,
+        generata_da: user_id,
         generata_at: new Date().toISOString(),
         versione: 1,
       },
