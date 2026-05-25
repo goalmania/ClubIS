@@ -19,7 +19,7 @@ export async function GET() {
 
   const FIELDS = `
     id, numero_maglia, tipo, squadra_id, stato,
-    giocatori ( id, nome, cognome, data_nascita, ruolo_principale, piede, nazionalita_tipo, foto_url ),
+    giocatori ( id, nome, cognome, data_nascita, ruolo_principale, piede, nazionalita_tipo, foto_url, numero_matricola_figc ),
     squadre ( nome, categoria_eta )
   `
 

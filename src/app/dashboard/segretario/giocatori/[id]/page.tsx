@@ -209,6 +209,16 @@ export default function GiocatoreDetailPage() {
                   <F label="Piede preferito"><select className="input" value={draft.piede_preferito ?? ''} onChange={e => upd('piede_preferito', e.target.value)}><option value="">—</option><option value="destro">Destro</option><option value="sinistro">Sinistro</option><option value="ambidestro">Ambidestro</option></select></F>
                   <F label="Ruolo preferito"><input className="input" value={draft.ruolo_preferito ?? ''} onChange={e => upd('ruolo_preferito', e.target.value)} placeholder="Attaccante" /></F>
                   <F label="Condizione"><select className="input" value={draft.condizione ?? 'disponibile'} onChange={e => upd('condizione', e.target.value)}><option value="disponibile">Disponibile</option><option value="infortunato">Infortunato</option><option value="squalificato">Squalificato</option><option value="assente">Assente</option></select></F>
+                  <F label="N° Matricola FIGC">
+                    <input
+                      className="input"
+                      value={draft.numero_matricola_figc ?? ''}
+                      onChange={e => upd('numero_matricola_figc', e.target.value.replace(/\D/g, '').slice(0, 8) || null)}
+                      placeholder="12345678"
+                      maxLength={8}
+                      style={{ fontFamily: 'var(--font-mono)', letterSpacing: '0.05em' }}
+                    />
+                  </F>
                   <F label="Codice identificativo"><input className="input" value={draft.codice_identificativo ?? ''} onChange={e => upd('codice_identificativo', e.target.value)} /></F>
                   <F label="Nome maglia"><input className="input" value={draft.nome_maglia ?? ''} onChange={e => upd('nome_maglia', e.target.value)} /></F>
                   <F label="Altezza (cm)"><input className="input" type="number" value={draft.altezza_cm ?? ''} onChange={e => upd('altezza_cm', e.target.value ? parseInt(e.target.value) : null)} /></F>
@@ -238,6 +248,7 @@ export default function GiocatoreDetailPage() {
                 { label: 'Piede preferito', value: g.piede_preferito ?? '—' },
                 { label: 'Ruolo preferito', value: g.ruolo_preferito ?? '—' },
                 { label: 'Condizione', value: g.condizione ?? 'disponibile' },
+                { label: 'N° Matricola FIGC', value: g.numero_matricola_figc ?? '—' },
                 { label: 'Codice identificativo', value: g.codice_identificativo ?? '—' },
                 { label: 'Nome maglia', value: g.nome_maglia ?? '—' },
                 { label: 'Altezza', value: g.altezza_cm ? `${g.altezza_cm} cm` : '—' },

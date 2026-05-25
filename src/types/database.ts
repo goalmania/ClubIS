@@ -120,6 +120,7 @@ export interface Giocatore {
   nazionalita_tipo: NazionalitaTipo
   nazionalita_paese: string
   codice_fiscale: string
+  numero_matricola_figc?: string
   ruolo_principale?: RuoloCampo
   ruolo_secondario?: RuoloCampo
   piede: Piede

@@ -225,6 +225,7 @@ export default function GiocatoriPage() {
                 <tr>
                   <th>#</th>
                   <th>Giocatore</th>
+                  <th>Matricola FIGC</th>
                   <th>Età</th>
                   <th>Ruolo</th>
                   <th>Piede</th>
@@ -258,6 +259,18 @@ export default function GiocatoriPage() {
                             <div style={{ fontSize: 14, fontWeight: 500 }}>{g.cognome} {g.nome}</div>
                           </div>
                         </div>
+                      </td>
+                      <td>
+                        {g.numero_matricola_figc ? (
+                          <span
+                            title={g.numero_matricola_figc}
+                            style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-3)' }}
+                          >
+                            {g.numero_matricola_figc.slice(0, 10)}
+                          </span>
+                        ) : (
+                          <span style={{ color: 'var(--grigio-4)', fontSize: 12 }}>—</span>
+                        )}
                       </td>
                       <td style={{ fontSize: 13, color: 'var(--grigio-3)' }}>{eta} anni</td>
                       <td>

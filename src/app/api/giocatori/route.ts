@@ -49,9 +49,10 @@ export async function POST(req: NextRequest) {
       peso_kg:           body.peso    ? parseInt(body.peso)    : null,
       email_contatto:    body.email_contatto?.trim()    || null,
       telefono_contatto: body.telefono_contatto?.trim() || null,
-      consenso_gdpr:     body.consenso_gdpr    ?? false,
-      consenso_data:     body.consenso_gdpr ? new Date().toISOString() : null,
-      consenso_immagini: body.consenso_immagini ?? false,
+      consenso_gdpr:          body.consenso_gdpr    ?? false,
+      consenso_data:          body.consenso_gdpr ? new Date().toISOString() : null,
+      consenso_immagini:      body.consenso_immagini ?? false,
+      numero_matricola_figc:  body.numero_matricola_figc?.trim() || null,
     })
     .select('id').single()
 

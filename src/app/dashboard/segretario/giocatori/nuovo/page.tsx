@@ -46,6 +46,9 @@ export default function NuovoGiocatorePage() {
   const [nazionalita,   setNazionalita]   = useState('italiano')
   const [paeseNascita,  setPaeseNascita]  = useState('Italia')
 
+  // FIGC
+  const [matricolaFigc,    setMatricolaFigc]    = useState('')
+
   // Dati tecnici
   const [ruoloPrincipale,  setRuoloPrincipale]  = useState('')
   const [ruoloSecondario,  setRuoloSecondario]  = useState('')
@@ -126,8 +129,9 @@ export default function NuovoGiocatorePage() {
           altezza,
           peso,
           email_contatto:    emailContatto,
-          telefono_contatto: telefonoContatto,
-          consenso_gdpr:     consensoGdpr,
+          telefono_contatto:    telefonoContatto,
+          numero_matricola_figc: matricolaFigc || undefined,
+          consenso_gdpr:        consensoGdpr,
           consenso_immagini: consensoImmagini,
           // Tesseramento
           squadra_id:        squadraId || null,
@@ -184,6 +188,19 @@ export default function NuovoGiocatorePage() {
               <FormField label="Cognome" required error={errori.cognome}>
                 <input className="input" value={cognome} onChange={e => setCognome(e.target.value)} placeholder="Rossi" />
               </FormField>
+            </FormGrid>
+            <FormGrid cols={2}>
+              <FormField label="N° Matricola FIGC" hint="Solo cifre, max 8 caratteri">
+                <input
+                  className="input"
+                  value={matricolaFigc}
+                  onChange={e => setMatricolaFigc(e.target.value.replace(/\D/g, '').slice(0, 8))}
+                  placeholder="12345678"
+                  maxLength={8}
+                  style={{ fontFamily: 'var(--font-mono)', letterSpacing: '0.05em' }}
+                />
+              </FormField>
+              <div />
             </FormGrid>
             <FormGrid cols={2}>
               <FormField label="Data di nascita" required error={errori.dataNascita}>
