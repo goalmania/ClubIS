@@ -1,5 +1,6 @@
 import { getUserContext } from '@/lib/impersonation'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { fetchLogoHtml } from '@/lib/pdf/logo'
 
 export const dynamic = 'force-dynamic'
 
@@ -30,7 +31,7 @@ export async function GET() {
       .eq('club_id', ctx.clubId)
       .eq('stato', 'attivo')
       .order('giocatori(cognome)'),
-    admin.from('clubs').select('nome, citta').eq('id', ctx.clubId).single(),
+    admin.from('clubs').select('nome, citta, logo_url').eq('id', ctx.clubId).single(),
   ])
 
   const lista = (tesseramenti ?? []).filter((t: any) => t.giocatori)
@@ -54,6 +55,8 @@ export async function GET() {
         <td class="center">${t.tipo ?? '—'}</td>
       </tr>`
   }).join('')
+
+  const logoHtml = await fetchLogoHtml(club?.logo_url)
 
   const html = `<!DOCTYPE html>
 <html lang="it">
@@ -90,9 +93,12 @@ export async function GET() {
 </head>
 <body>
   <div class="header">
-    <div class="header-left">
-      <h1>${club?.nome ?? 'Società Sportiva'}</h1>
-      <p>Rosa Giocatori — Stagione corrente${club?.citta ? ' · ' + club.citta : ''}</p>
+    <div style="display:flex;align-items:center">
+      ${logoHtml}
+      <div class="header-left">
+        <h1>${club?.nome ?? 'Società Sportiva'}</h1>
+        <p>Rosa Giocatori — Stagione corrente${club?.citta ? ' · ' + club.citta : ''}</p>
+      </div>
     </div>
     <div class="header-right">
       Stampato il ${oggi}<br/>

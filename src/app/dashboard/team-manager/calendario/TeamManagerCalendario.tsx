@@ -880,7 +880,24 @@ export default function TeamManagerCalendario() {
                   </details>
 
                   <details open>
-                    <summary style={{ cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>Staff</summary>
+                    <summary style={{ cursor: 'pointer', fontSize: 13, fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <span>Staff</span>
+                      {staff.length > 0 && (
+                        <button
+                          type="button"
+                          className="btn btn-ghost btn-sm"
+                          style={{ fontSize: 11, padding: '1px 8px', marginLeft: 8 }}
+                          onClick={e => {
+                            e.stopPropagation()
+                            const allIds = staff.map(s => s.id)
+                            const allSel = allIds.every(id => form.partecipanti.staff.includes(id))
+                            setForm(f => ({ ...f, partecipanti: { ...f.partecipanti, staff: allSel ? [] : allIds } }))
+                          }}
+                        >
+                          {staff.every(s => form.partecipanti.staff.includes(s.id)) ? 'Deseleziona tutti' : 'Seleziona tutti'}
+                        </button>
+                      )}
+                    </summary>
                     <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 6, maxHeight: 130, overflowY: 'auto' }}>
                       {staff.map(st => (
                         <label key={st.id} style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 13 }}>
@@ -899,7 +916,24 @@ export default function TeamManagerCalendario() {
                   </details>
 
                   <details open>
-                    <summary style={{ cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>Giocatori</summary>
+                    <summary style={{ cursor: 'pointer', fontSize: 13, fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <span>Giocatori</span>
+                      {giocatori.length > 0 && (
+                        <button
+                          type="button"
+                          className="btn btn-ghost btn-sm"
+                          style={{ fontSize: 11, padding: '1px 8px', marginLeft: 8 }}
+                          onClick={e => {
+                            e.stopPropagation()
+                            const allIds = giocatori.map(p => p.id)
+                            const allSel = allIds.every(id => form.partecipanti.giocatori.includes(id))
+                            setForm(f => ({ ...f, partecipanti: { ...f.partecipanti, giocatori: allSel ? [] : allIds } }))
+                          }}
+                        >
+                          {giocatori.every(p => form.partecipanti.giocatori.includes(p.id)) ? 'Deseleziona tutti' : 'Seleziona tutti'}
+                        </button>
+                      )}
+                    </summary>
                     <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 6, maxHeight: 180, overflowY: 'auto' }}>
                       {giocatori.map(p => (
                         <label key={p.id} style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 13 }}>

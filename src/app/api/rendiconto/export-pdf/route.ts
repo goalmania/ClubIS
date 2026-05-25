@@ -1,6 +1,7 @@
 import { getUserContext } from '@/lib/impersonation'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { NextRequest } from 'next/server'
+import { fetchLogoHtml } from '@/lib/pdf/logo'
 
 export const dynamic = 'force-dynamic'
 
@@ -33,7 +34,7 @@ export async function GET(req: NextRequest) {
       .not('stornato', 'eq', true)
       .gte('data', `${anno}-01-01`)
       .lte('data', `${anno}-12-31`),
-    admin.from('clubs').select('nome, citta').eq('id', ctx.clubId).single(),
+    admin.from('clubs').select('nome, citta, logo_url').eq('id', ctx.clubId).single(),
   ])
 
   const mensili = Array.from({ length: 12 }, (_, m) => ({
@@ -86,6 +87,8 @@ export async function GET(req: NextRequest) {
       </tr>`
   }).join('')
 
+  const logoHtml = await fetchLogoHtml(club?.logo_url)
+
   const html = `<!DOCTYPE html>
 <html lang="it">
 <head>
@@ -127,9 +130,12 @@ export async function GET(req: NextRequest) {
 </head>
 <body>
   <div class="header">
-    <div class="header-left">
-      <h1>${club?.nome ?? 'Società Sportiva'}</h1>
-      <p>Rendiconto Finanziario — Anno ${anno}${club?.citta ? ' · ' + club.citta : ''}</p>
+    <div style="display:flex;align-items:center">
+      ${logoHtml}
+      <div class="header-left">
+        <h1>${club?.nome ?? 'Società Sportiva'}</h1>
+        <p>Rendiconto Finanziario — Anno ${anno}${club?.citta ? ' · ' + club.citta : ''}</p>
+      </div>
     </div>
     <div class="header-right">
       Stampato il ${oggi}

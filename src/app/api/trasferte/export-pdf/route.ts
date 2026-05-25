@@ -1,7 +1,25 @@
 import { getUserContext } from '@/lib/impersonation'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { fetchLogoHtml } from '@/lib/pdf/logo'
 
 export const dynamic = 'force-dynamic'
+
+const COSTI_JSON_START = '__COSTI_TRASFERTE_JSON_START__'
+const COSTI_JSON_END = '__COSTI_TRASFERTE_JSON_END__'
+
+function parseNote(note: string | null): { competizione: string; noteLibere: string } {
+  if (!note) return { competizione: '', noteLibere: '' }
+  const s = note.indexOf(COSTI_JSON_START)
+  const e = note.indexOf(COSTI_JSON_END)
+  if (s === -1 || e === -1) return { competizione: '', noteLibere: note.trim() }
+  const noteLibere = note.slice(e + COSTI_JSON_END.length).trim()
+  try {
+    const obj = JSON.parse(note.slice(s + COSTI_JSON_START.length, e))
+    return { competizione: obj?.competizione_evento ?? '', noteLibere }
+  } catch {
+    return { competizione: '', noteLibere }
+  }
+}
 
 function fmt(n: number): string {
   return n.toLocaleString('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 })
@@ -20,7 +38,7 @@ export async function GET() {
       .select('id, destinazione, data_partenza, data_rientro, mezzo, costo_stimato, costo_effettivo, note, stato, partita_id')
       .eq('club_id', ctx.clubId)
       .order('data_partenza', { ascending: false }),
-    admin.from('clubs').select('nome, citta').eq('id', ctx.clubId).single(),
+    admin.from('clubs').select('nome, citta, logo_url').eq('id', ctx.clubId).single(),
   ])
 
   const lista = (trasferte ?? []) as any[]
@@ -37,11 +55,13 @@ export async function GET() {
     const dataPartenza = t.data_partenza ? new Date(t.data_partenza).toLocaleDateString('it-IT') : '—'
     const dataRientro = t.data_rientro && t.data_rientro !== t.data_partenza ? new Date(t.data_rientro).toLocaleDateString('it-IT') : null
     const delta = t.costo_effettivo && t.costo_stimato ? Number(t.costo_effettivo) - Number(t.costo_stimato) : null
+    const { competizione, noteLibere } = parseNote(t.note)
     return `
       <tr>
         <td>
           <strong>${t.destinazione ?? '—'}</strong>
-          ${t.note ? `<br/><span style="font-size:9px;color:#888;font-style:italic">${t.note}</span>` : ''}
+          ${competizione ? `<br/><span style="font-size:9px;color:#555;font-weight:600">${competizione}</span>` : ''}
+          ${noteLibere ? `<br/><span style="font-size:9px;color:#888;font-style:italic">${noteLibere}</span>` : ''}
         </td>
         <td style="font-family:monospace;font-size:10px">
           ${dataPartenza}${dataRientro ? `<br/>→ ${dataRientro}` : ''}
@@ -59,6 +79,8 @@ export async function GET() {
         </td>
       </tr>`
   }).join('')
+
+  const logoHtml = await fetchLogoHtml(club?.logo_url)
 
   const html = `<!DOCTYPE html>
 <html lang="it">
@@ -93,9 +115,12 @@ export async function GET() {
 </head>
 <body>
   <div class="header">
-    <div class="header-left">
-      <h1>${club?.nome ?? 'Società Sportiva'}</h1>
-      <p>Trasferte — Organizzazione e budget spostamenti${club?.citta ? ' · ' + club.citta : ''}</p>
+    <div style="display:flex;align-items:center">
+      ${logoHtml}
+      <div class="header-left">
+        <h1>${club?.nome ?? 'Società Sportiva'}</h1>
+        <p>Trasferte — Organizzazione e budget spostamenti${club?.citta ? ' · ' + club.citta : ''}</p>
+      </div>
     </div>
     <div class="header-right">Stampato il ${oggi}<br/>${lista.length} trasferte</div>
   </div>

@@ -1,5 +1,6 @@
 import { getUserContext } from '@/lib/impersonation'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { fetchLogoHtml } from '@/lib/pdf/logo'
 
 export const dynamic = 'force-dynamic'
 
@@ -18,7 +19,7 @@ export async function GET() {
       .eq('club_id', ctx.clubId)
       .or(`partite_restanti.gt.0,data_fine.gte.${today}`)
       .order('data_inizio', { ascending: false }),
-    admin.from('clubs').select('nome, citta').eq('id', ctx.clubId).single(),
+    admin.from('clubs').select('nome, citta, logo_url').eq('id', ctx.clubId).single(),
   ])
 
   const lista = (squalifiche ?? []) as any[]
@@ -45,6 +46,8 @@ export async function GET() {
   }).join('')
 
   const attive = lista.filter((s: any) => (s.partite_restanti ?? 0) > 0).length
+
+  const logoHtml = await fetchLogoHtml(club?.logo_url)
 
   const html = `<!DOCTYPE html>
 <html lang="it">
@@ -85,9 +88,12 @@ export async function GET() {
 </head>
 <body>
   <div class="header">
-    <div class="header-left">
-      <h1>${club?.nome ?? 'Società Sportiva'}</h1>
-      <p>Monitor Squalifiche — Giocatori non disponibili${club?.citta ? ' · ' + club.citta : ''}</p>
+    <div style="display:flex;align-items:center">
+      ${logoHtml}
+      <div class="header-left">
+        <h1>${club?.nome ?? 'Società Sportiva'}</h1>
+        <p>Monitor Squalifiche — Giocatori non disponibili${club?.citta ? ' · ' + club.citta : ''}</p>
+      </div>
     </div>
     <div class="header-right">
       Stampato il ${oggi}<br/>

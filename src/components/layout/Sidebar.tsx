@@ -155,6 +155,18 @@ const navConfig: Record<RuoloUtente, NavSezione[]> = {
       { label: 'Iscrizioni online', href: '/dashboard/segretario/iscrizioni', icon: 'Clipboard' },
       { label: 'Compensi', href: '/dashboard/segretario/compensi', icon: 'Euro', feature: 'compensi_staff' },
     ]},
+    { titolo: 'Squadra', voci: [
+      { label: 'Calendario', href: '/dashboard/segretario/calendario', icon: 'Calendar' },
+      { label: 'Trasferte', href: '/dashboard/segretario/trasferte', icon: 'MapPin' },
+      { label: 'Materiale', href: '/dashboard/segretario/materiale', icon: 'Package' },
+      { label: 'Presenze Allenamento', href: '/dashboard/segretario/presenze-allenamento', icon: 'Check' },
+    ]},
+    { titolo: 'Area Medica', voci: [
+      { label: 'Stato Medico', href: '/dashboard/segretario/stato-medico', icon: 'Heart' },
+      { label: 'Cartelle Mediche', href: '/dashboard/segretario/cartelle', icon: 'Folder' },
+      { label: 'Infortuni', href: '/dashboard/segretario/infortuni', icon: 'AlertTriangle' },
+      { label: 'Visite Mediche', href: '/dashboard/segretario/visite', icon: 'Stethoscope' },
+    ]},
     { titolo: 'Gestione', voci: [
       { label: 'Generatore Documenti', href: '/dashboard/segretario/documenti', icon: 'FileText', feature: 'genera_documenti' },
       { label: 'Compliance', href: '/dashboard/segretario/compliance', icon: 'Shield' },

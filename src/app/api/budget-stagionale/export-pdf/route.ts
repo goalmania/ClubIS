@@ -1,6 +1,7 @@
 import { getUserContext } from '@/lib/impersonation'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { NextRequest } from 'next/server'
+import { fetchLogoHtml } from '@/lib/pdf/logo'
 
 export const dynamic = 'force-dynamic'
 
@@ -33,7 +34,7 @@ export async function GET(req: NextRequest) {
     admin.from('uscite_previste').select('*').eq('club_id', ctx.clubId).eq('stagione_riferimento', stagione).order('mese_riferimento').order('categoria'),
     admin.from('prima_nota').select('tipo, importo, data').eq('club_id', ctx.clubId)
       .gte('data', `${annoInizio}-07-01`).lte('data', `${annoInizio + 1}-06-30`),
-    admin.from('clubs').select('nome, citta').eq('id', ctx.clubId).single(),
+    admin.from('clubs').select('nome, citta, logo_url').eq('id', ctx.clubId).single(),
   ])
 
   const budget = bs.data as any
@@ -88,6 +89,8 @@ export async function GET(req: NextRequest) {
       <td class="right mono red">${m.effU > 0 ? '€' + fmt(m.effU) : '—'}</td>
     </tr>`).join('')
 
+  const logoHtml = await fetchLogoHtml(club?.logo_url)
+
   const html = `<!DOCTYPE html>
 <html lang="it">
 <head>
@@ -133,9 +136,12 @@ export async function GET(req: NextRequest) {
 </head>
 <body>
   <div class="header">
-    <div class="header-left">
-      <h1>${club?.nome ?? 'Società Sportiva'}</h1>
-      <p>Budget Stagionale ${stagione}${club?.citta ? ' · ' + club.citta : ''}</p>
+    <div style="display:flex;align-items:center">
+      ${logoHtml}
+      <div class="header-left">
+        <h1>${club?.nome ?? 'Società Sportiva'}</h1>
+        <p>Budget Stagionale ${stagione}${club?.citta ? ' · ' + club.citta : ''}</p>
+      </div>
     </div>
     <div class="header-right">
       Stampato il ${oggi}

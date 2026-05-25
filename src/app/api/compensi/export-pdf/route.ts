@@ -1,6 +1,7 @@
 import { getUserContext } from '@/lib/impersonation'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { NextRequest } from 'next/server'
+import { fetchLogoHtml } from '@/lib/pdf/logo'
 
 export const dynamic = 'force-dynamic'
 
@@ -19,7 +20,7 @@ export async function GET(req: NextRequest) {
   const [{ data: compensi }, { data: utenti }, { data: club }] = await Promise.all([
     admin.from('compensi').select('*').eq('club_id', ctx.clubId).eq('anno', anno).order('data_pagamento', { ascending: true }),
     admin.from('utenti').select('id, nome, cognome').eq('club_id', ctx.clubId),
-    admin.from('clubs').select('nome, citta').eq('id', ctx.clubId).single(),
+    admin.from('clubs').select('nome, citta, logo_url').eq('id', ctx.clubId).single(),
   ])
 
   const lista = (compensi ?? []) as any[]
@@ -87,6 +88,8 @@ export async function GET(req: NextRequest) {
       <td style="text-align:right;font-family:monospace;font-weight:700;color:#16a34a">${fmt(r.netto)}</td>
     </tr>`).join('')
 
+  const logoHtml = await fetchLogoHtml(club?.logo_url)
+
   const html = `<!DOCTYPE html>
 <html lang="it">
 <head>
@@ -124,9 +127,12 @@ export async function GET(req: NextRequest) {
 </head>
 <body>
   <div class="header">
-    <div class="header-left">
-      <h1>${club?.nome ?? 'Società Sportiva'}</h1>
-      <p>Compensi Collaboratori — Anno ${anno}${club?.citta ? ' · ' + club.citta : ''} · D.Lgs. 36/2021 Riforma Sport</p>
+    <div style="display:flex;align-items:center">
+      ${logoHtml}
+      <div class="header-left">
+        <h1>${club?.nome ?? 'Società Sportiva'}</h1>
+        <p>Compensi Collaboratori — Anno ${anno}${club?.citta ? ' · ' + club.citta : ''} · D.Lgs. 36/2021 Riforma Sport</p>
+      </div>
     </div>
     <div class="header-right">Stampato il ${oggi}</div>
   </div>
