@@ -1,842 +1,905 @@
 'use client'
 import FeatureGate from '@/components/FeatureGate'
-import { useState, useCallback, useMemo, useEffect } from 'react'
-import { createClient } from '@/lib/supabase/client'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { PageHeader, Toast } from '@/components/ui'
-import { generaSEPAXML, validaIBAN, formattaIBAN, type BonificoSEPA } from '@/lib/sepa/sepa-generator'
+import { validaIBAN, formattaIBAN } from '@/lib/sepa/sepa-generator'
 
-/* ─── Costanti ───────────────────────────────────────────────── */
+/* ─── Costanti ─────────────────────────────────────────────── */
 
-const MESI = [
-  'Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno',
-  'Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre',
+const RUOLI = [
+  'Allenatore', 'Allenatore in seconda', 'Preparatore atletico',
+  'Dirigente', 'Accompagnatore', 'Medico Sociale',
+  'Fisioterapista', 'Massaggiatore', 'Osservatore', 'Altro',
 ]
+
+const TIPI_RIMBORSO = [
+  { value: 'forfetario_volontario', label: 'Rimborso forfetario volontario' },
+  { value: 'spese_documentate',     label: 'Rimborso spese documentate' },
+]
+
+// Scadenza caricamento trimestrale sul portale RASD
+const SCADENZE: Record<number, { mese: number; giorno: number; label: string }> = {
+  1: { mese: 3,  giorno: 30, label: '30 aprile'   },
+  2: { mese: 6,  giorno: 31, label: '31 luglio'   },
+  3: { mese: 9,  giorno: 31, label: '31 ottobre'  },
+  4: { mese: 0,  giorno: 31, label: '31 gennaio'  }, // anno successivo
+}
 
 const now = new Date()
 
-/* ─── Tipi ───────────────────────────────────────────────────── */
+/* ─── Tipi ─────────────────────────────────────────────────── */
 
-interface GiocatoreRow {
-  id:               string
-  nome:             string
-  cognome:          string
-  iban:             string
-  intestatario:     string
-  importo:          number   // rimborso di questo mese
-  causale:          string
-  includi:          boolean
-  tipo:             string   // giocatore | allenatore | …
-  soggetto:         'giocatore' | 'staff'
-  ibanError:        boolean
+interface RimborsoRas {
+  id: string
+  soggetto_nome: string
+  soggetto_cognome: string
+  codice_fiscale: string
+  ruolo: string
+  tipo_rimborso: string
+  importo: number
+  data_erogazione: string
+  trimestre: number
+  anno: number
+  causale: string | null
+  note: string | null
 }
 
-interface RasRow {
-  id:               string
-  nome_cognome:     string
-  tipo:             string
-  mese:             number
-  anno:             number
-  importo:          number
-  descrizione:      string
-  data_pagamento:   string | null
-  ras_inserito:     boolean
-  quietanza_firmata: boolean
+interface DatoBancario {
+  codice_fiscale: string
+  iban: string
+  intestatario: string
+  bic: string | null
 }
 
-interface ClubInfo {
-  id:               string
-  nome:             string
-  iban:             string
-  intestatario:     string
-  bic:              string
-}
-
-interface BatchPassato {
-  id:           string
-  descrizione:  string
-  mese:         number
-  anno:         number
-  n_bonifici:   number
+interface DistintaSepa {
+  id: string
+  message_id: string
+  data_generazione: string
+  data_esecuzione: string
+  numero_transazioni: number
   importo_totale: number
-  stato:        string
-  data_esecuzione: string | null
-  data_generazione: string | null
+  stato: string
+  rimborsi_ids: string[]
 }
 
-type Tab = 'batch' | 'ras'
+type Tab       = 'ras' | 'sepa' | 'storico'
+type SepaStep  = 'select' | 'iban' | 'preview' | 'done'
+
+const EMPTY_FORM = {
+  soggetto_nome: '', soggetto_cognome: '', codice_fiscale: '',
+  ruolo: RUOLI[0], tipo_rimborso: 'forfetario_volontario',
+  importo: '', data_erogazione: now.toISOString().split('T')[0],
+  causale: '', note: '',
+}
+
+/* ─── Helper ────────────────────────────────────────────────── */
+
+const fmtEur = (n: number) => n.toLocaleString('it-IT', { style: 'currency', currency: 'EUR' })
+const fmtDate = (d: string) => d ? new Date(d).toLocaleDateString('it-IT') : '—'
+const maskCF  = (cf: string) => cf ? cf.slice(0, 8) + '****' : '—'
+
+function prossimaDead(trimestre: number, anno: number): Date {
+  const s = SCADENZE[trimestre]
+  const annoD = trimestre === 4 ? anno + 1 : anno
+  return new Date(annoD, s.mese, s.giorno)
+}
+
+function calcolaTrimestre(dateStr: string) {
+  const d = new Date(dateStr)
+  return Math.ceil((d.getMonth() + 1) / 3)
+}
+
+function nextWorkday(): string {
+  const d = new Date()
+  d.setDate(d.getDate() + 1)
+  while (d.getDay() === 0 || d.getDay() === 6) d.setDate(d.getDate() + 1)
+  return d.toISOString().split('T')[0]
+}
 
 /* ─── Componente ─────────────────────────────────────────────── */
 
 export default function RimborsiPage() {
-  const supabase = createClient()
+  const [tab, setTab]           = useState<Tab>('ras')
+  const [loading, setLoading]   = useState(true)
+  const [toast, setToast]       = useState<{ msg: string; tipo: 'success' | 'error' } | null>(null)
+  const ok  = (msg: string) => setToast({ msg, tipo: 'success' })
+  const err = (msg: string) => setToast({ msg, tipo: 'error' })
 
-  /* ── Stato UI ───────────────────────────────────────────────── */
-  const [tab, setTab]             = useState<Tab>('batch')
-  const [loading, setLoading]     = useState(true)
-  const [loaded, setLoaded]       = useState(false)
+  /* ── Dati ─────────────────────────────────────────────────── */
+  const [rimborsi,  setRimborsi]  = useState<RimborsoRas[]>([])
+  const [distinte,  setDistinte]  = useState<DistintaSepa[]>([])
+  const [datiBanc,  setDatiBanc]  = useState<DatoBancario[]>([])
 
-  /* ── Configurazione batch ───────────────────────────────────── */
-  const [mese, setMese]           = useState(now.getMonth() + 1)
-  const [anno, setAnno]           = useState(now.getFullYear())
-  const [dataEsec, setDataEsec]   = useState(() => {
-    // Default: prossimo lunedì
-    const d = new Date(); d.setDate(d.getDate() + ((8 - d.getDay()) % 7 || 7))
-    return d.toISOString().split('T')[0]
-  })
+  /* ── Filtri RAS ───────────────────────────────────────────── */
+  const [filtroAnno,  setFiltroAnno]  = useState(now.getFullYear())
+  const [filtroTrim,  setFiltroTrim]  = useState(calcolaTrimestre(now.toISOString()))
 
-  /* ── Dati ────────────────────────────────────────────────────── */
-  const [club, setClub]           = useState<ClubInfo>({ id:'', nome:'', iban:'', intestatario:'', bic:'' })
-  const [clubIbanEdit, setClubIbanEdit] = useState(false)
-  const [giocatori, setGiocatori] = useState<GiocatoreRow[]>([])
-  const [ras, setRas]             = useState<RasRow[]>([])
-  const [batches, setBatches]     = useState<BatchPassato[]>([])
+  /* ── Form add/edit RAS ───────────────────────────────────── */
+  const [showForm, setShowForm] = useState(false)
+  const [editId,   setEditId]   = useState<string | null>(null)
+  const [form,     setForm]     = useState({ ...EMPTY_FORM })
+  const [saving,   setSaving]   = useState(false)
+  const [formErr,  setFormErr]  = useState<Record<string, string>>({})
 
-  /* ── Generazione ────────────────────────────────────────────── */
-  const [generando, setGenerando] = useState(false)
-  const [batchId, setBatchId]     = useState<string | null>(null)
-  const [mostraIstruzioni, setMostraIstruzioni] = useState(false)
-  const [nomeFile, setNomeFile]   = useState('')
+  /* ── SEPA ─────────────────────────────────────────────────── */
+  const [sepaStep,    setSepaStep]    = useState<SepaStep>('select')
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [sepaFiltroT, setSepaFiltroT] = useState(calcolaTrimestre(now.toISOString()))
+  const [sepaFiltroA, setSepaFiltroA] = useState(now.getFullYear())
+  const [dataEsec,    setDataEsec]    = useState(nextWorkday())
+  const [causaleBatch, setCausaleBatch] = useState('')
+  const [ibanMancanti, setIbanMancanti] = useState<{ cf: string; nome: string }[]>([])
+  const [nuoviIban,    setNuoviIban]    = useState<Record<string, { iban: string; intestatario: string }>>({})
+  const [generando,    setGenerando]    = useState(false)
+  const [distintaId,   setDistintaId]   = useState<string | null>(null)
 
-  /* ── Toast ───────────────────────────────────────────────────── */
-  const [toast, setToast]         = useState<{ msg: string; tipo: 'success' | 'error' } | null>(null)
-  const ok  = (msg: string) => { setToast({ msg, tipo: 'success' }); setTimeout(() => setToast(null), 3500) }
-  const err = (msg: string) => { setToast({ msg, tipo: 'error'   }); setTimeout(() => setToast(null), 4500) }
+  /* ── Load ─────────────────────────────────────────────────── */
 
-  /* ── Caricamento dati ───────────────────────────────────────── */
+  const loadRas = useCallback(async (anno?: number, trim?: number) => {
+    const params = new URLSearchParams()
+    if (anno) params.set('anno', String(anno))
+    if (trim) params.set('trimestre', String(trim))
+    const res = await fetch(`/api/rimborsi-ras?${params}`)
+    if (res.ok) setRimborsi(await res.json())
+  }, [])
 
-  const load = useCallback(async () => {
-    setLoading(true)
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) { setLoading(false); return }
+  const loadDistinte = useCallback(async () => {
+    const res = await fetch('/api/sepa/distinte')
+    if (res.ok) setDistinte(await res.json())
+  }, [])
 
-    const { data: utente } = await supabase
-      .from('utenti').select('club_id').eq('id', user.id).single()
-    const clubId = utente?.club_id
-    if (!clubId) { setLoading(false); return }
+  useEffect(() => {
+    Promise.all([loadRas(filtroAnno, filtroTrim), loadDistinte()])
+      .finally(() => setLoading(false))
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-    const [
-      { data: clubData },
-      { data: tesserati },
-      { data: staffData },
-      { data: rasData },
-      { data: batchData },
-    ] = await Promise.all([
-      supabase.from('clubs')
-        .select('id, nome, iban, intestatario_iban, bic')
-        .eq('id', clubId).single(),
-      supabase.from('tesseramenti')
-        .select('giocatore_id, tipo_tesseramento, giocatori(id, nome, cognome, iban, intestatario_iban)')
-        .eq('club_id', clubId).eq('stato', 'attivo'),
-      supabase.from('utenti')
-        .select('id, nome, cognome, iban, intestatario_iban, ruolo')
-        .eq('club_id', clubId)
-        .eq('attivo', true),
-      supabase.from('ras_registrazioni')
-        .select('id, giocatore_id, staff_id, tipo_collaboratore, mese, anno, importo, descrizione, data_pagamento, ras_inserito, quietanza_firmata, giocatori(nome, cognome), utenti(nome, cognome)')
-        .eq('club_id', clubId)
-        .order('anno', { ascending: false }).order('mese', { ascending: false })
-        .limit(200),
-      supabase.from('bonifici_batch')
-        .select('id, descrizione, mese, anno, n_bonifici, importo_totale, stato, data_esecuzione, data_generazione')
-        .eq('club_id', clubId)
-        .order('created_at', { ascending: false })
-        .limit(20),
-    ])
+  useEffect(() => { loadRas(filtroAnno, filtroTrim) }, [filtroAnno, filtroTrim, loadRas])
 
-    setClub({
-      id:           clubData?.id ?? '',
-      nome:         clubData?.nome ?? '',
-      iban:         clubData?.iban ?? '',
-      intestatario: clubData?.intestatario_iban ?? clubData?.nome ?? '',
-      bic:          clubData?.bic ?? '',
-    })
+  /* ── Alert scadenze ──────────────────────────────────────── */
 
-    const righeGiocatori: GiocatoreRow[] = (tesserati ?? []).map((t: any) => {
-      const g = t.giocatori
-      return {
-        id:           g?.id ?? '',
-        nome:         g?.nome ?? '',
-        cognome:      g?.cognome ?? '',
-        iban:         g?.iban ?? '',
-        intestatario: g?.intestatario_iban || `${g?.cognome ?? ''} ${g?.nome ?? ''}`.trim(),
-        importo:      0,
-        causale:      '',
-        includi:      false,
-        tipo:         'giocatore',
-        soggetto:     'giocatore' as const,
-        ibanError:    false,
-      }
-    })
+  const alertScadenza = useMemo(() => {
+    for (const [trim, s] of Object.entries(SCADENZE)) {
+      const t   = parseInt(trim)
+      const d   = prossimaDead(t, t === 4 ? now.getFullYear() : now.getFullYear())
+      const gg  = Math.ceil((d.getTime() - now.getTime()) / 86400000)
+      if (gg >= 0 && gg <= 15) return { trimestre: t, giorni: gg, label: s.label }
+    }
+    return null
+  }, [])
 
-    const righeStaff: GiocatoreRow[] = (staffData ?? []).map((u: any) => ({
-      id:           u.id,
-      nome:         u.nome ?? '',
-      cognome:      u.cognome ?? '',
-      iban:         u.iban ?? '',
-      intestatario: u.intestatario_iban || `${u.cognome ?? ''} ${u.nome ?? ''}`.trim(),
-      importo:      0,
-      causale:      '',
-      includi:      false,
-      tipo:         u.ruolo ?? 'staff',
-      soggetto:     'staff' as const,
-      ibanError:    false,
-    }))
+  /* ── Validazione form RAS ─────────────────────────────────── */
 
-    const righe = [...righeGiocatori, ...righeStaff]
-      .sort((a, b) => a.cognome.localeCompare(b.cognome))
-
-    setGiocatori(righe)
-
-    const rasRighe: RasRow[] = (rasData ?? []).map((r: any) => {
-      const persona = r.giocatori ?? r.utenti
-      return {
-        id:                r.id,
-        nome_cognome:      persona ? `${persona.cognome} ${persona.nome}` : '—',
-        tipo:              r.tipo_collaboratore,
-        mese:              r.mese,
-        anno:              r.anno,
-        importo:           Number(r.importo),
-        descrizione:       r.descrizione,
-        data_pagamento:    r.data_pagamento,
-        ras_inserito:      r.ras_inserito,
-        quietanza_firmata: r.quietanza_firmata,
-      }
-    })
-    setRas(rasRighe)
-    setBatches(batchData ?? [])
-    setLoaded(true)
-    setLoading(false)
-  }, [supabase])
-
-  // Carica al primo render
-  useEffect(() => { load() }, []) // eslint-disable-line react-hooks/exhaustive-deps
-
-  /* ── Derivati batch ─────────────────────────────────────────── */
-
-  const selezionati  = useMemo(() => giocatori.filter(g => g.includi && g.importo > 0), [giocatori])
-  const totale       = useMemo(() => selezionati.reduce((s, g) => s + g.importo, 0), [selezionati])
-  const senzaIban    = useMemo(() => selezionati.filter(g => !validaIBAN(g.iban)), [selezionati])
-
-  /* ── Helpers ────────────────────────────────────────────────── */
-
-  const updateGiocatore = (id: string, patch: Partial<GiocatoreRow>) =>
-    setGiocatori(prev => prev.map(g => g.id === id ? { ...g, ...patch } : g))
-
-  const onImportoChange = (id: string, val: string) => {
-    const importo = parseFloat(val.replace(',', '.')) || 0
-    const g       = giocatori.find(r => r.id === id)!
-    const causale = `Rimborso spese ${g.cognome} ${MESI[mese - 1]} ${anno}`
-    updateGiocatore(id, { importo, includi: importo > 0, causale })
+  const validaForm = () => {
+    const e: Record<string, string> = {}
+    if (!form.soggetto_nome.trim())    e.nome    = 'Obbligatorio'
+    if (!form.soggetto_cognome.trim()) e.cognome  = 'Obbligatorio'
+    const cf = form.codice_fiscale.trim().toUpperCase()
+    if (!cf) e.cf = 'Obbligatorio'
+    else if (!/^[A-Z0-9]{16}$/.test(cf)) e.cf = 'Formato non valido (16 caratteri alfanumerici)'
+    if (!form.importo || parseFloat(form.importo) <= 0) e.importo = 'Importo deve essere > 0'
+    if (!form.data_erogazione) e.data = 'Obbligatoria'
+    setFormErr(e)
+    return Object.keys(e).length === 0
   }
 
-  const onIbanChange = (id: string, val: string) => {
-    const clean    = val.replace(/\s/g, '').toUpperCase()
-    const ibanError = clean.length >= 15 && !validaIBAN(clean)
-    updateGiocatore(id, { iban: val, ibanError })
+  /* ── Salva rimborso ───────────────────────────────────────── */
+
+  const salvaRimborso = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!validaForm()) return
+    setSaving(true)
+    try {
+      const method = editId ? 'PATCH' : 'POST'
+      const url    = editId ? `/api/rimborsi-ras/${editId}` : '/api/rimborsi-ras'
+      const res    = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          soggetto_nome:    form.soggetto_nome,
+          soggetto_cognome: form.soggetto_cognome,
+          codice_fiscale:   form.codice_fiscale.toUpperCase(),
+          ruolo:            form.ruolo,
+          tipo_rimborso:    form.tipo_rimborso,
+          importo:          form.importo,
+          data_erogazione:  form.data_erogazione,
+          causale:          form.causale,
+          note:             form.note,
+        }),
+      })
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.error ?? 'Errore salvataggio')
+      ok(editId ? 'Rimborso aggiornato' : 'Rimborso aggiunto')
+      setShowForm(false); setEditId(null); setForm({ ...EMPTY_FORM })
+      await loadRas(filtroAnno, filtroTrim)
+    } catch (ex: any) {
+      err(ex.message)
+    } finally {
+      setSaving(false)
+    }
   }
 
-  const selezionaTutti = (v: boolean) =>
-    setGiocatori(prev => prev.map(g => ({ ...g, includi: v && g.importo > 0 })))
+  /* ── Elimina rimborso ─────────────────────────────────────── */
 
-  /* ── Genera + scarica XML ────────────────────────────────────── */
+  const eliminaRimborso = async (id: string) => {
+    if (!confirm('Eliminare questo rimborso?')) return
+    const res = await fetch(`/api/rimborsi-ras/${id}`, { method: 'DELETE' })
+    if (res.ok) { ok('Rimborso eliminato'); await loadRas(filtroAnno, filtroTrim) }
+    else err('Errore eliminazione')
+  }
 
-  const generaBatch = useCallback(async () => {
-    if (selezionati.length === 0) { err('Inserisci almeno un importo'); return }
-    if (senzaIban.length > 0) {
-      err(`${senzaIban.length} giocatori senza IBAN valido: ${senzaIban.map(g => g.cognome).join(', ')}`)
-      return
+  /* ── Report RASD CSV ─────────────────────────────────────── */
+
+  const exportRasd = () => {
+    const dead = prossimaDead(filtroTrim, filtroAnno)
+    const deadLabel = SCADENZE[filtroTrim].label
+    const header = [
+      `# Report RASD - Q${filtroTrim} ${filtroAnno} - Da caricare sul portale RASD entro ${deadLabel} ${filtroTrim === 4 ? filtroAnno + 1 : filtroAnno}`,
+      'Codice Fiscale,Cognome,Nome,Ruolo,Importo Totale Trimestre,N. Prestazioni',
+    ]
+    const byPerson: Record<string, { r: RimborsoRas; tot: number; n: number }> = {}
+    for (const r of rimborsi) {
+      const k = r.codice_fiscale
+      if (!byPerson[k]) byPerson[k] = { r, tot: 0, n: 0 }
+      byPerson[k].tot += Number(r.importo)
+      byPerson[k].n++
     }
-    if (!club.iban || !validaIBAN(club.iban)) {
-      err('Inserisci un IBAN valido per il conto del club')
-      return
-    }
+    const rows = Object.values(byPerson).map(({ r, tot, n }) =>
+      `${r.codice_fiscale},${r.soggetto_cognome},${r.soggetto_nome},${r.ruolo},${tot.toFixed(2)},${n}`
+    )
+    const csv  = [...header, ...rows].join('\n')
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' })
+    const url  = URL.createObjectURL(blob)
+    const a    = Object.assign(document.createElement('a'), { href: url, download: `RASD_Q${filtroTrim}_${filtroAnno}.csv` })
+    a.click(); URL.revokeObjectURL(url)
+  }
 
+  /* ── SEPA: lista rimborsi filtrata ───────────────────────── */
+
+  const rimborsiSepa = useMemo(() =>
+    rimborsi.filter(r => r.trimestre === sepaFiltroT && r.anno === sepaFiltroA),
+    [rimborsi, sepaFiltroT, sepaFiltroA]
+  )
+
+  const rimborsiSelezionati = useMemo(() =>
+    rimborsiSepa.filter(r => selectedIds.has(r.id)),
+    [rimborsiSepa, selectedIds]
+  )
+
+  const totaleSepa = useMemo(() =>
+    rimborsiSelezionati.reduce((s, r) => s + Number(r.importo), 0),
+    [rimborsiSelezionati]
+  )
+
+  /* ── SEPA: carica rimborsi del trimestre SEPA ────────────── */
+
+  useEffect(() => {
+    if (tab === 'sepa') loadRas(sepaFiltroA, sepaFiltroT)
+  }, [tab, sepaFiltroA, sepaFiltroT, loadRas])
+
+  /* ── SEPA: verifica IBAN + vai a preview ──────────────────── */
+
+  const verificaIban = useCallback(async () => {
+    if (selectedIds.size === 0) { err('Seleziona almeno un rimborso'); return }
+    const cfs = [...new Set(rimborsiSelezionati.map(r => r.codice_fiscale))]
+    const qs  = cfs.map(cf => `cf=${cf}`).join('&')
+    const res = await fetch(`/api/dati-bancari?${qs}`)
+    const dati: DatoBancario[] = res.ok ? await res.json() : []
+    setDatiBanc(dati)
+    const have = new Set(dati.map(d => d.codice_fiscale.toUpperCase()))
+    const miss  = rimborsiSelezionati
+      .filter(r => !have.has(r.codice_fiscale.toUpperCase()))
+      .map(r => ({ cf: r.codice_fiscale, nome: `${r.soggetto_cognome} ${r.soggetto_nome}` }))
+    setIbanMancanti(miss)
+    setSepaStep(miss.length > 0 ? 'iban' : 'preview')
+  }, [selectedIds, rimborsiSelezionati])
+
+  /* ── SEPA: genera XML ────────────────────────────────────── */
+
+  const generaSepa = useCallback(async () => {
     setGenerando(true)
     try {
-      const idBatch = `CLUB-${club.nome.slice(0, 4).toUpperCase().replace(/[^A-Z0-9]/g,'')}-${anno}-${String(mese).padStart(2,'0')}`
-      const filename = `${idBatch}-SEPA.xml`
+      // Raccogli nuovi IBAN inseriti
+      const nuoviArr = Object.entries(nuoviIban)
+        .filter(([, v]) => v.iban && v.intestatario)
+        .map(([cf, v]) => ({ codice_fiscale: cf, ...v }))
 
-      const bonifici: BonificoSEPA[] = selezionati.map(g => ({
-        id:                `${idBatch}-${g.id.slice(0, 8)}`,
-        nome_beneficiario:  g.intestatario || `${g.cognome} ${g.nome}`,
-        iban_beneficiario:  g.iban.replace(/\s/g, ''),
-        importo:            g.importo,
-        causale:            (g.causale || `Rimborso spese ${g.cognome} ${MESI[mese-1]} ${anno}`).slice(0, 140),
-      }))
-
-      const xml = generaSEPAXML({
-        nome_ordinante:  club.intestatario || club.nome,
-        iban_ordinante:  club.iban.replace(/\s/g, ''),
-        bic_ordinante:   club.bic || undefined,
-        data_esecuzione: dataEsec,
-        id_messaggio:    idBatch,
-      }, bonifici)
-
-      // ── 1. Download immediato — indipendente dal salvataggio DB ──
-      const blob = new Blob([xml], { type: 'application/xml;charset=utf-8' })
-      const url  = URL.createObjectURL(blob)
-      const a    = document.createElement('a')
-      a.href = url; a.download = filename; a.click()
-      URL.revokeObjectURL(url)
-
-      setNomeFile(filename)
-      setMostraIstruzioni(true)
-
-      // ── 2. Salva batch + RAS in DB (secondario — non blocca il download) ──
-      try {
-        const payload = {
-          mese,
-          anno,
-          descrizione:     `Rimborsi ${MESI[mese-1]} ${anno}`,
-          xml_sepa:        xml,
+      const res  = await fetch('/api/sepa/genera', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          rimborsi_ids:   [...selectedIds],
           data_esecuzione: dataEsec,
-          bonifici:        selezionati.map((g, i) => ({
-            id:                 bonifici[i].id,
-            soggetto:           g.soggetto,
-            giocatore_id:       g.soggetto === 'giocatore' ? g.id : null,
-            staff_id:           g.soggetto === 'staff'     ? g.id : null,
-            tipo_collaboratore: g.tipo,
-            nome_beneficiario:  bonifici[i].nome_beneficiario,
-            iban_beneficiario:  bonifici[i].iban_beneficiario,
-            importo:            g.importo,
-            causale:            bonifici[i].causale,
-          })),
-        }
+          causale_batch:  causaleBatch,
+          nuovi_iban:     nuoviArr,
+        }),
+      })
+      const json = await res.json()
 
-        const res  = await fetch('/api/rimborsi/salva-batch', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        })
-        const json = await res.json()
-        if (!res.ok) throw new Error(json.error ?? 'Errore salvataggio batch')
-
-        setBatchId(json.batch_id)
-        await load()
-      } catch (dbErr: any) {
-        // Il file è già scaricato — segnala solo l'errore di registrazione
-        err(`File scaricato. Errore registrazione batch: ${dbErr.message}`)
+      if (!res.ok) {
+        if (json.mancanti) { setIbanMancanti(json.mancanti); setSepaStep('iban') }
+        else err(json.error ?? 'Errore generazione')
+        return
       }
-    } catch (e: any) {
-      err(e.message)
+
+      // Download
+      const blob = new Blob([json.xml], { type: 'application/xml;charset=utf-8' })
+      const url  = URL.createObjectURL(blob)
+      const a    = Object.assign(document.createElement('a'), { href: url, download: json.filename })
+      a.click(); URL.revokeObjectURL(url)
+
+      setDistintaId(json.distinta_id)
+      setSepaStep('done')
+      await loadDistinte()
+    } catch (ex: any) {
+      err(ex.message)
     } finally {
       setGenerando(false)
     }
-  }, [selezionati, senzaIban, club, mese, anno, dataEsec, load])
+  }, [selectedIds, dataEsec, causaleBatch, nuoviIban, loadDistinte])
 
-  /* ── Segna batch come eseguito ───────────────────────────────── */
+  /* ── SEPA: aggiorna stato distinta ──────────────────────── */
 
-  const segnaEseguito = useCallback(async (id: string) => {
-    const res = await fetch('/api/rimborsi/salva-batch', {
+  const aggiornaStato = async (id: string, stato: string) => {
+    const res = await fetch(`/api/sepa/distinte/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ batch_id: id, data_esecuzione: new Date().toISOString().split('T')[0] }),
+      body: JSON.stringify({ stato }),
     })
-    if (res.ok) { ok('Batch segnato come eseguito'); await load() }
+    if (res.ok) { ok('Stato aggiornato'); await loadDistinte() }
     else err('Errore aggiornamento stato')
-  }, [load])
+  }
 
-  /* ── Toggle RAS ─────────────────────────────────────────────── */
+  /* ── Render ─────────────────────────────────────────────── */
 
-  const toggleRas = useCallback(async (id: string, field: 'ras_inserito' | 'quietanza_firmata', cur: boolean) => {
-    const { error } = await supabase.from('ras_registrazioni').update({ [field]: !cur }).eq('id', id)
-    if (error) { err('Errore aggiornamento RAS'); return }
-    setRas(prev => prev.map(r => r.id === id ? { ...r, [field]: !cur } : r))
-  }, [supabase])
-
-  /* ── Export CSV RAS ─────────────────────────────────────────── */
-
-  const exportRasCSV = useCallback(() => {
-    const header = 'Cognome Nome,Tipo,Mese,Anno,Importo,Descrizione,Data Pagamento,RAS Inserito,Quietanza Firmata'
-    const rows   = ras.map(r => [
-      r.nome_cognome, r.tipo, r.mese, r.anno,
-      r.importo.toFixed(2), `"${r.descrizione}"`,
-      r.data_pagamento ?? '', r.ras_inserito ? 'SI' : 'NO', r.quietanza_firmata ? 'SI' : 'NO',
-    ].join(','))
-    const csv  = [header, ...rows].join('\n')
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' })
-    const url  = URL.createObjectURL(blob)
-    const a    = document.createElement('a'); a.href = url
-    a.download = `RAS-${anno}-${String(mese).padStart(2,'0')}.csv`; a.click()
-    URL.revokeObjectURL(url)
-  }, [ras, anno, mese])
-
-  /* ── Dati RAS filtrati per mese/anno corrente ────────────────── */
-
-  const rasDelMese       = useMemo(() => ras.filter(r => r.mese === mese && r.anno === anno), [ras, mese, anno])
-  const rasNonInseriti   = useMemo(() => rasDelMese.filter(r => !r.ras_inserito).length, [rasDelMese])
-  const rasNoQuietanza   = useMemo(() => rasDelMese.filter(r => !r.quietanza_firmata).length, [rasDelMese])
-
-  /* ── Render ─────────────────────────────────────────────────── */
-
-  const fmtEur = (n: number) => n.toLocaleString('it-IT', { style: 'currency', currency: 'EUR' })
-  const fmt    = (d: string) => new Date(d).toLocaleDateString('it-IT')
-  const statoColor = (s: string) =>
-    s === 'eseguito' ? 'var(--accent)' : s === 'generato' ? 'var(--ambra)' : 'var(--gray)'
+  const annoOptions = [now.getFullYear() - 1, now.getFullYear(), now.getFullYear() + 1]
 
   if (loading) return (
-    <div style={{ padding: 60, textAlign: 'center', color: 'var(--gray)', fontFamily: 'var(--font-mono)' }}>
+    <div style={{ padding: 60, textAlign: 'center', color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>
       Caricamento rimborsi…
     </div>
   )
 
   return (
-    <FeatureGate feature="rimborso_sepa" featureLabel="Rimborsi SEPA">
-        <>
-          {toast && <Toast msg={toast.msg} tipo={toast.tipo} onClose={() => setToast(null)} />}
+    <FeatureGate feature="rimborso_sepa" featureLabel="Rimborsi & RAS">
+      <>
+        {toast && <Toast msg={toast.msg} tipo={toast.tipo} onClose={() => setToast(null)} />}
 
-          <PageHeader
-            title="Rimborsi SEPA"
-            subtitle="Genera file SEPA XML per bonifici batch e gestisci il registro RAS"
-            actions={
-              <div style={{ display: 'flex', gap: 10 }}>
-                {tab === 'ras' && (
-                  <button className="btn btn-secondary btn-sm" onClick={exportRasCSV}>
-                    Export CSV RAS
-                  </button>
-                )}
+        <PageHeader
+          title="Rimborsi & RAS"
+          subtitle="Gestisci i rimborsi ai volontari sportivi, il registro RASD e le distinte SEPA"
+        />
+
+        {/* Tab bar */}
+        <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', marginBottom: 28 }}>
+          {([['ras', 'Registro RAS'], ['sepa', 'Genera SEPA'], ['storico', 'Storico distinte']] as [Tab, string][]).map(([t, label]) => (
+            <button key={t} onClick={() => setTab(t)} style={{
+              padding: '10px 20px', background: 'none', border: 'none', cursor: 'pointer',
+              fontFamily: 'var(--font-display)', fontSize: '0.78rem',
+              letterSpacing: '0.08em', textTransform: 'uppercase',
+              color: tab === t ? 'var(--accent)' : 'var(--grigio-3)',
+              fontWeight: tab === t ? 700 : 500,
+              borderBottom: tab === t ? '2px solid var(--accent)' : '2px solid transparent',
+              marginBottom: -1, transition: 'all 0.15s',
+            }}>{label}</button>
+          ))}
+        </div>
+
+        {/* ═══ TAB: REGISTRO RAS ═══════════════════════════════════ */}
+        {tab === 'ras' && (
+          <div>
+            {/* Alert scadenza */}
+            {alertScadenza && (
+              <div style={{
+                background: 'rgba(255,180,0,0.1)', border: '1px solid rgba(255,180,0,0.4)',
+                borderRadius: 6, padding: '12px 16px', marginBottom: 20,
+                display: 'flex', alignItems: 'center', gap: 12,
+              }}>
+                <span style={{ fontSize: 18 }}>⚠</span>
+                <div style={{ fontSize: 13, color: 'var(--ambra)' }}>
+                  <strong>Scadenza RASD Q{alertScadenza.trimestre}:</strong> mancano {alertScadenza.giorni} giorni
+                  per caricare i dati sul portale RASD (entro {alertScadenza.label}).
+                </div>
               </div>
-            }
-          />
+            )}
 
-          {/* Tab bar */}
-          <div style={{ display: 'flex', borderBottom: '1px solid var(--border)', marginBottom: 28, gap: 0 }}>
-            {([['batch','Genera Batch SEPA'],['ras','Registro RAS']] as [Tab, string][]).map(([t, label]) => (
-              <button
-                key={t}
-                onClick={() => setTab(t)}
-                style={{
-                  padding: '10px 20px',
-                  background: 'none', border: 'none', cursor: 'pointer',
-                  fontFamily: 'var(--font-display)', fontSize: '0.78rem',
-                  letterSpacing: '0.08em', textTransform: 'uppercase',
-                  color: tab === t ? 'var(--accent)' : 'var(--gray)',
-                  fontWeight: tab === t ? 700 : 500,
-                  borderBottom: tab === t ? '2px solid var(--accent)' : '2px solid transparent',
-                  marginBottom: -1, transition: 'all 0.15s',
-                }}
-              >
-                {label}
+            {/* Filtri + azioni */}
+            <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 16, flexWrap: 'wrap' }}>
+              <select className="input" style={{ width: 130 }} value={filtroTrim} onChange={e => setFiltroTrim(+e.target.value)}>
+                {[1, 2, 3, 4].map(t => <option key={t} value={t}>Q{t}</option>)}
+              </select>
+              <select className="input" style={{ width: 100 }} value={filtroAnno} onChange={e => setFiltroAnno(+e.target.value)}>
+                {annoOptions.map(a => <option key={a} value={a}>{a}</option>)}
+              </select>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--grigio-4)', flex: 1 }}>
+                {rimborsi.length} rimborsi — {fmtEur(rimborsi.reduce((s, r) => s + Number(r.importo), 0))} totale
+              </span>
+              <button className="btn btn-secondary btn-sm" onClick={exportRasd} disabled={rimborsi.length === 0}>
+                ↓ Report RASD CSV
               </button>
-            ))}
-          </div>
+              <button className="btn btn-primary btn-sm" onClick={() => { setShowForm(!showForm); setEditId(null); setForm({ ...EMPTY_FORM }) }}>
+                {showForm ? '✕ Annulla' : '+ Aggiungi rimborso'}
+              </button>
+            </div>
 
-          {/* ─── TAB: GENERA BATCH ────────────────────────────────── */}
-          {tab === 'batch' && (
-            <div>
-              {/* Configurazione */}
-              <div className="card" style={{ padding: '20px 24px', marginBottom: 20 }}>
-                <div style={{
-                  fontFamily: 'var(--font-mono)', fontSize: '0.65rem',
-                  letterSpacing: '0.15em', textTransform: 'uppercase',
-                  color: 'var(--gray)', marginBottom: 16,
-                }}>
-                  Configurazione batch
+            {/* Form add/edit */}
+            {showForm && (
+              <div className="card" style={{ padding: '20px 24px', marginBottom: 20, borderLeft: '3px solid var(--accent)' }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--accent)', marginBottom: 16 }}>
+                  {editId ? 'Modifica rimborso' : 'Nuovo rimborso'}
                 </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr) 2fr', gap: 12, alignItems: 'flex-end' }}>
-                  {/* Mese */}
-                  <div>
-                    <label style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)', display: 'block', marginBottom: 5 }}>MESE</label>
-                    <select className="input" style={{ width: '100%' }} value={mese} onChange={e => setMese(+e.target.value)}>
-                      {MESI.map((m, i) => <option key={i} value={i+1}>{m}</option>)}
-                    </select>
-                  </div>
-                  {/* Anno */}
-                  <div>
-                    <label style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)', display: 'block', marginBottom: 5 }}>ANNO</label>
-                    <select className="input" style={{ width: '100%' }} value={anno} onChange={e => setAnno(+e.target.value)}>
-                      {[anno-1, anno, anno+1].map(a => <option key={a} value={a}>{a}</option>)}
-                    </select>
-                  </div>
-                  {/* Data esecuzione */}
-                  <div style={{ gridColumn: 'span 2' }}>
-                    <label style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)', display: 'block', marginBottom: 5 }}>DATA ESECUZIONE</label>
-                    <input type="date" className="input" style={{ width: '100%' }} value={dataEsec} onChange={e => setDataEsec(e.target.value)} />
-                  </div>
-                  {/* IBAN club */}
-                  <div>
-                    <label style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)', display: 'block', marginBottom: 5 }}>
-                      IBAN CLUB (ordinante)
-                      <button
-                        onClick={() => setClubIbanEdit(e => !e)}
-                        style={{ marginLeft: 8, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent)', fontSize: 10, textDecoration: 'underline' }}
-                      >
-                        {clubIbanEdit ? 'salva' : 'modifica'}
-                      </button>
-                    </label>
-                    {clubIbanEdit ? (
-                      <input
-                        className="input" style={{ width: '100%' }}
-                        placeholder="IT60 X054 2811 1010 0000 0123 456"
-                        value={club.iban}
-                        onChange={e => setClub(c => ({ ...c, iban: e.target.value }))}
-                      />
-                    ) : (
-                      <div style={{
-                        padding: '8px 12px', background: 'var(--gray-light)', border: '1px solid var(--border)',
-                        borderRadius: 4, fontFamily: 'var(--font-mono)', fontSize: 12,
-                        color: club.iban ? (validaIBAN(club.iban) ? 'var(--accent)' : 'var(--rosso)') : 'var(--gray)',
-                      }}>
-                        {club.iban ? formattaIBAN(club.iban) : '— non configurato —'}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Lista giocatori */}
-              <div className="card" style={{ padding: 0, overflow: 'hidden', marginBottom: 20 }}>
-                {/* Header tabella */}
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: '32px 1fr 180px 200px 110px 44px',
-                  gap: 0,
-                  padding: '10px 16px',
-                  background: 'rgba(255,255,255,0.02)',
-                  borderBottom: '1px solid var(--border)',
-                }}>
-                  {['','GIOCATORE','IMPORTO (€)','IBAN BENEFICIARIO','CAUSALE',''].map((h, i) => (
-                    <div key={i} style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', letterSpacing: '0.1em' }}>{h}</div>
-                  ))}
-                </div>
-
-                {giocatori.length === 0 ? (
-                  <div style={{ padding: '40px', textAlign: 'center', color: 'var(--gray)', fontFamily: 'var(--font-mono)', fontSize: 12 }}>
-                    Nessun giocatore tesserato attivo
-                  </div>
-                ) : giocatori.map(g => (
-                  <div
-                    key={g.id}
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: '32px 1fr 180px 200px 110px 44px',
-                      gap: 0, alignItems: 'center',
-                      padding: '8px 16px',
-                      borderBottom: '1px solid rgba(255,255,255,0.04)',
-                      background: g.includi ? 'rgba(200,240,0,0.03)' : 'transparent',
-                      transition: 'background 0.15s',
-                    }}
-                  >
-                    {/* Checkbox */}
-                    <input
-                      type="checkbox"
-                      checked={g.includi}
-                      onChange={e => updateGiocatore(g.id, { includi: e.target.checked })}
-                      disabled={g.importo === 0}
-                      style={{ accentColor: 'var(--accent)', cursor: 'pointer' }}
-                    />
-
-                    {/* Nome */}
+                <form onSubmit={salvaRimborso}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
                     <div>
-                      <div style={{ fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 600, color: 'var(--white)' }}>
-                        {g.cognome} {g.nome}
-                      </div>
-                      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', marginTop: 1 }}>
-                        {g.intestatario !== `${g.cognome} ${g.nome}` ? g.intestatario : ''}
-                      </div>
+                      <label style={lbStyle}>Cognome *</label>
+                      <input className="input" style={errBorder(formErr.cognome)} value={form.soggetto_cognome}
+                        onChange={e => setForm(f => ({ ...f, soggetto_cognome: e.target.value }))} placeholder="Rossi" />
+                      {formErr.cognome && <small style={errStyle}>{formErr.cognome}</small>}
                     </div>
-
-                    {/* Importo */}
-                    <div style={{ paddingRight: 12 }}>
-                      <input
-                        type="number"
-                        min="0" step="0.01"
-                        className="input"
-                        style={{ width: '100%', textAlign: 'right' }}
-                        placeholder="0,00"
-                        value={g.importo || ''}
-                        onChange={e => onImportoChange(g.id, e.target.value)}
-                      />
+                    <div>
+                      <label style={lbStyle}>Nome *</label>
+                      <input className="input" style={errBorder(formErr.nome)} value={form.soggetto_nome}
+                        onChange={e => setForm(f => ({ ...f, soggetto_nome: e.target.value }))} placeholder="Mario" />
+                      {formErr.nome && <small style={errStyle}>{formErr.nome}</small>}
                     </div>
-
-                    {/* IBAN */}
-                    <div style={{ paddingRight: 12 }}>
-                      <input
-                        type="text"
-                        className="input"
-                        style={{
-                          width: '100%',
-                          borderColor: g.ibanError ? 'var(--rosso)' : undefined,
-                          fontFamily: 'var(--font-mono)', fontSize: 11,
-                        }}
-                        placeholder="IT60 X054…"
-                        value={g.iban}
-                        onChange={e => onIbanChange(g.id, e.target.value)}
-                      />
-                      {g.ibanError && (
-                        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--rosso)', marginTop: 2 }}>
-                          IBAN non valido
-                        </div>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 12 }}>
+                    <div>
+                      <label style={lbStyle}>Codice Fiscale *</label>
+                      <input className="input" style={{ ...errBorder(formErr.cf), fontFamily: 'var(--font-mono)', letterSpacing: '0.05em' }}
+                        value={form.codice_fiscale} maxLength={16}
+                        onChange={e => setForm(f => ({ ...f, codice_fiscale: e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '') }))}
+                        placeholder="RSSMRA80A01H501Z" />
+                      {formErr.cf && <small style={errStyle}>{formErr.cf}</small>}
+                    </div>
+                    <div>
+                      <label style={lbStyle}>Ruolo *</label>
+                      <select className="input" value={form.ruolo} onChange={e => setForm(f => ({ ...f, ruolo: e.target.value }))}>
+                        {RUOLI.map(r => <option key={r} value={r}>{r}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label style={lbStyle}>Tipo rimborso *</label>
+                      <select className="input" value={form.tipo_rimborso} onChange={e => setForm(f => ({ ...f, tipo_rimborso: e.target.value }))}>
+                        {TIPI_RIMBORSO.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '130px 160px 1fr', gap: 12, marginBottom: 12 }}>
+                    <div>
+                      <label style={lbStyle}>Importo (€) *</label>
+                      <input className="input" type="number" min="0.01" step="0.01" style={errBorder(formErr.importo)}
+                        value={form.importo} onChange={e => setForm(f => ({ ...f, importo: e.target.value }))} placeholder="0,00" />
+                      {formErr.importo && <small style={errStyle}>{formErr.importo}</small>}
+                    </div>
+                    <div>
+                      <label style={lbStyle}>Data erogazione *</label>
+                      <input className="input" type="date" style={errBorder(formErr.data)} value={form.data_erogazione}
+                        onChange={e => setForm(f => ({ ...f, data_erogazione: e.target.value }))} />
+                      {form.data_erogazione && (
+                        <small style={{ fontSize: 10, color: 'var(--grigio-4)', display: 'block', marginTop: 3 }}>
+                          Q{calcolaTrimestre(form.data_erogazione)} {new Date(form.data_erogazione).getFullYear()}
+                        </small>
                       )}
                     </div>
-
-                    {/* Causale preview */}
-                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', paddingRight: 8, lineHeight: 1.3 }}>
-                      {g.causale || `Rimborso ${g.cognome}`}
+                    <div>
+                      <label style={lbStyle}>Causale</label>
+                      <input className="input" value={form.causale}
+                        onChange={e => setForm(f => ({ ...f, causale: e.target.value }))}
+                        placeholder="Trasferta gara del 12/04/2025" />
                     </div>
+                  </div>
+                  <div style={{ marginBottom: 16 }}>
+                    <label style={lbStyle}>Note</label>
+                    <textarea className="input" rows={2} value={form.note}
+                      onChange={e => setForm(f => ({ ...f, note: e.target.value }))} />
+                  </div>
+                  <div style={{ display: 'flex', gap: 10 }}>
+                    <button type="submit" className="btn btn-primary btn-sm" disabled={saving}>
+                      {saving ? 'Salvataggio…' : editId ? 'Aggiorna' : 'Salva rimborso'}
+                    </button>
+                    <button type="button" className="btn btn-secondary btn-sm" onClick={() => { setShowForm(false); setEditId(null) }}>
+                      Annulla
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
 
-                    {/* Importo badge */}
-                    <div style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontSize: 12, color: g.importo > 0 ? 'var(--accent)' : 'var(--gray)' }}>
-                      {g.importo > 0 ? fmtEur(g.importo) : '—'}
-                    </div>
+            {/* Tabella rimborsi */}
+            <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+              {rimborsi.length === 0 ? (
+                <div style={{ padding: '48px', textAlign: 'center', color: 'var(--grigio-4)', fontSize: 13 }}>
+                  Nessun rimborso per Q{filtroTrim} {filtroAnno}.
+                  <br /><button className="btn btn-secondary btn-sm" style={{ marginTop: 12 }}
+                    onClick={() => { setShowForm(true); setEditId(null); setForm({ ...EMPTY_FORM }) }}>
+                    Aggiungi il primo →
+                  </button>
+                </div>
+              ) : (
+                <div className="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Nome / Cognome</th>
+                        <th>CF</th>
+                        <th>Ruolo</th>
+                        <th>Tipo</th>
+                        <th style={{ textAlign: 'right' }}>Importo</th>
+                        <th>Data</th>
+                        <th>Causale</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rimborsi.map(r => (
+                        <tr key={r.id}>
+                          <td style={{ fontWeight: 600 }}>{r.soggetto_cognome} {r.soggetto_nome}</td>
+                          <td>
+                            <span title={r.codice_fiscale} style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--grigio-3)' }}>
+                              {maskCF(r.codice_fiscale)}
+                            </span>
+                          </td>
+                          <td><span className="badge badge-grigio" style={{ fontSize: 11 }}>{r.ruolo}</span></td>
+                          <td style={{ fontSize: 12, color: 'var(--grigio-3)' }}>
+                            {r.tipo_rimborso === 'forfetario_volontario' ? 'Forfetario' : 'Documentato'}
+                          </td>
+                          <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--accent)' }}>
+                            {fmtEur(Number(r.importo))}
+                          </td>
+                          <td style={{ fontSize: 12, color: 'var(--grigio-3)', fontFamily: 'var(--font-mono)' }}>
+                            {fmtDate(r.data_erogazione)}
+                          </td>
+                          <td style={{ fontSize: 12, color: 'var(--grigio-3)', maxWidth: 180 }}>
+                            {r.causale ? (r.causale.length > 30 ? r.causale.slice(0, 30) + '…' : r.causale) : '—'}
+                          </td>
+                          <td>
+                            <div style={{ display: 'flex', gap: 6 }}>
+                              <button className="btn btn-ghost btn-sm" style={{ fontSize: 11 }} onClick={() => {
+                                setEditId(r.id)
+                                setForm({
+                                  soggetto_nome:    r.soggetto_nome,
+                                  soggetto_cognome: r.soggetto_cognome,
+                                  codice_fiscale:   r.codice_fiscale,
+                                  ruolo:            r.ruolo,
+                                  tipo_rimborso:    r.tipo_rimborso,
+                                  importo:          String(r.importo),
+                                  data_erogazione:  r.data_erogazione,
+                                  causale:          r.causale ?? '',
+                                  note:             r.note ?? '',
+                                })
+                                setShowForm(true)
+                                window.scrollTo({ top: 0, behavior: 'smooth' })
+                              }}>Modifica</button>
+                              <button className="btn btn-ghost btn-sm" style={{ fontSize: 11, color: 'var(--rosso)' }}
+                                onClick={() => eliminaRimborso(r.id)}>Elimina</button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+
+            {rimborsi.length > 0 && (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1, background: 'var(--border)', borderRadius: 4, overflow: 'hidden', marginTop: 16 }}>
+                {[
+                  ['TOTALE Q' + filtroTrim, fmtEur(rimborsi.reduce((s, r) => s + Number(r.importo), 0))],
+                  ['N. SOGGETTI', String(new Set(rimborsi.map(r => r.codice_fiscale)).size)],
+                  ['N. RIMBORSI', String(rimborsi.length)],
+                ].map(([label, val]) => (
+                  <div key={label} style={{ background: 'var(--gray-light)', padding: '14px 20px', textAlign: 'center' }}>
+                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--grigio-4)', marginBottom: 4 }}>{label}</div>
+                    <div style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 900, color: 'var(--white)' }}>{val}</div>
                   </div>
                 ))}
               </div>
+            )}
+          </div>
+        )}
 
-              {/* Footer batch */}
-              <div style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                padding: '16px 20px',
-                background: 'var(--gray-light)',
-                border: '1px solid var(--border)',
-                borderRadius: 4, marginBottom: 20,
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)' }}>
-                    <input type="checkbox" onChange={e => selezionaTutti(e.target.checked)} style={{ accentColor: 'var(--accent)' }} />
-                    SELEZIONA TUTTI CON IMPORTO
+        {/* ═══ TAB: GENERA SEPA ════════════════════════════════════ */}
+        {tab === 'sepa' && (
+          <div>
+            {/* Step indicator */}
+            <div style={{ display: 'flex', gap: 0, marginBottom: 28, borderBottom: '1px solid var(--border)' }}>
+              {(['select', 'iban', 'preview', 'done'] as SepaStep[]).map((step, i) => {
+                const labels = ['Selezione', 'IBAN', 'Preview', 'Fine']
+                const active = sepaStep === step
+                const done   = ['select', 'iban', 'preview', 'done'].indexOf(sepaStep) > i
+                return (
+                  <div key={step} style={{
+                    padding: '8px 20px', fontFamily: 'var(--font-mono)', fontSize: 11,
+                    textTransform: 'uppercase', letterSpacing: '0.1em',
+                    color: active ? 'var(--accent)' : done ? 'var(--verde)' : 'var(--grigio-4)',
+                    borderBottom: active ? '2px solid var(--accent)' : '2px solid transparent',
+                    marginBottom: -1,
+                  }}>
+                    {i + 1}. {labels[i]}
+                  </div>
+                )
+              })}
+            </div>
+
+            {/* Step 1: Selezione */}
+            {sepaStep === 'select' && (
+              <div>
+                <div style={{ display: 'flex', gap: 10, marginBottom: 16, alignItems: 'center' }}>
+                  <select className="input" style={{ width: 130 }} value={sepaFiltroT} onChange={e => { setSepaFiltroT(+e.target.value); setSelectedIds(new Set()) }}>
+                    {[1, 2, 3, 4].map(t => <option key={t} value={t}>Q{t}</option>)}
+                  </select>
+                  <select className="input" style={{ width: 100 }} value={sepaFiltroA} onChange={e => { setSepaFiltroA(+e.target.value); setSelectedIds(new Set()) }}>
+                    {annoOptions.map(a => <option key={a} value={a}>{a}</option>)}
+                  </select>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--grigio-3)' }}>
+                    <input type="checkbox"
+                      checked={rimborsiSepa.length > 0 && rimborsiSepa.every(r => selectedIds.has(r.id))}
+                      onChange={e => setSelectedIds(e.target.checked ? new Set(rimborsiSepa.map(r => r.id)) : new Set())}
+                      style={{ accentColor: 'var(--accent)' }}
+                    />
+                    Seleziona tutti
                   </label>
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)' }}>
-                    {selezionati.length} bonifici selezionati
-                  </span>
-                  {senzaIban.length > 0 && (
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--rosso)' }}>
-                      ⚠ {senzaIban.length} senza IBAN valido
-                    </span>
-                  )}
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                  <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)' }}>TOTALE BATCH</div>
-                    <div style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 900, color: 'var(--accent)' }}>
-                      {fmtEur(totale)}
+
+                {rimborsiSepa.length === 0 ? (
+                  <div className="card" style={{ padding: '40px', textAlign: 'center', color: 'var(--grigio-4)', fontSize: 13 }}>
+                    Nessun rimborso in Q{sepaFiltroT} {sepaFiltroA}. Aggiungili nel tab Registro RAS.
+                  </div>
+                ) : (
+                  <div className="card" style={{ padding: 0, overflow: 'hidden', marginBottom: 20 }}>
+                    <div className="table-wrap">
+                      <table>
+                        <thead>
+                          <tr>
+                            <th style={{ width: 36 }}></th>
+                            <th>Nome</th>
+                            <th>CF</th>
+                            <th>Ruolo</th>
+                            <th style={{ textAlign: 'right' }}>Importo</th>
+                            <th>Data</th>
+                            <th>Causale</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {rimborsiSepa.map(r => (
+                            <tr key={r.id} style={{ background: selectedIds.has(r.id) ? 'rgba(200,240,0,0.04)' : undefined }}>
+                              <td>
+                                <input type="checkbox" checked={selectedIds.has(r.id)}
+                                  onChange={e => {
+                                    const s = new Set(selectedIds)
+                                    e.target.checked ? s.add(r.id) : s.delete(r.id)
+                                    setSelectedIds(s)
+                                  }}
+                                  style={{ accentColor: 'var(--accent)' }}
+                                />
+                              </td>
+                              <td style={{ fontWeight: 600 }}>{r.soggetto_cognome} {r.soggetto_nome}</td>
+                              <td><span title={r.codice_fiscale} style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--grigio-3)' }}>{maskCF(r.codice_fiscale)}</span></td>
+                              <td><span className="badge badge-grigio" style={{ fontSize: 11 }}>{r.ruolo}</span></td>
+                              <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--accent)' }}>{fmtEur(Number(r.importo))}</td>
+                              <td style={{ fontSize: 12, color: 'var(--grigio-3)', fontFamily: 'var(--font-mono)' }}>{fmtDate(r.data_erogazione)}</td>
+                              <td style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{r.causale ?? '—'}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
                   </div>
-                  <button
-                    className="btn btn-primary"
-                    onClick={generaBatch}
-                    disabled={generando || selezionati.length === 0 || senzaIban.length > 0}
-                  >
-                    {generando ? 'Generazione…' : `Genera file SEPA (${selezionati.length})`}
+                )}
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 20px', background: 'var(--gray-light)', border: '1px solid var(--border)', borderRadius: 4 }}>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-3)' }}>
+                    {selectedIds.size} selezionati — {fmtEur(totaleSepa)}
+                  </span>
+                  <button className="btn btn-primary" onClick={verificaIban} disabled={selectedIds.size === 0}>
+                    Avanti: verifica IBAN →
                   </button>
                 </div>
               </div>
+            )}
 
-              {/* Istruzioni post-download */}
-              {mostraIstruzioni && (
-                <div style={{
-                  background: 'rgba(200,240,0,0.05)',
-                  border: '1px solid rgba(200,240,0,0.2)',
-                  borderRadius: 6, padding: '20px 24px', marginBottom: 24,
-                }}>
-                  <div style={{ fontFamily: 'var(--font-display)', fontSize: 16, fontWeight: 900, color: 'var(--accent)', marginBottom: 12 }}>
-                    File scaricato: {nomeFile}
+            {/* Step 2: IBAN mancanti */}
+            {sepaStep === 'iban' && (
+              <div>
+                <div className="card" style={{ padding: '20px 24px', marginBottom: 20, borderLeft: '3px solid var(--ambra)' }}>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--ambra)', marginBottom: 14 }}>
+                    ⚠ IBAN mancanti — inserisci i dati bancari per procedere
                   </div>
-                  <div style={{ fontFamily: 'var(--font-sans)', fontSize: 13, color: 'var(--white)', lineHeight: 1.8, marginBottom: 16 }}>
-                    <strong style={{ color: 'var(--accent)' }}>Passo successivo</strong> — carica il file nella tua home banking:
+                  {ibanMancanti.map(({ cf, nome }) => (
+                    <div key={cf} style={{ marginBottom: 16, padding: '14px 16px', border: '1px solid var(--border)', borderRadius: 4 }}>
+                      <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 10 }}>{nome} <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--grigio-4)', fontWeight: 400 }}>({cf})</span></div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                        <div>
+                          <label style={lbStyle}>IBAN</label>
+                          <input className="input" placeholder="IT60 X054 2811 1010 0000 0123 456"
+                            style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}
+                            value={nuoviIban[cf]?.iban ?? ''}
+                            onChange={e => setNuoviIban(prev => ({ ...prev, [cf]: { ...prev[cf], iban: e.target.value.toUpperCase() } }))}
+                          />
+                          {nuoviIban[cf]?.iban && nuoviIban[cf].iban.replace(/\s/g,'').length >= 15 && (
+                            <small style={{ fontSize: 10, color: validaIBAN(nuoviIban[cf].iban) ? 'var(--verde)' : 'var(--rosso)', display: 'block', marginTop: 3 }}>
+                              {validaIBAN(nuoviIban[cf].iban) ? `✓ ${formattaIBAN(nuoviIban[cf].iban)}` : '✗ IBAN non valido'}
+                            </small>
+                          )}
+                        </div>
+                        <div>
+                          <label style={lbStyle}>Intestatario conto</label>
+                          <input className="input" placeholder="Rossi Mario"
+                            value={nuoviIban[cf]?.intestatario ?? ''}
+                            onChange={e => setNuoviIban(prev => ({ ...prev, [cf]: { ...prev[cf], intestatario: e.target.value } }))}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ display: 'flex', gap: 10 }}>
+                  <button className="btn btn-secondary" onClick={() => setSepaStep('select')}>← Indietro</button>
+                  <button className="btn btn-primary"
+                    disabled={ibanMancanti.some(({ cf }) => !nuoviIban[cf]?.iban || !nuoviIban[cf]?.intestatario || !validaIBAN(nuoviIban[cf].iban))}
+                    onClick={() => setSepaStep('preview')}>
+                    Avanti: preview →
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Step 3: Preview + config */}
+            {sepaStep === 'preview' && (
+              <div>
+                <div className="card" style={{ padding: '20px 24px', marginBottom: 20 }}>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--grigio-4)', marginBottom: 14 }}>Configurazione distinta</div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 12 }}>
+                    <div>
+                      <label style={lbStyle}>Data esecuzione</label>
+                      <input className="input" type="date" value={dataEsec} onChange={e => setDataEsec(e.target.value)} />
+                    </div>
+                    <div>
+                      <label style={lbStyle}>Causale batch (se non specificata per singolo rimborso)</label>
+                      <input className="input" placeholder="Rimborsi collaboratori sportivi Q1 2025" maxLength={140}
+                        value={causaleBatch} onChange={e => setCausaleBatch(e.target.value)} />
+                    </div>
                   </div>
-                  <ol style={{ margin: 0, paddingLeft: 22, fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', lineHeight: 2 }}>
-                    <li>Accedi all'home banking della tua banca</li>
-                    <li>Cerca <em>Bonifici SEPA</em> oppure <em>Disposizioni massive</em> oppure <em>Import file XML</em></li>
-                    <li>Carica il file <strong style={{ color: 'var(--white)' }}>{nomeFile}</strong></li>
-                    <li>Verifica l'elenco dei bonifici e conferma</li>
-                    <li>I fondi saranno accreditati entro 1–2 giorni lavorativi</li>
-                  </ol>
-                  <div style={{ display: 'flex', gap: 10, marginTop: 16, alignItems: 'center' }}>
-                    {batchId && (
-                      <button
-                        className="btn btn-secondary btn-sm"
-                        onClick={() => batchId && segnaEseguito(batchId)}
-                      >
-                        ✓ Segna come eseguito (bonifici inviati)
-                      </button>
-                    )}
-                    <button className="btn btn-secondary btn-sm" onClick={() => setMostraIstruzioni(false)}>
-                      Chiudi
+                </div>
+
+                <div className="card" style={{ padding: 0, overflow: 'hidden', marginBottom: 20 }}>
+                  <div className="table-wrap">
+                    <table>
+                      <thead>
+                        <tr><th>Nome</th><th>IBAN (mascherato)</th><th style={{ textAlign: 'right' }}>Importo</th><th>Causale</th></tr>
+                      </thead>
+                      <tbody>
+                        {rimborsiSelezionati.map(r => {
+                          const cf   = r.codice_fiscale.toUpperCase()
+                          const dato = datiBanc.find(d => d.codice_fiscale.toUpperCase() === cf) || { iban: nuoviIban[cf]?.iban ?? '' }
+                          const iban = dato.iban.replace(/\s/g, '')
+                          const ibanMask = iban.length > 8 ? iban.slice(0, 4) + '****' + iban.slice(-4) : iban
+                          return (
+                            <tr key={r.id}>
+                              <td style={{ fontWeight: 600 }}>{r.soggetto_cognome} {r.soggetto_nome}</td>
+                              <td><span style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{ibanMask}</span></td>
+                              <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--accent)' }}>{fmtEur(Number(r.importo))}</td>
+                              <td style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{(r.causale || causaleBatch || `Rimborso ${r.soggetto_cognome}`).slice(0, 50)}</td>
+                            </tr>
+                          )
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <button className="btn btn-secondary" onClick={() => setSepaStep(ibanMancanti.length > 0 ? 'iban' : 'select')}>← Indietro</button>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                    <span style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 900, color: 'var(--accent)' }}>{fmtEur(totaleSepa)}</span>
+                    <button className="btn btn-primary" onClick={generaSepa} disabled={generando}>
+                      {generando ? 'Generazione…' : `↓ Scarica XML SEPA (${rimborsiSelezionati.length} bonifici)`}
                     </button>
                   </div>
                 </div>
-              )}
-
-              {/* Batch storici */}
-              {batches.length > 0 && (
-                <div>
-                  <div style={{
-                    fontFamily: 'var(--font-mono)', fontSize: '0.65rem', letterSpacing: '0.15em',
-                    textTransform: 'uppercase', color: 'var(--gray)', marginBottom: 12,
-                  }}>
-                    Batch precedenti
-                  </div>
-                  <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-                    {batches.map(b => (
-                      <div key={b.id} style={{
-                        display: 'grid', gridTemplateColumns: '1fr 120px 100px 120px auto',
-                        alignItems: 'center', gap: 12, padding: '12px 16px',
-                        borderBottom: '1px solid rgba(255,255,255,0.04)',
-                      }}>
-                        <div>
-                          <div style={{ fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 600, color: 'var(--white)' }}>
-                            {b.descrizione}
-                          </div>
-                          {b.data_generazione && (
-                            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', marginTop: 2 }}>
-                              Generato {fmt(b.data_generazione)}
-                            </div>
-                          )}
-                        </div>
-                        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--white)' }}>
-                          {b.n_bonifici} bonifici
-                        </div>
-                        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 700, color: 'var(--accent)' }}>
-                          {fmtEur(Number(b.importo_totale))}
-                        </div>
-                        <div>
-                          <span style={{
-                            fontFamily: 'var(--font-mono)', fontSize: 11,
-                            color: statoColor(b.stato), textTransform: 'uppercase',
-                          }}>
-                            {b.stato === 'eseguito' ? '✓ Eseguito' : b.stato === 'generato' ? '⏳ Generato' : '○ Bozza'}
-                          </span>
-                          {b.data_esecuzione && (
-                            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', marginTop: 1 }}>
-                              {fmt(b.data_esecuzione)}
-                            </div>
-                          )}
-                        </div>
-                        <div>
-                          {b.stato === 'generato' && (
-                            <button
-                              className="btn btn-secondary btn-sm"
-                              onClick={() => segnaEseguito(b.id)}
-                            >
-                              Segna eseguito
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* ─── TAB: REGISTRO RAS ───────────────────────────────── */}
-          {tab === 'ras' && (
-            <div>
-              {/* Selezione mese/anno per RAS */}
-              <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 20 }}>
-                <select className="input" style={{ width: 140 }} value={mese} onChange={e => setMese(+e.target.value)}>
-                  {MESI.map((m, i) => <option key={i} value={i+1}>{m}</option>)}
-                </select>
-                <select className="input" style={{ width: 100 }} value={anno} onChange={e => setAnno(+e.target.value)}>
-                  {[anno-1, anno, anno+1].map(a => <option key={a} value={a}>{a}</option>)}
-                </select>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)' }}>
-                  {rasDelMese.length} registrazioni
-                </span>
               </div>
+            )}
 
-              {/* Alert */}
-              {rasNonInseriti > 0 && (
-                <div className="alert alert-warning" style={{ marginBottom: 16 }}>
-                  ⚠ {rasNonInseriti} pagamento{rasNonInseriti > 1 ? 'i' : ''} non ancora inserito{rasNonInseriti > 1 ? 'i' : ''} nel portale RAS FIGC
+            {/* Step 4: Done */}
+            {sepaStep === 'done' && (
+              <div className="card" style={{ padding: '28px 32px', borderLeft: '3px solid var(--verde)' }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 900, color: 'var(--verde)', marginBottom: 12 }}>
+                  ✓ File SEPA scaricato
                 </div>
-              )}
-              {rasNoQuietanza > 0 && now.getMonth() >= 4 && (
-                <div className="alert alert-danger" style={{ marginBottom: 16 }}>
-                  🔴 {rasNoQuietanza} quietanza{rasNoQuietanza > 1 ? 'e' : ''} non firmata{rasNoQuietanza > 1 ? 'e' : ''} —
-                  verifica le firme per l'iscrizione al campionato 2026-27
-                </div>
-              )}
-
-              {/* Tabella RAS */}
-              {rasDelMese.length === 0 ? (
-                <div className="card" style={{ padding: '40px', textAlign: 'center', color: 'var(--gray)', fontFamily: 'var(--font-mono)', fontSize: 12 }}>
-                  Nessuna registrazione RAS per {MESI[mese-1]} {anno}.<br/>
-                  Genera un batch di rimborsi per creare le registrazioni automaticamente.
-                </div>
-              ) : (
-                <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-                  <div style={{
-                    display: 'grid', gridTemplateColumns: '1fr 100px 80px 80px 120px 90px 90px',
-                    gap: 0, padding: '10px 16px',
-                    background: 'rgba(255,255,255,0.02)', borderBottom: '1px solid var(--border)',
+                <ol style={{ margin: '12px 0 20px', paddingLeft: 22, fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-3)', lineHeight: 2.2 }}>
+                  <li>Accedi alla home banking della tua banca</li>
+                  <li>Cerca <em>Bonifici SEPA</em>, <em>Disposizioni massive</em> o <em>Import XML</em></li>
+                  <li>Carica il file <strong style={{ color: 'var(--white)' }}>SEPA_*.xml</strong> appena scaricato</li>
+                  <li>Verifica l'elenco e conferma</li>
+                  <li>I bonifici saranno accreditati entro 1–2 giorni lavorativi</li>
+                </ol>
+                <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                  {distintaId && (
+                    <button className="btn btn-secondary btn-sm" onClick={() => aggiornaStato(distintaId, 'inviata_banca')}>
+                      ✓ Segna distinta come inviata alla banca
+                    </button>
+                  )}
+                  <button className="btn btn-secondary btn-sm" onClick={() => {
+                    setSepaStep('select'); setSelectedIds(new Set())
+                    setNuoviIban({}); setIbanMancanti([]); setDistintaId(null)
                   }}>
-                    {['NOME','TIPO','MESE','IMPORTO','DESCRIZIONE','RAS INS.','QUIETANZA'].map(h => (
-                      <div key={h} style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', letterSpacing: '0.1em' }}>{h}</div>
-                    ))}
-                  </div>
-                  {rasDelMese.map(r => (
-                    <div key={r.id} style={{
-                      display: 'grid', gridTemplateColumns: '1fr 100px 80px 80px 120px 90px 90px',
-                      gap: 0, alignItems: 'center', padding: '10px 16px',
-                      borderBottom: '1px solid rgba(255,255,255,0.04)',
-                    }}>
-                      <div style={{ fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 600, color: 'var(--white)' }}>
-                        {r.nome_cognome}
-                      </div>
-                      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)' }}>{r.tipo}</div>
-                      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)' }}>{MESI[r.mese-1].slice(0,3)} {r.anno}</div>
-                      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: 700, color: 'var(--accent)' }}>
-                        {fmtEur(r.importo)}
-                      </div>
-                      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', paddingRight: 8 }}>
-                        {r.descrizione.slice(0, 30)}{r.descrizione.length > 30 ? '…' : ''}
-                      </div>
-                      {/* Toggle RAS inserito */}
-                      <div>
-                        <label style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
-                          <input
-                            type="checkbox" checked={r.ras_inserito}
-                            onChange={() => toggleRas(r.id, 'ras_inserito', r.ras_inserito)}
-                            style={{ accentColor: 'var(--accent)' }}
-                          />
-                          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: r.ras_inserito ? 'var(--accent)' : 'var(--gray)' }}>
-                            {r.ras_inserito ? 'Sì' : 'No'}
-                          </span>
-                        </label>
-                      </div>
-                      {/* Toggle quietanza firmata */}
-                      <div>
-                        <label style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
-                          <input
-                            type="checkbox" checked={r.quietanza_firmata}
-                            onChange={() => toggleRas(r.id, 'quietanza_firmata', r.quietanza_firmata)}
-                            style={{ accentColor: 'var(--accent)' }}
-                          />
-                          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: r.quietanza_firmata ? 'var(--accent)' : 'var(--gray)' }}>
-                            {r.quietanza_firmata ? 'Sì' : 'No'}
-                          </span>
-                        </label>
-                      </div>
-                    </div>
-                  ))}
+                    Nuova distinta
+                  </button>
                 </div>
-              )}
+              </div>
+            )}
+          </div>
+        )}
 
-              {/* Totali mese */}
-              {rasDelMese.length > 0 && (
-                <div style={{
-                  display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1,
-                  background: 'var(--border)', borderRadius: 4, overflow: 'hidden', marginTop: 20,
-                }}>
-                  {[
-                    ['TOTALE PAGAMENTI', fmtEur(rasDelMese.reduce((s,r) => s + r.importo, 0))],
-                    ['RAS INSERITI', `${rasDelMese.filter(r => r.ras_inserito).length} / ${rasDelMese.length}`],
-                    ['QUIETANZE FIRMATE', `${rasDelMese.filter(r => r.quietanza_firmata).length} / ${rasDelMese.length}`],
-                  ].map(([label, val]) => (
-                    <div key={label} style={{ background: 'var(--gray-light)', padding: '14px 20px', textAlign: 'center' }}>
-                      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', marginBottom: 4 }}>{label}</div>
-                      <div style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 900, color: 'var(--white)' }}>{val}</div>
-                    </div>
-                  ))}
+        {/* ═══ TAB: STORICO DISTINTE ═══════════════════════════════ */}
+        {tab === 'storico' && (
+          <div>
+            {distinte.length === 0 ? (
+              <div className="card" style={{ padding: '48px', textAlign: 'center', color: 'var(--grigio-4)', fontSize: 13 }}>
+                Nessuna distinta SEPA generata ancora.
+              </div>
+            ) : (
+              <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+                <div className="table-wrap">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>ID Messaggio</th>
+                        <th>Generata il</th>
+                        <th>Data esecuzione</th>
+                        <th style={{ textAlign: 'right' }}>N. bonifici</th>
+                        <th style={{ textAlign: 'right' }}>Totale</th>
+                        <th>Stato</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {distinte.map(d => {
+                        const statoColor = d.stato === 'eseguita' ? 'badge-verde' : d.stato === 'inviata_banca' ? 'badge-ambra' : 'badge-grigio'
+                        const statoLabel = d.stato === 'eseguita' ? 'Eseguita' : d.stato === 'inviata_banca' ? 'Inviata banca' : 'Generata'
+                        return (
+                          <tr key={d.id}>
+                            <td><span style={{ fontFamily: 'var(--font-mono)', fontSize: 11 }}>{d.message_id}</span></td>
+                            <td style={{ fontSize: 12, color: 'var(--grigio-3)', fontFamily: 'var(--font-mono)' }}>{fmtDate(d.data_generazione)}</td>
+                            <td style={{ fontSize: 12, fontFamily: 'var(--font-mono)' }}>{fmtDate(d.data_esecuzione)}</td>
+                            <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)' }}>{d.numero_transazioni}</td>
+                            <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--accent)' }}>{fmtEur(Number(d.importo_totale))}</td>
+                            <td><span className={`badge ${statoColor}`} style={{ fontSize: 11 }}>{statoLabel}</span></td>
+                            <td>
+                              <div style={{ display: 'flex', gap: 6 }}>
+                                {d.stato === 'generata' && (
+                                  <button className="btn btn-ghost btn-sm" style={{ fontSize: 11 }} onClick={() => aggiornaStato(d.id, 'inviata_banca')}>
+                                    Segna inviata
+                                  </button>
+                                )}
+                                {d.stato === 'inviata_banca' && (
+                                  <button className="btn btn-ghost btn-sm" style={{ fontSize: 11, color: 'var(--verde)' }} onClick={() => aggiornaStato(d.id, 'eseguita')}>
+                                    Segna eseguita
+                                  </button>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        )
+                      })}
+                    </tbody>
+                  </table>
                 </div>
-              )}
-            </div>
-          )}
-        </>
+              </div>
+            )}
+          </div>
+        )}
+      </>
     </FeatureGate>
   )
 }
+
+/* ─── Stili inline helpers ──────────────────────────────────── */
+const lbStyle: React.CSSProperties = {
+  display: 'block', marginBottom: 5,
+  fontFamily: 'var(--font-mono)', fontSize: 10,
+  textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--grigio-4)',
+}
+const errStyle: React.CSSProperties = { color: 'var(--rosso)', fontSize: 11, display: 'block', marginTop: 3 }
+const errBorder = (e?: string): React.CSSProperties => e ? { borderColor: 'var(--rosso)' } : {}
