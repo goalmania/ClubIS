@@ -98,10 +98,10 @@ export async function GET(
     const giornataLabel = partita.giornata ? `${partita.giornata}\xAA giornata` : ''
     draw(giornataLabel, 190, 761)        // "valevole per ___"
     const comp = partita.competizione ?? 'Campionato Nazionale Serie D'
-    draw(comp, 118, 749)
+    draw(comp, 200, 749)                   // "in programma" blank starts at x≈197
     draw(fmtData(partita.data_ora), 140, 736)
-    draw(partita.campo ?? '', 268, 736)    // "a" field (location)
-    draw(partita.campo ?? '', 103, 722)    // "campo" field
+    draw(partita.campo ?? '', 334, 736)    // "a ___" 2nd blank starts at x≈332
+    draw(partita.campo ?? '', 181, 722)    // "campo" blank starts at x≈179
     draw(fmtOra(partita.data_ora), 453, 722)
 
     // Player rows – 18 titolari + 4 riserve
