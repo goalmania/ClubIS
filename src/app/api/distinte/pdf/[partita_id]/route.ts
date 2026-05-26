@@ -87,15 +87,16 @@ export async function GET(
   if (isSerieD) {
     // ── SERIE D (595.2 × 841.9 pt) ────────────────────────────────────────
 
-    // Header — three lines stacked to the right of the Serie D logo
-    // y=791: "SOCIETA' ___"  → club name, blank starts after the bold label (~x=170)
-    draw(club?.nome, 170, 791)
-    // y=776: "Elenco dei calciatori che partecipano alla gara ___" → avversario
-    //         preprinted text ends at ~x=310, blank runs to right margin
-    draw(partita.avversario, 310, 776)
-    // y=763: "valevole per ___" → giornata, blank starts after label (~x=170)
+    // Header — three lines stacked to the right of the Serie D logo.
+    // Underline y positions calibrated from screenshot pixel analysis:
+    //   SOCIETA' underline  → pdf_y ≈ 800
+    //   Elenco underline    → pdf_y ≈ 787
+    //   valevole per line   → pdf_y ≈ 774
+    // (competition/date/campo already confirmed correct at y=749/736/722)
+    draw(club?.nome, 170, 800)           // "SOCIETA' ___"
+    draw(partita.avversario, 310, 787)   // "Elenco … gara ___"
     const giornataLabel = partita.giornata ? `${partita.giornata}\xAA giornata` : ''
-    draw(giornataLabel, 170, 763)
+    draw(giornataLabel, 170, 774)        // "valevole per ___"
     const comp = partita.competizione ?? 'Campionato Nazionale Serie D'
     draw(comp, 118, 749)
     draw(fmtData(partita.data_ora), 140, 736)
