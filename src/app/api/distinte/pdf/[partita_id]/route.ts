@@ -97,12 +97,17 @@ export async function GET(
     draw(partita.avversario, 326, 778)   // "Elenco … gara ___" (x after long sentence)
     const giornataLabel = partita.giornata ? `${partita.giornata}\xAA giornata` : ''
     draw(giornataLabel, 190, 761)        // "valevole per ___"
-    const comp = partita.competizione ?? 'Campionato Nazionale Serie D'
-    draw(comp, 200, 749)                   // "in programma" blank starts at x≈197
-    draw(fmtData(partita.data_ora), 140, 736)
-    draw(partita.campo ?? '', 334, 736)    // "a ___" 2nd blank starts at x≈332
-    draw(partita.campo ?? '', 181, 722)    // "campo" blank starts at x≈179
-    draw(fmtOra(partita.data_ora), 453, 722)
+    // Row "in programma ___  a  ___"  (underline at pdf_y≈741)
+    // blank-DATE  x=196–318  →  draw at x=198, y=742
+    // blank-LOC   x=332–563  →  draw at x=334, y=742
+    draw(fmtData(partita.data_ora), 198, 742)  // "in programma ___"  (data)
+    draw(partita.campo ?? '', 334, 742)        // "a ___"             (luogo)
+
+    // Row "campo _____  ore  _____"  (underline at pdf_y≈723)
+    // blank-CAMPO x=179–422  →  draw at x=181, y=724
+    // blank-ORE   x=447–563  →  draw at x=449, y=724
+    draw(partita.campo ?? '', 181, 724)        // "campo ___"
+    draw(fmtOra(partita.data_ora), 449, 724)   // "ore ___"
 
     // Player rows – 18 titolari + 4 riserve
     // Row text baselines (y from page bottom), computed from detected horizontal line positions.
