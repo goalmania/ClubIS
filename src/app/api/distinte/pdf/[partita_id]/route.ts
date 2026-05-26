@@ -88,10 +88,14 @@ export async function GET(
     // ── SERIE D (595.2 × 841.9 pt) ────────────────────────────────────────
 
     // Header
-    draw(club?.nome, 80, 776)
-    draw(partita.avversario, 220, 763)
-    const comp = (partita.competizione ?? 'Campionato Nazionale Serie D') +
-      (partita.giornata ? ` — Giornata ${partita.giornata}` : '')
+    // SOCIETA' field: blank starts after the preprinted "SOCIETA'" label (~x=165)
+    draw(club?.nome, 165, 776)
+    // "Elenco dei calciatori che partecipano alla gara ___" blank: avversario
+    draw(partita.avversario, 340, 769)
+    // "valevole per ___" blank: giornata (e.g. "16ª giornata")
+    const giornataLabel = partita.giornata ? `${partita.giornata}ª giornata` : ''
+    draw(giornataLabel, 103, 763)
+    const comp = partita.competizione ?? 'Campionato Nazionale Serie D'
     draw(comp, 118, 749)
     draw(fmtData(partita.data_ora), 140, 736)
     draw(partita.campo ?? '', 268, 736)    // "a" field (location)
