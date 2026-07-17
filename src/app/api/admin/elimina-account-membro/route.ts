@@ -12,7 +12,7 @@ export async function POST(req: Request) {
 
   const admin = createAdminClient()
 
-  // ── 2. Verifica che il chiamante sia presidente ───────────────────────────
+  // ── 2. Verifica che il chiamante sia il titolare del club (presidente o segretario) ──
   const { data: caller } = await admin
     .from('utenti')
     .select('club_id, ruolo')
@@ -22,9 +22,9 @@ export async function POST(req: Request) {
   if (!caller) {
     return NextResponse.json({ error: 'Profilo chiamante non trovato.' }, { status: 403 })
   }
-  if (caller.ruolo !== 'presidente') {
+  if (!['presidente', 'segretario'].includes(caller.ruolo)) {
     return NextResponse.json(
-      { error: 'Accesso negato: solo il presidente può eliminare account.' },
+      { error: 'Accesso negato: solo il titolare del club può eliminare account.' },
       { status: 403 }
     )
   }

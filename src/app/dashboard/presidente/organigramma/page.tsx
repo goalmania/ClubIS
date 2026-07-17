@@ -84,7 +84,7 @@ export default async function OrganigrammaPage() {
   const byRole = (ruolo: string): Membro[] =>
     (tutti ?? []).filter(u => u.ruolo === ruolo)
 
-  const canEdit = utente.ruolo === 'presidente' || utente.ruolo === 'ds'
+  const canEdit = utente.ruolo === 'presidente' || utente.ruolo === 'segretario' || utente.ruolo === 'ds'
 
   return (
     <div>

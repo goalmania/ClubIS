@@ -321,7 +321,7 @@ export default async function VistaDisponibilita({ clubId, ruolo, squadraIds }: 
           </>
         )}
 
-        {ruolo === 'presidente' && (
+        {(ruolo === 'presidente' || ruolo === 'segretario') && (
           <Link href="/dashboard/presidente/report" className="btn btn-secondary btn-sm">
             Report mensile
           </Link>

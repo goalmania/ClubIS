@@ -330,7 +330,7 @@ export default function BudgetStagionalePage() {
     setTimeout(() => setToast(null), 3000)
   }
 
-  const canEdit = ruolo === 'presidente' || ruolo === ''
+  const canEdit = ruolo === 'presidente' || ruolo === 'segretario' || ruolo === ''
 
   // ── Anno di riferimento dalla stagione ──────────────────────────────────────
   const annoInizio = parseInt(stagione.slice(0, 4))

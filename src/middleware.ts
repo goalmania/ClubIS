@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { isPro } from '@/lib/categorie-club'
 
 // Route sempre pubbliche — mai intercettate dai redirect di piano
 const PUBLIC_PATHS = [
@@ -79,20 +80,32 @@ export async function middleware(request: NextRequest) {
 
     const { data: club } = await supabase
       .from('clubs')
-      .select('plan_status, onboarding_completed, trial_ends_at, current_period_end')
+      .select('plan_status, onboarding_completed, trial_ends_at, current_period_end, categoria')
       .eq('id', utente.club_id)
       .maybeSingle()
 
     if (!club) return response
 
-    // ── 4. Onboarding non completato → /onboarding (solo il presidente)
+    // ── 3b. Route pro: accessibili solo a club di Serie C e superiori.
+    // Le route pro-only usano tutte un segmento che termina in "pro"
+    // (contratti-pro, liste-pro, compliance-pro, comunicati-legapro).
+    const isProRoute = path.split('/').some(seg => seg.endsWith('pro'))
+    if (isProRoute && !isPro((club as any).categoria)) {
+      const url = new URL('/dashboard', request.url)
+      url.searchParams.set('notice', 'pro_required')
+      return NextResponse.redirect(url)
+    }
+
+    // ── 4. Onboarding non completato → /onboarding (solo il titolare del club)
     // Lo staff invitato durante l'onboarding accede direttamente alla propria dashboard.
-    if (!club.onboarding_completed && utente.ruolo === 'presidente') {
+    // Titolare = presidente o segretario (alcuni account usano segretario come ruolo primario).
+    const RUOLI_TITOLARE = ['presidente', 'segretario']
+    if (!club.onboarding_completed && RUOLI_TITOLARE.includes(utente.ruolo)) {
       return NextResponse.redirect(new URL('/onboarding', request.url))
     }
 
-    // ── 5. Controllo accesso per piano — solo il presidente gestisce l'abbonamento
-    if (utente.ruolo === 'presidente') {
+    // ── 5. Controllo accesso per piano — solo il titolare gestisce l'abbonamento
+    if (RUOLI_TITOLARE.includes(utente.ruolo)) {
       const now = new Date()
 
       // Trial attivo: consenti accesso
