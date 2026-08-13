@@ -63,24 +63,35 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 2. Disattiva le Price dei product orfani
+    // 2. Disattiva i Product stessi (prima delle Price: un product può essere
+    // disattivato anche col suo default_price ancora attivo, mentre una Price
+    // non può essere disattivata finché è il default_price del suo product)
+    for (const productId of ORPHAN_PRODUCTS) {
+      await stripePost(`/v1/products/${productId}`, { active: 'false' })
+    }
+
+    // 3. Disattiva le Price dei product orfani; se una Price è ancora il
+    // default_price del product (Stripe non lo sblocca automaticamente
+    // disattivando il product), la saltiamo — resta associata a un product
+    // già disattivato e senza Payment Link attivi, quindi inutilizzabile.
+    const skippedPrices: string[] = []
     for (const productId of ORPHAN_PRODUCTS) {
       const prices = await stripeGet(`/v1/prices?product=${productId}&limit=100&active=true`)
       for (const price of prices.data) {
-        await stripePost(`/v1/prices/${price.id}`, { active: 'false' })
-        deactivatedPrices.push(price.id)
+        try {
+          await stripePost(`/v1/prices/${price.id}`, { active: 'false' })
+          deactivatedPrices.push(price.id)
+        } catch (e: any) {
+          skippedPrices.push(price.id)
+        }
       }
-    }
-
-    // 3. Disattiva i Product stessi
-    for (const productId of ORPHAN_PRODUCTS) {
-      await stripePost(`/v1/products/${productId}`, { active: 'false' })
     }
 
     return NextResponse.json({
       ok: true,
       deactivated_products: ORPHAN_PRODUCTS,
       deactivated_prices: deactivatedPrices,
+      skipped_prices_still_default: skippedPrices,
       deactivated_links: deactivatedLinks,
     })
   } catch (err: any) {
