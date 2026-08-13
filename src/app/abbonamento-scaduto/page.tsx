@@ -6,35 +6,35 @@ import Link from 'next/link'
 const PIANI = [
   {
     id: 'starter',
-    nome: 'Starter',
+    nome: 'Base',
     colore: 'var(--gray)',
-    prezzoMensile: 59,
-    prezzoAnnuale: 50,   // €600/anno (−15%)
-    fatturatoAnno: 600,
-    features: ['Rosa & tesseramenti', 'Certificati medici', 'Quote & rateali', 'Calendario & distinte', 'Prima nota', '11 dashboard role-based'],
+    prezzoMensile: 50,
+    prezzoAnnuale: 42,   // €504/anno (−15% circa)
+    fatturatoAnno: 504,
+    features: ['1 club', 'Rosa & tesseramenti', 'Certificati medici', 'Quote & rateali', 'Calendario & distinte', 'Prima nota', '11 dashboard role-based'],
     envMensile: process.env.NEXT_PUBLIC_STRIPE_LINK_STARTER_MONTHLY,
     envAnnuale: process.env.NEXT_PUBLIC_STRIPE_LINK_STARTER_ANNUAL,
   },
   {
     id: 'pro',
-    nome: 'Pro',
+    nome: 'Multi-club',
     colore: 'var(--accent2)',
-    prezzoMensile: 99,
-    prezzoAnnuale: 84,   // €1.008/anno (−15%)
-    fatturatoAnno: 1008,
+    prezzoMensile: 100,
+    prezzoAnnuale: 85,   // €1.020/anno (−15% circa)
+    fatturatoAnno: 1020,
     popular: true,
-    features: ['Tutto Starter +', 'Dashboard DS completa', 'Analisi C.U. FIGC', 'Scouting con export PDF', 'Rimborsi SEPA', 'Registro IVA'],
+    features: ['Fino a 5 club', 'Tutto Base +', 'Dashboard DS completa', 'Analisi C.U. FIGC', 'Scouting con export PDF', 'Rimborsi SEPA', 'Registro IVA'],
     envMensile: process.env.NEXT_PUBLIC_STRIPE_LINK_PRO_MONTHLY,
     envAnnuale: process.env.NEXT_PUBLIC_STRIPE_LINK_PRO_ANNUAL,
   },
   {
     id: 'elite',
-    nome: 'Elite',
+    nome: 'Multi-club Max',
     colore: 'var(--accent)',
     prezzoMensile: 179,
     prezzoAnnuale: 152,  // €1.824/anno (−15%)
     fatturatoAnno: 1824,
-    features: ['Tutto Pro +', 'DM Scout integrato', 'Utenti illimitati', 'Onboarding dedicato', 'Supporto WhatsApp 4h', 'Report mensile auto'],
+    features: ['Club illimitati', 'Tutto Multi-club +', 'DM Scout integrato', 'Utenti illimitati', 'Onboarding dedicato', 'Supporto WhatsApp 4h', 'Report mensile auto'],
     envMensile: process.env.NEXT_PUBLIC_STRIPE_LINK_ELITE_MONTHLY,
     envAnnuale: process.env.NEXT_PUBLIC_STRIPE_LINK_ELITE_ANNUAL,
   },
