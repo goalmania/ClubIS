@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { importoNettoClub } from '@/lib/stripe'
 import type { PlanTier } from '@/lib/features'
 
 // Stripe SDK non è installato — usiamo la verifica manuale della firma HMAC
@@ -35,6 +36,45 @@ async function verifyStripeSignature(
   // Timing-safe comparison non è disponibile nel Web Crypto API,
   // ma per webhook server-side è accettabile.
   return computed === expectedSig
+}
+
+const RUOLI_TITOLARE = ['presidente', 'segretario']
+
+// stripe_customer_id è UNIQUE su clubs (un solo club può "ancorare" un
+// customer Stripe) — l'abbonamento è per-account, quindi per gli eventi di
+// rinnovo/cancellazione ricaviamo il club "ancora" da stripe_customer_id e
+// da lì risaliamo a TUTTI i club di cui il suo titolare (presidente o
+// segretario) è owner, per applicare l'update a tutto l'account.
+async function titolareClubIdsForStripeCustomer(
+  db: ReturnType<typeof createAdminClient>,
+  stripeCustomerId: string
+): Promise<string[]> {
+  const { data: anchorClub } = await db
+    .from('clubs')
+    .select('id')
+    .eq('stripe_customer_id', stripeCustomerId)
+    .maybeSingle()
+
+  if (!anchorClub) return []
+
+  const { data: titolari } = await db
+    .from('user_clubs')
+    .select('user_id')
+    .eq('club_id', anchorClub.id)
+    .eq('status', 'accepted')
+    .in('role', RUOLI_TITOLARE)
+
+  const userIds = Array.from(new Set((titolari ?? []).map(t => t.user_id)))
+  if (userIds.length === 0) return [anchorClub.id]
+
+  const { data: membership } = await db
+    .from('user_clubs')
+    .select('club_id')
+    .in('user_id', userIds)
+    .eq('status', 'accepted')
+    .in('role', RUOLI_TITOLARE)
+
+  return Array.from(new Set([anchorClub.id, ...(membership ?? []).map(m => m.club_id)]))
 }
 
 function planTierFromStripePrice(priceId: string | null | undefined): PlanTier {
@@ -86,6 +126,112 @@ export async function POST(req: NextRequest) {
       // ─────────────────────────────────────────────────────
       case 'checkout.session.completed': {
         const session = event.data.object
+
+        // Pagamento di un'iscrizione pubblica (/iscriviti/[slug]) — non è
+        // un abbonamento piattaforma, gestione separata.
+        if (session.metadata?.tipo === 'iscrizione_pubblica') {
+          const richiestaId = session.metadata?.richiesta_id
+          if (richiestaId) {
+            await db.from('richieste_iscrizione')
+              .update({ pagamento_stato: 'pagato' })
+              .eq('id', richiestaId)
+          }
+          break
+        }
+
+        // Pagamento con carta di una quota mensile (scuola calcio, tabella
+        // legacy quote_giovanili) dalla dashboard famiglia — destination
+        // charge sul conto Connect del club. La registrazione in Prima Nota
+        // avviene da sola via trigger DB (trig_quote_giovanili_to_prima_nota,
+        // AFTER UPDATE OF stato) — non inseriamo qui per evitare doppioni.
+        if (session.metadata?.tipo === 'quota_giovanile') {
+          const quotaId = session.metadata?.quota_id
+          if (quotaId) {
+            const oggi = new Date().toISOString().split('T')[0]
+            await db
+              .from('quote_giovanili')
+              .update({
+                stato: 'pagata',
+                data_pagamento: oggi,
+                metodo_pagamento: 'carta',
+                stripe_checkout_session_id: session.id,
+                updated_at: new Date().toISOString(),
+              })
+              .eq('id', quotaId)
+          }
+          break
+        }
+
+        // Pagamento con carta di una rata di un piano di pagamento (club
+        // agonistici) dalla dashboard famiglia. Prima Nota via trigger DB
+        // (trig_rate_to_prima_nota, AFTER UPDATE OF stato) — idem sopra.
+        if (session.metadata?.tipo === 'rata_pagamento') {
+          const rataId = session.metadata?.rata_id
+          if (rataId) {
+            const oggi = new Date().toISOString().split('T')[0]
+            const paymentIntentId = typeof session.payment_intent === 'string' ? session.payment_intent : null
+            await db
+              .from('rate_pagamento')
+              .update({
+                stato: 'pagata',
+                data_pagamento: oggi,
+                metodo_pagamento: 'carta',
+                stripe_checkout_session_id: session.id,
+                stripe_payment_intent_id: paymentIntentId,
+              })
+              .eq('id', rataId)
+          }
+          break
+        }
+
+        // Pagamento con carta di una quota di iscrizione (tabella principale
+        // quote_iscrizione, usata da segretario/presidente per tutti i club).
+        // Supporta pagamenti parziali: registriamo il pagamento nella tabella
+        // figlia `pagamenti` e il trigger sync_pagamenti ricalcola da solo
+        // importo_pagato/stato su quote_iscrizione. A differenza di
+        // quote_giovanili/rate_pagamento non esiste qui un trigger verso
+        // prima_nota (lo fa solo a mano la UI segretario per lo scuola
+        // calcio) quindi lo registriamo esplicitamente.
+        if (session.metadata?.tipo === 'quota_iscrizione') {
+          const quotaId = session.metadata?.quota_id
+          const importoPagato = Number(session.metadata?.importo ?? 0)
+          if (quotaId && importoPagato > 0) {
+            const paymentIntentId = typeof session.payment_intent === 'string' ? session.payment_intent : null
+            const oggi = new Date().toISOString().split('T')[0]
+
+            await db.from('pagamenti').insert({
+              quota_id: quotaId,
+              importo: importoPagato,
+              // L'enum metodo_pagamento non ha 'carta': usiamo 'stripe'.
+              metodo: 'stripe',
+              data_pagamento: oggi,
+              stripe_payment_id: paymentIntentId ?? session.id,
+            })
+
+            const { data: quota } = await db
+              .from('quote_iscrizione')
+              .select('club_id, giocatore:giocatori!giocatore_id(nome, cognome)')
+              .eq('id', quotaId)
+              .maybeSingle()
+
+            if (quota) {
+              const g = quota.giocatore as any
+              await db.from('prima_nota').insert({
+                club_id: quota.club_id,
+                tipo: 'entrata',
+                categoria: 'quote_iscrizione',
+                // Netto di ClubIS Pay (metà commissione a carico del club),
+                // non l'intero debito saldato — riflette l'incasso reale.
+                importo: importoNettoClub(importoPagato),
+                data: oggi,
+                descrizione: `Quota iscrizione${g ? ` — ${g.nome} ${g.cognome}` : ''} (pagamento online — ClubIS Pay)`,
+                controparte: g ? `${g.nome} ${g.cognome}` : null,
+              })
+            }
+          }
+          break
+        }
+
         const customerEmail: string = session.customer_details?.email ?? session.customer_email
         const stripeCustomerId: string = session.customer
         const priceId: string | null = session.line_items?.data?.[0]?.price?.id ?? null
@@ -117,8 +263,47 @@ export async function POST(req: NextRequest) {
           userId = newUser.user.id
         }
 
-        // Crea o aggiorna il club
-        const { data: existingClub } = await db
+        // Abbonamento per-account: se l'utente è già titolare (presidente o
+        // segretario) di uno o più club, un solo pagamento sblocca TUTTI i
+        // suoi club — stesso criterio già usato in activate-subscription
+        // (il webhook esterno chiamato da dmfootballservices.it) e nel
+        // middleware. Non un ruolo qualsiasi, per non attivare per errore
+        // il club di un titolare diverso dove questa email è solo staff.
+        const { data: membership } = found
+          ? await db
+              .from('user_clubs')
+              .select('club_id')
+              .eq('user_id', userId)
+              .eq('status', 'accepted')
+              .in('role', RUOLI_TITOLARE)
+          : { data: null }
+        const titolareClubIds = membership?.map(m => m.club_id) ?? []
+
+        if (titolareClubIds.length > 0) {
+          // Account esistente (nuovo o multi-club): plan_tier/plan_status vanno
+          // su tutti i club posseduti. stripe_customer_id è UNIQUE su clubs — può
+          // "ancorare" un solo club: lo mettiamo solo sul primo, gli eventi di
+          // rinnovo/cancellazione risalgono da lì a tutto l'account (vedi
+          // titolareClubIdsForStripeCustomer sopra).
+          await db
+            .from('clubs')
+            .update({ plan_tier: plan, plan_status: 'active' })
+            .in('id', titolareClubIds)
+
+          await db
+            .from('clubs')
+            .update({
+              stripe_customer_id: stripeCustomerId,
+              stripe_subscription_id: session.subscription ?? null,
+            })
+            .eq('id', titolareClubIds[0])
+          break
+        }
+
+        // Nessun club posseduto ancora (cliente nuovo, o utente esistente ma
+        // solo come staff invitato altrove): crea un club nuovo.
+        // Prima cerca per stripe_customer_id per evitare doppioni su retry del webhook.
+        let { data: existingClub } = await db
           .from('clubs')
           .select('id')
           .eq('stripe_customer_id', stripeCustomerId)
@@ -182,15 +367,18 @@ export async function POST(req: NextRequest) {
         const invoice = event.data.object
         const stripeCustomerId: string = invoice.customer
         const periodEnd: number = invoice.lines?.data?.[0]?.period?.end ?? invoice.period_end
+        const clubIds = await titolareClubIdsForStripeCustomer(db, stripeCustomerId)
 
-        await db.from('clubs')
-          .update({
-            plan_status: 'active',
-            current_period_end: periodEnd
-              ? new Date(periodEnd * 1000).toISOString()
-              : null,
-          })
-          .eq('stripe_customer_id', stripeCustomerId)
+        if (clubIds.length > 0) {
+          await db.from('clubs')
+            .update({
+              plan_status: 'active',
+              current_period_end: periodEnd
+                ? new Date(periodEnd * 1000).toISOString()
+                : null,
+            })
+            .in('id', clubIds)
+        }
         break
       }
 
@@ -198,12 +386,29 @@ export async function POST(req: NextRequest) {
       case 'invoice.payment_failed': {
         const invoice = event.data.object
         const stripeCustomerId: string = invoice.customer
+        const clubIds = await titolareClubIdsForStripeCustomer(db, stripeCustomerId)
 
-        await db.from('clubs')
-          .update({ plan_status: 'expired' })
-          .eq('stripe_customer_id', stripeCustomerId)
+        if (clubIds.length > 0) {
+          await db.from('clubs')
+            .update({ plan_status: 'expired' })
+            .in('id', clubIds)
+        }
 
         console.warn('[Stripe] Pagamento fallito per customer:', stripeCustomerId, '— gestione manuale richiesta')
+        break
+      }
+
+      // ─────────────────────────────────────────────────────
+      // Evento Connect (account collegato da un club per incassare le rette).
+      // Gli eventi Connect portano event.account, quelli della piattaforma no.
+      case 'account.updated': {
+        const account = event.data.object
+        await db.from('clubs')
+          .update({
+            stripe_connect_charges_enabled: !!account.charges_enabled,
+            stripe_connect_details_submitted: !!account.details_submitted,
+          })
+          .eq('stripe_connect_account_id', account.id)
         break
       }
 
@@ -211,10 +416,13 @@ export async function POST(req: NextRequest) {
       case 'customer.subscription.deleted': {
         const sub = event.data.object
         const stripeCustomerId: string = sub.customer
+        const clubIds = await titolareClubIdsForStripeCustomer(db, stripeCustomerId)
 
-        await db.from('clubs')
-          .update({ plan_status: 'inactive', plan_tier: 'starter' })
-          .eq('stripe_customer_id', stripeCustomerId)
+        if (clubIds.length > 0) {
+          await db.from('clubs')
+            .update({ plan_status: 'inactive', plan_tier: 'starter' })
+            .in('id', clubIds)
+        }
         break
       }
 
