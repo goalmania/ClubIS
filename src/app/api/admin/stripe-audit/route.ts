@@ -28,6 +28,11 @@ export async function GET(req: NextRequest) {
   }
 
   try {
+    const raw = req.nextUrl.searchParams.get('raw')
+    if (raw && raw.startsWith('/v1/')) {
+      return NextResponse.json(await stripeGet(raw))
+    }
+
     const [products, prices, paymentLinks] = await Promise.all([
       stripeGet('/v1/products?limit=30&active=true'),
       stripeGet('/v1/prices?limit=30&active=true'),
