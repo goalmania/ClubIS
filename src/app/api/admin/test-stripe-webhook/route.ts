@@ -95,6 +95,7 @@ export async function POST(req: NextRequest) {
       customer_email: testEmail,
     })
     realSessionId = realSession.id
+    const debugExpanded = await stripeGet(`/v1/checkout/sessions/${realSession.id}?expand[]=line_items`)
 
     // 3. Evento checkout.session.completed REALISTICO — SENZA line_items
     // espansi nel payload (Stripe non li manda di default: il nostro codice
@@ -142,6 +143,7 @@ export async function POST(req: NextRequest) {
       webhook_response_body: webhookBody,
       clubs_after: clubsAfter,
       expectation: 'plan_status deve essere active su tutti e 3 i club (plan_tier dipende da come il webhook gestisce priceId assente)',
+      debug_line_items: debugExpanded.line_items,
     })
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 })
