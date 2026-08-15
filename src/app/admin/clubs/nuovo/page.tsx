@@ -12,7 +12,11 @@ const categorie = [
 ]
 
 const piani = [
-  { value: 'base', label: 'Base' }, { value: 'pro', label: 'Pro' }, { value: 'elite', label: 'Elite' },
+  { value: 'starter', label: 'Base' }, { value: 'pro', label: 'Multi-club' }, { value: 'elite', label: 'Multi-club Max' },
+]
+
+const generi = [
+  { value: 'maschile', label: 'Maschile' }, { value: 'femminile', label: 'Femminile' },
 ]
 
 export default function NuovoClubPage() {
@@ -21,11 +25,12 @@ export default function NuovoClubPage() {
   const [errore, setErrore] = useState('')
   const [form, setForm] = useState({
     nome: '', nome_esteso: '', citta: '', provincia: '', regione: '',
-    categoria: 'eccellenza', piano_abbonamento: 'base',
+    categoria: 'eccellenza', genere: 'maschile', piano_abbonamento: 'base',
     figc_codice: '', email_ufficiale: '', telefono: '',
     abbonamento_scadenza: '',
     presidente_email: '', presidente_password: '',
     presidente_nome: '', presidente_cognome: '',
+    is_demo_account: false,
   })
 
   const update = (k: string, v: string) => setForm(p => ({ ...p, [k]: v }))
@@ -82,14 +87,19 @@ export default function NuovoClubPage() {
               <FormField label="Categoria" required>
                 <Select value={form.categoria} onChange={v => update('categoria', v)} options={categorie} />
               </FormField>
-              <FormField label="Codice FIGC">
-                <input className="input" value={form.figc_codice} onChange={e => update('figc_codice', e.target.value)} />
+              <FormField label="Genere" required>
+                <Select value={form.genere} onChange={v => update('genere', v)} options={generi} />
               </FormField>
             </FormGrid>
             <FormGrid>
+              <FormField label="Codice FIGC">
+                <input className="input" value={form.figc_codice} onChange={e => update('figc_codice', e.target.value)} />
+              </FormField>
               <FormField label="Email ufficiale">
                 <input className="input" type="email" value={form.email_ufficiale} onChange={e => update('email_ufficiale', e.target.value)} />
               </FormField>
+            </FormGrid>
+            <FormGrid>
               <FormField label="Telefono">
                 <input className="input" value={form.telefono} onChange={e => update('telefono', e.target.value)} />
               </FormField>
@@ -128,6 +138,16 @@ export default function NuovoClubPage() {
                 <input className="input" type="text" value={form.presidente_password} onChange={e => update('presidente_password', e.target.value)} required minLength={6} />
               </FormField>
             </FormGrid>
+            <FormField label="Account demo (vendite)" hint="Abilita 'Visualizza come' per cambiare ruolo durante le demo. Se questo utente esiste già su altri club demo, spunta anche qui per mantenere l'accesso attivo su tutti.">
+              <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
+                <input
+                  type="checkbox"
+                  checked={form.is_demo_account}
+                  onChange={e => setForm(p => ({ ...p, is_demo_account: e.target.checked }))}
+                />
+                Questo è un account demo per il team vendite
+              </label>
+            </FormField>
           </FormSection>
         </SectionCard>
 

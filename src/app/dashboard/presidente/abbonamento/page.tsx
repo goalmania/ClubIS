@@ -44,7 +44,7 @@ export default async function AbbonamentoPage() {
     ? Math.ceil((dmScadenzaDate.getTime() - now.getTime()) / 86_400_000)
     : null
 
-  const TIER_LABEL: Record<string, string> = { starter: 'Starter', pro: 'Pro', elite: 'Elite' }
+  const TIER_LABEL: Record<string, string> = { starter: 'Base', pro: 'Multi-club', elite: 'Multi-club Max' }
   const TIER_COLOR: Record<string, string> = {
     starter: 'var(--gray)',
     pro: 'var(--accent2)',
@@ -104,7 +104,7 @@ export default async function AbbonamentoPage() {
                 fontSize: 18, color: TIER_COLOR[planTier] ?? 'var(--white)',
                 textTransform: 'uppercase',
               }}>
-                {isTrial ? 'Elite (trial)' : (TIER_LABEL[planTier] ?? planTier)}
+                {TIER_LABEL[planTier] ?? planTier}{isTrial ? ' (trial)' : ''}
               </div>
             </div>
 

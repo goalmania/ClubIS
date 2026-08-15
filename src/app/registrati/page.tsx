@@ -6,12 +6,14 @@ import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 
 const PIANI = {
-  starter: { nome: 'Starter', colore: 'var(--gray)', prezzo: '€59/mese' },
-  pro:     { nome: 'Pro',     colore: 'var(--accent2)', prezzo: '€99/mese', popular: true },
-  elite:   { nome: 'Elite',   colore: 'var(--accent)', prezzo: '€179/mese' },
+  starter:       { nome: 'Base',        colore: 'var(--gray)',    prezzo: '€50/mese' },
+  pro:           { nome: 'Multi-club',  colore: 'var(--accent2)', prezzo: '€100/mese', popular: true },
+  elite:         { nome: 'Multi-club Max', colore: 'var(--accent)', prezzo: '€179/mese' },
+  scuola_calcio: { nome: 'Scuola Calcio', colore: 'var(--accent2)', prezzo: '€30/mese' },
 } as const
 
 type Piano = keyof typeof PIANI
+const PIANI_AGONISTICI: Piano[] = ['starter', 'pro', 'elite']
 
 const CATEGORIE = [
   { value: 'serie_a',         label: 'Serie A' },
@@ -41,12 +43,26 @@ function RegistratiForm() {
   const router = useRouter()
   const params = useSearchParams()
   const pianoParam = (params.get('piano') ?? 'pro').toLowerCase() as Piano
-  const piano: Piano = pianoParam in PIANI ? pianoParam : 'pro'
+  const pianoIniziale: Piano = pianoParam in PIANI ? pianoParam : 'pro'
+  const [ultimoPianoAgonistico, setUltimoPianoAgonistico] = useState<Piano>(
+    PIANI_AGONISTICI.includes(pianoIniziale) ? pianoIniziale : 'pro'
+  )
+  const [piano, setPiano] = useState<Piano>(pianoIniziale)
   const pianoDati = PIANI[piano]
+  const isScuolaCalcio = piano === 'scuola_calcio'
+
+  const scegliTipo = (tipo: 'agonistico' | 'scuola_calcio') => {
+    if (tipo === 'scuola_calcio') {
+      if (PIANI_AGONISTICI.includes(piano)) setUltimoPianoAgonistico(piano)
+      setPiano('scuola_calcio')
+    } else {
+      setPiano(ultimoPianoAgonistico)
+    }
+  }
 
   const [form, setForm] = useState({
     nome: '', cognome: '', email: '', password: '',
-    club_nome: '', club_categoria: 'eccellenza',
+    club_nome: '', club_categoria: 'eccellenza', club_genere: 'maschile',
   })
   const [loading, setLoading] = useState(false)
   const [errore, setErrore] = useState<string | null>(null)
@@ -111,6 +127,34 @@ function RegistratiForm() {
         borderRadius: 12,
         padding: '40px 36px',
       }}>
+        {/* Toggle tipo organizzazione */}
+        <div style={{ display: 'flex', gap: 8, marginBottom: 20, background: 'var(--black)', padding: 4, borderRadius: 10, border: '1px solid var(--border-solid)' }}>
+          <button
+            type="button"
+            onClick={() => scegliTipo('agonistico')}
+            style={{
+              flex: 1, padding: '10px 12px', borderRadius: 8, border: 'none', cursor: 'pointer',
+              background: !isScuolaCalcio ? 'var(--accent)' : 'transparent',
+              color: !isScuolaCalcio ? '#000' : 'var(--gray)',
+              fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.04em',
+            }}
+          >
+            Club agonistico
+          </button>
+          <button
+            type="button"
+            onClick={() => scegliTipo('scuola_calcio')}
+            style={{
+              flex: 1, padding: '10px 12px', borderRadius: 8, border: 'none', cursor: 'pointer',
+              background: isScuolaCalcio ? 'var(--accent)' : 'transparent',
+              color: isScuolaCalcio ? '#000' : 'var(--gray)',
+              fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.04em',
+            }}
+          >
+            Scuola calcio
+          </button>
+        </div>
+
         {/* Badge piano */}
         <div style={{
           display: 'inline-flex',
@@ -170,11 +214,20 @@ function RegistratiForm() {
             <input style={input} value={form.club_nome} onChange={set('club_nome')} required placeholder="A.S.D. Esempio Calcio" />
           </div>
 
-          <div>
-            <label style={{ fontSize: 12, color: 'var(--gray)', display: 'block', marginBottom: 6 }}>Categoria</label>
-            <select style={{ ...input, cursor: 'pointer' }} value={form.club_categoria} onChange={set('club_categoria')}>
-              {CATEGORIE.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
-            </select>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <div>
+              <label style={{ fontSize: 12, color: 'var(--gray)', display: 'block', marginBottom: 6 }}>Categoria</label>
+              <select style={{ ...input, cursor: 'pointer' }} value={form.club_categoria} onChange={set('club_categoria')}>
+                {CATEGORIE.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label style={{ fontSize: 12, color: 'var(--gray)', display: 'block', marginBottom: 6 }}>Genere</label>
+              <select style={{ ...input, cursor: 'pointer' }} value={form.club_genere} onChange={set('club_genere')}>
+                <option value="maschile">Maschile</option>
+                <option value="femminile">Femminile</option>
+              </select>
+            </div>
           </div>
 
           {errore && (

@@ -1,5 +1,12 @@
 export type PlanTier = 'starter' | 'pro' | 'elite' | 'super_admin'
 
+/** Asse separato da PlanTier: "quanto paga" (starter/pro/elite) vs "che tipo
+ * di organizzazione è" (club agonistico o scuola calcio standalone). Non
+ * mischiare i due assi: un domani una scuola calcio potrà avere anch'essa
+ * più piani di prezzo. Default sempre 'club_agonistico' per compatibilità
+ * con tutti i club esistenti. */
+export type TipoProdotto = 'club_agonistico' | 'scuola_calcio_standalone'
+
 export type Feature =
   | 'rosa_base'
   | 'calendario_partite'
@@ -106,8 +113,8 @@ export function requiredPlan(feature: Feature): PlanTier {
 }
 
 export const PLAN_LABEL: Record<PlanTier, string> = {
-  starter:     'Starter',
-  pro:         'Pro',
-  elite:       'Elite',
+  starter:     'Base',
+  pro:         'Multi-club',
+  elite:       'Multi-club Max',
   super_admin: 'Super Admin',
 }
