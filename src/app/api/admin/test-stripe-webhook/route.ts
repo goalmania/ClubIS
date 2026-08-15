@@ -41,6 +41,40 @@ async function hmacSha256Hex(secret: string, message: string): Promise<string> {
   return Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, '0')).join('')
 }
 
+export async function GET(req: NextRequest) {
+  const adminKey = process.env.ADMIN_SECRET_KEY
+  const authHeader = req.headers.get('authorization') ?? ''
+  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader
+  if (!adminKey || token !== adminKey) {
+    return NextResponse.json({ error: 'Non autorizzato' }, { status: 401 })
+  }
+  try {
+    const products = {
+      starter: 'prod_UVCMiOG9xlh0FU',
+      pro: 'prod_UVCM1smlSldGZd',
+      elite: 'prod_UVCM322ICEJg6t',
+    }
+    const result: Record<string, any> = {}
+    for (const [tier, productId] of Object.entries(products)) {
+      const prices = await stripeGet(`/v1/prices?product=${productId}&active=true&limit=10`)
+      result[tier] = prices.data.map((p: any) => ({
+        id: p.id, unit_amount: p.unit_amount, interval: p.recurring?.interval, nickname: p.nickname,
+      }))
+    }
+    result.current_env = {
+      STRIPE_PRICE_STARTER_MONTHLY: process.env.STRIPE_PRICE_STARTER_MONTHLY,
+      STRIPE_PRICE_STARTER_ANNUAL: process.env.STRIPE_PRICE_STARTER_ANNUAL,
+      STRIPE_PRICE_PRO_MONTHLY: process.env.STRIPE_PRICE_PRO_MONTHLY,
+      STRIPE_PRICE_PRO_ANNUAL: process.env.STRIPE_PRICE_PRO_ANNUAL,
+      STRIPE_PRICE_ELITE_MONTHLY: process.env.STRIPE_PRICE_ELITE_MONTHLY,
+      STRIPE_PRICE_ELITE_ANNUAL: process.env.STRIPE_PRICE_ELITE_ANNUAL,
+    }
+    return NextResponse.json(result)
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 500 })
+  }
+}
+
 export async function POST(req: NextRequest) {
   const adminKey = process.env.ADMIN_SECRET_KEY
   const authHeader = req.headers.get('authorization') ?? ''
