@@ -77,6 +77,26 @@ async function titolareClubIdsForStripeCustomer(
   return Array.from(new Set([anchorClub.id, ...(membership ?? []).map(m => m.club_id)]))
 }
 
+// Stripe NON include i line_items nell'evento checkout.session.completed di
+// default (vanno richiesti esplicitamente): senza questa chiamata priceId
+// risulta sempre null e planTierFromStripePrice ripiega su 'starter' per
+// qualunque piano — bug reale trovato testando il webhook con un evento
+// realistico non espanso.
+async function fetchSessionPriceId(sessionId: string): Promise<string | null> {
+  const key = process.env.STRIPE_SECRET_KEY
+  if (!key) return null
+  const res = await fetch(
+    `https://api.stripe.com/v1/checkout/sessions/${sessionId}?expand[]=line_items`,
+    { headers: { Authorization: `Bearer ${key}` } }
+  )
+  if (!res.ok) {
+    console.error('[Stripe] Impossibile recuperare line_items per', sessionId, res.status)
+    return null
+  }
+  const data = await res.json()
+  return data.line_items?.data?.[0]?.price?.id ?? null
+}
+
 function planTierFromStripePrice(priceId: string | null | undefined): PlanTier {
   if (!priceId) return 'starter'
   // Mappa price ID → tier tramite env var
@@ -234,7 +254,8 @@ export async function POST(req: NextRequest) {
 
         const customerEmail: string = session.customer_details?.email ?? session.customer_email
         const stripeCustomerId: string = session.customer
-        const priceId: string | null = session.line_items?.data?.[0]?.price?.id ?? null
+        const priceId: string | null =
+          session.line_items?.data?.[0]?.price?.id ?? await fetchSessionPriceId(session.id)
         const plan = planTierFromStripePrice(priceId)
 
         if (!customerEmail) {

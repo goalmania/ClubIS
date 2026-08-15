@@ -13,6 +13,26 @@ import { NextRequest, NextResponse } from 'next/server'
  * Nessun pagamento reale: l'evento è fabbricato, non nasce da un vero
  * checkout. Ripulisce da solo i dati creati. Da rimuovere a lavoro finito.
  */
+async function stripeGet(path: string) {
+  const key = process.env.STRIPE_SECRET_KEY
+  const res = await fetch(`https://api.stripe.com${path}`, { headers: { Authorization: `Bearer ${key}` } })
+  const data = await res.json()
+  if (!res.ok) throw new Error(`Stripe GET ${path}: ${data.error?.message ?? res.statusText}`)
+  return data
+}
+
+async function stripePost(path: string, body: Record<string, string>) {
+  const key = process.env.STRIPE_SECRET_KEY
+  const res = await fetch(`https://api.stripe.com${path}`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams(body),
+  })
+  const data = await res.json()
+  if (!res.ok) throw new Error(`Stripe POST ${path}: ${data.error?.message ?? res.statusText}`)
+  return data
+}
+
 async function hmacSha256Hex(secret: string, message: string): Promise<string> {
   const key = await crypto.subtle.importKey(
     'raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
@@ -37,6 +57,7 @@ export async function POST(req: NextRequest) {
   const db = createAdminClient()
   const testEmail = `qa-test-webhook-e2e-${Date.now()}@clubis-internal-test.local`
   const clubIds: string[] = []
+  let realSessionId: string | null = null
 
   try {
     // 1. Account sintetico con 3 club, titolare segretario (multi-club reale)
@@ -59,9 +80,26 @@ export async function POST(req: NextRequest) {
       })
     }
 
-    // 2. Evento checkout.session.completed REALISTICO — SENZA line_items
-    // espansi, come Stripe li manda davvero di default (per verificare se
-    // il nostro codice li richiede senza chiederli esplicitamente).
+    // 2. Sessione Checkout REALE (creata, non pagata — nessun addebito,
+    // nessuna carta) sul prezzo reale ClubIS Multi-club mensile, per avere
+    // un session.id vero da cui il webhook possa recuperare i line_items.
+    const prices = await stripeGet('/v1/prices?product=prod_UVCM1smlSldGZd&active=true&limit=10')
+    const proMonthlyPrice = prices.data.find((p: any) => p.recurring?.interval === 'month')
+    if (!proMonthlyPrice) throw new Error('Price mensile Multi-club non trovato')
+
+    const realSession = await stripePost('/v1/checkout/sessions', {
+      mode: 'subscription',
+      'line_items[0][price]': proMonthlyPrice.id,
+      'line_items[0][quantity]': '1',
+      success_url: 'https://clubis.it/auth/login?abbonamento=attivato',
+      customer_email: testEmail,
+    })
+    realSessionId = realSession.id
+
+    // 3. Evento checkout.session.completed REALISTICO — SENZA line_items
+    // espansi nel payload (Stripe non li manda di default: il nostro codice
+    // li richiedeva senza chiederli esplicitamente, bug corretto in questo
+    // giro). Usa il vero session.id appena creato.
     const fakeCustomerId = `cus_test_e2e_${Date.now()}`
     const event = {
       id: `evt_test_${Date.now()}`,
@@ -69,7 +107,7 @@ export async function POST(req: NextRequest) {
       type: 'checkout.session.completed',
       data: {
         object: {
-          id: `cs_test_${Date.now()}`,
+          id: realSession.id,
           object: 'checkout.session',
           customer: fakeCustomerId,
           customer_details: { email: testEmail },
@@ -117,5 +155,8 @@ export async function POST(req: NextRequest) {
       await db.auth.admin.deleteUser(u.id)
     }
     if (clubIds.length) await db.from('clubs').delete().in('id', clubIds)
+    if (realSessionId) {
+      await stripePost(`/v1/checkout/sessions/${realSessionId}/expire`, {}).catch(() => {})
+    }
   }
 }
