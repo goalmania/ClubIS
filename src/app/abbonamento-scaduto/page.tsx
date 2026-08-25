@@ -5,18 +5,16 @@ import Link from 'next/link'
 
 const PIANI = [
   {
-    id: 'starter',
+    id: 'starter' as const,
     nome: 'Base',
     colore: 'var(--gray)',
     prezzoMensile: 50,
     prezzoAnnuale: 42,   // €504/anno (−15% circa)
     fatturatoAnno: 504,
     features: ['1 club', 'Rosa & tesseramenti', 'Certificati medici', 'Quote & rateali', 'Calendario & distinte', 'Prima nota', '11 dashboard role-based'],
-    envMensile: process.env.NEXT_PUBLIC_STRIPE_LINK_STARTER_MONTHLY,
-    envAnnuale: process.env.NEXT_PUBLIC_STRIPE_LINK_STARTER_ANNUAL,
   },
   {
-    id: 'pro',
+    id: 'pro' as const,
     nome: 'Multi-club',
     colore: 'var(--accent2)',
     prezzoMensile: 100,
@@ -24,40 +22,53 @@ const PIANI = [
     fatturatoAnno: 1020,
     popular: true,
     features: ['Fino a 5 club', 'Tutto Base +', 'Dashboard DS completa', 'Analisi C.U. FIGC', 'Scouting con export PDF', 'Rimborsi SEPA', 'Registro IVA'],
-    envMensile: process.env.NEXT_PUBLIC_STRIPE_LINK_PRO_MONTHLY,
-    envAnnuale: process.env.NEXT_PUBLIC_STRIPE_LINK_PRO_ANNUAL,
   },
   {
-    id: 'elite',
+    id: 'elite' as const,
     nome: 'Multi-club Max',
     colore: 'var(--accent)',
     prezzoMensile: 179,
     prezzoAnnuale: 152,  // €1.824/anno (−15%)
     fatturatoAnno: 1824,
     features: ['Club illimitati', 'Tutto Multi-club +', 'DM Scout integrato', 'Utenti illimitati', 'Onboarding dedicato', 'Supporto WhatsApp 4h', 'Report mensile auto'],
-    envMensile: process.env.NEXT_PUBLIC_STRIPE_LINK_ELITE_MONTHLY,
-    envAnnuale: process.env.NEXT_PUBLIC_STRIPE_LINK_ELITE_ANNUAL,
   },
 ]
-
-function buildStripeUrl(baseUrl: string | undefined, email: string | null): string {
-  const fallback = 'https://dmfootballservices.it/#prezzi'
-  if (!baseUrl) return fallback
-  try {
-    const url = new URL(baseUrl)
-    if (email) url.searchParams.set('prefilled_email', email)
-    return url.toString()
-  } catch {
-    return fallback
-  }
-}
 
 function AbbonamentoContent() {
   const params = useSearchParams()
   const motivo = params.get('motivo') ?? 'inactive'
-  const email = params.get('email')
+  // Qualsiasi motivo di blocco (trial scaduto, abbonamento scaduto, mai
+  // attivato) porta comunque a un rinnovo/attivazione: mostriamo sempre la
+  // griglia piani, non più il link generico al sito marketing esterno che
+  // non aggancia il checkout all'account del club — era questo il motivo per
+  // cui "Vai ai piani" non portava a nulla di utile per chi aveva la prova
+  // già scaduta a DB.
   const isTrialScaduto = motivo === 'trial_scaduto'
   const [annuale, setAnnuale] = useState(false)
+  const [caricamento, setCaricamento] = useState<string | null>(null)
+  const [errore, setErrore] = useState<string | null>(null)
+
+  // Checkout creato via API (subscription su Price ID nudo, nessun
+  // trial_period_days): a differenza dei vecchi Payment Link statici, non
+  // può MAI far ripartire una prova gratuita per chi la prova l'ha già
+  // consumata — è sempre e solo un pagamento immediato.
+  async function scegliPiano(tier: 'starter' | 'pro' | 'elite') {
+    setErrore(null)
+    setCaricamento(tier)
+    try {
+      const res = await fetch('/api/checkout/piano', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tier, billing: annuale ? 'annual' : 'monthly' }),
+      })
+      const data = await res.json()
+      if (!res.ok || !data.url) throw new Error(data.error ?? 'Errore nella creazione del pagamento')
+      window.location.href = data.url
+    } catch (e: any) {
+      setErrore(e.message ?? 'Errore nella creazione del pagamento')
+      setCaricamento(null)
+    }
+  }
 
   return (
     <div style={{
@@ -77,7 +88,7 @@ function AbbonamentoContent() {
 
       <div style={{
         width: '100%',
-        maxWidth: isTrialScaduto ? 860 : 480,
+        maxWidth: 860,
         border: '1px solid var(--border-solid)',
         background: 'var(--gray-light)',
         borderRadius: 12,
@@ -116,17 +127,21 @@ function AbbonamentoContent() {
           color: 'var(--white)',
           marginBottom: 10,
         }}>
-          {isTrialScaduto ? 'Prova gratuita scaduta' : 'Accesso non disponibile'}
+          {isTrialScaduto ? 'Prova gratuita scaduta' : 'Abbonamento non attivo'}
         </h1>
 
-        <p style={{ fontSize: 14, color: 'var(--gray)', lineHeight: 1.6, marginBottom: isTrialScaduto ? 28 : 32 }}>
+        <p style={{ fontSize: 14, color: 'var(--gray)', lineHeight: 1.6, marginBottom: 28 }}>
           {isTrialScaduto
             ? 'Il periodo di prova di 7 giorni è terminato. Scegli il piano per continuare con tutti i tuoi dati intatti.'
-            : 'Il tuo abbonamento non è attivo. Attiva o rinnova per riprendere l\'accesso a ClubIS.'}
+            : 'Il tuo abbonamento non è attivo. Scegli il piano per riprendere l\'accesso a ClubIS con tutti i tuoi dati intatti.'}
         </p>
 
-        {isTrialScaduto && (
-          <>
+        {/* Qualunque sia il motivo del blocco, il rinnovo/attivazione passa
+            sempre dalla stessa griglia con checkout creato via API — mai dal
+            link generico al sito marketing, che non aggancia il pagamento al
+            club dell'utente né esclude un'eventuale prova gratuita
+            configurata sui vecchi Payment Link. */}
+        <>
             {/* Toggle mensile/annuale */}
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
               <div style={{
@@ -169,7 +184,6 @@ function AbbonamentoContent() {
               textAlign: 'left',
             }}>
               {PIANI.map(p => {
-                const stripeUrl = buildStripeUrl(annuale ? p.envAnnuale : p.envMensile, email)
                 const prezzo = annuale ? p.prezzoAnnuale : p.prezzoMensile
                 return (
                   <div key={p.id} style={{
@@ -220,12 +234,12 @@ function AbbonamentoContent() {
                       ))}
                     </ul>
 
-                    <a
-                      href={stripeUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <button
+                      onClick={() => scegliPiano(p.id)}
+                      disabled={caricamento !== null}
                       style={{
                         display: 'block',
+                        width: '100%',
                         textAlign: 'center',
                         padding: '10px 12px',
                         background: p.popular ? p.colore : 'transparent',
@@ -237,46 +251,25 @@ function AbbonamentoContent() {
                         fontSize: 11,
                         letterSpacing: '0.06em',
                         textTransform: 'uppercase',
-                        textDecoration: 'none',
+                        cursor: caricamento !== null ? 'default' : 'pointer',
+                        opacity: caricamento !== null && caricamento !== p.id ? 0.5 : 1,
                       }}
                     >
-                      Scegli {p.nome} →
-                    </a>
+                      {caricamento === p.id ? 'Attendi…' : `Scegli ${p.nome} →`}
+                    </button>
                   </div>
                 )
               })}
             </div>
 
+            {errore && (
+              <p style={{ fontSize: 12, color: '#ff4444', marginBottom: 16 }}>{errore}</p>
+            )}
+
             <p style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 20 }}>
               IVA esclusa · Cancellazione in qualsiasi momento · I tuoi dati rimangono intatti
             </p>
-          </>
-        )}
-
-        {!isTrialScaduto && (
-          <a
-            href={`https://dmfootballservices.it/#prezzi`}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: 'block',
-              padding: '14px 24px',
-              background: 'var(--accent)',
-              color: '#000',
-              fontFamily: 'var(--font-display)',
-              fontWeight: 900,
-              fontSize: 14,
-              textTransform: 'uppercase',
-              letterSpacing: '0.08em',
-              textDecoration: 'none',
-              textAlign: 'center',
-              marginBottom: 12,
-              borderRadius: 10,
-            }}
-          >
-            Vai ai piani →
-          </a>
-        )}
+        </>
 
         {/* Supporto */}
         <a
