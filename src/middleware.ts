@@ -16,6 +16,11 @@ function isPublic(path: string): boolean {
   return PUBLIC_PATHS.some(p => path.startsWith(p))
 }
 
+// Vedi lib/supabase/client.ts: stessa durata massima esplicita per i cookie
+// di sessione (400 giorni), impostata anche qui perché il middleware è il
+// punto che rinnova il token ad ogni richiesta e riscrive i cookie.
+const COOKIE_MAX_AGE_SECONDI = 60 * 60 * 24 * 400
+
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request: { headers: request.headers } })
 
@@ -23,6 +28,7 @@ export async function middleware(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
+      cookieOptions: { maxAge: COOKIE_MAX_AGE_SECONDI },
       cookies: {
         getAll() {
           return request.cookies.getAll()
@@ -80,7 +86,7 @@ export async function middleware(request: NextRequest) {
 
     const { data: club } = await supabase
       .from('clubs')
-      .select('plan_status, onboarding_completed, trial_ends_at, current_period_end, categoria')
+      .select('plan_status, onboarding_completed, trial_ends_at, current_period_end, categoria, tipo_prodotto')
       .eq('id', utente.club_id)
       .maybeSingle()
 
@@ -125,6 +131,7 @@ export async function middleware(request: NextRequest) {
         const url = new URL('/abbonamento-scaduto', request.url)
         url.searchParams.set('motivo', 'trial_scaduto')
         if (user.email) url.searchParams.set('email', user.email)
+        if ((club as any).tipo_prodotto) url.searchParams.set('tipo', (club as any).tipo_prodotto)
         return NextResponse.redirect(url)
       }
 

@@ -34,6 +34,21 @@ const PIANI = [
   },
 ]
 
+// Le scuole calcio / settori giovanili standalone (club.tipo_prodotto ===
+// 'scuola_calcio_standalone') hanno un piano unico, diverso dai 3 piani
+// club agonistico sopra — l'annuale qui è "a stagione" (importo pieno una
+// volta l'anno, non un prezzo/mese scontato come per gli altri piani).
+const PIANO_SCUOLA_CALCIO = {
+  id: 'scuola_calcio' as const,
+  nome: 'Scuola Calcio',
+  colore: 'var(--accent2)',
+  popular: false,
+  prezzoMensile: 30,
+  prezzoAnnuale: 300,
+  fatturatoAnno: 300,
+  features: ['Rosa & tesseramenti', 'Quote mensili scuola calcio', 'Presenze & gruppi', 'Calendario allenamenti', 'Comunicazioni famiglie', 'Prima nota', 'Dashboard allenatore'],
+}
+
 function AbbonamentoContent() {
   const params = useSearchParams()
   const motivo = params.get('motivo') ?? 'inactive'
@@ -44,6 +59,8 @@ function AbbonamentoContent() {
   // cui "Vai ai piani" non portava a nulla di utile per chi aveva la prova
   // già scaduta a DB.
   const isTrialScaduto = motivo === 'trial_scaduto'
+  const isScuolaCalcio = params.get('tipo') === 'scuola_calcio_standalone'
+  const piani = isScuolaCalcio ? [PIANO_SCUOLA_CALCIO] : PIANI
   const [annuale, setAnnuale] = useState(false)
   const [caricamento, setCaricamento] = useState<string | null>(null)
   const [errore, setErrore] = useState<string | null>(null)
@@ -52,7 +69,7 @@ function AbbonamentoContent() {
   // trial_period_days): a differenza dei vecchi Payment Link statici, non
   // può MAI far ripartire una prova gratuita per chi la prova l'ha già
   // consumata — è sempre e solo un pagamento immediato.
-  async function scegliPiano(tier: 'starter' | 'pro' | 'elite') {
+  async function scegliPiano(tier: 'starter' | 'pro' | 'elite' | 'scuola_calcio') {
     setErrore(null)
     setCaricamento(tier)
     try {
@@ -88,7 +105,7 @@ function AbbonamentoContent() {
 
       <div style={{
         width: '100%',
-        maxWidth: 860,
+        maxWidth: isScuolaCalcio ? 420 : 860,
         border: '1px solid var(--border-solid)',
         background: 'var(--gray-light)',
         borderRadius: 12,
@@ -151,7 +168,7 @@ function AbbonamentoContent() {
                 borderRadius: 10,
                 padding: 3,
               }}>
-                {['Mensile', 'Annuale −15%'].map((label, i) => (
+                {['Mensile', isScuolaCalcio ? 'A stagione' : 'Annuale −15%'].map((label, i) => (
                   <button
                     key={label}
                     onClick={() => setAnnuale(i === 1)}
@@ -178,13 +195,14 @@ function AbbonamentoContent() {
             {/* Piani */}
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
+              gridTemplateColumns: isScuolaCalcio ? '1fr' : 'repeat(3, 1fr)',
               gap: 12,
               marginBottom: 24,
               textAlign: 'left',
             }}>
-              {PIANI.map(p => {
+              {piani.map(p => {
                 const prezzo = annuale ? p.prezzoAnnuale : p.prezzoMensile
+                const suffissoPrezzo = annuale && isScuolaCalcio ? '/stagione' : '/mese'
                 return (
                   <div key={p.id} style={{
                     background: '#0a0a0a',
@@ -218,10 +236,15 @@ function AbbonamentoContent() {
                     </div>
                     <div style={{ marginBottom: 14 }}>
                       <span style={{ fontFamily: 'var(--font-display)', fontSize: 26, fontWeight: 900, color: 'var(--white)' }}>€{prezzo}</span>
-                      <span style={{ fontSize: 11, color: 'var(--gray)', marginLeft: 4 }}>/mese</span>
-                      {annuale && (
+                      <span style={{ fontSize: 11, color: 'var(--gray)', marginLeft: 4 }}>{suffissoPrezzo}</span>
+                      {annuale && !isScuolaCalcio && (
                         <div style={{ fontSize: 10, color: 'var(--accent)', marginTop: 3 }}>
                           €{p.fatturatoAnno.toLocaleString('it-IT')}/anno · risparmio 15%
+                        </div>
+                      )}
+                      {annuale && isScuolaCalcio && (
+                        <div style={{ fontSize: 10, color: 'var(--accent)', marginTop: 3 }}>
+                          Pagamento unico, valido per tutta la stagione
                         </div>
                       )}
                     </div>

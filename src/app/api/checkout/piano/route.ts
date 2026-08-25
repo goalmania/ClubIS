@@ -13,12 +13,13 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { stripeRequest } from '@/lib/stripe'
 
-type PianoTier = 'starter' | 'pro' | 'elite'
+type PianoTier = 'starter' | 'pro' | 'elite' | 'scuola_calcio'
 
 const PRICE_ENV: Record<PianoTier, { monthly: string; annual: string }> = {
-  starter: { monthly: 'STRIPE_PRICE_STARTER_MONTHLY', annual: 'STRIPE_PRICE_STARTER_ANNUAL' },
-  pro:     { monthly: 'STRIPE_PRICE_PRO_MONTHLY',     annual: 'STRIPE_PRICE_PRO_ANNUAL' },
-  elite:   { monthly: 'STRIPE_PRICE_ELITE_MONTHLY',   annual: 'STRIPE_PRICE_ELITE_ANNUAL' },
+  starter:       { monthly: 'STRIPE_PRICE_STARTER_MONTHLY',      annual: 'STRIPE_PRICE_STARTER_ANNUAL' },
+  pro:           { monthly: 'STRIPE_PRICE_PRO_MONTHLY',          annual: 'STRIPE_PRICE_PRO_ANNUAL' },
+  elite:         { monthly: 'STRIPE_PRICE_ELITE_MONTHLY',        annual: 'STRIPE_PRICE_ELITE_ANNUAL' },
+  scuola_calcio: { monthly: 'STRIPE_PRICE_SCUOLA_CALCIO_MONTHLY', annual: 'STRIPE_PRICE_SCUOLA_CALCIO_ANNUAL' },
 }
 
 export async function POST(req: NextRequest) {
