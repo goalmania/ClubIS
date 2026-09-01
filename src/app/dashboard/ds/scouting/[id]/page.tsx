@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { getUserContext } from '@/lib/impersonation'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import { potenzialeColore, esitoColore } from '@/lib/helpers'
@@ -17,17 +18,14 @@ function VotoBox({ label, value }: { label: string; value?: number | null }) {
 
 export default async function DSScoutingDettaglioPage({ params }: { params: { id: string } }) {
   const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth/login')
-
-  const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-  if (!utente) redirect('/auth/errore')
+  const ctx = await getUserContext()
+  if (!ctx) redirect('/auth/login')
 
   const { data: r } = await supabase
     .from('report_scouting')
     .select('*, utenti(nome, cognome)')
     .eq('id', params.id)
-    .eq('club_richiedente_id', utente.club_id)
+    .eq('club_richiedente_id', ctx.clubId)
     .single()
 
   if (!r) notFound()

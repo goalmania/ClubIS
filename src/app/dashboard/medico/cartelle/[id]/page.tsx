@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import { TabBar, Toast } from '@/components/ui'
 import Link from 'next/link'
 import FormInfortunio from '@/components/forms/FormInfortunio'
@@ -19,7 +20,7 @@ export default function CartellaGiocatorePage() {
   const { id } = useParams<{ id: string }>()
   const supabase = createClient()
 
-  const [clubId, setClubId] = useState<string | null>(null)
+  const clubId = useClubId()
   const [giocatore, setGiocatore] = useState<any>(null)
   const [tesseramento, setTesseramento] = useState<any>(null)
   const [infortuni, setInfortuni] = useState<any[]>([])
@@ -42,11 +43,7 @@ export default function CartellaGiocatorePage() {
 
   useEffect(() => {
     async function init() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-      const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-      if (!utente) return
-      setClubId(utente.club_id)
+      if (!clubId) return
 
       const [{ data: g }, { data: tess }, { data: cert }] = await Promise.all([
         supabase.from('giocatori')
@@ -54,11 +51,11 @@ export default function CartellaGiocatorePage() {
           .eq('id', id).single(),
         supabase.from('tesseramenti')
           .select('numero_maglia, squadre(nome)')
-          .eq('club_id', utente.club_id).eq('giocatore_id', id).eq('stato', 'attivo')
+          .eq('club_id', clubId).eq('giocatore_id', id).eq('stato', 'attivo')
           .maybeSingle(),
         supabase.from('certificati_medici')
           .select('id, tipo, data_rilascio, data_scadenza, medico, struttura')
-          .eq('club_id', utente.club_id).eq('giocatore_id', id)
+          .eq('club_id', clubId).eq('giocatore_id', id)
           .order('data_scadenza', { ascending: false }),
       ])
 
@@ -72,7 +69,7 @@ export default function CartellaGiocatorePage() {
       setLoading(false)
     }
     init()
-  }, [id])
+  }, [id, clubId])
 
   useEffect(() => {
     if (!clubId) return

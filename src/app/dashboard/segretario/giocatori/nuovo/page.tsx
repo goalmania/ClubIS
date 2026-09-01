@@ -2,6 +2,8 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { FormField, FormGrid, FormSection, SectionCard, Select, BackButton, Toast } from '@/components/ui'
+import { useTipoProdotto } from '@/lib/club-context'
+import { labelSquadra } from '@/lib/settore-giovanile'
 
 const ruoliOptions = [
   { value: 'portiere',                label: 'Portiere' },
@@ -32,10 +34,11 @@ const categoriaEtaOptions = [
 
 export default function NuovoGiocatorePage() {
   const router = useRouter()
+  const isScuolaCalcio = useTipoProdotto() === 'scuola_calcio_standalone'
   const [loading, setLoading] = useState(false)
   const [toast, setToast]     = useState<{ msg: string; tipo: 'success' | 'error' } | null>(null)
   const [errori, setErrori]   = useState<Record<string, string>>({})
-  const [squadre, setSquadre] = useState<{ id: string; nome: string }[]>([])
+  const [squadre, setSquadre] = useState<{ id: string; nome: string; categoria_eta: string }[]>([])
 
   // Dati anagrafica
   const [nome,          setNome]          = useState('')
@@ -81,7 +84,7 @@ export default function NuovoGiocatorePage() {
   useEffect(() => {
     fetch('/api/squadre')
       .then(r => r.json())
-      .then((data: { id: string; nome: string }[]) => {
+      .then((data: { id: string; nome: string; categoria_eta: string }[]) => {
         if (!Array.isArray(data)) return
         setSquadre(data)
         if (data.length === 1) setSquadraId(data[0].id)
@@ -98,8 +101,8 @@ export default function NuovoGiocatorePage() {
     if (!nome.trim())          e.nome          = 'Nome obbligatorio'
     if (!cognome.trim())       e.cognome        = 'Cognome obbligatorio'
     if (!dataNascita)          e.dataNascita    = 'Data di nascita obbligatoria'
-    if (!codiceFiscale.trim()) e.codiceFiscale  = 'Codice fiscale obbligatorio'
-    if (codiceFiscale.trim().length !== 16) e.codiceFiscale = 'Il codice fiscale deve avere 16 caratteri'
+    if (!isScuolaCalcio && !codiceFiscale.trim()) e.codiceFiscale = 'Codice fiscale obbligatorio'
+    if (codiceFiscale.trim() && codiceFiscale.trim().length !== 16) e.codiceFiscale = 'Il codice fiscale deve avere 16 caratteri'
     if (!consensoGdpr)         e.consensoGdpr   = 'Il consenso al trattamento dati è obbligatorio'
     if (isMinore && !emailGenitore.trim()) e.emailGenitore = 'Email genitore obbligatoria per i minori'
     setErrori(e)
@@ -216,7 +219,12 @@ export default function NuovoGiocatorePage() {
               </FormField>
             </FormGrid>
             <FormGrid cols={2}>
-              <FormField label="Codice fiscale" required error={errori.codiceFiscale}>
+              <FormField
+                label="Codice fiscale"
+                required={!isScuolaCalcio}
+                error={errori.codiceFiscale}
+                hint={isScuolaCalcio ? 'Facoltativo in fase di iscrizione, puoi aggiungerlo più avanti' : undefined}
+              >
                 <input
                   className="input"
                   value={codiceFiscale}
@@ -301,7 +309,12 @@ export default function NuovoGiocatorePage() {
                 </FormField>
               </FormGrid>
               <FormGrid cols={2}>
-                <FormField label="Email genitore" required error={errori.emailGenitore} hint="Verrà usata per l'accesso all'app famiglie">
+                <FormField
+                  label="Email genitore"
+                  required={!isScuolaCalcio}
+                  error={errori.emailGenitore}
+                  hint={isScuolaCalcio ? "Facoltativa in fase di iscrizione — necessaria in seguito per l'accesso all'app famiglie" : "Verrà usata per l'accesso all'app famiglie"}
+                >
                   <input className="input" type="email" value={emailGenitore} onChange={e => setEmailGenitore(e.target.value)} placeholder="giuseppe@esempio.it" />
                 </FormField>
                 <FormField label="Telefono genitore">
@@ -332,7 +345,7 @@ export default function NuovoGiocatorePage() {
                   value={squadraId}
                   onChange={setSquadraId}
                   placeholder="— Nessuna squadra assegnata —"
-                  options={squadre.map(s => ({ value: s.id, label: s.nome }))}
+                  options={squadre.map(s => ({ value: s.id, label: labelSquadra(s, isScuolaCalcio) }))}
                 />
               </FormField>
               <FormField label="Tipo tesseramento">

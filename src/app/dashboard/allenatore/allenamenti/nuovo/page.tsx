@@ -1,15 +1,18 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId, useTipoProdotto } from '@/lib/club-context'
+import { labelSquadra } from '@/lib/settore-giovanile'
 import { useRouter } from 'next/navigation'
 import { FormField, FormGrid, FormSection, SectionCard, Select, BackButton, Toast } from '@/components/ui'
 
 export default function NuovoAllenamentoPage() {
   const router  = useRouter()
   const supabase = createClient()
+  const clubId = useClubId()
+  const isScuolaCalcio = useTipoProdotto() === 'scuola_calcio_standalone'
 
   const [squadre,  setSquadre]  = useState<any[]>([])
-  const [clubId,   setClubId]   = useState<string | null>(null)
   const [loading,  setLoading]  = useState(false)
   const [toast,    setToast]    = useState<{ msg: string; tipo: 'success' | 'error' } | null>(null)
 
@@ -31,13 +34,6 @@ export default function NuovoAllenamentoPage() {
       u19: 3, u17: 4, u16: 5, u15: 6, u14: 7,
       u12: 8, u10: 9, u8: 10, u6: 11, femminile: 12,
     }
-    // Recupera club_id per includerlo nell'insert
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) {
-        supabase.from('utenti').select('club_id').eq('id', user.id).maybeSingle()
-          .then(({ data }) => { if (data?.club_id) setClubId(data.club_id) })
-      }
-    })
     fetch('/api/squadre')
       .then(r => r.json())
       .then((sq: any[]) => {
@@ -129,7 +125,7 @@ export default function NuovoAllenamentoPage() {
                 value={squadraId}
                 onChange={setSquadraId}
                 placeholder="Seleziona squadra"
-                options={squadre.map(s => ({ value: s.id, label: `${s.nome}${s.categoria_eta ? ` (${s.categoria_eta.toUpperCase().replace(/_/g, ' ')})` : ''}` }))}
+                options={squadre.map(s => ({ value: s.id, label: labelSquadra(s, isScuolaCalcio) }))}
               />
             </FormField>
             <FormGrid cols={2}>

@@ -1,11 +1,13 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import {
   Drawer, FormSection, FormField, FormGrid, Select, Toast, TabBar,
 } from '@/components/ui'
 import { useSharedData } from '@/hooks/useSharedData'
 import FeatureGate from '@/components/FeatureGate'
+import FinestaMercatoProBanner from '@/components/features/FinestaMercatoProBanner'
 
 type Trattativa = {
   id: string
@@ -46,7 +48,7 @@ const fmt = (n: number | null) =>
 
 export default function DSMercatoPage() {
   const supabase = createClient()
-  const [clubId, setClubId] = useState<string | null>(null)
+  const clubId = useClubId()
   const [userId, setUserId] = useState<string | null>(null)
   const [trattative, setTrattative] = useState<Trattativa[]>([])
   const [giocatoriDB, setGiocatoriDB] = useState<any[]>([])
@@ -81,18 +83,16 @@ export default function DSMercatoPage() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
     setUserId(user.id)
-    const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-    if (!utente) return
-    setClubId(utente.club_id)
+    if (!clubId) return
 
     const [{ data: tratt }, { data: scout }] = await Promise.all([
       supabase.from('trattative')
         .select('*, giocatori(nome, cognome)')
-        .eq('club_id', utente.club_id)
+        .eq('club_id', clubId)
         .order('created_at', { ascending: false }),
       supabase.from('report_scouting')
         .select('id, giocatore_id, nome_giocatore_ext, club_attuale_ext, giocatori(nome, cognome, ruolo_principale)')
-        .eq('club_richiedente_id', utente.club_id)
+        .eq('club_richiedente_id', clubId)
         .order('created_at', { ascending: false }),
     ])
     setTrattative(tratt ?? [])
@@ -183,6 +183,8 @@ export default function DSMercatoPage() {
           + Nuova trattativa
         </button>
       </div>
+
+      <FinestaMercatoProBanner />
 
       {/* TabBar */}
       <TabBar

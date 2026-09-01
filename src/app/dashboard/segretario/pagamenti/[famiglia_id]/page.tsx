@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import { useParams } from 'next/navigation'
 import { PageHeader, Toast } from '@/components/ui'
 import { generaSollecito } from '@/lib/solleciti'
@@ -65,7 +66,7 @@ export default function FamigliaDettaglio() {
   const [giocatore, setGiocatore] = useState<GiocatoreInfo | null>(null)
   const [club, setClub] = useState<ClubInfo | null>(null)
   const [piani, setPiani] = useState<Piano[]>([])
-  const [clubId, setClubId] = useState<string | null>(null)
+  const clubId = useClubId()
   const [loading, setLoading] = useState(true)
   const [toast, setToast] = useState<{ msg: string; tipo: 'success' | 'error' } | null>(null)
 
@@ -89,14 +90,12 @@ export default function FamigliaDettaglio() {
   })
   const [savingRata, setSavingRata] = useState(false)
 
-  useEffect(() => { load() }, [famigliaId])
+  useEffect(() => { load() }, [famigliaId, clubId])
 
   async function load() {
+    if (!clubId) return
     setLoading(true)
-    const { data: { user } } = await supabase.auth.getUser()
-    const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user!.id).single()
-    const cid = utente!.club_id
-    setClubId(cid)
+    const cid = clubId
 
     const [{ data: fam }, { data: cl }, { data: pianiData }] = await Promise.all([
       supabase.from('famiglie').select('id, nome, cognome, email, telefono').eq('id', famigliaId).single(),

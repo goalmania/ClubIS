@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { getUserContext } from '@/lib/impersonation'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { potenzialeColore, esitoColore, formatData } from '@/lib/helpers'
@@ -14,16 +15,13 @@ type SearchParams = {
 
 export default async function OsservatoreGiocatoriPage({ searchParams }: { searchParams: SearchParams }) {
   const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth/login')
-
-  const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-  if (!utente) redirect('/auth/errore')
+  const ctx = await getUserContext()
+  if (!ctx) redirect('/auth/login')
 
   let query = supabase
     .from('report_scouting')
     .select('*')
-    .eq('club_richiedente_id', utente.club_id)
+    .eq('club_richiedente_id', ctx.clubId)
 
   if (searchParams.ruolo) query = query.eq('ruolo', searchParams.ruolo)
   if (searchParams.stato_pipeline) query = query.eq('stato_pipeline', searchParams.stato_pipeline)

@@ -1,26 +1,22 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import Link from 'next/link'
 import CreaCartella from '@/components/forms/CreaCartella'
 import FeatureGate from '@/components/FeatureGate'
 
 export default function MedicoCartellePage() {
   const supabase = createClient()
+  const clubId = useClubId()
 
   const [giocatori, setGiocatori] = useState<any[]>([])
-  const [clubId, setClubId]       = useState<string | null>(null)
   const [loading, setLoading]     = useState(true)
 
   const oggi = new Date().toISOString().split('T')[0]
 
   const load = useCallback(async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
-    const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-    if (!utente) return
-    setClubId(utente.club_id)
-
+    if (!clubId) return
     // Prima squadra con fallback a tutti i tesserati del club
     const squadre: { id: string; categoria_eta: string }[] = await fetch('/api/squadre').then(r => r.json()).catch(() => [])
     const sqIds = squadre.filter(s => s.categoria_eta === 'prima_squadra').map(s => s.id)
@@ -38,7 +34,7 @@ export default function MedicoCartellePage() {
       const { data } = await supabase
         .from('tesseramenti')
         .select('giocatori(id, nome, cognome, ruolo_principale, data_nascita, gruppo_sanguigno, allergie, terapie_in_corso, certificati_medici(data_scadenza), infortuni(data_infortunio, data_rientro_effettiva))')
-        .eq('club_id', utente.club_id)
+        .eq('club_id', clubId)
         .eq('stato', 'attivo')
       tesserati = data
     }
@@ -53,7 +49,7 @@ export default function MedicoCartellePage() {
 
     setGiocatori(unici)
     setLoading(false)
-  }, [])
+  }, [clubId])
 
   useEffect(() => { load() }, [load])
 

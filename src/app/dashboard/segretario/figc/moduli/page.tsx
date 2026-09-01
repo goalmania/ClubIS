@@ -176,11 +176,13 @@ export default function ModuliFIGCPage() {
     setLoading(true)
     const [ctxData, giocatoriData] = await Promise.all([
       fetch('/api/user-context').then(r => r.ok ? r.json() : null).catch(() => null),
-      fetch('/api/giocatori').then(r => r.json()).catch(() => []),
+      fetch('/api/giocatori?tutti=1').then(r => r.json()).catch(() => []),
     ])
 
     if (!ctxData?.clubId) { setLoading(false); return }
     const clubId = ctxData.clubId
+    console.log('MODULI FIGC club_id usato:', clubId)
+    console.log('MODULI FIGC risultato query:', Array.isArray(giocatoriData) ? giocatoriData.length : giocatoriData)
     setUserId(ctxData.userId ?? null)
 
     const [{ data: cl }, { data: logData }] = await Promise.all([
@@ -325,7 +327,11 @@ export default function ModuliFIGCPage() {
                 <label className="label">Giocatore infortunato *</label>
                 <select className="input" value={fInfortuni.giocatore_id} onChange={e => setFInfortuni(p => ({ ...p, giocatore_id: e.target.value }))}>
                   <option value="">Seleziona giocatore...</option>
-                  {giocatori.map(g => <option key={g.id} value={g.id}>{g.cognome} {g.nome}</option>)}
+                  {giocatori.map(g => (
+                    <option key={g.id} value={g.id}>
+                      {g.numero_maglia != null ? `#${g.numero_maglia} — ` : ''}{g.cognome} {g.nome}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>
@@ -367,7 +373,11 @@ export default function ModuliFIGCPage() {
                 <label className="label">Giocatore *</label>
                 <select className="input" value={fSvincolo.giocatore_id} onChange={e => setFSvincolo(p => ({ ...p, giocatore_id: e.target.value }))}>
                   <option value="">Seleziona giocatore...</option>
-                  {giocatori.map(g => <option key={g.id} value={g.id}>{g.cognome} {g.nome}</option>)}
+                  {giocatori.map(g => (
+                    <option key={g.id} value={g.id}>
+                      {g.numero_maglia != null ? `#${g.numero_maglia} — ` : ''}{g.cognome} {g.nome}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>

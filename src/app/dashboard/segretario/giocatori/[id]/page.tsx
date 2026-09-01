@@ -1,17 +1,20 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import Link from 'next/link'
-import { useParams } from 'next/navigation'
-import { TabBar, Toast, Modal } from '@/components/ui'
-import { formatData, calcolaEta, ruoloLabel, ruoloShort } from '@/lib/helpers'
+import { useParams, useRouter } from 'next/navigation'
+import { TabBar, Toast, Modal, Select } from '@/components/ui'
+import { formatData, calcolaEta, ruoloLabel, ruoloShort, formatEuro } from '@/lib/helpers'
+import { sincronizzaBudgetPrevistoGiocatore } from '@/lib/staff-budget'
 
-type Tab = 'sportivi' | 'visita' | 'sanitario' | 'attestati' | 'indirizzo' | 'genitori' | 'documento' | 'altri' | 'materiale' | 'presenze' | 'pagamenti'
+type Tab = 'sportivi' | 'visita' | 'sanitario' | 'attestati' | 'indirizzo' | 'genitori' | 'documento' | 'altri' | 'materiale' | 'presenze' | 'pagamenti' | 'compenso'
 
 const TABS: { key: Tab; label: string }[] = [
   { key: 'sportivi',   label: 'Dati sportivi' },
   { key: 'visita',     label: 'Visita medica' },
   { key: 'sanitario',  label: 'Profilo sanitario' },
+  { key: 'compenso',   label: 'Compenso' },
   { key: 'attestati',  label: 'Attestati' },
   { key: 'indirizzo',  label: 'Indirizzo' },
   { key: 'genitori',   label: 'Genitori / Resp.' },
@@ -22,13 +25,20 @@ const TABS: { key: Tab; label: string }[] = [
   { key: 'pagamenti',  label: 'Pagamenti' },
 ]
 
+function dataScadenzaDefault(inizio: string): string {
+  const d = inizio ? new Date(inizio) : new Date()
+  d.setFullYear(d.getFullYear() + 1)
+  return d.toISOString().split('T')[0]
+}
+
 export default function GiocatoreDetailPage() {
   const params = useParams()
   const id = params.id as string
   const supabase = createClient()
+  const router = useRouter()
 
+  const clubId = useClubId()
   const [g, setG]             = useState<any>(null)
-  const [clubId, setClubId]   = useState<string | null>(null)
   const [clubNome, setClubNome] = useState('')
   const [tesseramento, setTesseramento] = useState<any>(null)
   const [certificati, setCertificati]   = useState<any[]>([])
@@ -42,19 +52,35 @@ export default function GiocatoreDetailPage() {
   const [draft, setDraft]               = useState<any>({})
   const [saving, setSaving]             = useState(false)
   const [toast, setToast]               = useState<{ msg: string; tipo: 'success' | 'error' } | null>(null)
-  const [invioEmail, setInvioEmail]      = useState<Record<string, 'idle' | 'sending' | 'sent' | 'error'>>({})
+  const [linkInvito, setLinkInvito]      = useState<Record<string, { stato: 'idle' | 'sending' | 'ok' | 'error'; link?: string; msg?: string }>>({})
+  const [abbonamento, setAbbonamento]   = useState<any>(null)
+  const [abbAzione, setAbbAzione]       = useState(false)
+  const [rimbAzione, setRimbAzione]     = useState<string | null>(null)
   const [modalPag, setModalPag]         = useState(false)
   const [nuovoPagImporto, setNuovoPagImporto] = useState('')
   const [nuovoPagData, setNuovoPagData] = useState(new Date().toISOString().split('T')[0])
   const [nuovoPagMetodo, setNuovoPagMetodo]   = useState('contanti')
   const [nuovoPagQuota, setNuovoPagQuota]     = useState('')
+  const [menuOpen, setMenuOpen]         = useState(false)
+  const [modalAnag, setModalAnag]       = useState(false)
+  const [anagDraft, setAnagDraft]       = useState<any>({})
+  const [savingAnag, setSavingAnag]     = useState(false)
+  const [deleting, setDeleting]         = useState(false)
+  const [contratto, setContratto]         = useState<any>(null)
+  const [contrattoDraft, setContrattoDraft] = useState({ importo_mensile: '', importo_annuo: '', data_inizio: '', data_scadenza: '' })
+  const [editContratto, setEditContratto] = useState(false)
+  const [savingContratto, setSavingContratto] = useState(false)
+  const [pagamentiCompenso, setPagamentiCompenso] = useState<any[]>([])
+  const [modalPagCompenso, setModalPagCompenso]   = useState(false)
+  const [pagCompensoImporto, setPagCompensoImporto] = useState('')
+  const [pagCompensoData, setPagCompensoData]       = useState(new Date().toISOString().split('T')[0])
+  const [pagCompensoDescrizione, setPagCompensoDescrizione] = useState('')
+  const [savingPagCompenso, setSavingPagCompenso] = useState(false)
 
   const load = useCallback(async () => {
+    if (!clubId) return
     setLoading(true)
-    const { data: { user } } = await supabase.auth.getUser()
-    const { data: u } = await supabase.from('utenti').select('club_id').eq('id', user!.id).single()
-    const { data: club } = await supabase.from('clubs').select('nome').eq('id', u!.club_id).single()
-    setClubId(u!.club_id)
+    const { data: club } = await supabase.from('clubs').select('nome').eq('id', clubId).single()
     setClubNome(club?.nome ?? '')
 
     const [
@@ -64,13 +90,17 @@ export default function GiocatoreDetailPage() {
       { data: fam },
       { data: pres },
       { data: q },
+      { data: contrattoData },
+      { data: pagCompenso },
     ] = await Promise.all([
       supabase.from('giocatori').select('*').eq('id', id).single(),
-      supabase.from('tesseramenti').select('*, squadre(nome)').eq('giocatore_id', id).eq('club_id', u!.club_id).eq('stato', 'attivo').maybeSingle(),
+      supabase.from('tesseramenti').select('*, squadre(nome)').eq('giocatore_id', id).eq('club_id', clubId).eq('stato', 'attivo').maybeSingle(),
       supabase.from('certificati_medici').select('*').eq('giocatore_id', id).order('data_scadenza', { ascending: false }),
       supabase.from('famiglie').select('*').eq('giocatore_id', id),
-      supabase.from('presenze').select('*, sessioni_allenamento(data, tipo)').eq('giocatore_id', id).order('created_at', { ascending: false }).limit(60),
-      supabase.from('quote_iscrizione').select('*, pagamenti(*)').eq('giocatore_id', id).eq('club_id', u!.club_id),
+      supabase.from('presenze').select('*, sessioni_allenamento(data:data_ora, tipo:tipologia)').eq('giocatore_id', id).order('registrato_at', { ascending: false }).limit(60),
+      supabase.from('quote_iscrizione').select('*, pagamenti(*)').eq('giocatore_id', id).eq('club_id', clubId),
+      supabase.from('contratti').select('*').eq('giocatore_id', id).eq('club_id', clubId).order('data_inizio', { ascending: false }).limit(1).maybeSingle(),
+      supabase.from('prima_nota').select('*').eq('club_id', clubId).eq('giocatore_id', id).eq('categoria', 'stipendi').order('data', { ascending: false }),
     ])
     setG(gData)
     setDraft(gData ?? {})
@@ -79,11 +109,62 @@ export default function GiocatoreDetailPage() {
     setFamiglia(fam ?? [])
     setPresenze(pres ?? [])
     setQuote(q ?? [])
+    setContratto(contrattoData ?? null)
+    setContrattoDraft({
+      importo_mensile: String(contrattoData?.importo_mensile ?? ''),
+      importo_annuo: String(contrattoData?.importo_annuo ?? ''),
+      data_inizio: contrattoData?.data_inizio ?? new Date().toISOString().split('T')[0],
+      data_scadenza: contrattoData?.data_scadenza ?? '',
+    })
+    setPagamentiCompenso(pagCompenso ?? [])
     const pags: any[] = []
     q?.forEach((qu: any) => { if (qu.pagamenti) pags.push(...(Array.isArray(qu.pagamenti) ? qu.pagamenti : [qu.pagamenti])) })
     setPagamenti(pags)
+
+    const abbRes = await fetch(`/api/segretario/pagamenti/abbonamento?giocatore_id=${id}`)
+    if (abbRes.ok) {
+      const abbJson = await abbRes.json()
+      setAbbonamento((abbJson.abbonamenti ?? [])[0] ?? null)
+    }
+
     setLoading(false)
-  }, [id, supabase])
+  }, [id, supabase, clubId])
+
+  const cambiaStatoAbbonamento = async (azione: 'sospendi' | 'riattiva') => {
+    if (!abbonamento) return
+    setAbbAzione(true)
+    try {
+      const res = await fetch('/api/segretario/pagamenti/abbonamento', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: abbonamento.id, azione }),
+      })
+      const json = await res.json()
+      if (!res.ok) { setToast({ msg: json.error ?? 'Errore', tipo: 'error' }); return }
+      setToast({ msg: azione === 'sospendi' ? 'Addebito automatico sospeso' : 'Addebito automatico riattivato', tipo: 'success' })
+      await load()
+    } finally {
+      setAbbAzione(false)
+    }
+  }
+
+  const rimborsaPagamento = async (pagamentoId: string) => {
+    if (!confirm('Rimborsare questo pagamento? L\'importo verrà restituito alla carta della famiglia.')) return
+    setRimbAzione(pagamentoId)
+    try {
+      const res = await fetch('/api/segretario/pagamenti/rimborsa', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pagamentoId }),
+      })
+      const json = await res.json()
+      if (!res.ok) { setToast({ msg: json.error ?? 'Errore', tipo: 'error' }); return }
+      setToast({ msg: 'Pagamento rimborsato', tipo: 'success' })
+      await load()
+    } finally {
+      setRimbAzione(null)
+    }
+  }
 
   useEffect(() => { load() }, [load])
 
@@ -97,6 +178,72 @@ export default function GiocatoreDetailPage() {
     setToast({ msg: 'Modifiche salvate', tipo: 'success' })
     setEditMode(false)
     load()
+  }
+
+  const apriModificaAnagrafica = () => {
+    setAnagDraft({
+      nome: g.nome ?? '',
+      cognome: g.cognome ?? '',
+      data_nascita: g.data_nascita ?? '',
+      luogo_nascita: g.luogo_nascita ?? '',
+      codice_fiscale: g.codice_fiscale ?? '',
+      nazionalita_tipo: g.nazionalita_tipo ?? 'italiano',
+      ruolo_principale: g.ruolo_principale ?? '',
+      ruolo_secondario: g.ruolo_secondario ?? '',
+      piede: g.piede ?? 'destro',
+      email_contatto: g.email_contatto ?? '',
+      telefono_contatto: g.telefono_contatto ?? '',
+    })
+    setMenuOpen(false)
+    setModalAnag(true)
+  }
+
+  const salvaAnagrafica = async () => {
+    if (!anagDraft.nome?.trim() || !anagDraft.cognome?.trim() || !anagDraft.data_nascita) {
+      setToast({ msg: 'Nome, cognome e data di nascita sono obbligatori', tipo: 'error' })
+      return
+    }
+    setSavingAnag(true)
+    const payload = {
+      nome: anagDraft.nome.trim(),
+      cognome: anagDraft.cognome.trim(),
+      data_nascita: anagDraft.data_nascita,
+      luogo_nascita: anagDraft.luogo_nascita?.trim() || null,
+      codice_fiscale: anagDraft.codice_fiscale?.trim().toUpperCase() || null,
+      nazionalita_tipo: anagDraft.nazionalita_tipo,
+      ruolo_principale: anagDraft.ruolo_principale || null,
+      ruolo_secondario: anagDraft.ruolo_secondario || null,
+      piede: anagDraft.piede,
+      email_contatto: anagDraft.email_contatto?.trim() || null,
+      telefono_contatto: anagDraft.telefono_contatto?.trim() || null,
+    }
+    const { error } = await supabase.from('giocatori').update(payload).eq('id', id)
+    setSavingAnag(false)
+    if (error) {
+      setToast({
+        msg: error.code === '23505' ? 'Codice fiscale già in uso da un altro giocatore' : `Errore: ${error.message}`,
+        tipo: 'error',
+      })
+      return
+    }
+    setToast({ msg: 'Anagrafica aggiornata', tipo: 'success' })
+    setModalAnag(false)
+    load()
+  }
+
+  const eliminaGiocatorePagina = async () => {
+    if (!g) return
+    if (!confirm(`Eliminare ${g.cognome} ${g.nome} dalla rosa? Lo storico (certificati, pagamenti, tesseramenti) resta conservato e consultabile, ma il giocatore sparirà da tutte le liste attive.`)) return
+    setMenuOpen(false)
+    setDeleting(true)
+    const res = await fetch(`/api/giocatori/${id}`, { method: 'DELETE' })
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}))
+      setToast({ msg: data.error ?? 'Errore durante l\'eliminazione', tipo: 'error' })
+      setDeleting(false)
+      return
+    }
+    router.push('/dashboard/segretario/giocatori')
   }
 
   const inviaReminderVisita = (gi: any) => {
@@ -122,6 +269,62 @@ export default function GiocatoreDetailPage() {
     load()
   }
 
+  const salvaContratto = async () => {
+    setSavingContratto(true)
+    const mensile = parseFloat(contrattoDraft.importo_mensile) || null
+    const annuo   = parseFloat(contrattoDraft.importo_annuo) || (mensile ? mensile * 12 : null)
+    const inizio  = contrattoDraft.data_inizio || new Date().toISOString().split('T')[0]
+    const payload = {
+      club_id: clubId,
+      giocatore_id: id,
+      importo_mensile: mensile,
+      importo_annuo: annuo,
+      data_inizio: inizio,
+      data_scadenza: contrattoDraft.data_scadenza || dataScadenzaDefault(inizio),
+      tipo: contratto?.tipo ?? 'professionistico',
+      stato: 'attivo',
+    }
+    const { error } = contratto?.id
+      ? await supabase.from('contratti').update(payload).eq('id', contratto.id)
+      : await supabase.from('contratti').insert(payload)
+    if (error) { setSavingContratto(false); setToast({ msg: `Errore: ${error.message}`, tipo: 'error' }); return }
+    if (clubId && g) {
+      await sincronizzaBudgetPrevistoGiocatore(supabase, clubId, { id, importo_annuo: annuo, nome: g.nome, cognome: g.cognome })
+    }
+    setSavingContratto(false)
+    setToast({ msg: 'Ingaggio aggiornato', tipo: 'success' })
+    setEditContratto(false)
+    load()
+  }
+
+  const apriModalPagCompenso = () => {
+    setPagCompensoImporto(contratto?.importo_mensile ? String(contratto.importo_mensile) : '')
+    setPagCompensoData(new Date().toISOString().split('T')[0])
+    setPagCompensoDescrizione('')
+    setModalPagCompenso(true)
+  }
+
+  const registraPagamentoCompenso = async () => {
+    if (!pagCompensoImporto) { setToast({ msg: 'Importo obbligatorio', tipo: 'error' }); return }
+    setSavingPagCompenso(true)
+    const { data: { user } } = await supabase.auth.getUser()
+    const { error } = await supabase.from('prima_nota').insert({
+      club_id: clubId,
+      giocatore_id: id,
+      tipo: 'uscita',
+      categoria: 'stipendi',
+      importo: parseFloat(pagCompensoImporto),
+      data: pagCompensoData,
+      descrizione: pagCompensoDescrizione.trim() || `Stipendio ${g?.cognome ?? ''} ${g?.nome ?? ''}`.trim(),
+      registrato_da: user?.id ?? null,
+    })
+    setSavingPagCompenso(false)
+    if (error) { setToast({ msg: `Errore: ${error.message}`, tipo: 'error' }); return }
+    setToast({ msg: 'Pagamento registrato in Prima Nota', tipo: 'success' })
+    setModalPagCompenso(false)
+    load()
+  }
+
   if (loading) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--grigio-4)' }}>Caricamento...</div>
   if (!g) return <div style={{ padding: 40, textAlign: 'center', color: 'var(--rosso)' }}>Giocatore non trovato</div>
 
@@ -138,11 +341,54 @@ export default function GiocatoreDetailPage() {
 
   return (
     <div style={{ maxWidth: 1060, margin: '0 auto' }}>
-      {/* Breadcrumb */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 18, fontSize: 13, color: 'var(--grigio-4)' }}>
-        <Link href="/dashboard/segretario/giocatori" style={{ color: 'var(--grigio-4)', textDecoration: 'none' }}>Giocatori</Link>
-        <span>/</span>
-        <span style={{ color: 'var(--grigio)' }}>{g.cognome} {g.nome}</span>
+      {/* Breadcrumb + Impostazioni */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--grigio-4)' }}>
+          <Link href="/dashboard/segretario/giocatori" style={{ color: 'var(--grigio-4)', textDecoration: 'none' }}>Giocatori</Link>
+          <span>/</span>
+          <span style={{ color: 'var(--grigio)' }}>{g.cognome} {g.nome}</span>
+        </div>
+
+        <div style={{ position: 'relative' }} data-testid="giocatore-impostazioni">
+          <button
+            type="button"
+            className="btn btn-secondary btn-sm"
+            onClick={() => setMenuOpen(v => !v)}
+            style={{ display: 'flex', alignItems: 'center', gap: 6 }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="3" />
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+            </svg>
+            Impostazioni
+          </button>
+          {menuOpen && (
+            <>
+              <div onClick={() => setMenuOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 30 }} />
+              <div style={{
+                position: 'absolute', top: 'calc(100% + 6px)', right: 0, zIndex: 40,
+                background: 'var(--bg-card)', border: '1px solid var(--border-solid)',
+                borderRadius: 8, minWidth: 210, overflow: 'hidden', boxShadow: 'var(--shadow)',
+              }}>
+                <button
+                  type="button"
+                  onClick={apriModificaAnagrafica}
+                  style={{ display: 'block', width: '100%', textAlign: 'left', padding: '11px 14px', background: 'transparent', border: 'none', color: 'var(--white)', fontSize: 13, cursor: 'pointer' }}
+                >
+                  ✎ Modifica anagrafica
+                </button>
+                <button
+                  type="button"
+                  onClick={eliminaGiocatorePagina}
+                  disabled={deleting}
+                  style={{ display: 'block', width: '100%', textAlign: 'left', padding: '11px 14px', background: 'transparent', border: 'none', borderTop: '1px solid var(--border)', color: 'var(--rosso)', fontSize: 13, cursor: 'pointer', opacity: deleting ? 0.5 : 1 }}
+                >
+                  {deleting ? 'Eliminazione…' : '🗑 Elimina giocatore'}
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Header */}
@@ -185,7 +431,7 @@ export default function GiocatoreDetailPage() {
           <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--white)' }}>
             {TABS.find(t => t.key === tab)?.label}
           </span>
-          {tab !== 'presenze' && tab !== 'pagamenti' && (
+          {tab !== 'presenze' && tab !== 'pagamenti' && tab !== 'compenso' && (
             editMode
               ? <div style={{ display: 'flex', gap: 8 }}>
                   <button className="btn btn-sm" onClick={() => { setEditMode(false); setDraft(g) }}>Annulla</button>
@@ -195,6 +441,9 @@ export default function GiocatoreDetailPage() {
           )}
           {tab === 'pagamenti' && (
             <button className="btn btn-primary btn-sm" onClick={() => setModalPag(true)}>+ Pagamento</button>
+          )}
+          {tab === 'compenso' && (
+            <button className="btn btn-primary btn-sm" onClick={apriModalPagCompenso}>+ Registra pagamento</button>
           )}
         </div>
 
@@ -410,72 +659,82 @@ export default function GiocatoreDetailPage() {
                     { label: 'Consenso dati', value: f.consenso_dati ? '✓' : '—' },
                     { label: 'Consenso immagini', value: f.consenso_immagini ? '✓' : '—' },
                   ]} />
-                  {/* Codice invito — visibile solo se l'account non è ancora collegato */}
-                  {!f.auth_user_id && (
-                    <div style={{
-                      marginTop: 14,
-                      padding: '12px 14px',
-                      background: 'rgba(200,240,0,0.04)',
-                      border: '1px solid rgba(200,240,0,0.15)',
-                      borderRadius: 8,
-                    }}>
-                      <div style={{ fontSize: 11, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--grigio-4)', marginBottom: 6 }}>
-                        Codice invito da condividere
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                        <code style={{
-                          fontFamily: 'var(--font-mono)', fontSize: 12,
-                          color: 'var(--accent)', letterSpacing: '0.04em',
-                          background: 'rgba(200,240,0,0.06)',
-                          padding: '4px 10px', borderRadius: 6,
-                          flexShrink: 0,
-                        }}>
-                          {f.id}
-                        </code>
-                        <button
-                          className="btn btn-secondary btn-sm"
-                          onClick={() => {
-                            navigator.clipboard.writeText(f.id)
-                            setToast({ msg: 'Codice copiato!', tipo: 'success' })
-                          }}
-                        >
-                          Copia
-                        </button>
-                        {f.email && (() => {
-                          const stato = invioEmail[f.id] ?? 'idle'
-                          return (
+                  {/* Link di registrazione — visibile solo se l'account non è ancora collegato */}
+                  {!f.auth_user_id && (() => {
+                    const stato = linkInvito[f.id] ?? { stato: 'idle' as const }
+                    return (
+                      <div style={{
+                        marginTop: 14,
+                        padding: '12px 14px',
+                        background: 'rgba(200,240,0,0.04)',
+                        border: '1px solid rgba(200,240,0,0.15)',
+                        borderRadius: 8,
+                      }}>
+                        <div style={{ fontSize: 11, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--grigio-4)', marginBottom: 6 }}>
+                          Link di registrazione genitore
+                        </div>
+                        <div style={{ fontSize: 12, color: 'var(--grigio-3)', marginBottom: 10, lineHeight: 1.5 }}>
+                          Genera un link personale: il genitore lo apre, crea email e password in un unico
+                          passaggio e viene collegato automaticamente a {g?.nome ?? 'questo giocatore'}.
+                          {f.email && ' Se ha un\'email registrata gliela inviamo anche automaticamente.'}
+                        </div>
+                        {stato.stato === 'ok' && stato.link ? (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                            <code style={{
+                              fontFamily: 'var(--font-mono)', fontSize: 11,
+                              color: 'var(--accent)', letterSpacing: '0.02em',
+                              background: 'rgba(200,240,0,0.06)',
+                              padding: '4px 10px', borderRadius: 6,
+                              flexShrink: 1, wordBreak: 'break-all',
+                            }}>
+                              {stato.link}
+                            </code>
                             <button
                               className="btn btn-secondary btn-sm"
-                              disabled={stato === 'sending' || stato === 'sent'}
-                              onClick={async () => {
-                                setInvioEmail(prev => ({ ...prev, [f.id]: 'sending' }))
-                                try {
-                                  const res = await fetch('/api/inviti/invia-codice-famiglia', {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({ famiglia_id: f.id }),
-                                  })
-                                  const json = await res.json()
-                                  if (!res.ok) {
-                                    setToast({ msg: json.error ?? 'Errore invio email', tipo: 'error' })
-                                    setInvioEmail(prev => ({ ...prev, [f.id]: 'error' }))
-                                  } else {
-                                    setToast({ msg: `Email inviata a ${json.email}`, tipo: 'success' })
-                                    setInvioEmail(prev => ({ ...prev, [f.id]: 'sent' }))
-                                  }
-                                } catch {
-                                  setToast({ msg: 'Errore di rete', tipo: 'error' })
-                                  setInvioEmail(prev => ({ ...prev, [f.id]: 'error' }))
-                                }
+                              onClick={() => {
+                                navigator.clipboard.writeText(stato.link!)
+                                setToast({ msg: 'Link copiato!', tipo: 'success' })
                               }}
                             >
-                              {stato === 'sending' ? 'Invio…' : stato === 'sent' ? '✓ Inviata' : 'Invia via email'}
+                              Copia link
                             </button>
-                          )
-                        })()}
+                            {stato.msg && <span style={{ fontSize: 11, color: 'var(--accent)' }}>✓ {stato.msg}</span>}
+                          </div>
+                        ) : (
+                          <button
+                            className="btn btn-secondary btn-sm"
+                            disabled={stato.stato === 'sending'}
+                            onClick={async () => {
+                              setLinkInvito(prev => ({ ...prev, [f.id]: { stato: 'sending' } }))
+                              try {
+                                const res = await fetch('/api/inviti/genera', {
+                                  method: 'POST',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ ruolo: 'famiglia', giocatoreId: g?.id, scadenzaGiorni: 30 }),
+                                })
+                                const json = await res.json()
+                                if (!res.ok) {
+                                  setToast({ msg: json.error ?? 'Errore generazione link', tipo: 'error' })
+                                  setLinkInvito(prev => ({ ...prev, [f.id]: { stato: 'error' } }))
+                                } else {
+                                  setLinkInvito(prev => ({
+                                    ...prev,
+                                    [f.id]: { stato: 'ok', link: json.link, msg: f.email ? `Email inviata a ${f.email}` : undefined },
+                                  }))
+                                  setToast({ msg: 'Link generato!', tipo: 'success' })
+                                }
+                              } catch {
+                                setToast({ msg: 'Errore di rete', tipo: 'error' })
+                                setLinkInvito(prev => ({ ...prev, [f.id]: { stato: 'error' } }))
+                              }
+                            }}
+                          >
+                            {stato.stato === 'sending' ? 'Generazione…' : 'Genera link'}
+                          </button>
+                        )}
                       </div>
-                    </div>
-                  )}
+                    )
+                  })()}
                 </div>
               ))}
             </div>
@@ -598,6 +857,37 @@ export default function GiocatoreDetailPage() {
           {/* ─── PAGAMENTI ─── */}
           {tab === 'pagamenti' && (
             <div style={{ padding: 18 }}>
+              {abbonamento && abbonamento.stato !== 'cancellato' && (
+                <div style={{
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10,
+                  padding: '12px 16px', marginBottom: 16, borderRadius: 4,
+                  background: abbonamento.stato === 'attivo' ? 'rgba(0,200,160,0.06)' : 'rgba(245,158,11,0.06)',
+                  border: `1px solid ${abbonamento.stato === 'attivo' ? 'rgba(0,200,160,0.25)' : 'rgba(245,158,11,0.3)'}`,
+                }}>
+                  <div style={{ fontSize: 13 }}>
+                    <strong>🔁 Addebito automatico (ClubIS Pay)</strong>
+                    <div style={{ fontSize: 12, color: 'var(--grigio-4)', marginTop: 3 }}>
+                      {abbonamento.stato === 'attivo' && `Attivo — €${(abbonamento.importo_centesimi / 100).toFixed(2)}/mese`}
+                      {abbonamento.stato === 'in_attesa' && 'In attesa di conferma dalla famiglia'}
+                      {abbonamento.stato === 'pausa' && (
+                        abbonamento.pausa_da === 'societa'
+                          ? 'Sospeso da voi — la famiglia non viene addebitata'
+                          : 'In pausa: la carta della famiglia è stata rifiutata'
+                      )}
+                    </div>
+                  </div>
+                  {abbonamento.stato === 'attivo' && (
+                    <button className="btn btn-secondary btn-sm" disabled={abbAzione} onClick={() => cambiaStatoAbbonamento('sospendi')}>
+                      {abbAzione ? '...' : 'Sospendi'}
+                    </button>
+                  )}
+                  {abbonamento.stato === 'pausa' && abbonamento.pausa_da === 'societa' && (
+                    <button className="btn btn-primary btn-sm" disabled={abbAzione} onClick={() => cambiaStatoAbbonamento('riattiva')}>
+                      {abbAzione ? '...' : 'Riattiva'}
+                    </button>
+                  )}
+                </div>
+              )}
               {quote.length === 0 ? (
                 <p style={{ fontSize: 13, color: 'var(--grigio-4)' }}>Nessuna quota registrata</p>
               ) : quote.map(q => {
@@ -619,21 +909,140 @@ export default function GiocatoreDetailPage() {
                     </div>
                     {qPag.length > 0 && (
                       <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-                        <thead><tr>{['Data', 'Importo', 'Metodo'].map(h => <th key={h} style={{ textAlign: 'left', padding: '6px 10px', fontSize: 11, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', color: 'var(--grigio-4)', borderBottom: '1px solid var(--border)' }}>{h}</th>)}</tr></thead>
+                        <thead><tr>{['Data', 'Importo', 'Metodo', ''].map(h => <th key={h} style={{ textAlign: 'left', padding: '6px 10px', fontSize: 11, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', color: 'var(--grigio-4)', borderBottom: '1px solid var(--border)' }}>{h}</th>)}</tr></thead>
                         <tbody>
-                          {qPag.map(p => (
-                            <tr key={p.id} style={{ borderBottom: '1px solid var(--border)' }}>
-                              <td style={{ padding: '7px 10px', fontFamily: 'var(--font-mono)', fontSize: 12 }}>{formatData(p.data_pagamento)}</td>
-                              <td style={{ padding: '7px 10px', fontFamily: 'var(--font-mono)', fontWeight: 600, color: 'var(--verde)' }}>€{Number(p.importo).toFixed(2)}</td>
-                              <td style={{ padding: '7px 10px', fontSize: 12, textTransform: 'capitalize', color: 'var(--grigio-3)' }}>{p.metodo}</td>
-                            </tr>
-                          ))}
+                          {qPag.map(p => {
+                            const importo = Number(p.importo)
+                            const giaRimborsato = qPag.some((r: any) => r.stripe_payment_id === `rimborso_${p.id}`)
+                            const puoRimborsare = p.metodo === 'stripe' && importo > 0 && !!p.stripe_payment_id && !giaRimborsato
+                            return (
+                              <tr key={p.id} style={{ borderBottom: '1px solid var(--border)' }}>
+                                <td style={{ padding: '7px 10px', fontFamily: 'var(--font-mono)', fontSize: 12 }}>{formatData(p.data_pagamento)}</td>
+                                <td style={{ padding: '7px 10px', fontFamily: 'var(--font-mono)', fontWeight: 600, color: importo < 0 ? 'var(--rosso)' : 'var(--verde)' }}>€{importo.toFixed(2)}</td>
+                                <td style={{ padding: '7px 10px', fontSize: 12, textTransform: 'capitalize', color: 'var(--grigio-3)' }}>{p.metodo}</td>
+                                <td style={{ padding: '7px 10px', textAlign: 'right' }}>
+                                  {puoRimborsare && (
+                                    <button
+                                      className="btn btn-secondary btn-sm"
+                                      disabled={rimbAzione === p.id}
+                                      onClick={() => rimborsaPagamento(p.id)}
+                                    >
+                                      {rimbAzione === p.id ? '...' : 'Rimborsa'}
+                                    </button>
+                                  )}
+                                </td>
+                              </tr>
+                            )
+                          })}
                         </tbody>
                       </table>
                     )}
                   </div>
                 )
               })}
+            </div>
+          )}
+
+          {/* ─── COMPENSO ─── */}
+          {tab === 'compenso' && (
+            <div style={{ padding: 18 }}>
+              <div className="card" style={{ padding: '16px 20px', marginBottom: 20, background: 'var(--gray-light)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--accent)' }}>
+                    Ingaggio
+                  </div>
+                  {editContratto ? (
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <button className="btn btn-sm" onClick={() => {
+                        setEditContratto(false)
+                        setContrattoDraft({
+                          importo_mensile: String(contratto?.importo_mensile ?? ''),
+                          importo_annuo: String(contratto?.importo_annuo ?? ''),
+                          data_inizio: contratto?.data_inizio ?? new Date().toISOString().split('T')[0],
+                          data_scadenza: contratto?.data_scadenza ?? '',
+                        })
+                      }}>Annulla</button>
+                      <button className="btn btn-primary btn-sm" onClick={salvaContratto} disabled={savingContratto}>{savingContratto ? '...' : 'Salva'}</button>
+                    </div>
+                  ) : (
+                    <button className="btn btn-secondary btn-sm" onClick={() => setEditContratto(true)}>Modifica</button>
+                  )}
+                </div>
+                {editContratto ? (
+                  <>
+                    <G2>
+                      <F label="Importo mensile (€)">
+                        <input
+                          className="input" type="number" min={0}
+                          value={contrattoDraft.importo_mensile}
+                          onChange={e => setContrattoDraft(p => ({ ...p, importo_mensile: e.target.value }))}
+                          placeholder="0"
+                        />
+                      </F>
+                      <F label="Importo annuo (€)" hint="Vuoto = calcolato automaticamente (mensile × 12)">
+                        <input
+                          className="input" type="number" min={0}
+                          value={contrattoDraft.importo_annuo}
+                          onChange={e => setContrattoDraft(p => ({ ...p, importo_annuo: e.target.value }))}
+                          placeholder="0"
+                        />
+                      </F>
+                    </G2>
+                    <G2>
+                      <F label="Data inizio">
+                        <input
+                          className="input" type="date"
+                          value={contrattoDraft.data_inizio}
+                          onChange={e => setContrattoDraft(p => ({ ...p, data_inizio: e.target.value }))}
+                        />
+                      </F>
+                      <F label="Data scadenza" hint="Vuoto = 1 anno dopo l'inizio">
+                        <input
+                          className="input" type="date"
+                          value={contrattoDraft.data_scadenza}
+                          onChange={e => setContrattoDraft(p => ({ ...p, data_scadenza: e.target.value }))}
+                        />
+                      </F>
+                    </G2>
+                  </>
+                ) : (
+                  <ReadGrid rows={[
+                    { label: 'Importo mensile', value: contratto?.importo_mensile ? formatEuro(Number(contratto.importo_mensile)) : '—' },
+                    { label: 'Importo annuo', value: contratto?.importo_annuo ? formatEuro(Number(contratto.importo_annuo)) : '—' },
+                    { label: 'Data inizio', value: contratto?.data_inizio ? formatData(contratto.data_inizio) : '—' },
+                    { label: 'Data scadenza', value: contratto?.data_scadenza ? formatData(contratto.data_scadenza) : '—' },
+                  ]} />
+                )}
+              </div>
+
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--accent)', marginBottom: 10 }}>
+                Pagamenti registrati ({pagamentiCompenso.length}) — totale {formatEuro(pagamentiCompenso.reduce((s, p) => s + Number(p.importo), 0))}
+              </div>
+              {pagamentiCompenso.length === 0 ? (
+                <p style={{ fontSize: 13, color: 'var(--grigio-4)' }}>Nessun pagamento registrato per questo giocatore</p>
+              ) : (
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                  <thead>
+                    <tr style={{ borderBottom: '1px solid var(--border-solid)' }}>
+                      {['Data', 'Descrizione', 'Importo'].map(h => (
+                        <th key={h} style={{ textAlign: 'left', padding: '6px 10px', fontSize: 11, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--grigio-4)' }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {pagamentiCompenso.map(p => (
+                      <tr key={p.id} style={{ borderBottom: '1px solid var(--border)' }}>
+                        <td style={{ padding: '8px 10px', fontFamily: 'var(--font-mono)', fontSize: 12 }}>{formatData(p.data)}</td>
+                        <td style={{ padding: '8px 10px' }}>{p.descrizione}</td>
+                        <td style={{ padding: '8px 10px', fontFamily: 'var(--font-mono)', fontWeight: 600, color: 'var(--rosso)' }}>{formatEuro(Number(p.importo))}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+              <div style={{ fontSize: 12, color: 'var(--grigio-4)', marginTop: 14 }}>
+                Ogni pagamento registrato qui viene salvato in Prima Nota come uscita (categoria &quot;Stipendi/ingaggi&quot;) e si somma automaticamente alle spese del budget stagionale del club.
+              </div>
             </div>
           )}
         </div>
@@ -671,6 +1080,114 @@ export default function GiocatoreDetailPage() {
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
             <button className="btn btn-sm" onClick={() => setModalPag(false)}>Annulla</button>
             <button className="btn btn-primary btn-sm" onClick={registraPagamento}>Registra</button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Modal pagamento compenso */}
+      <Modal open={modalPagCompenso} onClose={() => setModalPagCompenso(false)} title="Registra pagamento stipendio" width={420}>
+        <div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 12px', marginBottom: 14 }}>
+            <div>
+              <label className="label">Importo (€) *</label>
+              <input className="input" type="number" min={0} step="0.01" value={pagCompensoImporto} onChange={e => setPagCompensoImporto(e.target.value)} placeholder="0,00" />
+            </div>
+            <div>
+              <label className="label">Data</label>
+              <input className="input" type="date" value={pagCompensoData} onChange={e => setPagCompensoData(e.target.value)} />
+            </div>
+          </div>
+          <div style={{ marginBottom: 20 }}>
+            <label className="label">Descrizione</label>
+            <input
+              className="input"
+              value={pagCompensoDescrizione}
+              onChange={e => setPagCompensoDescrizione(e.target.value)}
+              placeholder={`Stipendio ${g?.cognome ?? ''} ${g?.nome ?? ''}`}
+            />
+          </div>
+          <div style={{ fontSize: 12, color: 'var(--grigio-4)', marginBottom: 16 }}>
+            Il pagamento viene registrato in Prima Nota come uscita (categoria &quot;Stipendi/ingaggi&quot;) e si somma automaticamente alle spese del budget stagionale.
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+            <button className="btn btn-sm" onClick={() => setModalPagCompenso(false)}>Annulla</button>
+            <button className="btn btn-primary btn-sm" onClick={registraPagamentoCompenso} disabled={savingPagCompenso}>{savingPagCompenso ? '...' : 'Registra'}</button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Modal modifica anagrafica */}
+      <Modal open={modalAnag} onClose={() => setModalAnag(false)} title="Modifica anagrafica" width={560}>
+        <div>
+          <G2>
+            <F label="Nome *"><input className="input" value={anagDraft.nome ?? ''} onChange={e => setAnagDraft((p: any) => ({ ...p, nome: e.target.value }))} /></F>
+            <F label="Cognome *"><input className="input" value={anagDraft.cognome ?? ''} onChange={e => setAnagDraft((p: any) => ({ ...p, cognome: e.target.value }))} /></F>
+          </G2>
+          <G2>
+            <F label="Data di nascita *"><input className="input" type="date" value={anagDraft.data_nascita ?? ''} onChange={e => setAnagDraft((p: any) => ({ ...p, data_nascita: e.target.value }))} /></F>
+            <F label="Luogo di nascita"><input className="input" value={anagDraft.luogo_nascita ?? ''} onChange={e => setAnagDraft((p: any) => ({ ...p, luogo_nascita: e.target.value }))} /></F>
+          </G2>
+          <G2>
+            <F label="Codice fiscale">
+              <input
+                className="input"
+                value={anagDraft.codice_fiscale ?? ''}
+                onChange={e => setAnagDraft((p: any) => ({ ...p, codice_fiscale: e.target.value.toUpperCase() }))}
+                maxLength={16}
+                style={{ fontFamily: 'var(--font-mono)', letterSpacing: '0.05em' }}
+              />
+            </F>
+            <F label="Nazionalità">
+              <Select
+                value={anagDraft.nazionalita_tipo ?? 'italiano'}
+                onChange={v => setAnagDraft((p: any) => ({ ...p, nazionalita_tipo: v }))}
+                options={[
+                  { value: 'italiano', label: 'Italiano' },
+                  { value: 'ue', label: 'Comunitario (UE)' },
+                  { value: 'extracomunitario', label: 'Extracomunitario' },
+                ]}
+              />
+            </F>
+          </G2>
+          <G2>
+            <F label="Ruolo principale">
+              <Select
+                value={anagDraft.ruolo_principale ?? ''}
+                onChange={v => setAnagDraft((p: any) => ({ ...p, ruolo_principale: v }))}
+                placeholder="—"
+                options={Object.keys(ruoloLabel).map(k => ({ value: k, label: ruoloLabel[k] }))}
+              />
+            </F>
+            <F label="Ruolo secondario">
+              <Select
+                value={anagDraft.ruolo_secondario ?? ''}
+                onChange={v => setAnagDraft((p: any) => ({ ...p, ruolo_secondario: v }))}
+                placeholder="Nessuno"
+                options={Object.keys(ruoloLabel).map(k => ({ value: k, label: ruoloLabel[k] }))}
+              />
+            </F>
+          </G2>
+          <G2>
+            <F label="Piede">
+              <Select
+                value={anagDraft.piede ?? 'destro'}
+                onChange={v => setAnagDraft((p: any) => ({ ...p, piede: v }))}
+                options={[
+                  { value: 'destro', label: 'Destro' },
+                  { value: 'sinistro', label: 'Sinistro' },
+                  { value: 'ambidestro', label: 'Ambidestro' },
+                ]}
+              />
+            </F>
+            <div />
+          </G2>
+          <G2>
+            <F label="Email"><input className="input" type="email" value={anagDraft.email_contatto ?? ''} onChange={e => setAnagDraft((p: any) => ({ ...p, email_contatto: e.target.value }))} /></F>
+            <F label="Telefono"><input className="input" type="tel" value={anagDraft.telefono_contatto ?? ''} onChange={e => setAnagDraft((p: any) => ({ ...p, telefono_contatto: e.target.value }))} /></F>
+          </G2>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 8 }}>
+            <button className="btn btn-sm" onClick={() => setModalAnag(false)}>Annulla</button>
+            <button className="btn btn-primary btn-sm" onClick={salvaAnagrafica} disabled={savingAnag}>{savingAnag ? 'Salvataggio…' : 'Salva'}</button>
           </div>
         </div>
       </Modal>

@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import { PageHeader, Toast, BackButton } from '@/components/ui'
 import { useRouter } from 'next/navigation'
 
@@ -12,6 +13,7 @@ const RUOLO_LABEL: Record<string, string> = {
 
 export default function OrganigrammaModificaPage() {
   const supabase = createClient()
+  const clubId   = useClubId()
   const router   = useRouter()
   const [utenti,  setUtenti]  = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -19,20 +21,14 @@ export default function OrganigrammaModificaPage() {
   const [toast,   setToast]   = useState<{ msg: string; tipo: 'success' | 'error' } | null>(null)
 
   useEffect(() => {
+    if (!clubId) return
     let mounted = true
 
     async function load() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-
-      const { data: utente } = await supabase
-        .from('utenti').select('club_id').eq('id', user.id).single()
-      if (!utente || !mounted) return
-
       const { data } = await supabase
         .from('utenti')
         .select('id, nome, cognome, ruolo, foto_url, titolo_organigramma, visibile_organigramma, ordine_organigramma')
-        .eq('club_id', utente.club_id)
+        .eq('club_id', clubId)
         .eq('attivo', true)
         .neq('ruolo', 'famiglia')
         .order('ordine_organigramma', { ascending: true, nullsFirst: false })
@@ -45,7 +41,7 @@ export default function OrganigrammaModificaPage() {
 
     load()
     return () => { mounted = false }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [clubId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const aggiorna = (id: string, campo: string, valore: any) => {
     setUtenti(prev => prev.map(u => u.id === id ? { ...u, [campo]: valore } : u))

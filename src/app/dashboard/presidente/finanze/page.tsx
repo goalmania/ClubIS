@@ -1,13 +1,14 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import Link from 'next/link'
 
 const fmt = (n: number) => n.toLocaleString('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 })
 
 export default function PresidenteFinanzePage() {
   const supabase = createClient()
-  const [clubId, setClubId] = useState<string | null>(null)
+  const clubId = useClubId()
   const [loading, setLoading] = useState(true)
   const [totEntrate, setTotEntrate] = useState(0)
   const [totUscite, setTotUscite] = useState(0)
@@ -15,15 +16,6 @@ export default function PresidenteFinanzePage() {
   const [quotePagate, setQuotePagate] = useState(0)
   const [catEntrate, setCatEntrate] = useState<Record<string, number>>({})
   const [catUscite, setCatUscite] = useState<Record<string, number>>({})
-
-  // Carica club_id una sola volta
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user) return
-      supabase.from('utenti').select('club_id').eq('id', user.id).single()
-        .then(({ data }) => { if (data) setClubId(data.club_id) })
-    })
-  }, [])
 
   useEffect(() => { if (clubId) load(clubId) }, [clubId])
 

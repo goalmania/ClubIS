@@ -1,6 +1,7 @@
 'use client'
 import { useState, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import { PageHeader, Toast } from '@/components/ui'
 import { useSharedData } from '@/hooks/useSharedData'
 
@@ -41,6 +42,7 @@ function RegimeBadge({ regime }: { regime: string }) {
 
 export default function RegistroIvaPage() {
   const supabase = createClient()
+  const clubId = useClubId()
   const [righe, setRighe] = useState<RegistroRow[]>([])
   const [loading, setLoading] = useState(true)
   const [sincronizzando, setSincronizzando] = useState(false)
@@ -63,10 +65,8 @@ export default function RegistroIvaPage() {
   }
 
   async function load(annoParam?: number) {
+    if (!clubId) return
     setLoading(true)
-    const { data: { user } } = await supabase.auth.getUser()
-    const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user!.id).single()
-    const clubId = utente!.club_id
 
     const targetAnno = annoParam ?? anno
     let rows = await queryAnno(clubId, targetAnno)
@@ -94,6 +94,7 @@ export default function RegistroIvaPage() {
   }
 
   async function sincronizza() {
+    if (!clubId) return
     setSincronizzando(true)
     try {
       const res = await fetch('/api/registro-iva/sincronizza', { method: 'POST' })
@@ -102,12 +103,10 @@ export default function RegistroIvaPage() {
       setToast({ msg: `${json.created} registrazioni create`, tipo: 'success' })
 
       // Trova l'anno più recente con dati e posizionati su quello
-      const { data: { user } } = await supabase.auth.getUser()
-      const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user!.id).single()
       const { data: lastRow } = await supabase
         .from('registro_iva')
         .select('data_operazione')
-        .eq('club_id', utente!.club_id)
+        .eq('club_id', clubId)
         .order('data_operazione', { ascending: false })
         .limit(1)
         .maybeSingle()

@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import Link from 'next/link'
 import { Toast } from '@/components/ui'
 
@@ -17,7 +18,7 @@ type Messaggio = {
 
 export default function TMComunicazioniPage() {
   const supabase = useMemo(() => createClient(), [])
-  const [clubId, setClubId] = useState('')
+  const clubId = useClubId()
   const [userId, setUserId] = useState('')
   const [messaggi, setMessaggi] = useState<Messaggio[]>([])
   const [utenti, setUtenti] = useState<any[]>([])
@@ -45,28 +46,23 @@ export default function TMComunicazioniPage() {
       }
       setUserId(user.id)
 
-      const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-      if (!utente) {
-        window.location.href = '/auth/errore'
-        return
-      }
+      if (!clubId) return
 
-      setClubId(utente.club_id)
       const [{ data: mm }, { data: uu }] = await Promise.all([
         supabase
           .from('messaggi')
           .select('id, titolo, corpo, tipo, destinatari_ruolo, inviato_at, thread_id')
-          .eq('club_id', utente.club_id)
+          .eq('club_id', clubId)
           .order('inviato_at', { ascending: false })
           .limit(60),
-        supabase.from('utenti').select('id, nome, cognome, ruolo').eq('club_id', utente.club_id).eq('attivo', true),
+        supabase.from('utenti').select('id, nome, cognome, ruolo').eq('club_id', clubId).eq('attivo', true),
       ])
       setMessaggi((mm ?? []) as Messaggio[])
       setUtenti(uu ?? [])
       setLoading(false)
     }
     load()
-  }, [supabase])
+  }, [supabase, clubId])
 
   const tipoBadge: Record<string, string> = {
     comunicazione: 'badge-blu',

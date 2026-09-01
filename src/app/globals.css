@@ -567,6 +567,101 @@ tbody tr:last-child td { border-bottom: none; }
   animation: onboarding-tooltip-glow 2.5s ease-in-out infinite;
 }
 
+/* ── RESPONSIVE / MOBILE ── */
+
+/* Sidebar: sticky column on desktop, off-canvas drawer below 860px */
+.sidebar-shell {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.sidebar-mobile-toggle {
+  display: none;
+}
+
+.dashboard-main {
+  padding: 28px 32px;
+}
+
+.dashboard-topbar {
+  flex-wrap: nowrap;
+}
+
+.dashboard-trial-banner {
+  flex-wrap: nowrap;
+}
+
+@media (max-width: 860px) {
+  .sidebar-shell {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100dvh;
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform 0.22s ease;
+    box-shadow: 0 0 48px rgba(0,0,0,0.6);
+  }
+  .sidebar-shell.sidebar-open {
+    transform: translateX(0);
+  }
+  .sidebar-mobile-toggle {
+    display: flex;
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 1001;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: #0d0d0d;
+    border: 1px solid var(--border-solid);
+    color: var(--white);
+    cursor: pointer;
+  }
+  .sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 999;
+  }
+  .dashboard-main {
+    padding: 68px 14px 24px;
+  }
+  .dashboard-topbar {
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+  .dashboard-topbar > *:first-child {
+    /* la ricerca globale prende tutta la riga per non schiacciare le notifiche */
+    flex: 1 1 100%;
+  }
+  .dashboard-trial-banner {
+    flex-wrap: wrap;
+    row-gap: 4px;
+  }
+  .table-wrap {
+    -webkit-overflow-scrolling: touch;
+  }
+  /* Utility: forza una colonna sola sotto gli 860px per i grid a 2 colonne
+     con una colonna fissa in px (es. "1fr 300px") che altrimenti non
+     ci starebbero mai su schermo — serve !important perché sovrascrive
+     un gridTemplateColumns impostato inline nel componente. */
+  .stack-mobile {
+    grid-template-columns: 1fr !important;
+  }
+  /* Utility: contenitore con scroll orizzontale per griglie a N colonne
+     fisse che devono restare affiancate anche su mobile (es. planner
+     settimanale) invece di essere schiacciate o impilate. */
+  .scroll-x-mobile {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
 /* ── PRINT ── */
 @media print {
   body { background: white; color: black; }

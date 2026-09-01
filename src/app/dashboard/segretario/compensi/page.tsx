@@ -1,7 +1,9 @@
 'use client'
 import FeatureGate from '@/components/FeatureGate'
 import { useState, useEffect, useCallback } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import { PageHeader, TabBar, Toast, Drawer, StatCard } from '@/components/ui'
 import { calcolaCompenso, type CalcoloCompenso } from '@/lib/compensi'
 
@@ -11,7 +13,8 @@ type ViewTab = 'lista' | 'report'
 
 export default function CompensiPage() {
   const supabase = createClient()
-  const [clubId, setClubId] = useState<string | null>(null)
+  const clubId = useClubId()
+  const searchParams = useSearchParams()
   const [compensi, setCompensi] = useState<Compenso[]>([])
   const [utenti, setUtenti] = useState<Utente[]>([])
   const [loading, setLoading] = useState(true)
@@ -39,14 +42,9 @@ export default function CompensiPage() {
   // Calcolo live
   const [calcolo, setCalcolo] = useState<CalcoloCompenso | null>(null)
 
-  const init = useCallback(async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    const { data: u } = await supabase.from('utenti').select('club_id').eq('id', user!.id).single()
-    const cid = u!.club_id as string
-    setClubId(cid)
+  const init = useCallback(async (cid: string) => {
     const { data: uts } = await supabase.from('utenti').select('id, nome, cognome').eq('club_id', cid).eq('attivo', true)
     setUtenti(uts ?? [])
-    return cid
   }, [supabase])
 
   const load = useCallback(async (cid: string) => {
@@ -59,7 +57,22 @@ export default function CompensiPage() {
     setLoading(false)
   }, [supabase])
 
-  useEffect(() => { init().then(cid => load(cid)) }, [init, load])
+  useEffect(() => {
+    if (!clubId) return
+    init(clubId)
+    load(clubId)
+  }, [clubId, init, load])
+
+  // Arrivo dalla scheda Staff con un collaboratore preselezionato
+  // (interno tramite id utente, oppure esterno tramite nome/codice fiscale)
+  useEffect(() => {
+    const collaboratore = searchParams.get('collaboratore')
+    const nomeEst = searchParams.get('nome_esterno')
+    const cfEst = searchParams.get('cf_esterno')
+    if (collaboratore) setCollabId(collaboratore)
+    else if (nomeEst) { setNomeEsterno(nomeEst); setCfEsterno(cfEst ?? '') }
+    if (searchParams.get('apri') === '1') setDrawerOpen(true)
+  }, [searchParams])
 
   // Calcola precedenti + live quando cambiano importo/collab/anno
   useEffect(() => {

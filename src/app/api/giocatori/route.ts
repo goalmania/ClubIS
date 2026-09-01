@@ -2,6 +2,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { getUserContext } from '@/lib/impersonation'
 import { NextRequest } from 'next/server'
 import { stagioneCorrente } from '@/lib/helpers'
+import { categoriaFederaleDaEta, categoriaFederaleDaEtaAnagrafica, collegaGiocatoreGruppoCategoria } from '@/lib/settore-giovanile'
 
 export const dynamic = 'force-dynamic'
 
@@ -85,56 +86,136 @@ export async function POST(req: NextRequest) {
     })
   }
 
+  // 4 — Scuola calcio: aggiungi automaticamente al gruppo della categoria
+  // (per età se non è stata assegnata una squadra) così il giocatore compare
+  // subito in "Gruppi & Categorie" senza dover premere "Crea gruppi default"
+  try {
+    const { data: clubData } = await admin.from('clubs').select('tipo_prodotto').eq('id', clubId).maybeSingle()
+    if (clubData?.tipo_prodotto === 'scuola_calcio_standalone') {
+      let categoria = null as ReturnType<typeof categoriaFederaleDaEta> | null
+      if (body.squadra_id) {
+        const { data: sq } = await admin.from('squadre').select('categoria_eta').eq('id', body.squadra_id).maybeSingle()
+        if (sq?.categoria_eta) categoria = categoriaFederaleDaEta(sq.categoria_eta)
+      }
+      if (!categoria) categoria = categoriaFederaleDaEtaAnagrafica(body.data_nascita)
+      if (categoria) {
+        await collegaGiocatoreGruppoCategoria(admin, { clubId, giocatoreId: giocatore.id, categoriaFederale: categoria })
+      }
+
+      // 5 — Genera in automatico le quote mensili per il nuovo tesserato, per
+      // tutti i mesi già "aperti" per gli altri tesserati (stessa stagione),
+      // ma solo dal suo mese di iscrizione in poi — mai per mesi precedenti.
+      // Copia importo e scadenza già usati per quel mese, così non serve
+      // ripassare a generarle a mano dal segretario.
+      const stagione = stagioneCorrente()
+      const dataIscrizione = body.data_inizio || new Date().toISOString().split('T')[0]
+      const meseIscrizione = new Date(dataIscrizione).getMonth() + 1 // 1-12
+
+      const { data: quoteEsistenti } = await admin
+        .from('quote_iscrizione')
+        .select('mese, importo_totale, scadenza')
+        .eq('club_id', clubId)
+        .eq('stagione', stagione)
+        .gt('mese', 0)
+
+      if (quoteEsistenti && quoteEsistenti.length > 0) {
+        const perMese = new Map<number, { importo_totale: number; scadenza: string | null }>()
+        for (const q of quoteEsistenti) {
+          if (!perMese.has(q.mese)) perMese.set(q.mese, { importo_totale: q.importo_totale, scadenza: q.scadenza })
+        }
+
+        // La stagione scuola calcio va da settembre(9) a giugno(6): normalizza
+        // l'ordine cronologico reale per poter confrontare "mese >= iscrizione".
+        const ordineStagione = (m: number) => (m >= 7 ? m : m + 12)
+        const sogliaIscrizione = ordineStagione(meseIscrizione)
+
+        const daCreare = Array.from(perMese.entries())
+          .filter(([mese]) => ordineStagione(mese) >= sogliaIscrizione)
+          .map(([mese, dati]) => ({
+            giocatore_id:   giocatore.id,
+            club_id:        clubId,
+            stagione,
+            mese,
+            importo_totale: dati.importo_totale,
+            importo_pagato: 0,
+            stato:          'non_pagato',
+            scadenza:       dati.scadenza,
+          }))
+
+        if (daCreare.length > 0) {
+          await admin.from('quote_iscrizione')
+            .upsert(daCreare, { onConflict: 'giocatore_id,club_id,stagione,mese', ignoreDuplicates: true })
+        }
+      }
+    }
+  } catch {}
+
   return Response.json({ id: giocatore.id })
 }
 
 /**
  * GET /api/giocatori
- * Restituisce i giocatori della prima squadra del club.
- * Fallback: se nessun giocatore nella prima squadra, restituisce tutti i tesserati attivi del club.
+ * ?tutti=1  → tutti i tesserati attivi del club (usato da Rosa FIGC)
+ * default   → prima squadra; fallback a tutti se prima_squadra vuota
  */
-export async function GET() {
+export async function GET(req: NextRequest) {
   const ctx = await getUserContext()
   if (!ctx) return Response.json({ error: 'Non autorizzato' }, { status: 401 })
 
   const { clubId } = ctx
+  console.log('ROSA FIGC club_id usato:', clubId)
   if (!clubId) return Response.json([], { status: 200 })
 
   const admin = createAdminClient()
-
-  // Prima squadra del club
-  const { data: sqPS } = await admin
-    .from('squadre')
-    .select('id')
-    .eq('club_id', clubId)
-    .eq('categoria_eta', 'prima_squadra')
-    .eq('attiva', true)
-  const sqIds = (sqPS ?? []).map(s => s.id)
-
-  let rows: any[] | null = null
+  const tutti = new URL(req.url).searchParams.get('tutti') === '1'
 
   const FIELDS = 'numero_maglia, squadra_id, squadre(categoria_eta), giocatori(id, nome, cognome, ruolo_principale, data_nascita, nazionalita_paese, codice_tessera_figc)'
 
-  if (sqIds.length > 0) {
-    const { data } = await admin
-      .from('tesseramenti')
-      .select(FIELDS)
-      .in('squadra_id', sqIds)
-      .eq('stato', 'attivo')
-    rows = data
-  }
+  let rows: any[] | null = null
 
-  // Fallback: tutti i tesserati attivi del club
-  if (!rows || rows.length === 0) {
-    const { data } = await admin
+  if (tutti) {
+    // Rosa FIGC: tutti i tesserati attivi del club, tutte le squadre
+    const { data, error } = await admin
       .from('tesseramenti')
       .select(FIELDS)
       .eq('club_id', clubId)
       .eq('stato', 'attivo')
+    console.log('ROSA FIGC risultato query:', data?.length ?? 0, error)
     rows = data
+  } else {
+    // Prima squadra del club
+    const { data: sqPS } = await admin
+      .from('squadre')
+      .select('id')
+      .eq('club_id', clubId)
+      .eq('categoria_eta', 'prima_squadra')
+      .eq('attiva', true)
+    const sqIds = (sqPS ?? []).map(s => s.id)
+
+    if (sqIds.length > 0) {
+      const { data, error } = await admin
+        .from('tesseramenti')
+        .select(FIELDS)
+        .in('squadra_id', sqIds)
+        .eq('club_id', clubId)
+        .eq('stato', 'attivo')
+      console.log('ROSA FIGC risultato query:', data?.length ?? 0, error)
+      rows = data
+    }
+
+    // Fallback: tutti i tesserati attivi del club
+    if (!rows || rows.length === 0) {
+      const { data, error } = await admin
+        .from('tesseramenti')
+        .select(FIELDS)
+        .eq('club_id', clubId)
+        .eq('stato', 'attivo')
+      console.log('ROSA FIGC risultato query (fallback):', data?.length ?? 0, error)
+      rows = data
+    }
   }
 
-  // Deduplica per giocatore_id (tieni prima_squadra se duplicato)
+  // Deduplica per giocatore_id (tieni prima occorrenza — prima_squadra ha priorità se ordinata prima)
   const seen = new Map<string, any>()
   for (const t of rows ?? []) {
     const g = (t as any).giocatori

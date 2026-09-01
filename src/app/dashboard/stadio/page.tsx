@@ -25,6 +25,7 @@ type Partita = {
   id: string
   avversario: string
   data_ora: string
+  casa_trasferta: string
 }
 
 type BiglietteriaRow = {
@@ -83,7 +84,6 @@ export default function StadioPage() {
       }
 
       setClubId(utente.club_id)
-      const oggi = new Date().toISOString()
 
       const { data: sqData } = await supabase.from('squadre').select('id').eq('club_id', utente.club_id)
       const sqIds = sqData?.map(s => s.id) ?? []
@@ -91,7 +91,7 @@ export default function StadioPage() {
 
       const [{ data: cfg }, { data: pp }, { data: bb }] = await Promise.all([
         supabase.from('stadio_configurazioni').select('id, nome, indirizzo, capienza_totale, stadio_settori(id, nome, capienza, colore, ordine)').eq('club_id', utente.club_id).maybeSingle(),
-        supabase.from('partite').select('id, avversario, data_ora').in('squadra_id', sqFilter).gte('data_ora', oggi).order('data_ora').limit(30),
+        supabase.from('partite').select('id, avversario, data_ora, casa_trasferta').in('squadra_id', sqFilter).order('data_ora'),
         supabase.from('stadio_biglietteria_partita').select('id, partita_id, settore_id, prezzo, venduti').eq('club_id', utente.club_id),
       ])
 
@@ -110,7 +110,11 @@ export default function StadioPage() {
         ])
       }
 
-      setPartite((pp ?? []) as Partita[])
+      const now = new Date().toISOString()
+      const allPartite = (pp ?? []) as Partita[]
+      const future = allPartite.filter(p => p.data_ora >= now).sort((a, b) => a.data_ora.localeCompare(b.data_ora))
+      const past = allPartite.filter(p => p.data_ora < now).sort((a, b) => b.data_ora.localeCompare(a.data_ora))
+      setPartite([...future, ...past])
       setStorico((bb ?? []) as BiglietteriaRow[])
       setLoading(false)
     }
@@ -384,7 +388,7 @@ export default function StadioPage() {
             <option value="">Seleziona partita...</option>
             {partite.map(p => (
               <option key={p.id} value={p.id}>
-                {new Date(p.data_ora).toLocaleDateString('it-IT')} — {p.avversario}
+                {new Date(p.data_ora).toLocaleDateString('it-IT')} {new Date(p.data_ora).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })} — {p.avversario} ({p.casa_trasferta === 'casa' ? 'Casa' : 'Trasferta'})
               </option>
             ))}
           </select>

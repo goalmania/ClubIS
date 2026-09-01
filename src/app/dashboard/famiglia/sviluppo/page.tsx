@@ -139,6 +139,19 @@ type Area = typeof AREE[number]
 const AREA_LABEL: Record<Area, string> = { tecnica: 'Tecnica', tattica: 'Tattica', fisico: 'Fisico', mentale: 'Mentale' }
 const AREA_ICON:  Record<Area, string> = { tecnica: '⚽', tattica: '🧠', fisico: '💪', mentale: '🎯' }
 
+// Per i più piccoli (Piccoli Amici, Pulcini) evitiamo un linguaggio da atleta
+// professionista: "tattica" e "fisico" suonano fuori luogo per un bambino di
+// 6-9 anni. I dati restano gli stessi 4 assi (tecnica/tattica/fisico/mentale,
+// così l'allenatore continua a valutare allo stesso modo), cambia solo
+// l'etichetta mostrata alla famiglia.
+const AREA_LABEL_PICCOLI: Record<Area, string> = {
+  tecnica: 'Tecnica', tattica: 'Gioco di squadra', fisico: 'Coordinazione', mentale: 'Divertimento',
+}
+
+function labelArea(area: Area, categoria: CategoriaEta): string {
+  return categoria.etaMax <= 9 ? AREA_LABEL_PICCOLI[area] : AREA_LABEL[area]
+}
+
 function coloreVoto(v: number | null, target: number) {
   if (!v) return 'var(--gray)'
   const r = v / target
@@ -216,7 +229,7 @@ function SviluppoContent({ g, valutazioni }: { g: any; valutazioni: any[] }) {
       </div>
 
       {/* Aree di sviluppo */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12, marginBottom: 24 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12, marginBottom: 24 }}>
         {stats.map(({ area, media, trend, target, perc }) => {
           const colore = coloreVoto(media, target)
           return (
@@ -225,7 +238,7 @@ function SviluppoContent({ g, valutazioni }: { g: any; valutazioni: any[] }) {
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <span style={{ fontSize: 16 }}>{AREA_ICON[area]}</span>
                   <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, textTransform: 'uppercase', color: 'var(--white)' }}>
-                    {AREA_LABEL[area]}
+                    {labelArea(area, categoria)}
                   </span>
                   <span style={{ fontSize: 10, fontFamily: 'var(--font-mono)', color: 'var(--gray)', padding: '1px 5px', border: '1px solid var(--border-solid)', borderRadius: 2 }}>
                     {categoria.priorita[area]}%
@@ -315,10 +328,10 @@ function SviluppoContent({ g, valutazioni }: { g: any; valutazioni: any[] }) {
                     </span>
                   )}
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginBottom: v.note ? 10 : 0 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(70px, 1fr))', gap: 8, marginBottom: v.note ? 10 : 0 }}>
                   {AREE.map(area => (
                     <div key={area} style={{ textAlign: 'center', padding: '8px 4px', background: 'var(--border-solid)', borderRadius: 2 }}>
-                      <div style={{ fontSize: 10, color: 'var(--gray)', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', marginBottom: 2 }}>{AREA_LABEL[area]}</div>
+                      <div style={{ fontSize: 10, color: 'var(--gray)', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', marginBottom: 2 }}>{labelArea(area, categoria)}</div>
                       <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 20, color: v[area] != null ? coloreVoto(v[area], categoria.target[area]) : 'var(--gray)' }}>
                         {v[area] ?? '—'}
                       </div>

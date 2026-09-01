@@ -168,7 +168,7 @@ export default function RosaFIGCPage() {
     setLoading(true)
     const [ctxData, giocatoriData] = await Promise.all([
       fetch('/api/user-context').then(r => r.ok ? r.json() : null).catch(() => null),
-      fetch('/api/giocatori').then(r => r.json()).catch(() => []),
+      fetch('/api/giocatori?tutti=1').then(r => r.json()).catch(() => []),
     ])
 
     if (!ctxData?.clubId) { setLoading(false); return }

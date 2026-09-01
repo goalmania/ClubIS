@@ -35,14 +35,17 @@ export async function POST(request: NextRequest) {
   const { data: { user } } = await sessionClient.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
 
-  // Verifica che sia super admin
+  // Verifica che sia super admin oppure un account demo (vendite)
   const { data: utente } = await supabase
     .from('utenti')
-    .select('is_super_admin')
+    .select('is_super_admin, is_demo_account')
     .eq('id', user.id)
     .single()
 
-  if (!utente?.is_super_admin) {
+  const isSuperAdmin = !!utente?.is_super_admin
+  const isDemoAccount = !!utente?.is_demo_account
+
+  if (!isSuperAdmin && !isDemoAccount) {
     return NextResponse.json({ error: 'Permessi insufficienti' }, { status: 403 })
   }
 
@@ -50,6 +53,22 @@ export async function POST(request: NextRequest) {
   const clubId = body.clubId ?? currentImpersonation?.clubId
   if (!clubId) {
     return NextResponse.json({ error: 'clubId richiesto' }, { status: 400 })
+  }
+
+  // Gli account demo (non super_admin) possono "Visualizza come" solo sui
+  // club a cui sono già iscritti — mai su club reali di altri clienti.
+  if (!isSuperAdmin) {
+    const { data: membership } = await supabase
+      .from('user_clubs')
+      .select('club_id')
+      .eq('user_id', user.id)
+      .eq('club_id', clubId)
+      .eq('status', 'accepted')
+      .maybeSingle()
+
+    if (!membership) {
+      return NextResponse.json({ error: 'Club non autorizzato per questo account' }, { status: 403 })
+    }
   }
 
   // Recupera nome club per banner

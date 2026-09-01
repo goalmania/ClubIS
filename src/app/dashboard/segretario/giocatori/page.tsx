@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react'
 import { GiocatoreConTesseramento } from '@/types/database'
 import Link from 'next/link'
 import { matchSearch } from '@/lib/search'
+import { useTipoProdotto } from '@/lib/club-context'
+import { CATEGORIE_FEDERALI_OPTIONS, categoriaFederaleDaEta } from '@/lib/settore-giovanile'
 
 type Squadra = { id: string; nome: string; categoria_eta: string }
 
@@ -20,16 +22,23 @@ const PRIMA_SQUADRA  = ['prima_squadra', 'femminile']
 const SETTORE_GIOV   = ['u14','u15','u16','u17','u19','juniores','primavera']
 const SCUOLA_CALCIO  = ['u6','u8','u10','u12']
 
-type CategoriaTab = 'tutti' | 'prima_squadra' | 'giovanili' | 'scuola_calcio'
+type CategoriaTab = string
 
-const TABS: { key: CategoriaTab; label: string }[] = [
+const TABS_AGONISTICO: { key: CategoriaTab; label: string }[] = [
   { key: 'tutti',         label: 'Tutti' },
   { key: 'prima_squadra', label: 'Prima Squadra' },
   { key: 'giovanili',     label: 'Settore Giovanile' },
   { key: 'scuola_calcio', label: 'Scuola Calcio' },
 ]
 
-function getCategoria(categoriaEta: string | null | undefined, dataNascita?: string | null): CategoriaTab {
+// Scuola calcio: divisione per categoria federale (Piccoli Amici, Primi
+// Calci, Pulcini, ecc.) invece dei generici raggruppamenti agonistici.
+const TABS_SCUOLA_CALCIO: { key: CategoriaTab; label: string }[] = [
+  { key: 'tutti', label: 'Tutti' },
+  ...CATEGORIE_FEDERALI_OPTIONS.map(c => ({ key: c.value as string, label: c.label })),
+]
+
+function getCategoriaAgonistico(categoriaEta: string | null | undefined, dataNascita?: string | null): CategoriaTab {
   if (categoriaEta) {
     if (PRIMA_SQUADRA.includes(categoriaEta)) return 'prima_squadra'
     if (SETTORE_GIOV.includes(categoriaEta)) return 'giovanili'
@@ -48,7 +57,33 @@ function getCategoria(categoriaEta: string | null | undefined, dataNascita?: str
   return 'prima_squadra'
 }
 
+function getCategoriaFederale(categoriaEta: string | null | undefined, dataNascita?: string | null): CategoriaTab {
+  if (categoriaEta) {
+    const cat = categoriaFederaleDaEta(categoriaEta)
+    if (cat) return cat
+  }
+  // Nessuna squadra assegnata → categorizza per età (fasce indicative)
+  if (dataNascita) {
+    const oggi = new Date()
+    const d = new Date(dataNascita)
+    let eta = oggi.getFullYear() - d.getFullYear()
+    if (oggi.getMonth() < d.getMonth() || (oggi.getMonth() === d.getMonth() && oggi.getDate() < d.getDate())) eta--
+    if (eta <= 6) return 'piccoli_amici'
+    if (eta <= 8) return 'primi_calci'
+    if (eta <= 10) return 'pulcini'
+    if (eta <= 12) return 'esordienti'
+    if (eta <= 14) return 'giovanissimi'
+    if (eta <= 16) return 'allievi'
+    return 'juniores'
+  }
+  return 'tutti'
+}
+
 export default function GiocatoriPage() {
+  const isScuolaCalcio = useTipoProdotto() === 'scuola_calcio_standalone'
+  const TABS = isScuolaCalcio ? TABS_SCUOLA_CALCIO : TABS_AGONISTICO
+  const getCategoria = isScuolaCalcio ? getCategoriaFederale : getCategoriaAgonistico
+
   const [giocatori, setGiocatori] = useState<any[]>([])
   const [squadre, setSquadre] = useState<Squadra[]>([])
   const [filtro, setFiltro] = useState('')
@@ -80,6 +115,21 @@ export default function GiocatoriPage() {
     // Ricarica lista aggiornata
     const res = await fetch('/api/giocatori/lista')
     if (res.ok) setGiocatori(await res.json() ?? [])
+    setSpostando(null)
+  }
+
+  async function eliminaGiocatore(giocatoreId: string, nomeCompleto: string) {
+    if (!confirm(`Eliminare ${nomeCompleto} dalla rosa? Lo storico (certificati, pagamenti, tesseramenti) resta conservato e consultabile dalla sua scheda, ma il giocatore sparirà da tutte le liste attive.`)) return
+    setSpostando(giocatoreId)
+    const res = await fetch(`/api/giocatori/${giocatoreId}`, { method: 'DELETE' })
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}))
+      alert(data.error ?? 'Errore durante l\'eliminazione')
+      setSpostando(null)
+      return
+    }
+    const listaRes = await fetch('/api/giocatori/lista')
+    if (listaRes.ok) setGiocatori(await listaRes.json() ?? [])
     setSpostando(null)
   }
 
@@ -310,13 +360,23 @@ export default function GiocatoriPage() {
                         <span className="badge badge-grigio" style={{ fontSize: 11 }}>{t.tipo}</span>
                       </td>
                       <td>
-                        <Link
-                          href={`/dashboard/segretario/giocatori/${g.id}`}
-                          className="btn btn-ghost btn-sm"
-                          style={{ fontSize: 12 }}
-                        >
-                          Apri →
-                        </Link>
+                        <div style={{ display: 'flex', gap: 6 }}>
+                          <Link
+                            href={`/dashboard/segretario/giocatori/${g.id}`}
+                            className="btn btn-ghost btn-sm"
+                            style={{ fontSize: 12 }}
+                          >
+                            Apri →
+                          </Link>
+                          <button
+                            className="btn btn-ghost btn-sm"
+                            style={{ fontSize: 12, color: 'var(--rosso)' }}
+                            disabled={spostando === g.id}
+                            onClick={() => eliminaGiocatore(g.id, `${g.cognome} ${g.nome}`)}
+                          >
+                            Elimina
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   )

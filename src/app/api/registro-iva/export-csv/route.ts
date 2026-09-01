@@ -1,6 +1,6 @@
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { NextRequest, NextResponse } from 'next/server'
+import { getClubFromSession } from '@/lib/server-helpers'
 
 const REGIME_LABEL: Record<string, string> = {
   esente_art10: 'Esente art. 10 DPR 633/72',
@@ -16,15 +16,10 @@ function csvEscape(val: string | number | null | undefined): string {
 }
 
 export async function GET(req: NextRequest) {
-  const sessionClient = createClient()
+  const session = await getClubFromSession()
+  if (!session) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
 
   const supabase = createAdminClient()
-  const { data: { user } } = await sessionClient.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
-
-  const { data: utente } = await supabase
-    .from('utenti').select('club_id').eq('id', user.id).single()
-  if (!utente?.club_id) return NextResponse.json({ error: 'Club non trovato' }, { status: 403 })
 
   const sp = req.nextUrl.searchParams
   const anno = sp.get('anno') ?? new Date().getFullYear().toString()
@@ -34,7 +29,7 @@ export async function GET(req: NextRequest) {
   let query = supabase
     .from('registro_iva')
     .select('numero_progressivo, data_operazione, tipo, natura, controparte, imponibile, iva, totale, regime, note')
-    .eq('club_id', utente.club_id)
+    .eq('club_id', session.clubId)
     .gte('data_operazione', `${anno}-01-01`)
     .lte('data_operazione', `${anno}-12-31`)
     .order('numero_progressivo')

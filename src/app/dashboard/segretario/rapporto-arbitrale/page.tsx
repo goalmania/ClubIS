@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import { Modal, Toast } from '@/components/ui'
 
 /* ─── Tipi ───────────────────────────────────────────────────────── */
@@ -68,8 +69,8 @@ const emptyForm = () => ({
 
 export default function RapportoArbitralePage() {
   const supabase = createClient()
+  const clubId = useClubId()
 
-  const [clubId, setClubId]         = useState<string | null>(null)
   const [rapporti, setRapporti]     = useState<RapportoArbitrale[]>([])
   const [partite, setPartite]       = useState<Partita[]>([])
   const [loading, setLoading]       = useState(true)
@@ -84,23 +85,13 @@ export default function RapportoArbitralePage() {
   /* ── Caricamento ─────────────────────────────────────────────── */
 
   const load = useCallback(async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
-
-    const { data: utente } = await supabase
-      .from('utenti')
-      .select('club_id')
-      .eq('id', user.id)
-      .single()
-    if (!utente) return
-
-    setClubId(utente.club_id)
+    if (!clubId) return
 
     const [{ data: rapp }, { data: pt }] = await Promise.all([
       supabase
         .from('rapporti_arbitrali')
         .select('*')
-        .eq('club_id', utente.club_id)
+        .eq('club_id', clubId)
         .order('created_at', { ascending: false }),
       supabase
         .from('partite')
@@ -112,7 +103,7 @@ export default function RapportoArbitralePage() {
     setRapporti((rapp ?? []) as RapportoArbitrale[])
     setPartite((pt ?? []) as Partita[])
     setLoading(false)
-  }, [])
+  }, [clubId, supabase])
 
   useEffect(() => { load() }, [load])
 

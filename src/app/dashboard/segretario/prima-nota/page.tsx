@@ -2,28 +2,62 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import { PageHeader, Toast, Modal } from '@/components/ui'
 
 const categorie = ['quote_iscrizione','sponsorizzazioni','proventi_gare','stipendi','compensi_staff','trasferte','materiale_sportivo','affitto_strutture','utenze','federazione','altro']
 
+/** YYYY-MM-DD nel fuso locale (evita lo shift UTC+2 di toISOString) */
+function localToday(): string {
+  const d = new Date()
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
+/** YYYY-MM nel fuso locale */
+function localMonth(): string {
+  return localToday().slice(0, 7)
+}
+
+/** Ultimo giorno reale del mese (es. "2026-02-28") */
+function ultimoGiornoMese(mese: string): string {
+  const [y, m] = mese.split('-').map(Number)
+  const lastDay = new Date(y, m, 0).getDate()
+  return `${mese}-${String(lastDay).padStart(2, '0')}`
+}
+
+/** Data di default per il form: oggi se oggi è nel mese visualizzato, altrimenti 1° del mese */
+function defaultDataPerMese(mese: string): string {
+  const today = localToday()
+  return today.startsWith(mese) ? today : `${mese}-01`
+}
+
+/** Mostra YYYY-MM-DD come DD/MM/YYYY senza parsing UTC */
+function fmtDataTabella(isoDate: string): string {
+  const [y, m, d] = isoDate.split('T')[0].split('-')
+  return `${d}/${m}/${y}`
+}
+
 export default function PrimaNotaPage() {
   const supabase = createClient()
+  const clubId = useClubId()
   const searchParams = useSearchParams()
+
+  // Niente lettura di localStorage qui: differirebbe tra render server e
+  // client al primo hydrate, causando un mismatch React. Il mese salvato
+  // viene ripristinato via useEffect subito dopo il mount (vedi sotto).
+  const meseDefault = searchParams.get('mese') ?? localMonth()
+
   const [movimenti, setMovimenti] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [toast, setToast] = useState<{ msg: string; tipo: 'success' | 'error' } | null>(null)
-  const [showForm, setShowForm] = useState(false)
+  const [showForm, setShowForm] = useState(searchParams.get('form') === '1')
 
-  const oggi = new Date()
-  const meseDefault = searchParams.get('mese')
-    ?? (typeof window !== 'undefined' ? localStorage.getItem('prima_nota_mese') : null)
-    ?? oggi.toISOString().slice(0, 7)
   const [mese, setMese] = useState(meseDefault)
-  const [tipo, setTipo] = useState('entrata')
-  const [categoria, setCategoria] = useState('altro')
+  const [tipo, setTipo] = useState(searchParams.get('tipo') ?? 'entrata')
+  const [categoria, setCategoria] = useState(searchParams.get('categoria') ?? 'altro')
   const [importo, setImporto] = useState('')
   const [descrizione, setDescrizione] = useState('')
-  const [data, setData] = useState(oggi.toISOString().split('T')[0])
+  const [data, setData] = useState(() => defaultDataPerMese(meseDefault))
   const [saving, setSaving] = useState(false)
 
   // Storno
@@ -31,30 +65,35 @@ export default function PrimaNotaPage() {
   const [stornoTipo, setStornoTipo] = useState<'totale' | 'parziale'>('totale')
   const [stornoImporto, setStornoImporto] = useState('')
   const [stornoMotivo, setStornoMotivo] = useState('')
-  const [stornoData, setStornoData] = useState(oggi.toISOString().split('T')[0])
+  const [stornoData, setStornoData] = useState(localToday)
   const [stornoSaving, setStornoSaving] = useState(false)
 
+  // Ripristina il mese salvato (dopo l'hydration, solo lato client) se non c'è ?mese= in URL
+  useEffect(() => {
+    if (searchParams.get('mese')) return
+    const saved = localStorage.getItem('prima_nota_mese')
+    if (saved && saved !== mese) setMese(saved)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Quando cambia il mese: aggiorna localStorage, ricarica, e sincronizza il campo data
   useEffect(() => {
     if (typeof window !== 'undefined') localStorage.setItem('prima_nota_mese', mese)
+    setData(defaultDataPerMese(mese))
     load()
-  }, [mese])
-
-  async function getClubId() {
-    const { data: { user } } = await supabase.auth.getUser()
-    const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user!.id).single()
-    return utente!.club_id as string
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mese, clubId])
 
   async function load() {
+    if (!clubId) return
     setLoading(true)
-    const clubId = await getClubId()
-    const { data } = await supabase.from('prima_nota')
+    const { data: rows } = await supabase.from('prima_nota')
       .select('*')
       .eq('club_id', clubId)
       .gte('data', `${mese}-01`)
-      .lte('data', `${mese}-31`)
+      .lte('data', ultimoGiornoMese(mese))
       .order('data', { ascending: false })
-    setMovimenti(data ?? [])
+    setMovimenti(rows ?? [])
     setLoading(false)
   }
 
@@ -67,16 +106,23 @@ export default function PrimaNotaPage() {
   const salva = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!importo || !descrizione.trim()) { setToast({ msg: 'Importo e descrizione obbligatori', tipo: 'error' }); return }
+    if (!clubId) return
     setSaving(true)
     const { data: { user } } = await supabase.auth.getUser()
-    const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user!.id).single()
     const { error } = await supabase.from('prima_nota').insert({
-      club_id: utente!.club_id, tipo, categoria, importo: parseFloat(importo),
+      club_id: clubId, tipo, categoria, importo: parseFloat(importo),
       data, descrizione: descrizione.trim(), registrato_da: user!.id,
     })
     if (error) { setToast({ msg: 'Errore', tipo: 'error' }); setSaving(false); return }
     setToast({ msg: 'Movimento registrato', tipo: 'success' })
-    setImporto(''); setDescrizione(''); setShowForm(false); setSaving(false); load()
+    setImporto(''); setDescrizione(''); setShowForm(false); setSaving(false)
+    // Se la data del movimento è in un mese diverso da quello visualizzato, naviga lì
+    const meseMovimento = data.slice(0, 7)
+    if (meseMovimento !== mese) {
+      setMese(meseMovimento)  // useEffect → load()
+    } else {
+      load()
+    }
   }
 
   const apriStorno = (m: any) => {
@@ -84,17 +130,16 @@ export default function PrimaNotaPage() {
     setStornoTipo('totale')
     setStornoImporto(String(Number(m.importo)))
     setStornoMotivo('')
-    setStornoData(oggi.toISOString().split('T')[0])
+    setStornoData(localToday())
   }
 
   const eseguiStorno = async () => {
-    if (!stornoTarget) return
+    if (!stornoTarget || !clubId) return
     const importoStorno = parseFloat(stornoImporto)
     if (isNaN(importoStorno) || importoStorno <= 0 || importoStorno > Number(stornoTarget.importo)) {
       setToast({ msg: 'Importo storno non valido', tipo: 'error' }); return
     }
     setStornoSaving(true)
-    const clubId = await getClubId()
     const tipoStorno = stornoTarget.tipo === 'entrata' ? 'uscita' : 'entrata'
 
     const { data: nuovoMov, error: insErr } = await supabase.from('prima_nota').insert({
@@ -118,7 +163,13 @@ export default function PrimaNotaPage() {
     setStornoSaving(false)
     setStornoTarget(null)
     setToast({ msg: 'Storno registrato', tipo: 'success' })
-    load()
+    // Naviga al mese dello storno se diverso da quello visualizzato
+    const meseStorno = stornoData.slice(0, 7)
+    if (meseStorno !== mese) {
+      setMese(meseStorno)  // useEffect → load()
+    } else {
+      load()
+    }
   }
 
   const fmt = (n: number) => n.toLocaleString('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 })
@@ -211,7 +262,7 @@ export default function PrimaNotaPage() {
                 const isStorno = m.descrizione?.startsWith('STORNO:')
                 return (
                   <tr key={m.id} style={isStornato ? { opacity: 0.45 } : undefined}>
-                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{new Date(m.data).toLocaleDateString('it-IT')}</td>
+                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{fmtDataTabella(m.data)}</td>
                     <td>
                       <span className={`badge ${m.tipo === 'entrata' ? 'badge-verde' : 'badge-rosso'}`}>{m.tipo}</span>
                       {isStornato && <span className="badge badge-grigio" style={{ marginLeft: 4, fontSize: 9 }}>STORNATO</span>}

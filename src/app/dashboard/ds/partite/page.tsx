@@ -1,6 +1,7 @@
 'use client'
 import { useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import { useSharedData } from '@/hooks/useSharedData'
 import { Modal, Toast } from '@/components/ui'
 
@@ -83,9 +84,9 @@ function TabBtn({ label, active, onClick }: { label: string; active: boolean; on
 
 export default function DSPartitePage() {
   const supabase = createClient()
+  const clubId = useClubId()
 
   const [tab, setTab]             = useState<Tab>('risultati')
-  const [clubId, setClubId]       = useState<string | null>(null)
   const [partite, setPartite]     = useState<Partita[]>([])
   const [squadre, setSquadre]     = useState<{ id: string; nome: string }[]>([])
   const [bySquadra, setBySquadra] = useState<Record<string, SquadraStats>>({})
@@ -105,12 +106,6 @@ export default function DSPartitePage() {
   /* ── Load ────────────────────────────────────────────────────── */
 
   const load = useCallback(async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
-    const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-    if (!utente) return
-    setClubId(utente.club_id)
-
     const sqList: { id: string; nome: string; categoria_eta: string }[] = await fetch('/api/squadre').then(r => r.json()).catch(() => [])
     setSquadre(sqList)
     setForm(prev => ({ ...prev, squadraId: prev.squadraId || sqList[0]?.id || '' }))

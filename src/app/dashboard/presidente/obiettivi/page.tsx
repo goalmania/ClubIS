@@ -3,6 +3,7 @@ import FeatureGate from '@/components/FeatureGate'
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import { Modal, FormField, FormGrid, Select, Toast } from '@/components/ui'
 import { formatData } from '@/lib/helpers'
 
@@ -55,7 +56,7 @@ export default function ObiettiviPage() {
   const supabase = createClient()
 
   const [obiettivi, setObiettivi] = useState<any[]>([])
-  const [clubId, setClubId] = useState('')
+  const clubId = useClubId()
   const [loading, setLoading] = useState(true)
   const [openModal, setOpenModal] = useState(false)
   const [editingObiettivo, setEditingObiettivo] = useState<any | null>(null)
@@ -76,21 +77,19 @@ export default function ObiettiviPage() {
   const [ruoliVisibili, setRuoliVisibili] = useState<string[]>(['presidente'])
 
   useEffect(() => {
+    if (!clubId) return
     async function load() {
-      const { data: { user } } = await supabase.auth.getUser()
-      const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user!.id).single()
-      setClubId(utente!.club_id)
       const { data } = await supabase
         .from('obiettivi_club')
         .select('*')
-        .eq('club_id', utente!.club_id)
+        .eq('club_id', clubId!)
         .order('priorita')
         .order('created_at', { ascending: false })
       setObiettivi(data ?? [])
       setLoading(false)
     }
     load()
-  }, [])
+  }, [clubId, supabase])
 
   async function ricarica(cid: string) {
     const { data } = await supabase
@@ -121,6 +120,7 @@ export default function ObiettiviPage() {
 
   async function salva() {
     if (!titolo.trim()) { setToast({ msg: 'Titolo obbligatorio', tipo: 'error' }); return }
+    if (!clubId) return
     setSaving(true)
     const payload = {
       club_id: clubId,

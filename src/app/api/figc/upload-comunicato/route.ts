@@ -1,4 +1,3 @@
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { NextRequest, NextResponse } from 'next/server'
 import { getClubFromSession } from '@/lib/server-helpers'
@@ -24,16 +23,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Piano insufficiente. Aggiorna il tuo abbonamento.' }, { status: 403 })
   }
 
-  const sessionClient = createClient()
   const supabase = createAdminClient()
-  const { data: { user } } = await sessionClient.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
-
-  const { data: utente } = await supabase
-    .from('utenti').select('club_id').eq('id', user.id).single()
-  if (!utente?.club_id) return NextResponse.json({ error: 'Club non trovato' }, { status: 403 })
-
-  const clubId = utente.club_id as string
+  const clubId = session.clubId
 
   let body: RequestBody
   try {

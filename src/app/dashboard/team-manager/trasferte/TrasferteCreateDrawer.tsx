@@ -4,10 +4,13 @@ import { useEffect, useMemo, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Drawer, FormField, FormGrid, FormSection, Toast } from '@/components/ui'
 import { useRouter } from 'next/navigation'
+import { useGiocatoriClub, GiocatoreClubOption } from '@/hooks/useGiocatoriClub'
+import { useTipoProdotto } from '@/lib/club-context'
+import { CATEGORIE_FEDERALI, categoriaFederaleDaEta } from '@/lib/settore-giovanile'
 
 type MedioTrasporto = 'pullman' | 'treno' | 'aereo' | 'auto_propria' | 'altro'
 
-type PlayerOption = { id: string; nome: string; cognome: string }
+type PlayerOption = GiocatoreClubOption
 type StaffOption = { id: string; nome: string; cognome: string; ruolo: string }
 type TeamManagerOption = { id: string; nome: string; cognome: string }
 type PartitaOption = {
@@ -49,10 +52,28 @@ export default function TrasferteCreateDrawer() {
 
   const [toast, setToast] = useState<{ msg: string; tipo: 'success' | 'error' | 'info' } | null>(null)
 
+  const [clubId, setClubId] = useState<string | null>(null)
   const [partite, setPartite] = useState<PartitaOption[]>([])
-  const [giocatori, setGiocatori] = useState<PlayerOption[]>([])
+  const { giocatori } = useGiocatoriClub(clubId)
   const [staff, setStaff] = useState<StaffOption[]>([])
   const [teamManagers, setTeamManagers] = useState<TeamManagerOption[]>([])
+  const isScuolaCalcio = useTipoProdotto() === 'scuola_calcio_standalone'
+
+  // Scuola calcio: raggruppa i giocatori per categoria federale invece di
+  // mostrarli in un unico elenco piatto.
+  const giocatoriPerCategoria = useMemo(() => {
+    if (!isScuolaCalcio) return null
+    const gruppi = new Map<string, { label: string; ordine: number; giocatori: PlayerOption[] }>()
+    for (const g of giocatori) {
+      const cat = g.categoria_eta ? categoriaFederaleDaEta(g.categoria_eta) : null
+      const key = cat ?? 'altri'
+      const label = cat ? CATEGORIE_FEDERALI[cat].label : 'Altri'
+      const ordine = cat ? CATEGORIE_FEDERALI[cat].ordine : 999
+      if (!gruppi.has(key)) gruppi.set(key, { label, ordine, giocatori: [] })
+      gruppi.get(key)!.giocatori.push(g)
+    }
+    return Array.from(gruppi.values()).sort((a, b) => a.ordine - b.ordine)
+  }, [giocatori, isScuolaCalcio])
 
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
 
@@ -142,18 +163,17 @@ export default function TrasferteCreateDrawer() {
     if (loadingOptions) return
     setLoadingOptions(true)
     try {
-      const [ctxData, partiteData, giocatoriData, staffData] = await Promise.all([
+      const [ctxData, partiteData, staffData] = await Promise.all([
         fetch('/api/user-context').then(r => r.ok ? r.json() : null).catch(() => null),
         fetch('/api/partite').then(r => r.json()).catch(() => []),
-        fetch('/api/giocatori').then(r => r.json()).catch(() => []),
         fetch('/api/staff?ruoli=presidente,ds,segretario,allenatore,osservatore,medico,ufficio_stampa,team_manager').then(r => r.json()).catch(() => []),
       ])
 
       if (!ctxData?.userId) return
       setCurrentUserId(ctxData.userId)
+      setClubId(ctxData.clubId ?? null)  // triggers useGiocatoriClub
 
       setPartite(Array.isArray(partiteData) ? partiteData as PartitaOption[] : [])
-      setGiocatori(Array.isArray(giocatoriData) ? giocatoriData as PlayerOption[] : [])
 
       const allStaff: any[] = Array.isArray(staffData) ? staffData : []
       const staffOnly = allStaff.filter(x => x.ruolo !== 'team_manager')
@@ -616,22 +636,44 @@ export default function TrasferteCreateDrawer() {
                       </button>
                     )}
                   </div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-                    {giocatori.length === 0 ? (
-                      <div style={{ color: 'var(--text-muted)', fontSize: 13 }}>Nessun giocatore attivo</div>
-                    ) : (
-                      giocatori.map(p => (
+                  {giocatori.length === 0 ? (
+                    <div style={{ color: 'var(--text-muted)', fontSize: 13 }}>Nessun giocatore attivo</div>
+                  ) : giocatoriPerCategoria ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                      {giocatoriPerCategoria.map(gruppo => (
+                        <div key={gruppo.label}>
+                          <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--accent, #c8f000)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>
+                            {gruppo.label}
+                          </div>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+                            {gruppo.giocatori.map(p => (
+                              <label key={p.id} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--text-secondary)' }}>
+                                <input
+                                  type="checkbox"
+                                  checked={form.partecipanti.giocatori.includes(p.id)}
+                                  onChange={() => toggleParticipant('giocatori', p.id)}
+                                />
+                                {p.numero_maglia != null ? `#${p.numero_maglia} ` : ''}{p.cognome} {p.nome}
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+                      {giocatori.map(p => (
                         <label key={p.id} style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--text-secondary)' }}>
                           <input
                             type="checkbox"
                             checked={form.partecipanti.giocatori.includes(p.id)}
                             onChange={() => toggleParticipant('giocatori', p.id)}
                           />
-                          {p.nome} {p.cognome}
+                          {p.numero_maglia != null ? `#${p.numero_maglia} ` : ''}{p.cognome} {p.nome}
                         </label>
-                      ))
-                    )}
-                  </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div>

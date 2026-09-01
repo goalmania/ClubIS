@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import Link from 'next/link'
 
 const TIPO_BADGE: Record<string, string> = {
@@ -13,23 +14,21 @@ const TIPO_BADGE: Record<string, string> = {
 
 export default function ComunicazioniGiocatorePage() {
   const supabase = useMemo(() => createClient(), [])
+  const clubId = useClubId()
   const [messaggi, setMessaggi] = useState<any[]>([])
   const [loading, setLoading]   = useState(true)
 
   useEffect(() => {
+    if (!clubId) return
     const load = async () => {
       const { data: auth } = await supabase.auth.getUser()
       const user = auth.user
       if (!user) { window.location.href = '/auth/login'; return }
 
-      const { data: utente } = await supabase
-        .from('utenti').select('club_id').eq('id', user.id).single()
-      if (!utente) { window.location.href = '/auth/errore'; return }
-
       const { data: mm } = await supabase
         .from('messaggi')
         .select('id, titolo, corpo, tipo, inviato_at, destinatari_ruolo, mittente_id, utenti(nome, cognome)')
-        .eq('club_id', utente.club_id)
+        .eq('club_id', clubId)
         .order('inviato_at', { ascending: false })
         .limit(60)
 
@@ -58,7 +57,7 @@ export default function ComunicazioniGiocatorePage() {
       }
     }
     load()
-  }, [supabase])
+  }, [supabase, clubId])
 
   return (
     <div style={{ animation: 'fadeIn 0.3s ease' }}>

@@ -2,6 +2,7 @@
 import FeatureGate from '@/components/FeatureGate'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import { formatEuro } from '@/lib/helpers'
 
 type Conto = {
@@ -60,7 +61,7 @@ function F({ label, children }: { label: string; children: React.ReactNode }) {
 
 export default function ConfigurazioneFinanziariaPage() {
   const supabase = createClient()
-  const [clubId,     setClubId]     = useState<string | null>(null)
+  const clubId = useClubId()
   const [tab,        setTab]        = useState<'conti' | 'causali' | 'categorie' | 'report'>('conti')
   const [loading,    setLoading]    = useState(true)
   const [saving,     setSaving]     = useState(false)
@@ -88,12 +89,8 @@ export default function ConfigurazioneFinanziariaPage() {
 
   useEffect(() => {
     const load = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-      const { data: u } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-      if (!u) return
-      setClubId(u.club_id)
-      await reload(u.club_id)
+      if (!clubId) return
+      await reload(clubId)
       setLoading(false)
     }
     load()

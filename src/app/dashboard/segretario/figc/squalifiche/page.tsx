@@ -34,6 +34,7 @@ interface Comunicato {
   data_comunicato: string
   processato: boolean
   created_at: string
+  lega?: string
   squalifiche: SqualificaComunicato[]
 }
 
@@ -41,8 +42,11 @@ interface SqualificaAttiva {
   id: string
   giocatore_id: string
   partite_restanti: number
+  giornate_rimanenti: number | null
   data_fine: string | null
-  tipo?: string
+  data_inizio: string | null
+  comunicato_figc: string | null
+  stato: string
 }
 
 interface Infortunio {
@@ -96,6 +100,9 @@ export default function FigcSqualifichePage() {
     // Ripara silenziosamente eventuali squalifiche salvate con club_id errato
     await fetch('/api/figc/comunicati/sync-squalifiche', { method: 'POST' })
 
+    // Scade automaticamente le squalifiche la cui data_fine è nel passato
+    await fetch('/api/figc/scadenza-squalifiche', { method: 'POST' })
+
     const today = new Date().toISOString().split('T')[0]
 
     const [
@@ -111,16 +118,15 @@ export default function FigcSqualifichePage() {
         .eq('stato', 'attivo'),
       supabase
         .from('comunicati_figc')
-        .select('id, comitato_regionale, numero_comunicato, data_comunicato, processato, created_at')
+        .select('id, comitato_regionale, numero_comunicato, data_comunicato, processato, created_at, lega')
         .eq('club_id', cid)
         .order('data_comunicato', { ascending: false })
         .limit(10),
       supabase
         .from('squalifiche')
-        .select('id, giocatore_id, partite_restanti, data_fine')
+        .select('id, giocatore_id, partite_restanti, giornate_rimanenti, data_fine, data_inizio, comunicato_figc, stato')
         .eq('club_id', cid)
-        .gt('partite_restanti', 0)
-        .or(`data_fine.is.null,data_fine.gte.${today}`),
+        .eq('stato', 'attiva'),
       supabase
         .from('infortuni')
         .select('giocatore_id')
@@ -304,10 +310,13 @@ export default function FigcSqualifichePage() {
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                   {comunicati.map(c => (
                     <span key={c.id} style={{
-                      fontSize: 11, background: 'var(--grigio-6)', borderRadius: 4,
-                      padding: '3px 10px', color: 'var(--grigio-3)',
+                      fontSize: 11,
+                      background: c.lega === 'LegaPro' ? 'rgba(0,112,243,0.08)' : 'var(--grigio-6)',
+                      border: c.lega === 'LegaPro' ? '1px solid rgba(0,112,243,0.2)' : 'none',
+                      borderRadius: 4, padding: '3px 10px',
+                      color: c.lega === 'LegaPro' ? '#60a5fa' : 'var(--grigio-3)',
                     }}>
-                      {c.comitato_regionale} {c.numero_comunicato && `n. ${c.numero_comunicato}`} — {fmt(c.data_comunicato)}
+                      {c.lega === 'LegaPro' ? '🔵 Lega Pro' : c.comitato_regionale} {c.numero_comunicato && `n. ${c.numero_comunicato}`} — {fmt(c.data_comunicato)}
                       <span style={{ marginLeft: 6, color: 'var(--verde)' }}>
                         ({c.squalifiche.length} sanzioni)
                       </span>
@@ -498,7 +507,11 @@ export default function FigcSqualifichePage() {
                                 </td>
                                 <td style={{ padding: '10px 14px', color: 'var(--grigio-3)' }}>{sq.durata}</td>
                                 <td style={{ padding: '10px 14px', fontSize: 11, color: 'var(--grigio-4)' }}>
-                                  {c.comitato_regionale}{c.numero_comunicato ? ` n. ${c.numero_comunicato}` : ''}<br />
+                                  {c.lega === 'LegaPro'
+                                    ? <span style={{ color: '#60a5fa', fontWeight: 600 }}>Lega Pro</span>
+                                    : c.comitato_regionale
+                                  }
+                                  {c.numero_comunicato ? ` n. ${c.numero_comunicato}` : ''}<br />
                                   {fmt(c.data_comunicato)}
                                 </td>
                               </tr>
@@ -545,7 +558,9 @@ export default function FigcSqualifichePage() {
                 if (isSq) {
                   pallino = 'var(--rosso)'
                   statoLabel = 'Squalificato'
-                  sottotitolo = `${sq?.partite_restanti ?? '?'} gior. rimanenti`
+                  const gg = sq?.giornate_rimanenti ?? sq?.partite_restanti
+                  const fineStr = sq?.data_fine ? ` · fino al ${fmt(sq.data_fine)}` : ''
+                  sottotitolo = gg != null ? `${gg} gior. rimanenti${fineStr}` : `Squalificato${fineStr}`
                 } else if (isInf) {
                   pallino = 'var(--grigio-4)'
                   statoLabel = 'Infortunato'

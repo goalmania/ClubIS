@@ -1,7 +1,7 @@
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { NextRequest, NextResponse } from 'next/server'
 import { stagioneCorrente } from '@/lib/helpers'
+import { getClubFromSession } from '@/lib/server-helpers'
 
 function periodoFromStagione(stagione: string): { da: string; a: string } {
   const anno = parseInt(stagione.split('-')[0], 10)
@@ -16,20 +16,11 @@ function buildNumeroQuietanza(anno: number, seq: number): string {
 }
 
 export async function POST(req: NextRequest) {
-  const sessionClient = createClient()
+  const session = await getClubFromSession()
+  if (!session) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
+
   const supabase = createAdminClient()
-
-  const { data: { user } } = await sessionClient.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
-
-  const { data: utente } = await supabase
-    .from('utenti')
-    .select('club_id')
-    .eq('id', user.id)
-    .single()
-  if (!utente?.club_id) return NextResponse.json({ error: 'Club non trovato' }, { status: 403 })
-
-  const clubId = utente.club_id
+  const clubId = session.clubId
   const body = await req.json().catch(() => ({}))
   const { bulk, giocatore_id } = body as { bulk?: boolean; giocatore_id?: string }
 

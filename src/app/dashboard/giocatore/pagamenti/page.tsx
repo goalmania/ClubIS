@@ -95,7 +95,7 @@ export default function PagamentiGiocatorePage() {
       </div>
 
       {/* Riepilogo */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 24 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 12, marginBottom: 24 }}>
         {[
           { label: 'Totale dovuto',  val: `€ ${totaleDovuto.toFixed(2)}`,  color: 'var(--white)' },
           { label: 'Pagato',         val: `€ ${totalePagato.toFixed(2)}`,  color: 'var(--accent)' },

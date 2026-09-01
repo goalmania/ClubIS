@@ -5,38 +5,42 @@ export const dynamic = 'force-dynamic'
 
 /**
  * GET /api/giocatori/tutti
- * Restituisce id, nome, cognome di tutti i giocatori con tesseramento attivo nel club.
- * Usa adminClient e interroga per squadra_id (non club_id) per includere i giocatori
- * importati il cui record tesseramento ha club_id = NULL.
+ * Restituisce id, nome, cognome, numero_maglia di tutti i giocatori con
+ * tesseramento attivo nel club, indipendentemente dal metodo di inserimento
+ * (manuale o importato) e dall'assegnazione squadra.
+ * Filtra per club_id sul tesseramento invece che per squadra_id, in modo da
+ * includere anche i giocatori importati che hanno squadra_id = NULL.
  */
 export async function GET() {
   const ctx = await getUserContext()
   if (!ctx) return Response.json({ error: 'Non autorizzato' }, { status: 401 })
 
   const { clubId } = ctx
+  console.log('CALENDARIO giocatori club_id usato:', clubId)
   if (!clubId) return Response.json([], { status: 200 })
 
   const admin = createAdminClient()
 
-  // Prendi tutti gli id squadra attive del club
-  const { data: squadre } = await admin
-    .from('squadre')
-    .select('id')
-    .eq('club_id', clubId)
-    .eq('attiva', true)
-
-  const squadraIds = (squadre ?? []).map((s: any) => s.id)
-  if (squadraIds.length === 0) return Response.json([], { status: 200 })
-
-  // Tesseramenti attivi per quelle squadre (cattura anche record con club_id NULL)
-  const { data: tess } = await admin
+  // Tutti i tesseramenti attivi del club — include giocatori con squadra_id NULL (importati)
+  const { data: tess, error: tessErr } = await admin
     .from('tesseramenti')
-    .select('giocatore_id')
-    .in('squadra_id', squadraIds)
+    .select('giocatore_id, numero_maglia')
+    .eq('club_id', clubId)
     .eq('stato', 'attivo')
 
-  const ids = Array.from(new Set((tess ?? []).map((t: any) => t.giocatore_id).filter(Boolean)))
+  console.log('CALENDARIO tesseramenti trovati:', tess?.length ?? 0, tessErr)
+
+  const rawIds = (tess ?? []).map((t: any) => t.giocatore_id).filter(Boolean)
+  const ids = Array.from(new Set(rawIds))
   if (ids.length === 0) return Response.json([], { status: 200 })
+
+  // Mappa giocatore_id → numero_maglia (primo tesseramento trovato)
+  const magliaByCid = new Map<string, number | null>()
+  for (const t of tess ?? []) {
+    if (t.giocatore_id && !magliaByCid.has(t.giocatore_id)) {
+      magliaByCid.set(t.giocatore_id, t.numero_maglia ?? null)
+    }
+  }
 
   const { data: giocatori, error } = await admin
     .from('giocatori')
@@ -44,6 +48,14 @@ export async function GET() {
     .in('id', ids)
     .order('cognome')
 
+  console.log('CALENDARIO giocatori risultato query:', giocatori?.length ?? 0, error)
+
   if (error) return Response.json({ error: error.message }, { status: 500 })
-  return Response.json(giocatori ?? [])
+
+  const result = (giocatori ?? []).map((g: any) => ({
+    ...g,
+    numero_maglia: magliaByCid.get(g.id) ?? null,
+  }))
+
+  return Response.json(result)
 }

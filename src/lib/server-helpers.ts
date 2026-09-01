@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { readImpersonation } from '@/lib/impersonation'
+import { resolveDeviceClub } from '@/lib/multi-club'
 import type { PlanTier } from '@/lib/features'
 
 export async function getUtenteCorrente() {
@@ -38,22 +39,28 @@ export async function getClubFromSession(): Promise<{ clubId: string; plan: Plan
     .select('club_id, is_super_admin')
     .eq('id', user.id)
     .maybeSingle()
-  if (!utente?.club_id) return null
+  if (!utente) return null
 
+  // Super admin: risolvi impersonation PRIMA di controllare club_id
   if (utente.is_super_admin) {
     const impersonation = readImpersonation()
     const clubId = impersonation?.clubId ?? utente.club_id
+    if (!clubId) return null
     return { clubId, plan: 'super_admin' }
   }
+
+  if (!utente.club_id) return null
+
+  const clubId = await resolveDeviceClub(user.id, utente.club_id)
 
   const { data: club } = await supabase
     .from('clubs')
     .select('plan_tier')
-    .eq('id', utente.club_id)
+    .eq('id', clubId)
     .maybeSingle()
 
   return {
-    clubId: utente.club_id,
+    clubId,
     plan: (club?.plan_tier ?? 'starter') as PlanTier,
   }
 }

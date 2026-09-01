@@ -1,12 +1,13 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import { Modal, Toast } from '@/components/ui'
 import Link from 'next/link'
 
 export default function MedicoPrevenzionePage() {
   const supabase = createClient()
-  const [clubId, setClubId] = useState<string | null>(null)
+  const clubId = useClubId()
   const [infortuni, setInfortuni] = useState<any[]>([])
   const [protocolli, setProtocolli] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -15,18 +16,14 @@ export default function MedicoPrevenzionePage() {
   const [toast, setToast] = useState<{ msg: string; tipo: 'success' | 'error' } | null>(null)
   const [form, setForm] = useState({ titolo: '', area: '', frequenza: '', descrizione: '', attivo: true })
 
-  useEffect(() => { init() }, [])
+  useEffect(() => { init() }, [clubId])
 
   const init = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
-    const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-    if (!utente) return
-    setClubId(utente.club_id)
+    if (!clubId) return
 
     const [{ data: inf }, { data: prot }] = await Promise.all([
-      supabase.from('infortuni').select('zona_corpo, gravita, data_infortunio').eq('club_id', utente.club_id),
-      supabase.from('protocolli_prevenzione').select('id, titolo, descrizione, area, frequenza, attivo').eq('club_id', utente.club_id).order('attivo', { ascending: false }),
+      supabase.from('infortuni').select('zona_corpo, gravita, data_infortunio').eq('club_id', clubId),
+      supabase.from('protocolli_prevenzione').select('id, titolo, descrizione, area, frequenza, attivo').eq('club_id', clubId).order('attivo', { ascending: false }),
     ])
     setInfortuni(inf ?? [])
     setProtocolli(prot ?? [])

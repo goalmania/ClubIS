@@ -4,6 +4,7 @@
 // I nuovi movimenti vengono registrati direttamente in prima_nota (API) → sincronizzati su tutti i ruoli
 import { useState, useCallback, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import { TabBar, Modal, FormField, FormGrid, Toast } from '@/components/ui'
 import { useSharedData } from '@/hooks/useSharedData'
 
@@ -49,6 +50,7 @@ const fmt = (n: number) =>
 
 export default function TeamManagerPagamentiPage() {
   const supabase = useRef(createClient()).current
+  const clubId = useClubId()
 
   const [movimenti, setMovimenti]       = useState<MovimentoRow[]>([])
   const [rate, setRate]                 = useState<RataRow[]>([])
@@ -73,16 +75,13 @@ export default function TeamManagerPagamentiPage() {
     }
 
     // Rate in scadenza (60gg)
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
-    const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-    if (!utente) return
+    if (!clubId) return
 
     const fra60 = new Date(); fra60.setDate(fra60.getDate() + 60)
     const { data: rateData } = await supabase
       .from('rate_pagamento')
       .select('id, piano_id, numero_rata, importo, scadenza, stato, data_pagamento')
-      .eq('club_id', utente.club_id)
+      .eq('club_id', clubId)
       .neq('stato', 'annullata')
       .lte('scadenza', fra60.toISOString().split('T')[0])
       .order('scadenza')
@@ -98,7 +97,7 @@ export default function TeamManagerPagamentiPage() {
     } else {
       setRate([])
     }
-  }, [supabase])
+  }, [supabase, clubId])
 
   useSharedData(load)
 

@@ -1,310 +1,203 @@
 'use client'
-
-import { useEffect, useMemo, useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
-import { Toast } from '@/components/ui'
-
-type Partita = { id: string; avversario: string; data_ora: string; casa_trasferta: string; stato: string; squadra_id?: string | null }
-type Giocatore = { id: string; nome: string; cognome: string; ruolo_principale: string | null; numero_maglia: number | null; categoria_eta?: string | null }
-type Staff = { id: string; nome: string; cognome: string; ruolo: string }
-type Squadra = { id: string; nome: string; categoria_eta: string | null }
 
 type CategoriaTab = 'tutti' | 'prima_squadra' | 'settore_giovanile' | 'scuola_calcio'
+
 const PRIMA_SQ = ['prima_squadra', 'femminile']
 const SETTORE_GIO = ['u14', 'u15', 'u16', 'u17', 'u19', 'juniores', 'primavera']
-function getCat(cat: string | null | undefined): CategoriaTab {
-  if (!cat) return 'scuola_calcio'
+
+function getCategoria(cat: string | null | undefined): CategoriaTab {
+  if (!cat || !PRIMA_SQ.includes(cat) && !SETTORE_GIO.includes(cat)) return 'scuola_calcio'
   if (PRIMA_SQ.includes(cat)) return 'prima_squadra'
-  if (SETTORE_GIO.includes(cat)) return 'settore_giovanile'
-  return 'scuola_calcio'
-}
-const CAT_LABEL: Record<CategoriaTab, string> = {
-  tutti: 'Tutti', prima_squadra: 'Prima Squadra', settore_giovanile: 'Settore Giovanile', scuola_calcio: 'Scuola Calcio',
+  return 'settore_giovanile'
 }
 
-export default function TMDistintePage() {
-  const supabase = useMemo(() => createClient(), [])
-  const [clubNome, setClubNome] = useState('Club')
-  const [partite, setPartite] = useState<Partita[]>([])
-  const [giocatori, setGiocatori] = useState<Giocatore[]>([])
-  const [staff, setStaff] = useState<Staff[]>([])
-  const [segreteriaEmails, setSegreteriaEmails] = useState<string[]>([])
+const LABEL_CAT: Record<CategoriaTab, string> = {
+  tutti: 'Tutte',
+  prima_squadra: 'Prima Squadra',
+  settore_giovanile: 'Settore Giovanile',
+  scuola_calcio: 'Scuola Calcio',
+}
+
+export default function DistintePage() {
+  const supabase = createClient()
+
+  const [partite, setPartite] = useState<any[]>([])
+  const [distinteMap, setDistinteMap] = useState<Map<string, any>>(new Map())
   const [loading, setLoading] = useState(true)
-  const [toast, setToast] = useState<{ msg: string; tipo: 'success' | 'error' | 'info' } | null>(null)
-
-  const [squadre, setSquadre] = useState<Squadra[]>([])
-  const [partitaId, setPartitaId] = useState('')
-  const [convocati, setConvocati] = useState<string[]>([])
-  const [staffPresenti, setStaffPresenti] = useState<string[]>([])
-  const [noteTecnico, setNoteTecnico] = useState('')
-  const [categoriaFiltro, setCategoriaFiltro] = useState<CategoriaTab>('tutti')
+  const [categoriaTab, setCategoriaTab] = useState<CategoriaTab>('tutti')
 
   useEffect(() => {
     const load = async () => {
-      const [ctxData, sqData, giocatoriData, staffData] = await Promise.all([
-        fetch('/api/user-context').then(r => r.ok ? r.json() : null).catch(() => null),
-        fetch('/api/squadre').then(r => r.json()).catch(() => []),
-        fetch('/api/giocatori').then(r => r.json()).catch(() => []),
-        fetch('/api/staff?ruoli=team_manager,allenatore,medico,segretario').then(r => r.json()).catch(() => []),
-      ])
+      const squadre: any[] = await fetch('/api/squadre').then(r => r.json()).catch(() => [])
+      const squadreIds = squadre.map((s: any) => s.id)
+      const squadraMap = new Map(squadre.map((s: any) => [s.id, s]))
 
-      if (!ctxData?.clubId) {
-        window.location.href = '/auth/login'
-        return
-      }
-      const clubId = ctxData.clubId
+      const { data: pp } = squadreIds.length > 0
+        ? await supabase
+            .from('partite')
+            .select('id, avversario, data_ora, competizione, giornata, casa_trasferta, stato, squadra_id')
+            .in('squadra_id', squadreIds)
+            .order('data_ora', { ascending: false })
+        : { data: [] as any[] }
 
-      const squadreArr: Squadra[] = Array.isArray(sqData) ? sqData : []
-      setSquadre(squadreArr)
+      const arricchite = (pp ?? []).map((p: any) => ({
+        ...p,
+        squadra: squadraMap.get(p.squadra_id) ?? null,
+      }))
+      setPartite(arricchite)
 
-      const [{ data: club }, ppData, { data: seg }] = await Promise.all([
-        supabase.from('clubs').select('nome').eq('id', clubId).single(),
-        fetch('/api/partite').then(r => r.json()).catch(() => []),
-        supabase.from('utenti').select('email').eq('club_id', clubId).eq('ruolo', 'segretario').not('email', 'is', null),
-      ])
-      const pp = Array.isArray(ppData) ? ppData : []
-
-      // /api/giocatori restituisce oggetti piatti con numero_maglia e categoria_eta
-      const giocatoriArr: Giocatore[] = Array.isArray(giocatoriData) ? giocatoriData : []
-      const staffArr: Staff[] = Array.isArray(staffData) ? staffData : []
-
-      setClubNome((club as any)?.nome ?? 'Club')
-      setPartite(pp as Partita[])
-      setGiocatori(giocatoriArr)
-      setStaff(staffArr)
-      setSegreteriaEmails((seg ?? []).map((s: any) => s.email).filter(Boolean))
+      const partiteIds = arricchite.map((p: any) => p.id)
+      const { data: distinte } = partiteIds.length > 0
+        ? await supabase
+            .from('distinte_gara')
+            .select('partita_id, versione, generata_at')
+            .in('partita_id', partiteIds)
+        : { data: [] as any[] }
+      setDistinteMap(new Map((distinte ?? []).map((d: any) => [d.partita_id, d])))
       setLoading(false)
     }
     load()
-  }, [supabase])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
-  const toggle = (id: string, list: string[], setter: (value: string[]) => void) => {
-    setter(list.includes(id) ? list.filter(x => x !== id) : [...list, id])
-  }
+  const filtrate = categoriaTab === 'tutti'
+    ? partite
+    : partite.filter(p => getCategoria(p.squadra?.categoria_eta) === categoriaTab)
 
-  const giocatoriFiltrati = giocatori.filter(g => categoriaFiltro === 'tutti' || getCat(g.categoria_eta) === categoriaFiltro)
-  const tuttiSelezionati = giocatoriFiltrati.length > 0 && giocatoriFiltrati.every(g => convocati.includes(g.id))
-  const selezionaTutti = () => {
-    if (tuttiSelezionati) {
-      setConvocati(prev => prev.filter(id => !giocatoriFiltrati.some(g => g.id === id)))
-    } else {
-      const ids = giocatoriFiltrati.map(g => g.id)
-      setConvocati(prev => Array.from(new Set([...prev, ...ids])))
-    }
-  }
+  const countCat = (c: CategoriaTab) =>
+    c === 'tutti' ? partite.length : partite.filter(p => getCategoria(p.squadra?.categoria_eta) === c).length
 
-  const generaPdf = async () => {
-    if (!partitaId) {
-      setToast({ msg: 'Seleziona una partita', tipo: 'error' })
-      return
-    }
-    if (convocati.length === 0) {
-      setToast({ msg: 'Seleziona almeno un convocato', tipo: 'error' })
-      return
-    }
+  const totale = filtrate.length
+  const generate = filtrate.filter(p => distinteMap.has(p.id)).length
+  const daGenerare = totale - generate
 
-    // Costruisce il payload con gli stessi campi usati dal segretario
-    const giocatoriPayload = giocatori
-      .filter(g => convocati.includes(g.id))
-      .sort((a, b) => (a.numero_maglia ?? 99) - (b.numero_maglia ?? 99))
-
-    const staffSel = staff.filter(s => staffPresenti.includes(s.id))
-    const staffPayload: Record<string, string> = {}
-    staffSel.forEach(s => {
-      const ruolo = s.ruolo === 'allenatore' ? 'allenatore'
-        : s.ruolo === 'medico' ? 'medico'
-        : s.ruolo === 'segretario' ? 'dirigente'
-        : 'vice_allenatore'
-      if (!staffPayload[ruolo]) staffPayload[ruolo] = `${s.cognome} ${s.nome}`
-    })
-
-    try {
-      const res = await fetch('/api/distinte/salva', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ partita_id: partitaId, giocatori: giocatoriPayload, staff: staffPayload }),
-      })
-      if (!res.ok) {
-        const json = await res.json()
-        setToast({ msg: json.error ?? 'Errore salvataggio', tipo: 'error' })
-        return
-      }
-      window.open(`/print/distinta/${partitaId}`, '_blank')
-    } catch {
-      setToast({ msg: 'Errore di rete', tipo: 'error' })
-    }
-  }
-
-  const inviaEmail = () => {
-    const stampaEmail = 'distinte@stampaservice.it'
-    const destinatari = Array.from(new Set([...segreteriaEmails, stampaEmail]))
-    if (destinatari.length === 0) {
-      setToast({ msg: 'Nessun destinatario email configurato', tipo: 'error' })
-      return
-    }
-    const p = partite.find(x => x.id === partitaId)
-    const subject = encodeURIComponent(`Distinta gara - ${clubNome} ${p ? `vs ${p.avversario}` : ''}`)
-    const body = encodeURIComponent(`In allegato la distinta gara.\n\nNote tecnico:\n${noteTecnico || '-'}`)
-    window.location.href = `mailto:${destinatari.join(',')}?subject=${subject}&body=${body}`
-    setToast({ msg: 'Apertura client email con destinatari preimpostati', tipo: 'info' })
-  }
-
-  const partitaSel = partite.find(p => p.id === partitaId)
+  const fmtData = (d: string) =>
+    new Date(d).toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' })
+  const fmtOra = (d: string) =>
+    new Date(d).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })
 
   return (
     <div style={{ animation: 'fadeIn 0.3s ease' }}>
-      <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Distinte gara</h1>
-        <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>
-          Crea la distinta gara, esporta in PDF e invia alla segreteria
-        </p>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
+        <div>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Distinte Gara</h1>
+          <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>Archivio distinte stagione corrente</p>
+        </div>
       </div>
 
-      <div className="card no-print" style={{ marginBottom: 18 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-          <div>
-            <label style={labelStyle}>Partita</label>
-            <select className="input" value={partitaId} onChange={e => setPartitaId(e.target.value)}>
-              <option value="">Seleziona partita...</option>
-              {partite.map(p => {
-                const sq = squadre.find(s => s.id === p.squadra_id)
+      {/* Tabs categoria */}
+      <div style={{ display: 'flex', gap: 6, marginBottom: 20, flexWrap: 'wrap' }}>
+        {(['tutti', 'prima_squadra', 'settore_giovanile', 'scuola_calcio'] as CategoriaTab[]).map(c => (
+          <button
+            key={c}
+            onClick={() => setCategoriaTab(c)}
+            style={{
+              padding: '5px 14px', borderRadius: 20, fontSize: 12, cursor: 'pointer',
+              border: categoriaTab === c ? '1px solid var(--accent)' : '1px solid var(--grigio-5)',
+              background: categoriaTab === c ? 'rgba(200,240,0,0.12)' : 'transparent',
+              color: categoriaTab === c ? 'var(--accent)' : 'var(--grigio-3)',
+              fontWeight: categoriaTab === c ? 600 : 400,
+            }}
+          >
+            {LABEL_CAT[c]} ({countCat(c)})
+          </button>
+        ))}
+      </div>
+
+      {/* KPI */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginBottom: 24 }}>
+        <div className="stat-card">
+          <div className="stat-label">Partite {categoriaTab !== 'tutti' ? LABEL_CAT[categoriaTab] : 'stagione'}</div>
+          <div className="stat-value">{totale}</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-label">Distinte generate</div>
+          <div className="stat-value" style={{ color: 'var(--accent-green)' }}>{generate}</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-label">Da generare</div>
+          <div className="stat-value" style={{ color: daGenerare > 0 ? 'var(--accent-orange)' : 'var(--accent-green)' }}>
+            {daGenerare}
+          </div>
+        </div>
+      </div>
+
+      <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+        {loading ? (
+          <div style={{ padding: 50, textAlign: 'center', color: 'var(--text-muted)', fontSize: 13 }}>Caricamento...</div>
+        ) : filtrate.length === 0 ? (
+          <div style={{ padding: '50px', textAlign: 'center', color: 'var(--text-muted)', fontSize: 13 }}>
+            Nessuna partita in calendario{categoriaTab !== 'tutti' ? ` per ${LABEL_CAT[categoriaTab]}` : ''}
+          </div>
+        ) : (
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ background: 'var(--bg-input)' }}>
+                <th style={th}>Data</th>
+                <th style={th}>Avversario</th>
+                <th style={th}>Categoria</th>
+                <th style={th}>Competizione</th>
+                <th style={th}>Giornata</th>
+                <th style={th}>Distinta</th>
+                <th style={{ ...th, textAlign: 'right' }}>Azioni</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtrate.map((p: any) => {
+                const distinta = distinteMap.get(p.id)
+                const catTab = getCategoria(p.squadra?.categoria_eta)
+                const catColor = catTab === 'prima_squadra' ? 'var(--accent)' : catTab === 'settore_giovanile' ? '#388bfd' : '#66ddff'
                 return (
-                  <option key={p.id} value={p.id}>
-                    {sq ? `[${sq.nome}] ` : ''}{p.casa_trasferta === 'casa' ? 'vs' : '@'} {p.avversario} — {new Date(p.data_ora).toLocaleDateString('it-IT')}
-                  </option>
+                  <tr key={p.id} style={{ borderBottom: '1px solid var(--border-light)' }}>
+                    <td style={td}>
+                      <div style={{ fontSize: 13, fontWeight: 500 }}>{fmtData(p.data_ora)}</div>
+                      <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{fmtOra(p.data_ora)}</div>
+                    </td>
+                    <td style={td}>
+                      <span style={{ fontSize: 13, fontWeight: 500 }}>
+                        {p.casa_trasferta === 'trasferta' ? '✈ ' : '🏠 '}{p.avversario}
+                      </span>
+                    </td>
+                    <td style={td}>
+                      <span style={{ fontSize: 11, fontWeight: 600, color: catColor, background: `${catColor}18`, padding: '2px 8px', borderRadius: 10 }}>
+                        {p.squadra?.nome ?? LABEL_CAT[catTab]}
+                      </span>
+                    </td>
+                    <td style={td}>
+                      <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{p.competizione ?? '—'}</span>
+                    </td>
+                    <td style={td}>
+                      <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{p.giornata ? `G${p.giornata}` : '—'}</span>
+                    </td>
+                    <td style={td}>
+                      {distinta
+                        ? <span className="badge badge-verde">Generata ✓</span>
+                        : <span className="badge badge-ambra">Da generare</span>}
+                    </td>
+                    <td style={{ ...td, textAlign: 'right' }}>
+                      {distinta ? (
+                        <Link href={`/dashboard/team-manager/distinte/${p.id}/stampa`} className="btn btn-ghost btn-sm">Vedi</Link>
+                      ) : (
+                        <Link href={`/dashboard/team-manager/distinte/${p.id}`} className="btn btn-primary btn-sm">Genera distinta</Link>
+                      )}
+                    </td>
+                  </tr>
                 )
               })}
-            </select>
-          </div>
-          <div>
-            <label style={labelStyle}>Note tecnico</label>
-            <textarea className="input" rows={2} value={noteTecnico} onChange={e => setNoteTecnico(e.target.value)} />
-          </div>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 14 }}>
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-              <label style={labelStyle}>Convocati ({convocati.length})</label>
-              <button onClick={selezionaTutti} style={{
-                padding: '2px 8px', borderRadius: 10, fontSize: 10, cursor: 'pointer',
-                border: '1px solid var(--grigio-5)',
-                background: tuttiSelezionati ? 'rgba(200,240,0,0.12)' : 'transparent',
-                color: tuttiSelezionati ? 'var(--accent)' : 'var(--grigio-3)',
-              }}>
-                {tuttiSelezionati ? 'Deseleziona tutti' : 'Seleziona tutti'}
-              </button>
-            </div>
-            {/* Filtro categoria giocatori */}
-            <div style={{ display: 'flex', gap: 4, marginBottom: 8, flexWrap: 'wrap' }}>
-              {(['tutti', 'prima_squadra', 'settore_giovanile', 'scuola_calcio'] as CategoriaTab[]).map(c => (
-                <button key={c} onClick={() => setCategoriaFiltro(c)} style={{
-                  padding: '2px 8px', borderRadius: 10, fontSize: 10, cursor: 'pointer',
-                  border: categoriaFiltro === c ? '1px solid var(--accent)' : '1px solid var(--grigio-5)',
-                  background: categoriaFiltro === c ? 'rgba(200,240,0,0.12)' : 'transparent',
-                  color: categoriaFiltro === c ? 'var(--accent)' : 'var(--grigio-3)',
-                }}>
-                  {CAT_LABEL[c]}
-                </button>
-              ))}
-            </div>
-            <div className="card" style={{ maxHeight: 220, overflow: 'auto', padding: 10 }}>
-              {giocatoriFiltrati.map(g => (
-                <label key={g.id} style={{ display: 'flex', gap: 8, fontSize: 13, marginBottom: 6, color: 'var(--text-secondary)' }}>
-                  <input type="checkbox" checked={convocati.includes(g.id)} onChange={() => toggle(g.id, convocati, setConvocati)} />
-                  #{g.numero_maglia ?? '-'} {g.cognome} {g.nome} ({g.ruolo_principale ?? 'n/d'})
-                </label>
-              ))}
-            </div>
-          </div>
-          <div>
-            <label style={labelStyle}>Staff presenti ({staffPresenti.length})</label>
-            <div className="card" style={{ maxHeight: 220, overflow: 'auto', padding: 10 }}>
-              {staff.map(s => (
-                <label key={s.id} style={{ display: 'flex', gap: 8, fontSize: 13, marginBottom: 6, color: 'var(--text-secondary)' }}>
-                  <input type="checkbox" checked={staffPresenti.includes(s.id)} onChange={() => toggle(s.id, staffPresenti, setStaffPresenti)} />
-                  {s.cognome} {s.nome} ({s.ruolo})
-                </label>
-              ))}
-            </div>
-          </div>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 12 }}>
-          <button className="btn btn-primary btn-sm" onClick={generaPdf}>📄 Genera PDF</button>
-          <button className="btn btn-secondary btn-sm" onClick={inviaEmail}>Invia via email</button>
-        </div>
-      </div>
-
-      <div id="distinta-print" className="card" style={{ padding: 22, background: 'white' }}>
-        {loading ? (
-          <div style={{ textAlign: 'center', color: 'var(--text-muted)' }}>Caricamento...</div>
-        ) : !partitaSel ? (
-          <div style={{ textAlign: 'center', color: 'var(--text-muted)' }}>Seleziona una partita per visualizzare la distinta</div>
-        ) : (
-          <>
-            {(() => {
-              const sqPartita = squadre.find(s => s.id === partitaSel?.squadra_id)
-              const catPartita = sqPartita ? CAT_LABEL[getCat(sqPartita.categoria_eta)] : null
-              return (
-                <div style={{ textAlign: 'center', borderBottom: '2px solid var(--border)', paddingBottom: 12, marginBottom: 14 }}>
-                  <div style={{ fontSize: 12, textTransform: 'uppercase', color: 'var(--text-muted)', fontWeight: 700 }}>Distinta gara ufficiale</div>
-                  <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)' }}>{clubNome}</div>
-                  {sqPartita && (
-                    <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 4 }}>
-                      {sqPartita.nome} · <span style={{ color: 'var(--text-muted)' }}>{catPartita}</span>
-                    </div>
-                  )}
-                </div>
-              )
-            })()}
-            <div style={{ marginBottom: 14, fontSize: 13, color: 'var(--text-secondary)' }}>
-              Gara: {clubNome} {partitaSel.casa_trasferta === 'casa' ? 'vs' : '@'} {partitaSel.avversario} <br />
-              Data: {new Date(partitaSel.data_ora).toLocaleString('it-IT', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}
-            </div>
-            <div style={{ marginBottom: 14 }}>
-              <div style={sectionTitle}>Convocati</div>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
-                <thead>
-                  <tr>
-                    <th style={th}>#</th>
-                    <th style={th}>Giocatore</th>
-                    <th style={th}>Ruolo</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {giocatori.filter(g => convocati.includes(g.id)).map(g => (
-                    <tr key={g.id}>
-                      <td style={td}>{g.numero_maglia ?? '-'}</td>
-                      <td style={td}>{g.cognome} {g.nome}</td>
-                      <td style={td}>{g.ruolo_principale ?? '—'}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div style={{ marginBottom: 14 }}>
-              <div style={sectionTitle}>Staff presenti</div>
-              <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
-                {staff.filter(s => staffPresenti.includes(s.id)).map(s => `${s.cognome} ${s.nome} (${s.ruolo})`).join(', ') || 'Nessuno'}
-              </div>
-            </div>
-            <div>
-              <div style={sectionTitle}>Note tecnico</div>
-              <div style={{ fontSize: 12, color: 'var(--text-secondary)', whiteSpace: 'pre-wrap' }}>{noteTecnico || '—'}</div>
-            </div>
-          </>
+            </tbody>
+          </table>
         )}
       </div>
-
-      <div style={{ marginTop: 20 }}>
-        <Link href="/dashboard/team-manager" className="btn btn-secondary btn-sm">← Dashboard</Link>
-      </div>
-      {toast && <Toast msg={toast.msg} tipo={toast.tipo} onClose={() => setToast(null)} />}
     </div>
   )
 }
 
-const labelStyle: React.CSSProperties = { display: 'block', fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 4 }
-const sectionTitle: React.CSSProperties = { fontSize: 12, fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: 6 }
-const th: React.CSSProperties = { borderBottom: '1px solid var(--border)', textAlign: 'left', padding: '6px 8px', fontSize: 11, color: 'var(--text-muted)' }
-const td: React.CSSProperties = { borderBottom: '1px solid var(--border-light)', textAlign: 'left', padding: '6px 8px', fontSize: 12, color: 'var(--text-secondary)' }
+const th: React.CSSProperties = {
+  padding: '10px 16px', textAlign: 'left', fontSize: 11, fontWeight: 600,
+  textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)',
+  borderBottom: '1px solid var(--border)',
+}
+const td: React.CSSProperties = { padding: '12px 16px', fontSize: 13, verticalAlign: 'middle' }

@@ -1,20 +1,19 @@
 import { createClient } from '@/lib/supabase/server'
+import { getUserContext } from '@/lib/impersonation'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
 export default async function TMConvocazioniPage() {
   const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth/login')
-  const { data: utente, error: utenteError } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-  if (utenteError || !utente) redirect('/auth/errore')
+  const ctx = await getUserContext()
+  if (!ctx) redirect('/auth/login')
 
   const oggi = new Date().toISOString()
 
   const { data: partite } = await supabase
     .from('partite')
     .select('id, avversario, data_ora, casa_trasferta, stato, convocazioni(giocatore_id, stato, giocatori(nome, cognome, ruolo_principale))')
-    .eq('club_id', utente.club_id)
+    .eq('club_id', ctx.clubId)
     .gte('data_ora', oggi)
     .order('data_ora')
     .limit(10)

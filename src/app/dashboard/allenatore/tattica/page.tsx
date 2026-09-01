@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import { Modal, FormField, Toast } from '@/components/ui'
 
 type Pos = { x: number; y: number; numero: number; nome: string; ruolo: string }
@@ -198,7 +199,7 @@ export default function TatticaPage() {
   const [posSelezionata, setPosSelezionata] = useState<number | null>(null)
   const [noteTattiche, setNoteTattiche] = useState('')
   const [schemiSalvati, setSchemiSalvati] = useState<any[]>([])
-  const [clubId, setClubId] = useState<string | null>(null)
+  const clubId = useClubId()
   const [userId, setUserId] = useState<string | null>(null)
   const [openSalva, setOpenSalva] = useState(false)
   const [nomeSchema, setNomeSchema] = useState('')
@@ -211,17 +212,15 @@ export default function TatticaPage() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
       setUserId(user.id)
-      const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-      if (!utente) return
-      setClubId(utente.club_id)
+      if (!clubId) return
 
       const [{ data: gioc }, { data: schemi }] = await Promise.all([
         supabase.from('giocatori')
           .select('id, nome, cognome, ruolo_principale, numero_maglia')
-          .eq('club_id', utente.club_id).eq('attivo', true).order('numero_maglia'),
+          .eq('club_id', clubId).eq('attivo', true).order('numero_maglia'),
         supabase.from('schemi_tattici')
           .select('*')
-          .eq('club_id', utente.club_id)
+          .eq('club_id', clubId)
           .order('created_at', { ascending: false }),
       ])
       setGiocatori(gioc ?? [])
@@ -235,7 +234,7 @@ export default function TatticaPage() {
       }
     }
     load()
-  }, [])
+  }, [clubId])
 
   const positions = MODULI[modulo]
   const disponibili = giocatori.filter(g => !Object.values(assegnazioni).includes(g.id))
@@ -318,7 +317,7 @@ export default function TatticaPage() {
         ))}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 260px', gap: 20 }}>
+      <div className="stack-mobile" style={{ display: 'grid', gridTemplateColumns: '1fr 260px', gap: 20 }}>
         {/* Campo SVG */}
         <div data-onboarding="campo-tattico" style={{
           position: 'relative', aspectRatio: '7/10', maxHeight: 680,

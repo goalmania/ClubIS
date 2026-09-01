@@ -1,7 +1,7 @@
 'use client'
 import { useState, useMemo } from 'react'
-import { parseCSV } from '@/lib/import/csv-parser'
-import { SCHEMA_GIOCATORI, SCHEMA_MOVIMENTI, SCHEMA_FAMIGLIE } from '@/lib/import/schemas'
+import { parseCSV, parseExcel } from '@/lib/import/csv-parser'
+import { SCHEMA_GIOCATORI, SCHEMA_MOVIMENTI, SCHEMA_FAMIGLIE, SCHEMA_QUOTE, SCHEMA_CALENDARIO, SCHEMA_CERTIFICATI } from '@/lib/import/schemas'
 import { PageHeader, Toast } from '@/components/ui'
 
 const TIPI_IMPORT = [
@@ -39,6 +39,41 @@ const TIPI_IMPORT = [
       'De Santis,Giovanni,giovanni.desantis@libero.it,3353344556,Padre,De Santis,Filippo,08/11/2016',
     ].join('\n'),
   },
+  {
+    key: 'quote',
+    label: 'Quote / pagamenti',
+    icon: '🧾',
+    schema: SCHEMA_QUOTE,
+    colonne: 'cognome · nome (del giocatore, già importato) · stagione (es. 2025-26) · importo_totale · importo_pagato · stato (Non Pagato / Parziale / Pagato / Esonerato) · scadenza (GG/MM/AAAA) · note',
+    note: 'Il giocatore deve essere già stato importato — fallo prima con "Giocatori / Atleti".',
+    template: [
+      'cognome,nome,stagione,importo_totale,importo_pagato,stato,scadenza,note',
+      'Rossi,Mario,2025-26,450.00,450.00,Pagato,,Saldata a inizio stagione',
+      'Bianchi,Luca,2025-26,450.00,200.00,Parziale,30/11/2026,Acconto versato',
+      'Verdi,Andrea,2025-26,450.00,0.00,Non Pagato,30/11/2026,',
+    ].join('\n'),
+  },
+  {
+    key: 'calendario',
+    label: 'Calendario',
+    icon: '📅',
+    schema: SCHEMA_CALENDARIO,
+    colonne: 'tipologia (Allenamento / Partita / Riunione / Visita Medica / Trasferta) · data (GG/MM/AAAA) · ora_inizio (HH:MM) · ora_fine (HH:MM, facoltativo) · luogo · priorita (Bassa / Media / Alta / Urgente, facoltativo) · note',
+    template: null as unknown as string, // calcolato dinamicamente in componente
+  },
+  {
+    key: 'certificati',
+    label: 'Certificati medici',
+    icon: '🩺',
+    schema: SCHEMA_CERTIFICATI,
+    colonne: 'cognome · nome (del giocatore, già importato) · tipo (Agonistico / Non Agonistico) · data_rilascio (GG/MM/AAAA) · data_scadenza (GG/MM/AAAA) · medico · struttura',
+    note: 'Il giocatore deve essere già stato importato — fallo prima con "Giocatori / Atleti".',
+    template: [
+      'cognome,nome,tipo,data_rilascio,data_scadenza,medico,struttura',
+      'Rossi,Mario,Agonistico,10/09/2025,10/09/2026,Dott. Ferrari,Centro Medico Sportivo Bari',
+      'Bianchi,Luca,Agonistico,15/08/2025,15/08/2026,Dott.ssa Colombo,Poliambulatorio San Rocco',
+    ].join('\n'),
+  },
 ]
 
 export default function ImportPage() {
@@ -57,9 +92,23 @@ export default function ImportPage() {
     ].join('\n')
   }, [])
 
-  const TIPI_IMPORT_EFFETTIVI = TIPI_IMPORT.map(t =>
-    t.key === 'movimenti' ? { ...t, template: templateMovimenti } : t
-  )
+  // Template calendario con date dell'anno corrente
+  const templateCalendario = useMemo(() => {
+    const y = new Date().getFullYear()
+    const m = String(new Date().getMonth() + 1).padStart(2, '0')
+    return [
+      'tipologia,data,ora_inizio,ora_fine,luogo,priorita,note',
+      `Allenamento,05/${m}/${y},18:30,20:00,Campo Comunale,Media,`,
+      `Partita,08/${m}/${y},15:00,17:00,Stadio Comunale,Alta,vs ASD Rivali`,
+      `Riunione,10/${m}/${y},19:00,20:00,Sede sociale,Bassa,Riunione staff tecnico`,
+    ].join('\n')
+  }, [])
+
+  const TIPI_IMPORT_EFFETTIVI = TIPI_IMPORT.map(t => {
+    if (t.key === 'movimenti') return { ...t, template: templateMovimenti }
+    if (t.key === 'calendario') return { ...t, template: templateCalendario }
+    return t
+  })
   const [testo, setTesto] = useState('')
   const [file, setFile] = useState<File | null>(null)
   const [preview, setPreview] = useState<ReturnType<typeof parseCSV> | null>(null)
@@ -77,6 +126,16 @@ export default function ImportPage() {
 
   const onFile = (f: File) => {
     setFile(f)
+    const isExcel = /\.(xlsx|xls)$/i.test(f.name)
+
+    if (isExcel) {
+      // File binario: non ha senso mostrarlo come testo incollabile,
+      // lo parsiamo direttamente con la stessa validazione del CSV.
+      setTesto('')
+      parseExcel(f, tipo.schema).then(setPreview)
+      return
+    }
+
     const reader = new FileReader()
     reader.onload = e => {
       const txt = (e.target?.result as string) ?? ''
@@ -126,7 +185,20 @@ export default function ImportPage() {
 
   return (
     <div>
-      <PageHeader title="Import dati" subtitle="Carica CSV per importare massivamente giocatori, movimenti o famiglie" />
+      <PageHeader
+        title="Import dati"
+        subtitle="Carica un file CSV o Excel per importare massivamente i tuoi dati — utile anche per passare da un altro gestionale (es. Golee) a ClubIS"
+      />
+
+      <div className="card" style={{
+        padding: '14px 18px', marginBottom: 20, display: 'flex', gap: 12, alignItems: 'flex-start',
+        background: 'rgba(200,240,0,0.06)', border: '1px solid rgba(200,240,0,0.25)',
+      }}>
+        <span style={{ fontSize: 18 }}>🔄</span>
+        <div style={{ fontSize: 13, color: 'var(--grigio-2, #ccc)', lineHeight: 1.7 }}>
+          <strong>Stai passando da un altro gestionale?</strong> Esporta i tuoi dati in CSV o Excel (quasi tutti i software lo permettono, di solito da un menu &quot;Esporta&quot; o &quot;Stampa elenco&quot;), poi caricali qui. Ordine consigliato: prima <strong>Giocatori</strong>, poi <strong>Famiglie</strong>, <strong>Quote/pagamenti</strong>, <strong>Calendario</strong> e <strong>Certificati medici</strong> (questi ultimi tre si agganciano ai giocatori già importati). Se le colonne del tuo export hanno nomi diversi da quelli richiesti, rinominale nella prima riga del file prima di caricarlo.
+        </div>
+      </div>
 
       {/* Selezione tipo */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12, marginBottom: 24 }}>
@@ -168,6 +240,11 @@ export default function ImportPage() {
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)', lineHeight: 1.8 }}>
               {tipo.colonne}
             </div>
+            {'note' in tipo && tipo.note && (
+              <div style={{ fontSize: 12, color: 'var(--accent)', marginTop: 8 }}>
+                ⚠️ {tipo.note as string}
+              </div>
+            )}
           </div>
           <button className="btn btn-secondary btn-sm" onClick={scaricaTemplate} style={{ flexShrink: 0, marginLeft: 16 }}>
             ↓ Scarica template CSV
@@ -197,7 +274,7 @@ export default function ImportPage() {
           <input
             id="file-input"
             type="file"
-            accept=".csv,.txt,.tsv"
+            accept=".csv,.txt,.tsv,.xlsx,.xls"
             style={{ display: 'none' }}
             onChange={e => { const f = e.target.files?.[0]; if (f) onFile(f) }}
           />
@@ -206,10 +283,10 @@ export default function ImportPage() {
             fontFamily: 'var(--font-display)', fontWeight: 700,
             textTransform: 'uppercase', fontSize: 13, marginBottom: 4,
           }}>
-            {file ? file.name : 'Trascina il file CSV qui'}
+            {file ? file.name : 'Trascina qui il file CSV o Excel'}
           </div>
           <div style={{ fontSize: 11, color: 'var(--gray)', fontFamily: 'var(--font-mono)' }}>
-            oppure clicca per selezionare · CSV, TSV, TXT
+            oppure clicca per selezionare · CSV, TSV, TXT, XLSX, XLS
           </div>
         </div>
 
@@ -371,6 +448,45 @@ export default function ImportPage() {
                 style={{ color: '#60a5fa', textDecoration: 'underline' }}
               >
                 Giocatori → Scuola Calcio →
+              </a>
+            </div>
+          )}
+
+          {tipoSel === 'quote' && risultato.importati > 0 && (
+            <div style={{
+              marginTop: 12, padding: '10px 14px',
+              background: 'rgba(200,240,0,0.06)', border: '1px solid rgba(200,240,0,0.25)',
+              fontSize: 12, fontFamily: 'var(--font-mono)',
+            }}>
+              Quote registrate.{' '}
+              <a href="/dashboard/segretario/quote" style={{ color: 'var(--accent)', textDecoration: 'underline' }}>
+                Vai a Quote →
+              </a>
+            </div>
+          )}
+
+          {tipoSel === 'calendario' && risultato.importati > 0 && (
+            <div style={{
+              marginTop: 12, padding: '10px 14px',
+              background: 'rgba(200,240,0,0.06)', border: '1px solid rgba(200,240,0,0.25)',
+              fontSize: 12, fontFamily: 'var(--font-mono)',
+            }}>
+              Eventi aggiunti al calendario.{' '}
+              <a href="/dashboard/segretario/calendario" style={{ color: 'var(--accent)', textDecoration: 'underline' }}>
+                Vai a Calendario →
+              </a>
+            </div>
+          )}
+
+          {tipoSel === 'certificati' && risultato.importati > 0 && (
+            <div style={{
+              marginTop: 12, padding: '10px 14px',
+              background: 'rgba(200,240,0,0.06)', border: '1px solid rgba(200,240,0,0.25)',
+              fontSize: 12, fontFamily: 'var(--font-mono)',
+            }}>
+              Certificati registrati.{' '}
+              <a href="/dashboard/segretario/certificati" style={{ color: 'var(--accent)', textDecoration: 'underline' }}>
+                Vai a Certificati medici →
               </a>
             </div>
           )}

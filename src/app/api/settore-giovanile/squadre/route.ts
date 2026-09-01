@@ -19,6 +19,7 @@ export async function GET(req: NextRequest) {
       id,
       nome,
       categoria_eta,
+      genere,
       colore_badge,
       descrizione,
       max_giocatori,
@@ -52,6 +53,7 @@ export async function POST(req: NextRequest) {
       club_id: ctx.clubId,
       nome: body.nome,
       categoria_eta: body.categoria_eta,
+      genere: body.genere ?? 'maschile',
       colore_badge: body.colore_badge ?? '#c8f000',
       descrizione: body.descrizione ?? null,
       max_giocatori: body.max_giocatori ?? 30,
@@ -81,6 +83,7 @@ export async function PATCH(req: NextRequest) {
   const aggiornamenti: Record<string, unknown> = {}
   if (body.nome           !== undefined) aggiornamenti.nome            = body.nome
   if (body.categoria_eta  !== undefined) aggiornamenti.categoria_eta   = body.categoria_eta
+  if (body.genere         !== undefined) aggiornamenti.genere          = body.genere
   if (body.colore_badge   !== undefined) aggiornamenti.colore_badge    = body.colore_badge
   if (body.descrizione    !== undefined) aggiornamenti.descrizione     = body.descrizione
   if (body.max_giocatori  !== undefined) aggiornamenti.max_giocatori   = body.max_giocatori

@@ -5,6 +5,7 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getUserContext } from '@/lib/impersonation'
 import { stagioneCorrente } from '@/lib/helpers'
+import { CATEGORIE_FEDERALI } from '@/lib/settore-giovanile'
 
 export const dynamic = 'force-dynamic'
 
@@ -22,6 +23,13 @@ const DEFAULT_SQUADRE = [
   { nome: 'Under 6',       categoria_eta: 'u6' },
 ]
 
+// Scuola calcio: stessi codici categoria_eta di DEFAULT_SQUADRE, ma con il
+// nome federale (Esordienti, Allievi, ecc.) invece del generico "Under N".
+const DEFAULT_SQUADRE_SCUOLA_CALCIO = DEFAULT_SQUADRE.map(d => {
+  const federale = Object.values(CATEGORIE_FEDERALI).find(c => (c.etaCodes as readonly string[]).includes(d.categoria_eta))
+  return federale ? { ...d, nome: federale.label } : d
+})
+
 export async function GET() {
   const ctx = await getUserContext()
   if (!ctx) return Response.json({ error: 'Non autorizzato' }, { status: 401 })
@@ -32,6 +40,9 @@ export async function GET() {
   const supabase = createAdminClient()
   const stagione = stagioneCorrente()
 
+  const { data: clubData } = await supabase.from('clubs').select('tipo_prodotto').eq('id', clubId).maybeSingle()
+  const squadreDefault = clubData?.tipo_prodotto === 'scuola_calcio_standalone' ? DEFAULT_SQUADRE_SCUOLA_CALCIO : DEFAULT_SQUADRE
+
   // Carica squadre esistenti (tutte le stagioni, solo attive)
   const { data: esistenti } = await supabase
     .from('squadre')
@@ -41,7 +52,7 @@ export async function GET() {
     .order('nome')
 
   const categorieEsistenti = new Set((esistenti ?? []).map(s => s.categoria_eta))
-  const mancanti = DEFAULT_SQUADRE.filter(d => !categorieEsistenti.has(d.categoria_eta))
+  const mancanti = squadreDefault.filter(d => !categorieEsistenti.has(d.categoria_eta))
 
   // Inserisce le categorie mancanti una per una (no upsert → nessun constraint richiesto)
   for (const d of mancanti) {

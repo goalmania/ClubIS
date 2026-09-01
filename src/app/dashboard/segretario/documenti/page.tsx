@@ -2,6 +2,7 @@
 import FeatureGate from '@/components/FeatureGate'
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import { CATEGORIA_META, type CategoriaDocumento } from '@/lib/documents/types'
 import { CATALOGO_DOCUMENTI, cercaDocumenti } from '@/lib/documents/catalogo'
 
@@ -248,6 +249,7 @@ function CampoExtraInput({
 
 // ── Pagina principale ──────────────────────────────────────────────────────
 export default function DocumentiPage() {
+  const clubId = useClubId()
   // Catalogo completo (sempre tutti i documenti, senza filtro categoria)
   const [tuttiDocumenti, setTuttiDocumenti] = useState<DocRow[]>([])
   const [loading, setLoading]               = useState(true)
@@ -289,20 +291,17 @@ export default function DocumentiPage() {
     setVarianteId(modalDoc.documenti_varianti?.[0]?.id ?? '')
     setCampiExtra({})
 
+    if (!clubId) return
     const supabase = createClient()
     ;(async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-      const { data: u } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-      if (!u) return
       const { data: g } = await supabase
         .from('giocatori')
         .select('id, nome, cognome')
-        .eq('club_id', u.club_id)
+        .eq('club_id', clubId)
         .order('cognome')
       setGiocatori(g ?? [])
     })()
-  }, [modalDoc])
+  }, [modalDoc, clubId])
 
   const togglePreferito = (docId: string) => {
     setPreferiti(prev => {

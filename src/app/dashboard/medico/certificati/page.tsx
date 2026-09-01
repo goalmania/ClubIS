@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import { PageHeader, TabBar, EmptyState, Modal, Toast } from '@/components/ui'
 
 /* ─── Tipi ───────────────────────────────────────────────────────── */
@@ -39,7 +40,7 @@ export default function MedicoCertificatiPage() {
 
   const [certificati, setCertificati] = useState<any[]>([])
   const [giocatoriList, setGiocatoriList] = useState<any[]>([])
-  const [clubId, setClubId]   = useState<string | null>(null)
+  const clubId = useClubId()
   const [loading, setLoading] = useState(true)
   const [filtro, setFiltro]   = useState<Filtro>('tutti')
   const [modalOpen, setModalOpen] = useState(false)
@@ -50,17 +51,13 @@ export default function MedicoCertificatiPage() {
   /* ── Load ──────────────────────────────────────────────────────── */
 
   const load = useCallback(async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
-    const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-    if (!utente) return
-    setClubId(utente.club_id)
+    if (!clubId) return
 
     const [{ data: certs }, giocatori] = await Promise.all([
       supabase
         .from('certificati_medici')
         .select('*, giocatori(id, nome, cognome, ruolo_principale)')
-        .eq('club_id', utente.club_id)
+        .eq('club_id', clubId)
         .order('data_scadenza'),
       fetch('/api/giocatori').then(r => r.json()).catch(() => []),
     ])
@@ -68,7 +65,7 @@ export default function MedicoCertificatiPage() {
     setCertificati(certs ?? [])
     setGiocatoriList(Array.isArray(giocatori) ? giocatori : [])
     setLoading(false)
-  }, [])
+  }, [clubId])
 
   useEffect(() => { load() }, [load])
 

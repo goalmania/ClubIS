@@ -6,6 +6,7 @@ import { PageHeader, FormField, FormGrid } from '@/components/ui'
 import {
   CATEGORIE_SQUADRA,
   CATEGORIE_SQUADRA_OPTIONS,
+  GENERE_OPTIONS,
   STATI_QUOTA_GIOVANILE,
   METODI_PAGAMENTO,
   mesiStagione,
@@ -21,6 +22,7 @@ interface Squadra {
   id: string
   nome: string
   categoria_eta: string
+  genere: string
   colore_badge: string
   descrizione: string | null
   max_giocatori: number
@@ -212,7 +214,7 @@ export default function SettoreGiovanilePage() {
           tab === 'squadre' ? (
             <button
               className="btn btn-primary btn-sm"
-              onClick={() => { setEditingSquadra(null); setModalSquadra({ colore_badge: '#c8f000', max_giocatori: 30, attiva: true }) }}
+              onClick={() => { setEditingSquadra(null); setModalSquadra({ colore_badge: '#c8f000', max_giocatori: 30, attiva: true, genere: 'maschile' }) }}
             >
               + Nuova squadra
             </button>
@@ -262,7 +264,7 @@ export default function SettoreGiovanilePage() {
               <button
                 className="btn btn-primary btn-sm"
                 style={{ marginTop: 16 }}
-                onClick={() => { setEditingSquadra(null); setModalSquadra({ colore_badge: '#c8f000', max_giocatori: 30, attiva: true }) }}
+                onClick={() => { setEditingSquadra(null); setModalSquadra({ colore_badge: '#c8f000', max_giocatori: 30, attiva: true, genere: 'maschile' }) }}
               >
                 + Crea la prima squadra
               </button>
@@ -301,6 +303,7 @@ export default function SettoreGiovanilePage() {
 
                       <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>
                         {CATEGORIE_SQUADRA[s.categoria_eta as CategoriaSquadra]?.label ?? s.categoria_eta}
+                        {s.genere === 'femminile' && <span style={{ marginLeft: 6 }}>🚺 Femminile</span>}
                       </div>
 
                       {s.allenatore && (
@@ -548,6 +551,17 @@ export default function SettoreGiovanilePage() {
                   >
                     <option value="">— Seleziona —</option>
                     {CATEGORIE_SQUADRA_OPTIONS.map(o => (
+                      <option key={o.value} value={o.value}>{o.label}</option>
+                    ))}
+                  </select>
+                </FormField>
+                <FormField label="Genere" required>
+                  <select
+                    className="select"
+                    value={modalSquadra.genere ?? 'maschile'}
+                    onChange={e => setModalSquadra(p => ({ ...p!, genere: e.target.value }))}
+                  >
+                    {GENERE_OPTIONS.map(o => (
                       <option key={o.value} value={o.value}>{o.label}</option>
                     ))}
                   </select>

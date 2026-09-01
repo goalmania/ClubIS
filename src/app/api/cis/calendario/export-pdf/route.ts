@@ -30,18 +30,15 @@ export async function GET(req: NextRequest) {
   const admin = createAdminClient()
   const oggi = new Date().toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric' })
 
-  const { data: utente } = await admin.from('utenti').select('club_id').eq('id', ctx.userId).single()
-  if (!utente?.club_id) return new Response('Non autorizzato', { status: 403 })
-
   const [{ data: eventi }, { data: club }] = await Promise.all([
     admin
       .from('eventi_calendario')
       .select('id, tipologia, data, data_ora_inizio, data_ora_fine, luogo_testo, priorita, note')
-      .eq('club_id', utente.club_id)
+      .eq('club_id', ctx.clubId)
       .lt('data_ora_inizio', end)
       .gt('data_ora_fine', start)
       .order('data_ora_inizio', { ascending: true }),
-    admin.from('clubs').select('nome, citta, logo_url').eq('id', utente.club_id).single(),
+    admin.from('clubs').select('nome, citta, logo_url').eq('id', ctx.clubId).single(),
   ])
 
   const lista = (eventi ?? []) as any[]

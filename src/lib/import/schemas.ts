@@ -54,6 +54,58 @@ export const SCHEMA_FAMIGLIE = {
   lowercaseFields: ['relazione'],
 }
 
+// Import quote/pagamenti per giocatore già in rosa — usato per migrare lo
+// storico contabile da un altro gestionale (es. Golee). Il giocatore deve
+// esistere già nel club (importarlo prima con SCHEMA_GIOCATORI): la riga
+// viene abbinata per cognome+nome.
+export const SCHEMA_QUOTE = {
+  mapping: {
+    'cognome': 'giocatore_cognome',
+    'nome': 'giocatore_nome',
+    'stagione': 'stagione',
+    'importo_totale': 'importo_totale',
+    'importo_pagato': 'importo_pagato',
+    'stato': 'stato',
+    'scadenza': 'scadenza',
+    'note': 'note',
+  } as Record<string, string>,
+  required: ['cognome', 'nome', 'stagione', 'importo_totale'],
+  dateFields: ['scadenza'],
+  lowercaseFields: ['stato'],
+}
+
+// Import eventi di calendario (allenamenti, partite, riunioni, trasferte).
+export const SCHEMA_CALENDARIO = {
+  mapping: {
+    'tipologia': 'tipologia',
+    'data': 'data',
+    'ora_inizio': 'ora_inizio',
+    'ora_fine': 'ora_fine',
+    'luogo': 'luogo_testo',
+    'priorita': 'priorita',
+    'note': 'note',
+  } as Record<string, string>,
+  required: ['tipologia', 'data', 'ora_inizio', 'luogo'],
+  dateFields: ['data'],
+  lowercaseFields: ['tipologia', 'priorita'],
+}
+
+// Import certificati medici — il giocatore deve esistere già nel club.
+export const SCHEMA_CERTIFICATI = {
+  mapping: {
+    'cognome': 'giocatore_cognome',
+    'nome': 'giocatore_nome',
+    'tipo': 'tipo',
+    'data_rilascio': 'data_rilascio',
+    'data_scadenza': 'data_scadenza',
+    'medico': 'medico',
+    'struttura': 'struttura',
+  } as Record<string, string>,
+  required: ['cognome', 'nome', 'tipo', 'data_rilascio', 'data_scadenza'],
+  dateFields: ['data_rilascio', 'data_scadenza'],
+  lowercaseFields: ['tipo'],
+}
+
 export type ImportSchema = {
   mapping: Record<string, string>
   required: string[]

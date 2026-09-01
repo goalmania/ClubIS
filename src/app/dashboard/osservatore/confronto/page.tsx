@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import { potenzialeColore, formatEuro } from '@/lib/helpers'
 import RadarChart from '@/components/ui/RadarChart'
 import Link from 'next/link'
@@ -80,6 +81,7 @@ function VotoBox({ v, best }: { v: number | null; best: boolean }) {
 
 export default function ConfrontoPage() {
   const supabase = createClient()
+  const clubId = useClubId()
   const [all, setAll]         = useState<Report[]>([])
   const [selected, setSelected] = useState<string[]>([])
   const [loading, setLoading]   = useState(true)
@@ -87,22 +89,14 @@ export default function ConfrontoPage() {
   const [cerca, setCerca]     = useState('')
 
   const load = useCallback(async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) { setLoading(false); return }
-
-    const { data: utente } = await supabase
-      .from('utenti')
-      .select('club_id')
-      .eq('id', user.id)
-      .single()
-    if (!utente) { setLoading(false); return }
+    if (!clubId) { setLoading(false); return }
 
     // Query difensiva: seleziona solo colonne sicuramente presenti
     // ruolo_osservato aggiunto da migration fix049 — gestito con fallback
     const { data, error } = await supabase
       .from('report_scouting')
       .select('id, nome_giocatore_ext, club_attuale_ext, tecnica, tattica, fisico, mentale, velocita, voto_globale, potenziale, esito, stato_pipeline, valore_mercato_stimato, ruolo_osservato')
-      .eq('club_richiedente_id', utente.club_id)
+      .eq('club_richiedente_id', clubId)
       .in('esito', ESITI_DISPONIBILI)
       .order('voto_globale', { ascending: false, nullsFirst: false })
 
@@ -111,7 +105,7 @@ export default function ConfrontoPage() {
       const { data: fallback } = await supabase
         .from('report_scouting')
         .select('id, nome_giocatore_ext, club_attuale_ext, tecnica, tattica, fisico, mentale, velocita, voto_globale, potenziale, esito, stato_pipeline, valore_mercato_stimato')
-        .eq('club_richiedente_id', utente.club_id)
+        .eq('club_richiedente_id', clubId)
         .in('esito', ESITI_DISPONIBILI)
         .order('voto_globale', { ascending: false, nullsFirst: false })
       setAll((fallback ?? []).map(r => ({ ...r, ruolo_osservato: null })))
@@ -119,7 +113,7 @@ export default function ConfrontoPage() {
       setAll(data ?? [])
     }
     setLoading(false)
-  }, [supabase])
+  }, [supabase, clubId])
 
   useEffect(() => { load() }, [load])
 

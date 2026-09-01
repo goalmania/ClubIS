@@ -3,10 +3,22 @@ import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { formatData, formatOra, formatEuro } from '@/lib/helpers'
 import Link from 'next/link'
+import { useTipoProdotto } from '@/lib/club-context'
 
 export default function GiocatoreDashboard() {
   // Stable client ref — never recreated on re-render
   const supabase = useRef(createClient()).current
+
+  const COSTI_JSON_START = '__COSTI_TRASFERTE_JSON_START__'
+  const COSTI_JSON_END   = '__COSTI_TRASFERTE_JSON_END__'
+
+  function parseCostiJson(note: string | null): any | null {
+    if (!note) return null
+    const s = note.indexOf(COSTI_JSON_START)
+    const e = note.indexOf(COSTI_JSON_END)
+    if (s === -1 || e === -1) return null
+    try { return JSON.parse(note.slice(s + COSTI_JSON_START.length, e)) } catch { return null }
+  }
 
   const [stato, setStato]       = useState<'loading' | 'ok' | 'demo' | 'errore'>('loading')
   const [giocatore, setGiocatore] = useState<any>(null)
@@ -14,6 +26,9 @@ export default function GiocatoreDashboard() {
   const [prossimi, setProssimi]  = useState<any[]>([])
   const [quote, setQuote]        = useState<any[]>([])
   const [convocazioni, setConv]  = useState<any[]>([])
+  const [trasferte, setTrasferte] = useState<any[]>([])
+  const [eventiCalendario, setEventiCalendario] = useState<any[]>([])
+  const isScuolaCalcio = useTipoProdotto() === 'scuola_calcio_standalone'
 
   useEffect(() => {
     let mounted = true
@@ -40,7 +55,7 @@ export default function GiocatoreDashboard() {
       setGiocatore(g)
 
       // Carica dati in parallelo con le colonne/tabelle corrette
-      const [presRes, partRes, quoteRes, convRes] = await Promise.allSettled([
+      const [presRes, partRes, quoteRes, convRes, trasRes] = await Promise.allSettled([
         // Presenze: conta le sessioni dove il giocatore risulta presente
         supabase
           .from('presenze')
@@ -72,6 +87,14 @@ export default function GiocatoreDashboard() {
           .eq('giocatore_id', g.id)
           .order('created_at', { ascending: false })
           .limit(5),
+
+        // Trasferte del club (filtra client-side per partecipanti)
+        supabase
+          .from('trasferte')
+          .select('id, destinazione, data_partenza, data_rientro, mezzo, stato, note, partite(avversario, data_ora)')
+          .gte('data_partenza', new Date().toISOString().split('T')[0])
+          .order('data_partenza')
+          .limit(20),
       ])
 
       if (!mounted) return
@@ -83,6 +106,24 @@ export default function GiocatoreDashboard() {
       if (partRes.status === 'fulfilled') setProssimi((partRes.value as any).data ?? [])
       if (quoteRes.status === 'fulfilled') setQuote((quoteRes.value as any).data ?? [])
       if (convRes.status === 'fulfilled') setConv((convRes.value as any).data ?? [])
+      if (trasRes.status === 'fulfilled') {
+        const rows: any[] = (trasRes.value as any).data ?? []
+        const mie = rows.filter((r: any) => {
+          const costi = parseCostiJson(r.note)
+          return costi?.partecipanti?.giocatori?.includes(g.id)
+        })
+        setTrasferte(mie)
+      }
+
+      // Eventi del Calendario (riunioni, visite mediche, trasferte...) in cui
+      // il giocatore è partecipante selezionato — solo scuola calcio.
+      try {
+        const evRes = await fetch('/api/cis/calendario/eventi-giocatore')
+        if (evRes.ok) {
+          const evJson = await evRes.json()
+          if (mounted) setEventiCalendario(evJson.events ?? [])
+        }
+      } catch {}
 
       setStato('ok')
     }
@@ -196,6 +237,7 @@ export default function GiocatoreDashboard() {
         <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
           <Link href="/dashboard/giocatore/allenamenti" style={linkBtn}>📋 Allenamenti</Link>
           <Link href="/dashboard/giocatore/partite"     style={linkBtn}>🏟️ Partite</Link>
+          <Link href="/dashboard/giocatore/trasferte"   style={linkBtn}>🚌 Trasferte</Link>
         </div>
       </div>
 
@@ -205,6 +247,7 @@ export default function GiocatoreDashboard() {
         <StatCard icona="🏟️" label="Prossime gare"        value={String(prossimi.length)}                  sub="in programma" />
         <StatCard icona="💰" label="Quota stagionale"      value={quotaAttiva ? formatEuro(Number(quotaAttiva.importo_pagato)) : '—'} sub={quotaAttiva ? `su ${formatEuro(Number(quotaAttiva.importo_totale))}` : 'Nessuna quota'} />
         <StatCard icona="📋" label="Convocazioni"          value={String(convocazioni.length)}              sub="ultime registrate" />
+        <StatCard icona="🚌" label="Trasferte in programma" value={String(trasferte.length)}                sub="prossime assegnate" />
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
@@ -254,6 +297,54 @@ export default function GiocatoreDashboard() {
               })}
         </div>
       </div>
+
+      {/* Prossime trasferte */}
+      {trasferte.length > 0 && (
+        <div style={{ background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2, overflow: 'hidden', marginBottom: 16 }}>
+          <div style={{ ...cardHeader, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span>Prossime trasferte</span>
+            <Link href="/dashboard/giocatore/trasferte" style={{ fontSize: 10, color: 'var(--accent)', fontFamily: 'var(--font-mono)', textDecoration: 'none' }}>Vedi tutte →</Link>
+          </div>
+          {trasferte.slice(0, 3).map((t: any) => {
+            const dp = new Date(t.data_partenza)
+            return (
+              <div key={t.id} style={{ padding: '10px 18px', borderBottom: '1px solid var(--border-solid)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <div style={{ fontSize: 13, color: 'var(--white)', fontWeight: 600 }}>{t.destinazione}</div>
+                  <div style={{ fontSize: 11, color: 'var(--gray)', marginTop: 2, fontFamily: 'var(--font-mono)' }}>
+                    {dp.toLocaleDateString('it-IT')}
+                    {t.mezzo && ` · ${t.mezzo}`}
+                    {t.partite?.avversario && ` · vs ${t.partite.avversario}`}
+                  </div>
+                </div>
+                <span style={{ fontSize: 10, padding: '2px 8px', color: 'var(--accent)', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', border: '1px solid rgba(200,240,0,0.3)' }}>
+                  {t.stato}
+                </span>
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      {/* Prossimi eventi calendario (scuola calcio) */}
+      {isScuolaCalcio && eventiCalendario.length > 0 && (
+        <div style={{ background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2, overflow: 'hidden', marginBottom: 16 }}>
+          <div style={cardHeader}>Prossimi eventi</div>
+          {eventiCalendario.map((e: any) => (
+            <div key={e.id} style={{ padding: '10px 18px', borderBottom: '1px solid var(--border-solid)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <div style={{ fontSize: 13, color: 'var(--white)', fontWeight: 600 }}>
+                  {{ allenamento: 'Allenamento', partita: 'Partita', riunione: 'Riunione', visita_medica: 'Visita medica', trasferta: 'Trasferta' }[e.tipologia as string] ?? e.tipologia}
+                </div>
+                <div style={{ fontSize: 11, color: 'var(--gray)', marginTop: 2, fontFamily: 'var(--font-mono)' }}>
+                  {formatData(e.data_ora_inizio)} {formatOra(e.data_ora_inizio)}
+                  {e.luogo_testo && ` · ${e.luogo_testo}`}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Ultime convocazioni */}
       {convocazioni.length > 0 && (

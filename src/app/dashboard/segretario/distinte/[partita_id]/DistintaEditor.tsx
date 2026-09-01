@@ -28,6 +28,8 @@ interface Props {
   preselectedIds: string[] | null
   squalificheManuale?: number
   categoriaClub?: string | null
+  basePath?: string
+  comunicatiFigcHref?: string | null
 }
 
 const RUOLO_SHORT: Record<string, string> = {
@@ -38,7 +40,11 @@ const RUOLO_SHORT: Record<string, string> = {
 
 const CAT_LND = ['eccellenza', 'promozione', 'prima_categoria', 'seconda_categoria', 'terza_categoria']
 
-export default function DistintaEditor({ partita, eleggibili, nonEleggibili, staffDefault, preselectedIds, squalificheManuale = 0, categoriaClub }: Props) {
+export default function DistintaEditor({
+  partita, eleggibili, nonEleggibili, staffDefault, preselectedIds, squalificheManuale = 0, categoriaClub,
+  basePath = '/dashboard/segretario/distinte',
+  comunicatiFigcHref = '/dashboard/segretario/figc/comunicati',
+}: Props) {
   const MAX_SELEZIONATI = categoriaClub === 'serie_d' ? 22 : CAT_LND.includes(categoriaClub ?? '') ? 20 : 18
   const router = useRouter()
   const [selected, setSelected] = useState<Set<string>>(
@@ -113,19 +119,21 @@ export default function DistintaEditor({ partita, eleggibili, nonEleggibili, sta
             ⚠️ {squalificheManuale} squalifica{squalificheManuale > 1 ? 'i' : ''} non collegata{squalificheManuale > 1 ? 'i' : ''} a un comunicato FIGC.
             Potrebbe trattarsi di inserimento manuale — verifica tramite i comunicati ufficiali.
           </span>
-          <a
-            href="/dashboard/segretario/figc/comunicati"
-            style={{ flexShrink: 0, fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--ambra)', textDecoration: 'underline' }}
-          >
-            Apri comunicati →
-          </a>
+          {comunicatiFigcHref && (
+            <a
+              href={comunicatiFigcHref}
+              style={{ flexShrink: 0, fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--ambra)', textDecoration: 'underline' }}
+            >
+              Apri comunicati →
+            </a>
+          )}
         </div>
       )}
 
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
         <div>
-          <Link href="/dashboard/segretario/distinte" style={{ fontSize: 12, color: 'var(--text-muted)', textDecoration: 'none' }}>
+          <Link href={basePath} style={{ fontSize: 12, color: 'var(--text-muted)', textDecoration: 'none' }}>
             ← Distinte Gara
           </Link>
           <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)', marginTop: 6 }}>

@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import PushSubscribeButton from '@/components/notifications/PushSubscribeButton'
 
 type Preferenza = {
   tipo_notifica: string
@@ -171,6 +172,12 @@ export default function ImpostazioniNotifichePage() {
             {saving ? 'Salvataggio...' : 'Salva preferenze'}
           </button>
         </div>
+      </div>
+
+      {/* Attivazione push su questo dispositivo */}
+      <div style={{ background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2, padding: '14px 20px', marginBottom: 20 }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--white)', marginBottom: 8 }}>Notifiche push su questo dispositivo</div>
+        <PushSubscribeButton />
       </div>
 
       {/* Legenda canali + toggle globali */}

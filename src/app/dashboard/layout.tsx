@@ -2,17 +2,19 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Sidebar from '@/components/layout/Sidebar'
 import ImpersonationBanner from '@/components/layout/ImpersonationBanner'
+import DemoRoleSwitcher from '@/components/layout/DemoRoleSwitcher'
 import NotificheDropdown from '@/components/layout/NotificheDropdown'
 import { RuoloUtente } from '@/types/database'
-import { readImpersonation } from '@/lib/impersonation'
+import { readVerifiedImpersonation } from '@/lib/impersonation'
 import { dispatchDueNotificationsForUser, getInternalNotificationCountForUser } from '@/lib/notifications/NotificationService'
+import { controllaScadenzeClubSeNecessario } from '@/lib/scadenze-check'
 import { getFamigliaCollegamenti } from '@/lib/famiglia'
 import RicercaGlobale from '@/components/ui/RicercaGlobale'
 import OnboardingWrapper from '@/components/ui/OnboardingWrapper'
 import OnboardingSystem from '@/components/onboarding/OnboardingSystem'
 import { ClubPlanProvider } from '@/lib/club-context'
-import type { PlanTier } from '@/lib/features'
-import { getUserClubs, readActiveClubCookie, resolveActiveClub } from '@/lib/multi-club'
+import type { PlanTier, TipoProdotto } from '@/lib/features'
+import { getUserClubs, readActiveClubCookie, resolveActiveClub, resolveDeviceClub } from '@/lib/multi-club'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = createClient()
@@ -68,20 +70,23 @@ export default async function DashboardLayout({ children }: { children: React.Re
   }
   // ───────────────────────────────────────────────────────────────
 
-  const impersonation = utente.is_super_admin ? readImpersonation() : null
+  const isDemoAccount = !!utente.is_demo_account
+  const impersonation = await readVerifiedImpersonation(user.id, !!utente.is_super_admin, isDemoAccount)
 
   const effectiveRuolo = (impersonation?.ruolo ?? utente.ruolo ?? 'segretario') as RuoloUtente
 
-  // utente.club_id è sempre il club attivo (viene aggiornato da /api/club/switch
-  // e da /api/inviti/accetta-esistente). Nessuna risoluzione via cookie necessaria.
-  const effectiveClubId = impersonation?.clubId ?? utente.club_id
+  // Risolve il club attivo per questo dispositivo specifico.
+  // Se l'utente ha un cookie device_id e ha fatto switch su questo device,
+  // usa quel club. Altrimenti fallback su utente.club_id dal DB.
+  const effectiveClubId = impersonation?.clubId
+    ?? await resolveDeviceClub(user.id, utente.club_id)
 
   // Carica tutti i club dell'utente (solo per mostrare il selettore nella sidebar)
   const userClubs = !impersonation ? await getUserClubs(user.id) : []
 
   const { data: club } = await supabase
     .from('clubs')
-    .select('nome, categoria, logo_url, onboarding_completed, plan_tier, plan_status, trial_ends_at')
+    .select('nome, categoria, genere, logo_url, onboarding_completed, plan_tier, plan_status, trial_ends_at, tipo_prodotto')
     .eq('id', effectiveClubId)
     .maybeSingle()
 
@@ -91,6 +96,20 @@ export default async function DashboardLayout({ children }: { children: React.Re
   try {
     await dispatchDueNotificationsForUser(supabase as any, user.id)
     internalNotUnread = await getInternalNotificationCountForUser(supabase as any, user.id, effectiveClubId)
+  } catch (err) {
+    void err
+  }
+
+  // Al primo accesso della giornata per questo club, lancia il controllo
+  // scadenze certificati medici e quote scuola calcio — complementare al cron
+  // giornaliero delle 9:00, utile se qualcuno apre il gestionale prima di
+  // quell'orario. Le esecuzioni successive nello stesso giorno ritornano
+  // subito (vedi il check su club_controllo_scadenze), quindi non rallentano
+  // le pagine successive. Awaited (non fire-and-forget): in ambiente
+  // serverless una promise non attesa rischia di essere interrotta appena la
+  // risposta HTTP viene inviata.
+  try {
+    await controllaScadenzeClubSeNecessario(effectiveClubId)
   } catch (err) {
     void err
   }
@@ -109,6 +128,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
     : (rawPlanTier.trim().toLowerCase() || 'starter')
   ) as PlanTier
 
+  const tipoProdotto = (((club as any)?.tipo_prodotto ?? 'club_agonistico') as string).trim().toLowerCase() as TipoProdotto
+
   return (
     <div style={{ minHeight: '100vh' }}>
       {impersonation && (
@@ -119,7 +140,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       )}
       {/* Banner prova gratuita */}
       {isTrial && giorniRimanenti !== null && (
-        <div style={{
+        <div className="dashboard-trial-banner" style={{
           background: 'rgba(200,240,0,0.08)',
           borderBottom: '1px solid rgba(200,240,0,0.2)',
           padding: '8px 24px',
@@ -167,6 +188,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           notifiche={internalNotUnread ?? 0}
           isSuperAdmin={utente.is_super_admin ?? false}
           planTier={effectivePlanTier}
+          tipoProdotto={tipoProdotto}
           userClubs={userClubs.map(c => ({
             club_id:   c.club_id,
             nome:      c.nome,
@@ -175,15 +197,14 @@ export default async function DashboardLayout({ children }: { children: React.Re
           }))}
           activeClubId={effectiveClubId}
         />
-        <main style={{
+        <main className="dashboard-main" style={{
           flex: 1,
-          padding: '28px 32px',
           overflowY: 'auto',
           maxWidth: '100%',
           background: 'var(--bg-app)',
           minHeight: '100vh',
         }}>
-          <div style={{
+          <div className="dashboard-topbar" style={{
             position: 'sticky',
             top: 0,
             zIndex: 10,
@@ -200,13 +221,18 @@ export default async function DashboardLayout({ children }: { children: React.Re
               clubId={effectiveClubId}
               initialCount={internalNotUnread ?? 0}
             />
+            {isDemoAccount && !impersonation && (
+              <div style={{ marginLeft: 'auto' }}>
+                <DemoRoleSwitcher clubId={effectiveClubId} clubNome={club?.nome} />
+              </div>
+            )}
           </div>
           <OnboardingWrapper
             clubId={effectiveClubId}
             ruolo={effectiveRuolo}
             mostra={!(club?.onboarding_completed ?? false)}
           />
-          <ClubPlanProvider planTier={effectivePlanTier}>
+          <ClubPlanProvider planTier={effectivePlanTier} categoria={club?.categoria ?? 'eccellenza'} genere={(club as any)?.genere ?? 'maschile'} clubId={effectiveClubId} tipoProdotto={tipoProdotto}>
             {children}
           </ClubPlanProvider>
           <OnboardingSystem role={effectiveRuolo} />

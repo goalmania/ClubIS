@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import { Toast, StatCard } from '@/components/ui'
 
 type TrasfertaRow = {
@@ -62,17 +63,8 @@ export default function CostiTrasferteStagioneCard() {
   const [loading, setLoading] = useState(false)
   const [toast, setToast] = useState<{ msg: string; tipo: 'success' | 'error' | 'info' } | null>(null)
 
-  const [clubId, setClubId] = useState<string | null>(null)
+  const clubId = useClubId()
   const [rows, setRows] = useState<TrasfertaRow[]>([])
-
-  useEffect(() => {
-    void (async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-      const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-      if (utente?.club_id) setClubId(utente.club_id)
-    })()
-  }, [supabase])
 
   const load = async (s: string, e: string) => {
     if (!clubId) return

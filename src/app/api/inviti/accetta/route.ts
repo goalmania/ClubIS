@@ -1,5 +1,6 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { NextResponse } from 'next/server'
+import { collegaAllenatoreCategoria } from '@/lib/settore-giovanile'
 
 /** Endpoint pubblico — accetta un invito e crea l'account utente */
 export async function POST(req: Request) {
@@ -23,7 +24,7 @@ export async function POST(req: Request) {
 
   const { data: invito } = await admin
     .from('inviti_club')
-    .select('id, ruolo, usato, scadenza, club_id, giocatore_id')
+    .select('id, ruolo, usato, scadenza, club_id, giocatore_id, categoria_federale')
     .eq('token', token)
     .maybeSingle()
 
@@ -109,6 +110,17 @@ export async function POST(req: Request) {
           .eq('id', invito.giocatore_id)
       } catch {}
     }
+  }
+
+  // 3b. Allenatore scuola calcio: collega automaticamente alla squadra della categoria
+  if (invito.ruolo === 'allenatore' && invito.categoria_federale) {
+    try {
+      await collegaAllenatoreCategoria(admin, {
+        clubId:            invito.club_id,
+        allenatoreId:      userId,
+        categoriaFederale: invito.categoria_federale,
+      })
+    } catch {}
   }
 
   // 4. Aggiungi membership in user_clubs

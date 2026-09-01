@@ -2,9 +2,12 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { FormField, FormGrid, FormSection, SectionCard, Select, BackButton, Toast } from '@/components/ui'
+import { useTipoProdotto } from '@/lib/club-context'
+import { labelSquadra } from '@/lib/settore-giovanile'
 
 export default function NuovaPartitaPage() {
   const router = useRouter()
+  const isScuolaCalcio = useTipoProdotto() === 'scuola_calcio_standalone'
   const [squadre, setSquadre] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const [toast, setToast] = useState<{ msg: string; tipo: 'success' | 'error' } | null>(null)
@@ -73,7 +76,7 @@ export default function NuovaPartitaPage() {
             <FormGrid cols={2}>
               <FormField label="Squadra" required>
                 <Select value={squadraId} onChange={setSquadraId} placeholder="Seleziona squadra"
-                  options={squadre.map(s => ({ value: s.id, label: s.nome }))} />
+                  options={squadre.map(s => ({ value: s.id, label: labelSquadra(s, isScuolaCalcio) }))} />
               </FormField>
               <FormField label="Avversario" required>
                 <input className="input" value={avversario} onChange={e => setAvversario(e.target.value)} placeholder="A.S.D. Barletta" />

@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { ACTIVE_CLUB_COOKIE } from '@/lib/multi-club'
+import { ACTIVE_CLUB_COOKIE, DEVICE_ID_COOKIE, readDeviceId } from '@/lib/multi-club'
+import { randomUUID } from 'crypto'
+import { collegaAllenatoreCategoria } from '@/lib/settore-giovanile'
 
 /**
  * Accetta un invito per un utente che ha già un account ClubIS.
@@ -19,7 +21,7 @@ export async function POST(req: NextRequest) {
   // Valida l'invito
   const { data: invito } = await admin
     .from('inviti_club')
-    .select('id, ruolo, usato, scadenza, club_id, giocatore_id')
+    .select('id, ruolo, usato, scadenza, club_id, giocatore_id, categoria_federale')
     .eq('token', token)
     .maybeSingle()
 
@@ -72,12 +74,26 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // Aggiorna utenti.club_id al nuovo club — tutte le pagine esistenti
-  // leggono già da questo campo, quindi vedranno subito i dati corretti.
+  // Aggiorna utenti.club_id E utenti.ruolo al nuovo club/ruolo — tutte le
+  // pagine esistenti leggono da questi campi (incluso il redirect di
+  // /dashboard che sceglie la dashboard in base a utenti.ruolo), quindi
+  // senza aggiornare anche il ruolo un utente esistente con un ruolo diverso
+  // altrove finiva sempre sulla dashboard del suo VECCHIO ruolo.
   await admin
     .from('utenti')
-    .update({ club_id: invito.club_id })
+    .update({ club_id: invito.club_id, ruolo: invito.ruolo })
     .eq('id', user.id)
+
+  // Allenatore scuola calcio: collega automaticamente alla squadra della categoria
+  if (invito.ruolo === 'allenatore' && invito.categoria_federale) {
+    try {
+      await collegaAllenatoreCategoria(admin, {
+        clubId:            invito.club_id,
+        allenatoreId:      user.id,
+        categoriaFederale: invito.categoria_federale,
+      })
+    } catch {}
+  }
 
   // Marca invito come usato
   await admin
@@ -85,12 +101,15 @@ export async function POST(req: NextRequest) {
     .update({ usato: true, usato_da: user.id, usato_at: now })
     .eq('id', invito.id)
 
+  const deviceId = readDeviceId() ?? randomUUID()
+  await admin
+    .from('user_device_clubs')
+    .upsert({ user_id: user.id, device_id: deviceId, club_id: invito.club_id, updated_at: new Date().toISOString() },
+             { onConflict: 'user_id,device_id' })
+
+  const cookieOpts = { httpOnly: true, sameSite: 'lax' as const, path: '/', maxAge: 60 * 60 * 24 * 365 }
   const res = NextResponse.json({ ok: true, club_id: invito.club_id })
-  res.cookies.set(ACTIVE_CLUB_COOKIE, invito.club_id, {
-    httpOnly: true,
-    sameSite: 'lax',
-    path: '/',
-    maxAge: 60 * 60 * 24 * 365,
-  })
+  res.cookies.set(ACTIVE_CLUB_COOKIE, invito.club_id, cookieOpts)
+  res.cookies.set(DEVICE_ID_COOKIE, deviceId, cookieOpts)
   return res
 }

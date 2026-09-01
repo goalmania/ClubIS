@@ -1,19 +1,26 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserContext } from '@/lib/impersonation'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { formatData } from '@/lib/helpers'
+import ValutazioniMensiliList from './ValutazioniMensiliList'
 
 export default async function ValutazioniPage() {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth/login')
-  const { data: utente, error: utenteError } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-  if (utenteError || !utente) redirect('/auth/errore')
+  const ctx = await getUserContext()
+  if (!ctx) redirect('/auth/login')
+  const { clubId, userId } = ctx
+
+  const supabase = createAdminClient()
+
+  const { data: club } = await supabase.from('clubs').select('tipo_prodotto').eq('id', clubId).maybeSingle()
+  if (club?.tipo_prodotto === 'scuola_calcio_standalone') {
+    return <ValutazioniMensiliList allenatoreId={userId} clubId={clubId} />
+  }
 
   const { data: valutazioni } = await supabase
     .from('valutazioni_tecniche')
     .select('*, giocatori(nome, cognome, ruolo_principale)')
-    .eq('allenatore_id', user.id)
+    .eq('allenatore_id', userId)
     .order('data', { ascending: false })
     .limit(50)
 

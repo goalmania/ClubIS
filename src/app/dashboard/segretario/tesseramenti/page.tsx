@@ -3,6 +3,7 @@ import { getUserContext } from '@/lib/impersonation'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { formatData, calcolaEta, ruoloShort } from '@/lib/helpers'
+import TerminaTesseramentoButton from './TerminaTesseramentoButton'
 
 export default async function TesseramentiPage() {
   const ctx = await getUserContext()
@@ -45,7 +46,14 @@ export default async function TesseramentiPage() {
         <td style={{ fontFamily:'var(--font-mono)', fontSize:12 }}>{t.stagione}</td>
         <td style={{ fontFamily:'var(--font-mono)', fontSize:12 }}>{formatData(t.data_inizio, { day:'2-digit', month:'2-digit', year:'2-digit' })}</td>
         <td><span className={`badge ${t.stato==='attivo'?'badge-verde':t.stato==='sospeso'?'badge-ambra':'badge-grigio'}`} style={{ fontSize:10 }}>{t.stato}</span></td>
-        <td><Link href={`/dashboard/segretario/giocatori/${g.id}`} className="btn btn-ghost btn-sm" style={{ fontSize:12 }}>Profilo →</Link></td>
+        <td>
+          <div style={{ display:'flex', gap:6 }}>
+            <Link href={`/dashboard/segretario/giocatori/${g.id}`} className="btn btn-ghost btn-sm" style={{ fontSize:12 }}>Profilo →</Link>
+            {t.stato === 'attivo' && (
+              <TerminaTesseramentoButton tesseramentoId={t.id} nomeCompleto={`${g.cognome} ${g.nome}`} />
+            )}
+          </div>
+        </td>
       </tr>
     )
   }

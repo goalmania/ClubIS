@@ -30,6 +30,8 @@ export default function FormIscrizionePublic({ modulo }: { modulo: Modulo }) {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const richiedePagamento = !!modulo.importo_iscrizione && Number(modulo.importo_iscrizione) > 0
+
   // Step 1 — Dati atleta
   const [nome, setNome] = useState('')
   const [cognome, setCognome] = useState('')
@@ -91,6 +93,53 @@ export default function FormIscrizionePublic({ modulo }: { modulo: Modulo }) {
       return
     }
     setSubmitted(true)
+  }
+
+  const handlePayment = async () => {
+    if (modulo.richiedi_consenso_gdpr && !gdpr) {
+      setError('Il consenso al trattamento dati è obbligatorio.')
+      return
+    }
+    if (!gEmail.trim()) {
+      setError("L'email del genitore/responsabile è obbligatoria.")
+      return
+    }
+    setSaving(true)
+    setError(null)
+
+    try {
+      const res = await fetch('/api/moduli/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          modulo_id: modulo.id,
+          origin: window.location.origin,
+          nome, cognome,
+          data_nascita: dataNascita || null,
+          codice_fiscale: cf.trim() || null,
+          indirizzo: indirizzo.trim() || null,
+          comune: comune.trim() || null,
+          genitore_nome: gNome.trim() || null,
+          genitore_cognome: gCognome.trim() || null,
+          genitore_email: gEmail.trim(),
+          genitore_telefono: gTel.trim() || null,
+          genitore_cf: gCf.trim() || null,
+          relazione,
+          consenso_gdpr: gdpr,
+          consenso_foto: foto,
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok || !data.url) {
+        setError(data.error ?? 'Errore durante l\'avvio del pagamento. Riprova o contatta la segreteria.')
+        setSaving(false)
+        return
+      }
+      window.location.href = data.url
+    } catch {
+      setError('Errore durante l\'avvio del pagamento. Riprova o contatta la segreteria.')
+      setSaving(false)
+    }
   }
 
   if (submitted) {
@@ -308,18 +357,24 @@ export default function FormIscrizionePublic({ modulo }: { modulo: Modulo }) {
               <Row label="Consenso dati" value={gdpr ? '✓ Accordato' : '—'} />
               <Row label="Consenso foto" value={foto ? '✓ Accordato' : '—'} />
             </div>
-            {modulo.importo_iscrizione && (
+            {richiedePagamento && (
               <div style={{ background: '#1a1a00', border: `1px solid ${accent}`, borderRadius: 4, padding: '12px 16px', marginBottom: 16, fontSize: 13 }}>
                 <strong style={{ color: accent }}>Quota iscrizione: €{Number(modulo.importo_iscrizione).toFixed(2)}</strong>
-                <br /><span style={{ color: '#888', fontSize: 12 }}>Il pagamento verrà gestito dalla segreteria al momento della conferma.</span>
+                <br /><span style={{ color: '#888', fontSize: 12 }}>Il pagamento con carta è obbligatorio e avviene subito, in modo sicuro tramite Stripe. Nessun pagamento in sede.</span>
               </div>
             )}
             {error && <p style={{ color: '#ff4d4d', fontSize: 13, marginBottom: 12 }}>{error}</p>}
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
               <button style={btnSecondary} onClick={() => { setError(null); setStep(3) }}>← Indietro</button>
-              <button style={{ ...btnPrimary, minWidth: 160 }} onClick={handleSubmit} disabled={saving}>
-                {saving ? 'Invio in corso...' : 'Invia iscrizione ✓'}
-              </button>
+              {richiedePagamento ? (
+                <button style={{ ...btnPrimary, minWidth: 160 }} onClick={handlePayment} disabled={saving}>
+                  {saving ? 'Attendere...' : `Paga €${Number(modulo.importo_iscrizione).toFixed(2)} e iscriviti →`}
+                </button>
+              ) : (
+                <button style={{ ...btnPrimary, minWidth: 160 }} onClick={handleSubmit} disabled={saving}>
+                  {saving ? 'Invio in corso...' : 'Invia iscrizione ✓'}
+                </button>
+              )}
             </div>
           </div>
         )}

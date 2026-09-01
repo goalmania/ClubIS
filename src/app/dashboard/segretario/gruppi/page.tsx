@@ -1,6 +1,8 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
 import { PageHeader, Toast, Drawer, Modal, StatCard } from '@/components/ui'
+import { useTipoProdotto } from '@/lib/club-context'
+import { CATEGORIE_FEDERALI_GRUPPI_DEFAULT } from '@/lib/settore-giovanile'
 
 /* ── Tipi ─────────────────────────────────────────────────────────────────── */
 type Gruppo    = { id: string; club_id: string; nome: string; tipo: string; colore: string; stagione: string; descrizione?: string | null; attivo: boolean }
@@ -8,7 +10,7 @@ type Giocatore = { id: string; nome: string; cognome: string; ruolo_principale?:
 type Utente    = { id: string; nome: string; cognome: string; ruolo: string; email?: string | null }
 type Membro    = { id: string; gruppo_id: string; giocatore_id: string | null; utente_id: string | null; ruolo_nel_gruppo: string | null; data_ingresso: string | null }
 
-/* ── Categorie FIGC ───────────────────────────────────────────────────────── */
+/* ── Categorie FIGC (club agonistici) ────────────────────────────────────── */
 const FIGC = [
   { nome: 'Prima Squadra', colore: '#c8f000', etaMin: 19, etaMax: -1  },
   { nome: 'Primavera',     colore: '#00e5b8', etaMin: 18, etaMax: 20  },
@@ -23,6 +25,10 @@ const FIGC = [
   { nome: 'Staff Tecnico', colore: '#888888', etaMin: -1, etaMax: -1  },
 ]
 
+// Scuola calcio: stessa lista usata da "Crea gruppi default" (fasce d'età
+// federali corrette) — vedi src/lib/settore-giovanile.ts
+const FIGC_SCUOLA_CALCIO = CATEGORIE_FEDERALI_GRUPPI_DEFAULT
+
 function annoStagione() {
   const d = new Date(); const m = d.getMonth() + 1
   return m >= 7 ? d.getFullYear() + 1 : d.getFullYear()
@@ -34,6 +40,9 @@ function stagioneCorrente() {
 
 /* ════════════════════════════════════════════════════════════════════════════ */
 export default function GruppiPage() {
+  const isScuolaCalcio = useTipoProdotto() === 'scuola_calcio_standalone'
+  const categorieAttive = isScuolaCalcio ? FIGC_SCUOLA_CALCIO : FIGC
+
   /* ── Dati principali ──────────────────────────────────────────────────── */
   const [gruppi,    setGruppi]    = useState<Gruppo[]>([])
   const [giocatori, setGiocatori] = useState<Giocatore[]>([])
@@ -423,7 +432,7 @@ export default function GruppiPage() {
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
           {gruppi.map(g => {
-            const cat    = FIGC.find(c => c.nome === g.nome)
+            const cat    = categorieAttive.find(c => c.nome === g.nome)
             const refAnn = annoStagione()
             return (
               <div key={g.id} className="card" style={{ overflow: 'hidden', opacity: g.attivo ? 1 : 0.55 }}>

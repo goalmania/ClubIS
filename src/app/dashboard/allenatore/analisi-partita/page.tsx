@@ -1,18 +1,17 @@
 import { createClient } from '@/lib/supabase/server'
+import { getUserContext } from '@/lib/impersonation'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
 export default async function AnalisiPartitaPage() {
   const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth/login')
-  const { data: utente, error: utenteError } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-  if (utenteError || !utente) redirect('/auth/errore')
+  const ctx = await getUserContext()
+  if (!ctx) redirect('/auth/login')
 
   const { data: partite } = await supabase
     .from('partite')
     .select('id, avversario, data_ora, casa_trasferta, gol_fatti, gol_subiti, note_allenatore, statistiche_partita(tiri_totali, tiri_in_porta, possesso_palla, corner, falli)')
-    .eq('club_id', utente.club_id)
+    .eq('club_id', ctx.clubId)
     .eq('stato', 'giocata')
     .order('data_ora', { ascending: false })
     .limit(10)
@@ -58,7 +57,7 @@ export default async function AnalisiPartitaPage() {
                 </div>
 
                 {stats ? (
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 0, padding: '12px 0', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)', marginBottom: 14 }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(80px, 1fr))', gap: 0, padding: '12px 0', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)', marginBottom: 14 }}>
                     {[
                       { label: 'Tiri', v: stats.tiri_totali },
                       { label: 'In porta', v: stats.tiri_in_porta },

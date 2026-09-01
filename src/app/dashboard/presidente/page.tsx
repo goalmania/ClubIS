@@ -1,18 +1,19 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserContext } from '@/lib/impersonation'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import AzioniRapide from '@/components/ui/AzioniRapide'
 import ImpiantiDashboardWidget from '@/components/features/ImpiantiDashboardWidget'
 import ScadenzeFIGCWidget from '@/components/features/ScadenzeFIGCWidget'
+import RischioCovisocWidget from '@/components/features/RischioCovisocWidget'
+import { categoriaFederaleDaEta, CATEGORIE_FEDERALI } from '@/lib/settore-giovanile'
 
 export default async function PresidenteDashboard() {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth/login')
+  const ctx = await getUserContext()
+  if (!ctx) redirect('/auth/login')
+  const { clubId } = ctx
 
-  const { data: utente, error: utenteError } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-  if (utenteError || !utente) redirect('/auth/errore')
-  const clubId = utente.club_id
+  const supabase = createAdminClient()
 
   const oggi = new Date()
   const meseCorrente = oggi.toISOString().slice(0, 7)
@@ -29,6 +30,7 @@ export default async function PresidenteDashboard() {
     { count: contrInScadenza },
     { data: squadre },
     { data: sponsors },
+    { data: clubInfo },
   ] = await Promise.all([
     supabase.from('tesseramenti').select('*', { count: 'exact', head: true }).eq('club_id', clubId).eq('stato', 'attivo'),
     supabase.from('quote_iscrizione').select('*', { count: 'exact', head: true }).eq('club_id', clubId).eq('stato', 'pagato'),
@@ -40,7 +42,10 @@ export default async function PresidenteDashboard() {
     supabase.from('contratti').select('*', { count: 'exact', head: true }).eq('club_id', clubId).lte('data_scadenza', new Date(oggi.getTime() + 90 * 86400000).toISOString().split('T')[0]).gte('data_scadenza', oggi.toISOString().split('T')[0]),
     supabase.from('squadre').select('id, nome, categoria_eta').eq('club_id', clubId).eq('attiva', true),
     supabase.from('sponsors').select('id, nome, tipo, importo_annuo, attivo').eq('club_id', clubId).eq('attivo', true).limit(5),
+    supabase.from('clubs').select('tipo_prodotto').eq('id', clubId).maybeSingle(),
   ])
+
+  const isScuolaCalcio = clubInfo?.tipo_prodotto === 'scuola_calcio_standalone'
 
   const totEntrate = entrateMese?.reduce((s, r) => s + Number(r.importo), 0) ?? 0
   const totUscite  = usciteMese?.reduce((s, r) => s + Number(r.importo), 0) ?? 0
@@ -59,11 +64,16 @@ export default async function PresidenteDashboard() {
         </p>
       </div>
 
-      <ScadenzeFIGCWidget compact={true} />
+      {!isScuolaCalcio && (
+        <>
+          <ScadenzeFIGCWidget compact={true} />
+          <RischioCovisocWidget />
+        </>
+      )}
 
-      <AzioniRapide ruolo="presidente" />
+      <AzioniRapide ruolo="presidente" variante={isScuolaCalcio ? 'scuola_calcio' : 'agonistico'} />
 
-      <ImpiantiDashboardWidget ruolo="presidente" />
+      {!isScuolaCalcio && <ImpiantiDashboardWidget ruolo="presidente" />}
 
       {alertTotale > 0 && (
       <div className="alert alert-warning" style={{ marginBottom: 20 }}>
@@ -79,9 +89,9 @@ export default async function PresidenteDashboard() {
       {/* KPI */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 28 }}>
         <div className="stat-card">
-          <div className="stat-label">Tesserati</div>
+          <div className="stat-label">{isScuolaCalcio ? 'Iscritti' : 'Tesserati'}</div>
           <div className="stat-value">{totTesserati ?? 0}</div>
-          <div className="stat-sub">{squadre?.length ?? 0} squadre attive</div>
+          <div className="stat-sub">{squadre?.length ?? 0} {isScuolaCalcio ? 'categorie attive' : 'squadre attive'}</div>
         </div>
         <div className="stat-card">
           <div className="stat-label">Entrate mese</div>
@@ -173,7 +183,9 @@ export default async function PresidenteDashboard() {
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)' }}>{s.nome}</div>
                       <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-                        {s.categoria_eta.toUpperCase().replace('_', ' ')}
+                        {isScuolaCalcio && categoriaFederaleDaEta(s.categoria_eta)
+                          ? CATEGORIE_FEDERALI[categoriaFederaleDaEta(s.categoria_eta)!].label
+                          : s.categoria_eta.toUpperCase().replace('_', ' ')}
                       </div>
                     </div>
                   </div>
@@ -223,13 +235,24 @@ export default async function PresidenteDashboard() {
 
       {/* Link rapidi */}
       <div className="card" style={{ padding: 18, marginTop: 20, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-        <Link href="/dashboard/presidente/finanze" className="btn btn-secondary btn-sm">Entrate & Uscite</Link>
-        <Link href="/dashboard/presidente/ffp" className="btn btn-secondary btn-sm">FFP / Budget</Link>
-        <Link href="/dashboard/presidente/sponsor" className="btn btn-secondary btn-sm">Sponsor</Link>
-        <Link href="/dashboard/presidente/staff" className="btn btn-secondary btn-sm">Gestione staff</Link>
-        <Link href="/dashboard/presidente/obiettivi" className="btn btn-secondary btn-sm">Obiettivi stagionali</Link>
-        <Link href="/dashboard/presidente/comunicazioni" className="btn btn-secondary btn-sm">Comunicazioni</Link>
-        <Link href="/dashboard/presidente/report" className="btn btn-primary btn-sm">Report mensile</Link>
+        {isScuolaCalcio ? (
+          <>
+            <Link href="/dashboard/presidente/finanze" className="btn btn-secondary btn-sm">Entrate & Uscite</Link>
+            <Link href="/dashboard/presidente/staff" className="btn btn-secondary btn-sm">Gestione staff</Link>
+            <Link href="/dashboard/presidente/abbonamento" className="btn btn-secondary btn-sm">Abbonamento</Link>
+            <Link href="/dashboard/presidente/comunicazioni" className="btn btn-primary btn-sm">Comunicazioni</Link>
+          </>
+        ) : (
+          <>
+            <Link href="/dashboard/presidente/finanze" className="btn btn-secondary btn-sm">Entrate & Uscite</Link>
+            <Link href="/dashboard/presidente/ffp" className="btn btn-secondary btn-sm">FFP / Budget</Link>
+            <Link href="/dashboard/presidente/sponsor" className="btn btn-secondary btn-sm">Sponsor</Link>
+            <Link href="/dashboard/presidente/staff" className="btn btn-secondary btn-sm">Gestione staff</Link>
+            <Link href="/dashboard/presidente/obiettivi" className="btn btn-secondary btn-sm">Obiettivi stagionali</Link>
+            <Link href="/dashboard/presidente/comunicazioni" className="btn btn-secondary btn-sm">Comunicazioni</Link>
+            <Link href="/dashboard/presidente/report" className="btn btn-primary btn-sm">Report mensile</Link>
+          </>
+        )}
       </div>
     </div>
   )

@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { readImpersonation } from '@/lib/impersonation'
+import { readVerifiedImpersonation } from '@/lib/impersonation'
 
 export default async function DashboardRedirect() {
   const supabase = createClient()
@@ -9,14 +9,14 @@ export default async function DashboardRedirect() {
 
   const { data: utente } = await supabase
     .from('utenti')
-    .select('ruolo, is_super_admin')
+    .select('ruolo, is_super_admin, is_demo_account')
     .eq('id', user.id)
     .maybeSingle()
 
   if (!utente) redirect('/auth/errore')
 
-  // Impersonation override (solo per super admin)
-  const impersonation = utente.is_super_admin ? readImpersonation() : null
+  // Impersonation override (super admin, o account demo verificato sul proprio club)
+  const impersonation = await readVerifiedImpersonation(user.id, !!utente.is_super_admin, !!utente.is_demo_account)
   const effectiveRuolo = impersonation?.ruolo ?? utente.ruolo
 
   // Super admin senza impersonation → pannello admin

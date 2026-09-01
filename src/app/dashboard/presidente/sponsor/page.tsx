@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import {
   Modal, FormField, FormGrid, FormSection,
   Select, Toast, TabBar,
@@ -42,7 +43,7 @@ export default function SponsorPage() {
   const supabase = createClient()
 
   const [sponsors, setSponsors] = useState<any[]>([])
-  const [clubId, setClubId] = useState('')
+  const clubId = useClubId()
   const [loading, setLoading] = useState(true)
   const [openModal, setOpenModal] = useState(false)
   const [editingSponsor, setEditingSponsor] = useState<any | null>(null)
@@ -66,21 +67,19 @@ export default function SponsorPage() {
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
+    if (!clubId) return
     async function load() {
-      const { data: { user } } = await supabase.auth.getUser()
-      const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user!.id).single()
-      setClubId(utente!.club_id)
       const { data } = await supabase
         .from('sponsors')
         .select('*')
-        .eq('club_id', utente!.club_id)
+        .eq('club_id', clubId!)
         .order('tipo')
         .order('importo_annuo', { ascending: false })
       setSponsors(data ?? [])
       setLoading(false)
     }
     load()
-  }, [])
+  }, [clubId, supabase])
 
   async function ricarica(cid: string) {
     const { data } = await supabase
@@ -113,6 +112,7 @@ export default function SponsorPage() {
 
   async function salva() {
     if (!nome.trim()) { setToast({ msg: 'Nome sponsor obbligatorio', tipo: 'error' }); return }
+    if (!clubId) return
     setSaving(true)
     const payload = {
       club_id: clubId,

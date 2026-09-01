@@ -1,9 +1,10 @@
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { NextRequest, NextResponse } from 'next/server'
+import { getClubFromSession } from '@/lib/server-helpers'
 
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
-  const sessionClient = createClient()
+  const session = await getClubFromSession()
+  if (!session) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
 
   const supabase = createAdminClient()
   const transferId = params.id
@@ -11,17 +12,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   const body = await req.json().catch(() => null) as any
   if (!body) return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
 
-  const { data: { user } } = await sessionClient.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
-
-  const { data: utente, error: utenteError } = await supabase
-    .from('utenti')
-    .select('club_id')
-    .eq('id', user.id)
-    .single()
-
-  if (utenteError || !utente) return NextResponse.json({ error: 'Utente non valido' }, { status: 403 })
-  const clubId = utente.club_id
+  const clubId = session.clubId
 
   const updateFields: any = {}
   if (typeof body.note === 'string') updateFields.note = body.note

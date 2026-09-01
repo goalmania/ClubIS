@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { createBrowserClient } from '@supabase/ssr'
+import { useClubId } from '@/lib/club-context'
 import Link from 'next/link'
 
 const BUCKET = 'club-assets'
@@ -36,7 +37,7 @@ export default function SegretarioArchivioPage() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   )
 
-  const [clubId, setClubId] = useState<string | null>(null)
+  const clubId = useClubId()
   const [userId, setUserId] = useState<string | null>(null)
   const [documenti, setDocumenti] = useState<Documento[]>([])
   const [categorie, setCategorie] = useState<string[]>(CATEGORIE_DEFAULT)
@@ -82,14 +83,12 @@ export default function SegretarioArchivioPage() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
       setUserId(user.id)
-      const { data: u } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-      if (!u) return
-      setClubId(u.club_id)
-      await carica(u.club_id)
+      if (!clubId) return
+      await carica(clubId)
       setLoading(false)
     })()
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [clubId])
 
   const apriUpload = () => {
     setFile(null)

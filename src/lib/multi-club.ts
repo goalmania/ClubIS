@@ -2,6 +2,7 @@ import { cookies } from 'next/headers'
 import { createAdminClient } from '@/lib/supabase/admin'
 
 export const ACTIVE_CLUB_COOKIE = 'cis-active-club'
+export const DEVICE_ID_COOKIE   = 'cis-device-id'
 
 export type UserClubEntry = {
   club_id: string
@@ -49,6 +50,53 @@ export function readActiveClubCookie(): string | null {
   } catch {
     return null
   }
+}
+
+/**
+ * Legge il device_id dal cookie cis-device-id.
+ * Ritorna null se assente.
+ */
+export function readDeviceId(): string | null {
+  try {
+    return cookies().get(DEVICE_ID_COOKIE)?.value ?? null
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Risolve il club attivo per questo specifico dispositivo.
+ * Cerca in user_device_clubs (keyed by device_id), valida contro user_clubs,
+ * fallback su fallbackClubId (utenti.club_id dal DB).
+ * Non causa mai scritture errate — solo lettura.
+ */
+export async function resolveDeviceClub(
+  userId: string,
+  fallbackClubId: string,
+): Promise<string> {
+  const deviceId = readDeviceId()
+  if (!deviceId) return fallbackClubId
+
+  const db = createAdminClient()
+  const { data } = await db
+    .from('user_device_clubs')
+    .select('club_id')
+    .eq('user_id', userId)
+    .eq('device_id', deviceId)
+    .maybeSingle()
+
+  if (!data?.club_id) return fallbackClubId
+
+  // Valida che l'utente abbia ancora accesso a quel club
+  const { data: membership } = await db
+    .from('user_clubs')
+    .select('club_id')
+    .eq('user_id', userId)
+    .eq('club_id', data.club_id)
+    .eq('status', 'accepted')
+    .maybeSingle()
+
+  return membership?.club_id ?? fallbackClubId
 }
 
 /**

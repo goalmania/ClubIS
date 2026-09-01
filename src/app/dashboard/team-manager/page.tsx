@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import CostiTrasferteStagioneCard from './CostiTrasferteStagioneCard'
 import AzioniRapide from '@/components/ui/AzioniRapide'
+import RischioCovisocWidget from '@/components/features/RischioCovisocWidget'
 
 export default async function TeamManagerDashboard() {
   const supabase = createClient()
@@ -61,6 +62,8 @@ export default async function TeamManagerDashboard() {
           Organizzazione squadra, trasferte e logistica
         </p>
       </div>
+
+      <RischioCovisocWidget />
 
             <AzioniRapide ruolo="team_manager" />
       {/* KPI */}

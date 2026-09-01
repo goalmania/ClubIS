@@ -1,6 +1,7 @@
 'use client'
 import { useState, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import { PageHeader, Toast } from '@/components/ui'
 import { useSharedData } from '@/hooks/useSharedData'
 import { matchSearch } from '@/lib/search'
@@ -61,6 +62,7 @@ function KpiCard({ label, value, sub, colore }: {
 
 export default function QuietanzePage() {
   const supabase = createClient()
+  const clubId = useClubId()
   const [players, setPlayers] = useState<PlayerRow[]>([])
   const [quietanze, setQuietanze] = useState<QuietanzaRow[]>([])
   const [loading, setLoading] = useState(true)
@@ -72,10 +74,8 @@ export default function QuietanzePage() {
   useSharedData(async () => { await load() })
 
   async function load() {
+    if (!clubId) return
     setLoading(true)
-    const { data: { user } } = await supabase.auth.getUser()
-    const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user!.id).single()
-    const clubId = utente!.club_id
 
     const [
       tesseramentiRes,

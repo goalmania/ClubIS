@@ -15,9 +15,9 @@ const AZIONI_PER_RUOLO: Record<RuoloUtente, AzioneRapida[]> = {
     { area: 'Anagrafica',    label: 'Importa dati',           href: '/dashboard/segretario/import',                               icon: '⬆',  colore: 'var(--verde)' },
     { area: 'Anagrafica',    label: 'Gestisci iscrizioni',    href: '/dashboard/segretario/iscrizioni',                           icon: '📝', colore: 'var(--verde)' },
     { area: 'Anagrafica',    label: 'Visite mediche',         href: '/dashboard/segretario/certificati',                          icon: '🏥', colore: '#f97316' },
-    { area: 'Contabilità',   label: 'Rimborso trasferta',     href: '/dashboard/segretario/pagamenti/nuovo?tipo=rimborso_trasferta', icon: '🚌', colore: 'var(--accent)' },
-    { area: 'Contabilità',   label: 'Pagamento fornitore',    href: '/dashboard/segretario/pagamenti/nuovo?tipo=fornitore',       icon: '🏢', colore: 'var(--accent)' },
-    { area: 'Contabilità',   label: 'Tassa federale',         href: '/dashboard/segretario/pagamenti/nuovo?tipo=tassa_federale',  icon: '💰', colore: 'var(--accent)' },
+    { area: 'Contabilità',   label: 'Rimborso trasferta',     href: '/dashboard/segretario/prima-nota?tipo=uscita&categoria=trasferte&form=1',   icon: '🚌', colore: 'var(--accent)' },
+    { area: 'Contabilità',   label: 'Pagamento fornitore',    href: '/dashboard/segretario/prima-nota?tipo=uscita&categoria=altro&form=1',        icon: '🏢', colore: 'var(--accent)' },
+    { area: 'Contabilità',   label: 'Tassa federale',         href: '/dashboard/segretario/prima-nota?tipo=uscita&categoria=federazione&form=1',   icon: '💰', colore: 'var(--accent)' },
     { area: 'Contabilità',   label: 'Visualizza bilancio',    href: '/dashboard/segretario/prima-nota',                          icon: '📊', colore: 'var(--accent)' },
     { area: 'FIGC',          label: 'Scadenziario FIGC',      href: '/dashboard/segretario/scadenze-figc',                       icon: '📋', colore: 'var(--rosso)' },
     { area: 'FIGC',          label: 'Pratiche tesseramento',  href: '/dashboard/segretario/pratiche-tesseramento',               icon: '🪪', colore: 'var(--rosso)' },
@@ -100,8 +100,35 @@ const AZIONI_PER_RUOLO: Record<RuoloUtente, AzioneRapida[]> = {
   ],
 }
 
-export default function AzioniRapide({ ruolo }: { ruolo: RuoloUtente }) {
-  const azioni = AZIONI_PER_RUOLO[ruolo] ?? []
+// Variante ridotta per il verticale "scuola calcio standalone": solo azioni
+// senza machinery FIGC agonistica (distinte, squalifiche, mercato, SEPA...).
+// Ruoli non coperti qui (es. famiglia) ricadono su AZIONI_PER_RUOLO come sempre.
+const AZIONI_PER_RUOLO_SCUOLA_CALCIO: Partial<Record<RuoloUtente, AzioneRapida[]>> = {
+  presidente: [
+    { area: 'Scuola',     label: 'Info scuola',        href: '/dashboard/presidente/club',          icon: '🏛', colore: 'var(--verde)' },
+    { area: 'Scuola',     label: 'Staff',              href: '/dashboard/presidente/staff',          icon: '👥', colore: 'var(--verde)' },
+    { area: 'Finanze',    label: 'Entrate & uscite',   href: '/dashboard/presidente/finanze',        icon: '📊', colore: 'var(--accent)' },
+    { area: 'Comunicazione', label: 'Comunicazioni',   href: '/dashboard/presidente/comunicazioni',  icon: '📣', colore: 'var(--verde)' },
+  ],
+  segretario: [
+    { area: 'Anagrafica',    label: 'Gestisci iscrizioni', href: '/dashboard/segretario/iscrizioni',          icon: '📝', colore: 'var(--verde)' },
+    { area: 'Anagrafica',    label: 'Certificati medici',  href: '/dashboard/segretario/certificati',         icon: '🏥', colore: '#f97316' },
+    { area: 'Quote',         label: 'Quote mensili',       href: '/dashboard/segretario/quote',               icon: '💶', colore: 'var(--accent)' },
+    { area: 'Quote',         label: 'Pagamenti',           href: '/dashboard/segretario/pagamenti',           icon: '💰', colore: 'var(--accent)' },
+    { area: 'Attività',      label: 'Calendario',          href: '/dashboard/segretario/calendario',          icon: '📅', colore: '#22d3ee' },
+    { area: 'Attività',      label: 'Trasferte & tornei',  href: '/dashboard/segretario/trasferte',           icon: '🚌', colore: '#22d3ee' },
+    { area: 'Comunicazione', label: 'Invia comunicazione', href: '/dashboard/segretario/comunicazioni',       icon: '📣', colore: 'var(--verde)' },
+  ],
+  allenatore: [
+    { area: 'Categoria',   label: 'Rosa',                href: '/dashboard/allenatore/rosa',          icon: '👥', colore: '#f97316' },
+    { area: 'Categoria',   label: 'Registra presenze',   href: '/dashboard/allenatore/presenze',      icon: '✓',  colore: 'var(--accent)' },
+    { area: 'Categoria',   label: 'Allenamenti',         href: '/dashboard/allenatore/allenamenti',   icon: '⚽', colore: 'var(--accent)' },
+    { area: 'Sviluppo',    label: 'Valutazioni mensili',  href: '/dashboard/allenatore/valutazioni',  icon: '⭐', colore: '#a855f7' },
+  ],
+}
+
+export default function AzioniRapide({ ruolo, variante = 'agonistico' }: { ruolo: RuoloUtente; variante?: 'agonistico' | 'scuola_calcio' }) {
+  const azioni = (variante === 'scuola_calcio' ? AZIONI_PER_RUOLO_SCUOLA_CALCIO[ruolo] : undefined) ?? AZIONI_PER_RUOLO[ruolo] ?? []
 
   // Raggruppa per area
   const perArea = azioni.reduce<Record<string, AzioneRapida[]>>((acc, a) => {

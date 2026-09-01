@@ -72,17 +72,18 @@ export async function getGiocatoriEleggibili(
     .in('categoria_eta', ['prima_squadra', 'juniores'])
   const squadraIds = (squadreFiltrate ?? []).map((s: any) => s.id)
 
+  // Prende tutti i tesseramenti attivi del club.
+  // Se esistono squadre prima_squadra/juniores, include sia i giocatori assegnati
+  // a quelle squadre sia quelli senza squadra assegnata (es. importati via CSV).
+  const tessBaseQuery = supabase
+    .from('tesseramenti')
+    .select('numero_maglia, giocatori(id, nome, cognome, data_nascita, ruolo_principale, codice_tessera_figc, numero_matricola_figc)')
+    .eq('stato', 'attivo')
+    .eq('club_id', clubId)
+
   const tessQuery = squadraIds.length > 0
-    ? supabase
-        .from('tesseramenti')
-        .select('numero_maglia, giocatori(id, nome, cognome, data_nascita, ruolo_principale, codice_tessera_figc, numero_matricola_figc)')
-        .eq('stato', 'attivo')
-        .in('squadra_id', squadraIds)
-    : supabase
-        .from('tesseramenti')
-        .select('numero_maglia, giocatori(id, nome, cognome, data_nascita, ruolo_principale, codice_tessera_figc, numero_matricola_figc)')
-        .eq('stato', 'attivo')
-        .eq('club_id', clubId)
+    ? tessBaseQuery.or(`squadra_id.in.(${squadraIds.join(',')}),squadra_id.is.null`)
+    : tessBaseQuery
 
   const [
     { data: tesseramenti },

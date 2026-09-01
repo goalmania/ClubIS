@@ -1,18 +1,16 @@
 import { createClient } from '@/lib/supabase/server'
+import { getUserContext } from '@/lib/impersonation'
+import { getSquadreAllenatore } from '@/lib/settore-giovanile'
 import { redirect } from 'next/navigation'
 import { ruoloShort } from '@/lib/helpers'
 
 export default async function AllenatoreStatistichePage() {
   const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth/login')
-  const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-  if (!utente) redirect('/auth/errore')
+  const ctx = await getUserContext()
+  if (!ctx) redirect('/auth/login')
 
-  const { data: sq } = await supabase
-    .from('squadre').select('id, nome')
-    .eq('club_id', utente.club_id).eq('allenatore_id', user.id)
-  const sqIds = sq?.map(s => s.id) ?? []
+  const sq = await getSquadreAllenatore(supabase, { clubId: ctx.clubId, allenatoreId: ctx.userId, soloAttive: false })
+  const sqIds = sq.map(s => s.id)
 
   const { data: tesserati } = await supabase
     .from('tesseramenti')
@@ -30,7 +28,7 @@ export default async function AllenatoreStatistichePage() {
     supabase
       .from('valutazioni_tecniche')
       .select('giocatore_id, tecnica, tattica, fisico, mentale')
-      .eq('allenatore_id', user.id)
+      .eq('allenatore_id', ctx.userId)
       .in('giocatore_id', giocatoriIds.length ? giocatoriIds : ['none']),
   ])
 

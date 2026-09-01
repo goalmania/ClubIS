@@ -3,11 +3,20 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { FormField, FormSection, SectionCard, BackButton, Toast, RatingInput } from '@/components/ui'
+import { useTipoProdotto, useClubId } from '@/lib/club-context'
+import NuovaValutazioneMensileForm from '../NuovaValutazioneMensileForm'
 
 export default function NuovaValutazionePage() {
+  const tipoProdotto = useTipoProdotto()
+  if (tipoProdotto === 'scuola_calcio_standalone') return <NuovaValutazioneMensileForm />
+  return <NuovaValutazioneTecnicaForm />
+}
+
+function NuovaValutazioneTecnicaForm() {
   const router       = useRouter()
   const searchParams = useSearchParams()
   const supabase     = createClient()
+  const clubId       = useClubId()
 
   const [giocatori, setGiocatori] = useState<{ id: string; nome: string; cognome: string; ruolo_principale: string | null; categoria_eta: string }[]>([])
   const [loading,   setLoading]   = useState(false)
@@ -82,16 +91,16 @@ export default function NuovaValutazionePage() {
   const salva = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!giocatoreId) { setToast({ msg: 'Seleziona un giocatore', tipo: 'error' }); return }
+    if (!clubId) return
     setLoading(true)
 
     try {
       const { data: { user } } = await supabase.auth.getUser()
-      const { data: utente }   = await supabase.from('utenti').select('club_id').eq('id', user!.id).single()
 
       const { error } = await supabase.from('valutazioni_tecniche').insert({
         giocatore_id:      giocatoreId,
         allenatore_id:     user!.id,
-        club_id:           utente!.club_id,
+        club_id:           clubId,
         data,
         tecnica:           tecnica ?? null,
         tattica:           tattica ?? null,

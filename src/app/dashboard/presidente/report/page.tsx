@@ -1,23 +1,21 @@
 'use client'
 import { createClient } from '@/lib/supabase/client'
 import { useEffect, useState } from 'react'
+import { useClubId } from '@/lib/club-context'
 import FeatureGate from '@/components/FeatureGate'
 
 type Row = { sez: string; l: string; v: string; c?: string }
 
 function ReportContent() {
   const supabase = createClient()
+  const clubId = useClubId()
   const [rows, setRows] = useState<Row[]>([])
   const [meseLabel, setMeseLabel] = useState('')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const load = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-      const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-      if (!utente?.club_id) return
-      const clubId = utente.club_id
+      if (!clubId) return
       const oggi = new Date()
       const mese = oggi.toISOString().slice(0, 7)
       const inizioMese = `${mese}-01`
@@ -72,7 +70,7 @@ function ReportContent() {
       setLoading(false)
     }
     load()
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [clubId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const sezioni = [...new Set(rows.map(r => r.sez))]
 

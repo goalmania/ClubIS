@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import { formatData } from '@/lib/helpers'
 
 // ─── Template library standalone ─────────────────────────────────────────────
@@ -399,6 +400,7 @@ const CATEGORIE = Array.from(new Set(TEMPLATES.map(t => t.categoria)))
 
 export default function ArticoliPage() {
   const supabaseRef = useRef(createClient())
+  const clubId = useClubId()
 
   // Modalità: 'library' | 'partita'
   const [modalita, setModalita] = useState<'library' | 'partita'>('library')
@@ -420,11 +422,8 @@ export default function ArticoliPage() {
   // Carica partite
   const loadPartite = useCallback(async () => {
     const supabase = supabaseRef.current
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
-    const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-    if (!utente) return
-    const { data: sqData } = await supabase.from('squadre').select('id').eq('club_id', utente.club_id)
+    if (!clubId) return
+    const { data: sqData } = await supabase.from('squadre').select('id').eq('club_id', clubId)
     const sqIds = sqData?.map((s: any) => s.id) ?? []
     if (!sqIds.length) return
     const { data } = await supabase
@@ -434,7 +433,7 @@ export default function ArticoliPage() {
       .order('data_ora', { ascending: false })
       .limit(50)
     setPartite(data ?? [])
-  }, [])
+  }, [clubId])
 
   useEffect(() => { loadPartite() }, [loadPartite])
 

@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 
 interface Partita {
   id: string
@@ -18,6 +19,7 @@ interface Partita {
 const TIPO_LABEL: Record<string, string> = { campionato: 'Campionato', coppa: 'Coppa', amichevole: 'Amichevole', playoff: 'Playoff' }
 
 export default function PartiteGiocatorePage() {
+  const clubId = useClubId()
   const [partite, setPartite] = useState<Partita[]>([])
   const [loading, setLoading] = useState(true)
   const [filtro,  setFiltro]  = useState<'tutte' | 'convocato'>('tutte')
@@ -27,9 +29,6 @@ export default function PartiteGiocatorePage() {
       const supabase = createClient()
       const { data: me } = await supabase.auth.getUser()
       if (!me.user) return
-
-      const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', me.user.id).maybeSingle()
-      const clubId = utente?.club_id
 
       const { data: gioc } = await supabase
         .from('giocatori')
@@ -59,7 +58,7 @@ export default function PartiteGiocatorePage() {
       setLoading(false)
     }
     load()
-  }, [])
+  }, [clubId])
 
   if (loading) return <div style={{ color: 'var(--gray)', fontFamily: 'var(--font-mono)', fontSize: 12, padding: 40 }}>Caricamento...</div>
 
@@ -76,7 +75,7 @@ export default function PartiteGiocatorePage() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 24 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 12, marginBottom: 24 }}>
         {[
           { label: 'Partite giocate', val: gocate.length },
           { label: 'Da titolare', val: titolari },

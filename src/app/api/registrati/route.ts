@@ -1,13 +1,14 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { NextRequest, NextResponse } from 'next/server'
 
-const PIANI_VALIDI = ['starter', 'pro', 'elite'] as const
+const PIANI_VALIDI = ['starter', 'pro', 'elite', 'scuola_calcio'] as const
 type Piano = typeof PIANI_VALIDI[number]
 
 const PIANO_TIER: Record<Piano, string> = {
   starter: 'starter',
   pro: 'pro',
   elite: 'elite',
+  scuola_calcio: 'starter',
 }
 
 export async function POST(req: NextRequest) {
@@ -18,6 +19,7 @@ export async function POST(req: NextRequest) {
     password: string
     club_nome: string
     club_categoria?: string
+    club_genere?: string
     piano?: string
   }
 
@@ -27,7 +29,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'JSON non valido' }, { status: 400 })
   }
 
-  const { nome, cognome, email, password, club_nome, club_categoria, piano } = body
+  const { nome, cognome, email, password, club_nome, club_categoria, club_genere, piano } = body
   const emailNorm = email?.toLowerCase().trim()
 
   if (!emailNorm || !password || !nome || !cognome || !club_nome) {
@@ -85,6 +87,8 @@ export async function POST(req: NextRequest) {
       nome: club_nome,
       citta: '',
       categoria: club_categoria ?? 'eccellenza',
+      genere: club_genere === 'femminile' ? 'femminile' : 'maschile',
+      tipo_prodotto: pianoScelto === 'scuola_calcio' ? 'scuola_calcio_standalone' : 'club_agonistico',
       plan_status: 'trial',
       plan_tier: PIANO_TIER[pianoScelto],
       trial_ends_at: trialEndsAt.toISOString(),

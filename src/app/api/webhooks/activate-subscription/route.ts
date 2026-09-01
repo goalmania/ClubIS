@@ -68,22 +68,54 @@ export async function POST(req: NextRequest) {
 
   const db = createAdminClient()
 
-  // ── Trova il club tramite email presidente ─────────────────
+  // ── Trova l'utente tramite email ─────────────────────────────
+  // Non filtriamo più per ruolo='presidente': il ruolo principale mostrato
+  // in dashboard (utenti.ruolo) è indipendente da chi gestisce/paga
+  // l'abbonamento — un account può avere ruolo "segretario" come vista
+  // primaria pur essendo il titolare dell'abbonamento (vedi user_clubs
+  // sotto, che è la vera fonte di verità sui club posseduti).
   const { data: utente } = await db
     .from('utenti')
-    .select('club_id')
+    .select('id, club_id')
     .eq('email', emailNorm)
-    .eq('ruolo', 'presidente')
     .maybeSingle()
 
-  if (!utente?.club_id) {
+  if (!utente) {
     return NextResponse.json(
-      { error: 'Nessun account presidente trovato per questa email.' },
+      { error: 'Nessun account trovato per questa email.' },
       { status: 404 }
     )
   }
 
-  // ── Attiva abbonamento ClubIS ──────────────────────────────
+  // ── Trova TUTTI i club dell'account (abbonamento per-account, non per-club) ──
+  // utenti.club_id è solo il puntatore al club "attivo" sul dispositivo corrente
+  // (vedi src/lib/multi-club.ts) — un account multi-club deve sbloccare ogni
+  // suo club con un solo pagamento. Consideriamo "titolare" un membership con
+  // ruolo presidente O segretario (i due ruoli usati in questo progetto come
+  // vista primaria di chi possiede/gestisce l'account) — non un ruolo
+  // qualsiasi, per non sbloccare per errore un club dove questa email è
+  // solo staff invitato (es. allenatore, medico) di un titolare diverso.
+  const RUOLI_TITOLARE = ['presidente', 'segretario']
+  const { data: membership } = await db
+    .from('user_clubs')
+    .select('club_id')
+    .eq('user_id', utente.id)
+    .eq('status', 'accepted')
+    .in('role', RUOLI_TITOLARE)
+
+  const clubIds = Array.from(new Set([
+    ...(membership?.map(m => m.club_id) ?? []),
+    ...(utente.club_id ? [utente.club_id] : []),
+  ]))
+
+  if (clubIds.length === 0) {
+    return NextResponse.json(
+      { error: 'Nessun club associato a questo account.' },
+      { status: 404 }
+    )
+  }
+
+  // ── Attiva abbonamento ClubIS su tutti i club dell'account ──
   const updatePayload: Record<string, unknown> = {
     plan_status: 'active',
     plan_tier,
@@ -95,7 +127,7 @@ export async function POST(req: NextRequest) {
     updatePayload.abbonamento_scadenza = current_period_end
   }
 
-  // Attiva DMScout sul club ClubIS se incluso nel piano
+  // Attiva DMScout su tutti i club ClubIS dell'account se incluso nel piano
   if (includes_dmscout) {
     updatePayload.dmscout_abbonamento_attivo  = true
     updatePayload.dmscout_abbonamento_scadenza = current_period_end
@@ -103,16 +135,20 @@ export async function POST(req: NextRequest) {
       : null
   }
 
-  const { data: club, error } = await db
+  const { data: clubsUpdated, error } = await db
     .from('clubs')
     .update(updatePayload)
-    .eq('id', utente.club_id)
+    .in('id', clubIds)
     .select('id, nome, plan_tier, plan_status, current_period_end')
-    .single()
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
+  if (!clubsUpdated || clubsUpdated.length === 0) {
+    return NextResponse.json({ error: 'Nessun club aggiornato.' }, { status: 404 })
+  }
+
+  const club = clubsUpdated[0]
 
   // ── Assicura account DMScout (se non esiste già) ───────────
   let dmscoutActivated = false
@@ -160,11 +196,14 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({
     ok: true,
+    // Campi storici (compatibilità con chiamanti esistenti): riferiti al primo club.
     club_id: club.id,
     club_nome: club.nome,
     plan_tier: club.plan_tier,
     plan_status: club.plan_status,
     current_period_end: club.current_period_end,
     dmscout_activated: dmscoutActivated,
+    // Abbonamento per-account: elenco di TUTTI i club sbloccati da questo pagamento.
+    clubs_activated: clubsUpdated.map(c => ({ club_id: c.id, club_nome: c.nome })),
   })
 }

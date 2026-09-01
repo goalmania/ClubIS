@@ -4,6 +4,7 @@
 
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getUserContext } from '@/lib/impersonation'
+import { CATEGORIE_FEDERALI_GRUPPI_DEFAULT } from '@/lib/settore-giovanile'
 
 const CATEGORIE_FIGC = [
   { nome: 'Prima Squadra', colore: '#c8f000', tipo: 'squadra',   etaMin: 19, etaMax: -1,  descrizione: 'Seniores dai 19 anni in su',                                    categoriaEta: 'prima_squadra' },
@@ -19,6 +20,14 @@ const CATEGORIE_FIGC = [
   { nome: 'Staff Tecnico', colore: '#888888', tipo: 'staff',     etaMin: -1, etaMax: -1,  descrizione: 'Allenatori, preparatori e staff',                               categoriaEta: null           },
 ]
 
+// Scuola calcio: stesse 7 categorie federali + Staff Tecnico, con le fasce
+// d'età corrette (Pulcini = 9-10 anni, non 7-8 come nella lista sopra —
+// quella lista resta invariata per non toccare i club agonistici esistenti).
+const CATEGORIE_SCUOLA_CALCIO = CATEGORIE_FEDERALI_GRUPPI_DEFAULT.map(c => ({
+  ...c,
+  descrizione: c.categoriaEta ? `${c.nome} — nati ${c.etaMin}-${c.etaMax === -1 ? '+' : c.etaMax} anni fa` : 'Allenatori, preparatori e staff',
+}))
+
 function annoFineStagione(): number {
   const ora  = new Date()
   const mese = ora.getMonth() + 1
@@ -33,10 +42,10 @@ function stagioneCorrente(): string {
   return `${inizio}-${String(inizio + 1).slice(-2)}`
 }
 
-function categoriaPerNascita(annoNascita: number): string | null {
+function categoriaPerNascita(annoNascita: number, categorie: typeof CATEGORIE_FIGC): string | null {
   const refAnno = annoFineStagione()
   const eta     = refAnno - annoNascita
-  const cat     = CATEGORIE_FIGC.find(c =>
+  const cat     = categorie.find(c =>
     c.etaMin >= 0 &&
     eta >= c.etaMin &&
     (c.etaMax === -1 || eta <= c.etaMax)
@@ -52,6 +61,11 @@ export async function POST() {
   const { clubId } = ctx
   const stagione  = stagioneCorrente()
 
+  const { data: clubData } = await supabase.from('clubs').select('tipo_prodotto').eq('id', clubId).maybeSingle()
+  const categorie: typeof CATEGORIE_FIGC = clubData?.tipo_prodotto === 'scuola_calcio_standalone'
+    ? (CATEGORIE_SCUOLA_CALCIO as unknown as typeof CATEGORIE_FIGC)
+    : CATEGORIE_FIGC
+
   const risultato = {
     gruppiCreati:   0,
     gruppiEsistenti:0,
@@ -65,7 +79,7 @@ export async function POST() {
   const gruppiMap:  Record<string, string> = {} // nome → gruppo_id
   const squadreMap: Record<string, string> = {} // categoriaEta → squadra_id
 
-  for (const cat of CATEGORIE_FIGC) {
+  for (const cat of categorie) {
     // 1a. Gruppo
     const { data: existing } = await supabase
       .from('gruppi').select('id')
@@ -133,9 +147,9 @@ export async function POST() {
     if (!g.data_nascita) { risultato.saltati++; continue }
 
     const annoNascita   = new Date(g.data_nascita).getFullYear()
-    const nomeCategoria = categoriaPerNascita(annoNascita)
+    const nomeCategoria = categoriaPerNascita(annoNascita, categorie)
     const gruppoId      = nomeCategoria ? gruppiMap[nomeCategoria] : null
-    const cat           = nomeCategoria ? CATEGORIE_FIGC.find(c => c.nome === nomeCategoria) : null
+    const cat           = nomeCategoria ? categorie.find(c => c.nome === nomeCategoria) : null
     const squadraId     = cat?.categoriaEta ? squadreMap[cat.categoriaEta] : null
 
     if (!gruppoId) { risultato.saltati++; continue }

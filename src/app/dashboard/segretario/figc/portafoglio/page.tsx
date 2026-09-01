@@ -1,7 +1,9 @@
 'use client'
 import { useState, useCallback, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import { PageHeader, Toast, Modal } from '@/components/ui'
+import { calcolaSaldoPortafoglio } from '@/lib/figc/portafoglio'
 
 interface Ricarica {
   id:      string
@@ -22,7 +24,7 @@ export default function PortafoglioFIGCPage() {
   const supabase = createClient()
   const [loading, setLoading]     = useState(true)
   const [loaded, setLoaded]       = useState(false)
-  const [clubId, setClubId]       = useState<string | null>(null)
+  const clubId = useClubId()
   const [ricariche, setRicariche] = useState<Ricarica[]>([])
   const [costi, setCosti]         = useState<ClubCosti>({ costo_definitivo: 8, costo_prestito: 5 })
   const [saldo, setSaldo]         = useState<number | null>(null)
@@ -41,13 +43,8 @@ export default function PortafoglioFIGCPage() {
 
   const load = useCallback(async () => {
     setLoading(true)
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) { setLoading(false); return }
-
-    const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-    const cId = utente?.club_id
+    const cId = clubId
     if (!cId) { setLoading(false); return }
-    setClubId(cId)
 
     const [
       { data: clubData },
@@ -62,38 +59,38 @@ export default function PortafoglioFIGCPage() {
         .eq('club_id', cId)
         .order('data', { ascending: false }),
       supabase.from('tesseramenti')
-        .select('tipo_tesseramento, created_at')
-        .eq('club_id', cId)
-        .eq('stato', 'attivo'),
+        .select('tipo, stato, created_at')
+        .eq('club_id', cId),
     ])
 
     const cd = { costo_definitivo: Number(clubData?.costo_tesseramento_definitivo ?? 8), costo_prestito: Number(clubData?.costo_tesseramento_prestito ?? 5) }
     setCosti(cd)
-    setRicariche((ricaricheData ?? []).map((r: any) => ({ ...r, importo: Number(r.importo) })))
-    setNTess(tessData?.length ?? 0)
+    const ricaricheNorm = (ricaricheData ?? []).map((r: any) => ({ ...r, importo: Number(r.importo) }))
+    setRicariche(ricaricheNorm)
+    setNTess((tessData ?? []).filter((t: any) => t.stato === 'attivo').length)
 
-    // Calcola saldo: ultima ricarica - costi tesseramenti da quella data
-    const ultima   = (ricaricheData ?? [])[0]
-    const dataRef  = ultima?.data ?? null
-    const tessDopo = (tessData ?? []).filter((t: any) => !dataRef || (t.created_at as string).split('T')[0] >= dataRef)
-    const costoTot = tessDopo.reduce((s: number, t: any) => s + (t.tipo_tesseramento === 'prestito' ? cd.costo_prestito : cd.costo_definitivo), 0)
-    setSaldo(ultima ? Number(ultima.importo) - costoTot : null)
+    // Saldo cumulativo: totale ricaricato - costo di tutti i tesseramenti
+    // dalla prima ricarica registrata in poi (i costi già sostenuti non si
+    // "recuperano" quando un giocatore viene svincolato).
+    const { saldo: saldoCalcolato } = calcolaSaldoPortafoglio(ricaricheNorm, tessData ?? [], cd)
+    setSaldo(saldoCalcolato)
 
     setLoaded(true)
     setLoading(false)
-  }, [supabase])
+  }, [supabase, clubId])
 
-  useEffect(() => { load() }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { load() }, [load])
 
   const salvaRicarica = async () => {
     if (!importo || !clubId) return
     setSalvando(true)
-    const { error } = await supabase.from('ricariche_portafoglio_figc').insert({
+    const payload = {
       club_id: clubId,
       importo: parseFloat(importo),
       data,
       note: note || null,
-    })
+    }
+    const { error } = await supabase.from('ricariche_portafoglio_figc').insert(payload)
     if (error) { err(`Errore salvataggio: ${error.message}`); setSalvando(false); return }
     ok('Ricarica registrata')
     setModalOpen(false); setImporto(''); setNote('')

@@ -1,6 +1,8 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useTipoProdotto } from '@/lib/club-context'
+import { labelSquadra } from '@/lib/settore-giovanile'
 import { PageHeader, EmptyState } from '@/components/ui'
 import Link from 'next/link'
 
@@ -13,6 +15,7 @@ interface Props {
 
 export default function PresenzeList({ basePath, nuovoAllenamentoPath, soloMie = false }: Props) {
   const supabase = createClient()
+  const isScuolaCalcio = useTipoProdotto() === 'scuola_calcio_standalone'
   const [sessioni, setSessioni] = useState<any[]>([])
   const [loading,  setLoading]  = useState(true)
 
@@ -93,12 +96,7 @@ export default function PresenzeList({ basePath, nuovoAllenamentoPath, soloMie =
                       </td>
                       <td style={{ fontSize: 13, textTransform: 'capitalize' }}>{s.tipologia}</td>
                       <td style={{ fontSize: 13, color: 'var(--grigio-3)' }}>
-                        {sq?.nome ?? '—'}
-                        {sq?.categoria_eta && (
-                          <span style={{ fontSize: 10, color: 'var(--grigio-4)', marginLeft: 6 }}>
-                            {sq.categoria_eta.toUpperCase().replace(/_/g, ' ')}
-                          </span>
-                        )}
+                        {sq ? labelSquadra(sq, isScuolaCalcio) : '—'}
                       </td>
                       <td style={{ fontSize: 12, color: 'var(--grigio-4)' }}>{s.campo ?? '—'}</td>
                       <td>

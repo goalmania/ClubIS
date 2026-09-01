@@ -40,11 +40,12 @@ export default function AdminClubDetailPage() {
   const salvaClub = async () => {
     setSaving(true)
     await supabase.from('clubs').update({
-      nome: club.nome, citta: club.citta, categoria: club.categoria,
+      nome: club.nome, citta: club.citta, categoria: club.categoria, genere: club.genere,
       piano_abbonamento: club.piano_abbonamento,
       abbonamento_scadenza: club.abbonamento_scadenza || null,
       email_ufficiale: club.email_ufficiale || null,
       telefono: club.telefono || null,
+      promozione_serie_c_stagione: club.promozione_serie_c_stagione || null,
     }).eq('id', id)
     setSaving(false)
     setToast('Club aggiornato')
@@ -100,6 +101,13 @@ export default function AdminClubDetailPage() {
             </FormField>
           </FormGrid>
           <FormGrid>
+            <FormField label="Genere">
+              <Select value={club.genere ?? 'maschile'} onChange={v => setClub({ ...club, genere: v })} options={[
+                { value: 'maschile', label: 'Maschile' }, { value: 'femminile', label: 'Femminile' },
+              ]} />
+            </FormField>
+          </FormGrid>
+          <FormGrid>
             <FormField label="Email ufficiale">
               <input className="input" type="email" value={club.email_ufficiale ?? ''} onChange={e => setClub({ ...club, email_ufficiale: e.target.value })} />
             </FormField>
@@ -110,6 +118,18 @@ export default function AdminClubDetailPage() {
           <FormField label="Scadenza abbonamento">
             <input className="input" type="date" value={club.abbonamento_scadenza ?? ''} onChange={e => setClub({ ...club, abbonamento_scadenza: e.target.value })} style={{ maxWidth: 220 }} />
           </FormField>
+          {club.categoria === 'serie_c' && (
+            <FormField label="Promosso dalla Serie D nella stagione (es. 2026/27)">
+              <input className="input" placeholder="lascia vuoto se già affiliato in Serie C"
+                value={club.promozione_serie_c_stagione ?? ''}
+                onChange={e => setClub({ ...club, promozione_serie_c_stagione: e.target.value })}
+                style={{ maxWidth: 260 }}
+              />
+              <div style={{ fontSize: 11, color: 'var(--grigio-4)', marginTop: 4 }}>
+                Usato dal modulo Compliance COVISOC per calcolare la fideiussione corretta (350.000€ già affiliati, 700.000€ neopromossi — Manuale Licenze Nazionali).
+              </div>
+            </FormField>
+          )}
           <div style={{ marginTop: 16, display: 'flex', justifyContent: 'flex-end' }}>
             <button className="btn btn-primary btn-sm" onClick={salvaClub} disabled={saving}>
               {saving ? 'Salvataggio...' : 'Salva modifiche'}

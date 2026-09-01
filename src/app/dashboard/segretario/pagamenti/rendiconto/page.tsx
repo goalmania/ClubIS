@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import { PageHeader } from '@/components/ui'
 
 // ── Tipi ──────────────────────────────────────────────────────────────────────
@@ -102,16 +103,7 @@ export default function RendicontoPage() {
   const [anno, setAnno] = useState(annoSalvato)
   const [dati, setDati] = useState<MeseData[]>([])
   const [loading, setLoading] = useState(true)
-  const [clubId, setClubId] = useState<string | null>(null)
-
-  // Risolvi club_id una volta sola
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user) return
-      supabase.from('utenti').select('club_id').eq('id', user.id).single()
-        .then(({ data }) => { if (data) setClubId(data.club_id) })
-    })
-  }, [])
+  const clubId = useClubId()
 
   // Ricarica quando anno o clubId cambiano
   useEffect(() => { if (clubId) load(clubId) }, [anno, clubId])

@@ -2,12 +2,13 @@
 import FeatureGate from '@/components/FeatureGate'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import Link from 'next/link'
 import FormVisita from '@/components/forms/FormVisita'
 
 export default function MedicoVisitePage() {
   const supabase = createClient()
-  const [clubId, setClubId] = useState<string | null>(null)
+  const clubId = useClubId()
   const [visite, setVisite] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [openDrawer, setOpenDrawer] = useState(false)
@@ -15,22 +16,18 @@ export default function MedicoVisitePage() {
 
   useEffect(() => {
     async function init() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-      const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-      if (!utente) return
-      setClubId(utente.club_id)
+      if (!clubId) return
 
       const { data } = await supabase
         .from('visite_mediche')
         .select('id, tipo, data, esito, note, struttura, giocatori(nome, cognome)')
-        .eq('club_id', utente.club_id)
+        .eq('club_id', clubId)
         .order('data', { ascending: false })
       setVisite(data ?? [])
       setLoading(false)
     }
     init()
-  }, [refresh])
+  }, [refresh, clubId])
 
   const oggiStr = new Date().toISOString().split('T')[0]
   const future = visite.filter(v => v.data >= oggiStr)

@@ -1,6 +1,7 @@
 'use client'
 import { useState, useMemo, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId, useTipoProdotto } from '@/lib/club-context'
 import { PageHeader, Toast } from '@/components/ui'
 import { useSharedData } from '@/hooks/useSharedData'
 import Link from 'next/link'
@@ -8,6 +9,11 @@ import { matchSearch } from '@/lib/search'
 import QuickPianoPagamento from '@/components/forms/QuickPianoPagamento'
 
 type FiltroStato = 'tutti' | 'in_attesa' | 'in_ritardo' | 'pagata'
+
+const MESE_LABEL: Record<number, string> = {
+  1: 'Gennaio', 2: 'Febbraio', 3: 'Marzo', 4: 'Aprile', 5: 'Maggio', 6: 'Giugno',
+  7: 'Luglio', 8: 'Agosto', 9: 'Settembre', 10: 'Ottobre', 11: 'Novembre', 12: 'Dicembre',
+}
 
 interface RataRow {
   id: string
@@ -27,6 +33,17 @@ interface RataRow {
   }
 }
 
+interface QuotaMensileRow {
+  id: string
+  giocatore_id: string
+  mese: number
+  importo_totale: number
+  importo_pagato: number
+  stato: string
+  scadenza: string | null
+  giocatore: { id: string; nome: string; cognome: string } | null
+}
+
 function statoEffettivo(stato: string, scadenza: string): string {
   if (stato === 'in_attesa' && new Date(scadenza) < new Date()) return 'in_ritardo'
   return stato
@@ -39,6 +56,25 @@ function StatoBadge({ stato, scadenza }: { stato: string; scadenza: string }) {
     in_attesa:  { label: 'In attesa',  cls: 'badge-grigio' },
     in_ritardo: { label: 'In ritardo', cls: 'badge-rosso' },
     annullata:  { label: 'Annullata',  cls: 'badge-grigio' },
+  }
+  const { label, cls } = map[s] ?? { label: s, cls: 'badge-grigio' }
+  return <span className={`badge ${cls}`}>{label}</span>
+}
+
+function statoEffettivoQuota(stato: string, scadenza: string | null): string {
+  if ((stato === 'non_pagato' || stato === 'parziale') && scadenza && new Date(scadenza) < new Date()) return 'in_ritardo'
+  return stato
+}
+
+function StatoBadgeQuota({ stato, scadenza }: { stato: string; scadenza: string | null }) {
+  const s = statoEffettivoQuota(stato, scadenza)
+  const map: Record<string, { label: string; cls: string }> = {
+    pagato:     { label: 'Pagato',     cls: 'badge-verde' },
+    non_pagato: { label: 'Non pagato', cls: 'badge-grigio' },
+    parziale:   { label: 'Parziale',   cls: 'badge-ambra' },
+    in_ritardo: { label: 'In ritardo', cls: 'badge-rosso' },
+    esonerato:  { label: 'Esonerato',  cls: 'badge-grigio' },
+    rimborsato: { label: 'Rimborsato', cls: 'badge-blu' },
   }
   const { label, cls } = map[s] ?? { label: s, cls: 'badge-grigio' }
   return <span className={`badge ${cls}`}>{label}</span>
@@ -63,13 +99,15 @@ const TEMPLATE_NUOVO_PIANO = [{ numero: 1, importoDef: 0, mesiDaOggi: 0 }]
 
 export default function PagamentiDashboard() {
   const supabase = createClient()
+  const isScuolaCalcio = useTipoProdotto() === 'scuola_calcio_standalone'
   const [rate, setRate] = useState<RataRow[]>([])
+  const [quoteMensili, setQuoteMensili] = useState<QuotaMensileRow[]>([])
   const [loading, setLoading] = useState(true)
   const [filtro, setFiltro] = useState<FiltroStato>('tutti')
   const [cerca, setCerca] = useState('')
   const [bannerDismissed, setBannerDismissed] = useState(false)
   const [toast, setToast] = useState<{ msg: string; tipo: 'success' | 'error' } | null>(null)
-  const [clubId, setClubId] = useState<string | null>(null)
+  const clubId = useClubId()
   const [nuovoPianoOpen, setNuovoPianoOpen] = useState(false)
 
   useSharedData(async () => {
@@ -78,11 +116,21 @@ export default function PagamentiDashboard() {
   })
 
   async function load() {
+    if (!clubId) return
     setLoading(true)
-    const { data: { user } } = await supabase.auth.getUser()
-    const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user!.id).single()
-    const clubId = utente!.club_id
-    setClubId(clubId)
+
+    if (isScuolaCalcio) {
+      const { data } = await supabase
+        .from('quote_iscrizione')
+        .select('id, giocatore_id, mese, importo_totale, importo_pagato, stato, scadenza, giocatori(id, nome, cognome)')
+        .eq('club_id', clubId)
+        .gt('mese', 0)
+        .order('scadenza')
+
+      setQuoteMensili((data ?? []).map((q: any) => ({ ...q, giocatore: q.giocatori ?? null })))
+      setLoading(false)
+      return
+    }
 
     const { data } = await supabase
       .from('rate_pagamento')
@@ -110,8 +158,8 @@ export default function PagamentiDashboard() {
     setLoading(false)
   }
 
-  // Sottoscrizione realtime: aggiorna la lista rate quando un qualsiasi ruolo del club
-  // modifica rate_pagamento o piani_pagamento (senza aspettare il cambio di tab)
+  // Sottoscrizione realtime: aggiorna la lista quando un qualsiasi ruolo del club
+  // modifica i dati dei pagamenti (senza aspettare il cambio di tab)
   useEffect(() => {
     if (!clubId) return
     const channel = supabase
@@ -124,9 +172,13 @@ export default function PagamentiDashboard() {
         event: '*', schema: 'public', table: 'piani_pagamento',
         filter: `club_id=eq.${clubId}`,
       }, () => load())
+      .on('postgres_changes', {
+        event: '*', schema: 'public', table: 'quote_iscrizione',
+        filter: `club_id=eq.${clubId}`,
+      }, () => load())
       .subscribe()
     return () => { supabase.removeChannel(channel) }
-  }, [clubId])
+  }, [clubId, isScuolaCalcio])
 
   const dismissBanner = () => {
     localStorage.setItem('cis_banner_golee_dismissed', '1')
@@ -180,6 +232,51 @@ export default function PagamentiDashboard() {
     return true
   })
 
+  // ── Scuola calcio: KPI e righe calcolati sulle quote mensili ──────────────
+  const meseCorrenteNum = oggi.getMonth() + 1
+
+  const kpiScuola = useMemo(() => {
+    const tesseratiUnique = new Set(quoteMensili.map(q => q.giocatore_id))
+    const incassatoMese = quoteMensili
+      .filter(q => q.mese === meseCorrenteNum)
+      .reduce((s, q) => s + Number(q.importo_pagato), 0)
+    const ritardo = quoteMensili.filter(q =>
+      (q.stato === 'non_pagato' || q.stato === 'parziale') && q.scadenza && new Date(q.scadenza) < oggi
+    )
+    const tesInRitardo = new Set(ritardo.map(q => q.giocatore_id))
+    const totRitardo = ritardo.reduce((s, q) => s + (Number(q.importo_totale) - Number(q.importo_pagato)), 0)
+    const attesaFineM = quoteMensili
+      .filter(q => (q.stato === 'non_pagato' || q.stato === 'parziale') && q.scadenza && new Date(q.scadenza) >= oggi && new Date(q.scadenza) <= fineM2)
+      .reduce((s, q) => s + (Number(q.importo_totale) - Number(q.importo_pagato)), 0)
+    return { tesserati: tesseratiUnique.size, incassatoMese, tesInRitardo: tesInRitardo.size, totRitardo, attesaFineM }
+  }, [quoteMensili])
+
+  // Raggruppamento per giocatore: prende la quota "corrente" (prossima in attesa o più recente in ritardo)
+  const righeTabellaScuola = useMemo(() => {
+    const byGiocatore = new Map<string, QuotaMensileRow[]>()
+    for (const q of quoteMensili) {
+      const gid = q.giocatore_id
+      if (!byGiocatore.has(gid)) byGiocatore.set(gid, [])
+      byGiocatore.get(gid)!.push(q)
+    }
+
+    return Array.from(byGiocatore.entries()).map(([gid, righe]) => {
+      const inRitardo = righe.filter(q => statoEffettivoQuota(q.stato, q.scadenza) === 'in_ritardo')
+        .sort((a, b) => new Date(a.scadenza ?? 0).getTime() - new Date(b.scadenza ?? 0).getTime())
+      const inAttesa = righe.filter(q => (q.stato === 'non_pagato' || q.stato === 'parziale') && (!q.scadenza || new Date(q.scadenza) >= oggi))
+        .sort((a, b) => new Date(a.scadenza ?? 0).getTime() - new Date(b.scadenza ?? 0).getTime())
+      const corrente = inRitardo[0] ?? inAttesa[0] ?? righe[righe.length - 1]
+      const statoGen: FiltroStato = inRitardo.length > 0 ? 'in_ritardo' : inAttesa.length > 0 ? 'in_attesa' : 'pagata'
+      return { gid, corrente, statoGen, giocatore: righe[0].giocatore }
+    })
+  }, [quoteMensili])
+
+  const righeFiltrateScuola = righeTabellaScuola.filter(r => {
+    if (filtro !== 'tutti' && r.statoGen !== filtro) return false
+    if (cerca && !matchSearch(cerca, r.giocatore?.cognome, r.giocatore?.nome)) return false
+    return true
+  })
+
   const export730 = () => {
     window.open('/api/pagamenti/export-730?anno=' + oggi.getFullYear(), '_blank')
   }
@@ -190,37 +287,62 @@ export default function PagamentiDashboard() {
     <div>
       <PageHeader
         title="Pagamenti"
-        subtitle="Dashboard rate e piani di pagamento"
+        subtitle={isScuolaCalcio ? 'Riepilogo delle quote mensili dei tesserati' : 'Dashboard rate e piani di pagamento'}
         actions={
-          <div style={{ display: 'flex', gap: 10 }}>
-            <button className="btn btn-secondary btn-sm" onClick={export730}>
-              Scarica per 730
-            </button>
-            <Link href="/dashboard/segretario/pagamenti/rendiconto" className="btn btn-secondary btn-sm">
-              Rendiconto
-            </Link>
-            <button
-              className="btn btn-primary btn-sm"
-              onClick={() => setNuovoPianoOpen(true)}
-            >
-              + Nuovo piano
-            </button>
-          </div>
+          isScuolaCalcio ? (
+            <div style={{ display: 'flex', gap: 10 }}>
+              <Link href="/dashboard/segretario/pagamenti/rendiconto" className="btn btn-secondary btn-sm">
+                Rendiconto
+              </Link>
+              <Link href="/dashboard/segretario/quote" className="btn btn-primary btn-sm">
+                + Nuova quota mensile
+              </Link>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button className="btn btn-secondary btn-sm" onClick={export730}>
+                Scarica per 730
+              </button>
+              <Link href="/dashboard/segretario/pagamenti/rendiconto" className="btn btn-secondary btn-sm">
+                Rendiconto
+              </Link>
+              <button
+                className="btn btn-primary btn-sm"
+                onClick={() => setNuovoPianoOpen(true)}
+              >
+                + Nuovo piano
+              </button>
+            </div>
+          )
         }
       />
 
       {/* KPI */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 20 }}>
-        <KpiCard label="Famiglie iscritte" value={String(kpi.famiglie)} sub="con piano attivo" />
-        <KpiCard label="Pagato questo mese" value={fmt(kpi.pagatoMese)} colore="var(--verde)" />
-        <KpiCard
-          label="In ritardo"
-          value={fmt(kpi.totRitardo)}
-          sub={`${kpi.famInRitardo} famiglie`}
-          colore={kpi.totRitardo > 0 ? 'var(--rosso)' : undefined}
-        />
-        <KpiCard label="Atteso entro fine mese" value={fmt(kpi.attesaFineM)} colore="var(--ambra)" />
-      </div>
+      {isScuolaCalcio ? (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 20 }}>
+          <KpiCard label="Tesserati con quote" value={String(kpiScuola.tesserati)} sub="stagione corrente" />
+          <KpiCard label={`Incassato a ${MESE_LABEL[meseCorrenteNum]}`} value={fmt(kpiScuola.incassatoMese)} colore="var(--verde)" />
+          <KpiCard
+            label="In ritardo"
+            value={fmt(kpiScuola.totRitardo)}
+            sub={`${kpiScuola.tesInRitardo} tesserati`}
+            colore={kpiScuola.totRitardo > 0 ? 'var(--rosso)' : undefined}
+          />
+          <KpiCard label="Atteso entro fine mese" value={fmt(kpiScuola.attesaFineM)} colore="var(--ambra)" />
+        </div>
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 20 }}>
+          <KpiCard label="Famiglie iscritte" value={String(kpi.famiglie)} sub="con piano attivo" />
+          <KpiCard label="Pagato questo mese" value={fmt(kpi.pagatoMese)} colore="var(--verde)" />
+          <KpiCard
+            label="In ritardo"
+            value={fmt(kpi.totRitardo)}
+            sub={`${kpi.famInRitardo} famiglie`}
+            colore={kpi.totRitardo > 0 ? 'var(--rosso)' : undefined}
+          />
+          <KpiCard label="Atteso entro fine mese" value={fmt(kpi.attesaFineM)} colore="var(--ambra)" />
+        </div>
+      )}
 
       {/* Banner anti-Golee */}
       {!bannerDismissed && (
@@ -254,7 +376,7 @@ export default function PagamentiDashboard() {
             {{ tutti: 'Tutti', in_attesa: 'In attesa', in_ritardo: 'In ritardo', pagata: 'Pagati' }[f]}
             {f !== 'tutti' && (
               <span style={{ marginLeft: 6, opacity: 0.8 }}>
-                ({righeTabella.filter(r => r.statoGen === f).length})
+                ({(isScuolaCalcio ? righeTabellaScuola : righeTabella).filter(r => r.statoGen === f).length})
               </span>
             )}
           </button>
@@ -262,7 +384,7 @@ export default function PagamentiDashboard() {
         <input
           className="input"
           style={{ marginLeft: 'auto', width: 240 }}
-          placeholder="Cerca famiglia / giocatore..."
+          placeholder={isScuolaCalcio ? 'Cerca giocatore...' : 'Cerca famiglia / giocatore...'}
           value={cerca}
           onChange={e => setCerca(e.target.value)}
         />
@@ -271,69 +393,130 @@ export default function PagamentiDashboard() {
       {/* Tabella */}
       <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
         <div className="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Famiglia</th>
-                <th>Giocatore</th>
-                <th>Rata corrente</th>
-                <th>Scadenza</th>
-                <th>Stato</th>
-                <th>Azioni</th>
-              </tr>
-            </thead>
-            <tbody>
-              {righeFiltrate.length === 0 ? (
+          {isScuolaCalcio ? (
+            <table>
+              <thead>
                 <tr>
-                  <td colSpan={6} style={{ textAlign: 'center', padding: '40px', color: 'var(--grigio-4)' }}>
-                    {filtro === 'tutti' ? 'Nessun piano di pagamento registrato' : 'Nessuna riga con questo filtro'}
-                  </td>
+                  <th>Giocatore</th>
+                  <th>Mese</th>
+                  <th>Importo</th>
+                  <th>Scadenza</th>
+                  <th>Stato</th>
+                  <th>Azioni</th>
                 </tr>
-              ) : righeFiltrate.map(({ famId, corrente, statoGen, famiglia, giocatore }) => (
-                <tr key={famId}>
-                  <td>
-                    <div style={{ fontWeight: 600, fontSize: 13 }}>
-                      {famiglia?.cognome ?? '—'} {famiglia?.nome ?? ''}
-                    </div>
-                    {famiglia?.email && (
-                      <div style={{ fontSize: 11, color: 'var(--grigio-4)' }}>{famiglia.email}</div>
-                    )}
-                  </td>
-                  <td style={{ fontSize: 13 }}>
-                    {giocatore ? `${giocatore.cognome} ${giocatore.nome}` : '—'}
-                  </td>
-                  <td>
-                    <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
-                      {fmt(Number(corrente?.importo ?? 0))}
-                    </div>
-                    {corrente && (
-                      <div style={{ fontSize: 11, color: 'var(--grigio-4)' }}>Rata {corrente.numero_rata}</div>
-                    )}
-                  </td>
-                  <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
-                    {corrente?.scadenza
-                      ? new Date(corrente.scadenza).toLocaleDateString('it-IT')
-                      : '—'}
-                  </td>
-                  <td>
-                    {corrente && <StatoBadge stato={corrente.stato} scadenza={corrente.scadenza} />}
-                  </td>
-                  <td>
-                    <div style={{ display: 'flex', gap: 6 }}>
-                      {famiglia?.id && (
+              </thead>
+              <tbody>
+                {righeFiltrateScuola.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} style={{ textAlign: 'center', padding: '40px', color: 'var(--grigio-4)' }}>
+                      {filtro === 'tutti' ? 'Nessuna quota mensile registrata' : 'Nessuna riga con questo filtro'}
+                    </td>
+                  </tr>
+                ) : righeFiltrateScuola.map(({ gid, corrente, giocatore }) => (
+                  <tr key={gid}>
+                    <td style={{ fontWeight: 600, fontSize: 13 }}>
+                      {giocatore ? `${giocatore.cognome} ${giocatore.nome}` : '—'}
+                    </td>
+                    <td style={{ fontSize: 13, color: 'var(--grigio-3)' }}>
+                      {corrente ? MESE_LABEL[corrente.mese] ?? corrente.mese : '—'}
+                    </td>
+                    <td>
+                      <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
+                        {fmt(Number(corrente?.importo_totale ?? 0))}
+                      </div>
+                      {corrente && corrente.stato !== 'pagato' && Number(corrente.importo_pagato) > 0 && (
+                        <div style={{ fontSize: 11, color: 'var(--grigio-4)' }}>
+                          Pagato {fmt(Number(corrente.importo_pagato))}
+                        </div>
+                      )}
+                    </td>
+                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
+                      {corrente?.scadenza
+                        ? new Date(corrente.scadenza).toLocaleDateString('it-IT')
+                        : '—'}
+                    </td>
+                    <td>
+                      {corrente && <StatoBadgeQuota stato={corrente.stato} scadenza={corrente.scadenza} />}
+                    </td>
+                    <td>
+                      <div style={{ display: 'flex', gap: 6 }}>
                         <Link
-                          href={`/dashboard/segretario/pagamenti/${famiglia.id}`}
+                          href={`/dashboard/segretario/giocatori/${gid}`}
                           className="btn btn-secondary btn-sm"
                         >
                           Dettaglio
                         </Link>
-                      )}
-                    </div>
-                  </td>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <table>
+              <thead>
+                <tr>
+                  <th>Famiglia</th>
+                  <th>Giocatore</th>
+                  <th>Rata corrente</th>
+                  <th>Scadenza</th>
+                  <th>Stato</th>
+                  <th>Azioni</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {righeFiltrate.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} style={{ textAlign: 'center', padding: '40px', color: 'var(--grigio-4)' }}>
+                      {filtro === 'tutti' ? 'Nessun piano di pagamento registrato' : 'Nessuna riga con questo filtro'}
+                    </td>
+                  </tr>
+                ) : righeFiltrate.map(({ famId, corrente, statoGen, famiglia, giocatore }) => (
+                  <tr key={famId}>
+                    <td>
+                      <div style={{ fontWeight: 600, fontSize: 13 }}>
+                        {famiglia?.cognome ?? '—'} {famiglia?.nome ?? ''}
+                      </div>
+                      {famiglia?.email && (
+                        <div style={{ fontSize: 11, color: 'var(--grigio-4)' }}>{famiglia.email}</div>
+                      )}
+                    </td>
+                    <td style={{ fontSize: 13 }}>
+                      {giocatore ? `${giocatore.cognome} ${giocatore.nome}` : '—'}
+                    </td>
+                    <td>
+                      <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
+                        {fmt(Number(corrente?.importo ?? 0))}
+                      </div>
+                      {corrente && (
+                        <div style={{ fontSize: 11, color: 'var(--grigio-4)' }}>Rata {corrente.numero_rata}</div>
+                      )}
+                    </td>
+                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
+                      {corrente?.scadenza
+                        ? new Date(corrente.scadenza).toLocaleDateString('it-IT')
+                        : '—'}
+                    </td>
+                    <td>
+                      {corrente && <StatoBadge stato={corrente.stato} scadenza={corrente.scadenza} />}
+                    </td>
+                    <td>
+                      <div style={{ display: 'flex', gap: 6 }}>
+                        {famiglia?.id && (
+                          <Link
+                            href={`/dashboard/segretario/pagamenti/${famiglia.id}`}
+                            className="btn btn-secondary btn-sm"
+                          >
+                            Dettaglio
+                          </Link>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
 

@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { getUserContext } from '@/lib/impersonation'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import StampaPrintButton from './StampaPrintButton'
@@ -9,11 +10,8 @@ export default async function StampaPage({
   params: { partita_id: string }
 }) {
   const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth/login')
-
-  const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-  if (!utente) redirect('/auth/errore')
+  const ctx = await getUserContext()
+  if (!ctx) redirect('/auth/login')
 
   const [{ data: partita }, { data: distinta }, { data: club }] = await Promise.all([
     supabase
@@ -31,7 +29,7 @@ export default async function StampaPage({
     supabase
       .from('clubs')
       .select('nome')
-      .eq('id', utente.club_id)
+      .eq('id', ctx.clubId)
       .single(),
   ])
 

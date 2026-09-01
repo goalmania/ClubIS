@@ -15,6 +15,29 @@ function normEnum(val: string | null | undefined, fallback: string): string {
   return val.toLowerCase().trim()
 }
 
+// Converte una data (YYYY-MM-DD, già normalizzata dal parser) + un orario
+// "HH:MM" in orario italiano in un istante UTC corretto, gestendo da sola il
+// cambio CET/CEST — necessario perché questa route gira su un server con
+// fuso orario UTC, mentre gli orari nel CSV sono quelli locali del club.
+function orarioItaliaAISO(dataStr: string, oraStr: string): string {
+  const [anno, mese, giorno] = dataStr.split('-').map(Number)
+  const [ora, minuti] = oraStr.split(':').map(Number)
+
+  let stima = Date.UTC(anno, mese - 1, giorno, ora, minuti)
+  // Converge in 1-2 iterazioni: calcola come apparirebbe `stima` a Roma,
+  // e corregge dello scarto rispetto all'orario richiesto.
+  for (let i = 0; i < 2; i++) {
+    const inRoma = new Date(stima).toLocaleString('sv-SE', { timeZone: 'Europe/Rome' })
+    const [dataRoma, oraRoma] = inRoma.split(' ')
+    const [aR, mR, gR] = dataRoma.split('-').map(Number)
+    const [hR, minR] = oraRoma.split(':').map(Number)
+    const vistoComeRoma = Date.UTC(aR, mR - 1, gR, hR, minR)
+    const scarto = vistoComeRoma - Date.UTC(anno, mese - 1, giorno, ora, minuti)
+    stima -= scarto
+  }
+  return new Date(stima).toISOString()
+}
+
 // Mappa categorie CSV libere → enum categoria_movimento PostgreSQL
 // Valori validi: quote_iscrizione | sponsorizzazioni | proventi_gare |
 //   stipendi | compensi_staff | trasferte | materiale_sportivo |
@@ -369,6 +392,164 @@ export async function POST(req: Request, { params }: { params: { tipo: string } 
       } catch (e: unknown) {
         const msg = e instanceof Error ? e.message : String(e)
         risultati.errori.push(`${r.cognome} ${r.nome}: ${msg}`)
+      }
+    }
+  }
+
+  // Import quote/pagamenti — usato soprattutto per la migrazione da un altro
+  // gestionale (es. Golee): il giocatore deve essere già in rosa.
+  if (params.tipo === 'quote') {
+    const STATI_VALIDI = ['non_pagato', 'parziale', 'pagato', 'rimborsato', 'esonerato']
+    for (const r of righe as Record<string, unknown>[]) {
+      const cognome = String(r.giocatore_cognome ?? '').trim()
+      const nome = String(r.giocatore_nome ?? '').trim()
+      try {
+        if (!cognome || !nome) throw new Error('cognome/nome mancanti')
+
+        const { data: giocatore } = await supabase
+          .from('giocatori')
+          .select('id')
+          .eq('club_id', clubId)
+          .ilike('cognome', cognome)
+          .ilike('nome', nome)
+          .maybeSingle()
+
+        if (!giocatore) throw new Error('giocatore non trovato in rosa — importa prima l\'anagrafica giocatori')
+
+        const stagioneRiga = String(r.stagione ?? stagione)
+        const importoTotale = Number(r.importo_totale)
+        if (isNaN(importoTotale)) throw new Error('importo_totale non valido')
+        const importoPagato = r.importo_pagato != null ? Number(r.importo_pagato) : 0
+
+        let stato = String(r.stato ?? '').toLowerCase().trim()
+        if (!STATI_VALIDI.includes(stato)) {
+          stato = importoPagato <= 0 ? 'non_pagato' : importoPagato >= importoTotale ? 'pagato' : 'parziale'
+        }
+
+        const { data: esistente } = await supabase
+          .from('quote_iscrizione')
+          .select('id')
+          .eq('club_id', clubId)
+          .eq('giocatore_id', giocatore.id)
+          .eq('stagione', stagioneRiga)
+          .eq('mese', 0)
+          .maybeSingle()
+
+        if (esistente) { risultati.saltati++; continue }
+
+        const { error } = await supabase.from('quote_iscrizione').insert({
+          club_id: clubId,
+          giocatore_id: giocatore.id,
+          stagione: stagioneRiga,
+          importo_totale: importoTotale,
+          importo_pagato: importoPagato,
+          stato,
+          scadenza: r.scadenza ?? null,
+          note: r.note ?? null,
+        })
+        if (error) throw new Error(error.message)
+
+        risultati.importati++
+      } catch (e: unknown) {
+        const msg = e instanceof Error ? e.message : String(e)
+        risultati.errori.push(`${cognome} ${nome}: ${msg}`)
+      }
+    }
+  }
+
+  // Import eventi calendario (allenamenti, partite, riunioni, trasferte).
+  if (params.tipo === 'calendario') {
+    const TIPOLOGIE = ['allenamento', 'partita', 'riunione', 'visita_medica', 'trasferta']
+    const PRIORITA = ['bassa', 'media', 'alta', 'urgente']
+    for (const r of righe as Record<string, unknown>[]) {
+      const dataStr = String(r.data ?? '')
+      const tipologia = String(r.tipologia ?? '').toLowerCase().trim()
+      try {
+        const oraInizio = String(r.ora_inizio ?? '').trim()
+        const oraFine = String(r.ora_fine ?? '').trim()
+        const luogo = String(r.luogo_testo ?? '').trim()
+
+        if (!dataStr) throw new Error('data mancante')
+        if (!TIPOLOGIE.includes(tipologia)) throw new Error(`tipologia non valida: "${tipologia}" (valori: ${TIPOLOGIE.join(', ')})`)
+        if (!luogo) throw new Error('luogo mancante')
+        if (!/^\d{1,2}:\d{2}$/.test(oraInizio)) throw new Error(`ora_inizio non valida: "${oraInizio}" (formato HH:MM)`)
+
+        const dataOraInizio = orarioItaliaAISO(dataStr, oraInizio)
+        const dataOraFine = /^\d{1,2}:\d{2}$/.test(oraFine)
+          ? orarioItaliaAISO(dataStr, oraFine)
+          : new Date(new Date(dataOraInizio).getTime() + 90 * 60000).toISOString()
+
+        let priorita = String(r.priorita ?? '').toLowerCase().trim()
+        if (!PRIORITA.includes(priorita)) priorita = 'media'
+
+        const { error } = await supabase.from('eventi_calendario').insert({
+          club_id: clubId,
+          tipologia,
+          data: dataStr,
+          data_ora_inizio: dataOraInizio,
+          data_ora_fine: dataOraFine,
+          luogo_testo: luogo,
+          priorita,
+          note: r.note ?? null,
+        })
+        if (error) throw new Error(error.message)
+
+        risultati.importati++
+      } catch (e: unknown) {
+        const msg = e instanceof Error ? e.message : String(e)
+        risultati.errori.push(`${dataStr} ${tipologia}: ${msg}`)
+      }
+    }
+  }
+
+  // Import certificati medici — il giocatore deve essere già in rosa.
+  if (params.tipo === 'certificati') {
+    const TIPI_CERT = ['agonistico', 'non_agonistico']
+    for (const r of righe as Record<string, unknown>[]) {
+      const cognome = String(r.giocatore_cognome ?? '').trim()
+      const nome = String(r.giocatore_nome ?? '').trim()
+      try {
+        if (!cognome || !nome) throw new Error('cognome/nome mancanti')
+        if (!r.data_rilascio || !r.data_scadenza) throw new Error('date mancanti')
+
+        const { data: giocatore } = await supabase
+          .from('giocatori')
+          .select('id')
+          .eq('club_id', clubId)
+          .ilike('cognome', cognome)
+          .ilike('nome', nome)
+          .maybeSingle()
+
+        if (!giocatore) throw new Error('giocatore non trovato in rosa — importa prima l\'anagrafica giocatori')
+
+        let tipo = String(r.tipo ?? '').toLowerCase().trim()
+        if (!TIPI_CERT.includes(tipo)) tipo = 'agonistico'
+
+        const { data: dup } = await supabase
+          .from('certificati_medici')
+          .select('id')
+          .eq('club_id', clubId)
+          .eq('giocatore_id', giocatore.id)
+          .eq('data_scadenza', r.data_scadenza)
+          .maybeSingle()
+
+        if (dup) { risultati.saltati++; continue }
+
+        const { error } = await supabase.from('certificati_medici').insert({
+          club_id: clubId,
+          giocatore_id: giocatore.id,
+          tipo,
+          data_rilascio: r.data_rilascio,
+          data_scadenza: r.data_scadenza,
+          medico: r.medico ?? null,
+          struttura: r.struttura ?? null,
+        })
+        if (error) throw new Error(error.message)
+
+        risultati.importati++
+      } catch (e: unknown) {
+        const msg = e instanceof Error ? e.message : String(e)
+        risultati.errori.push(`${cognome} ${nome}: ${msg}`)
       }
     }
   }

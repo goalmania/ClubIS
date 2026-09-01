@@ -2,10 +2,12 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { isPro as isCategoriaPro } from '@/lib/categorie-club'
+import { CATEGORIE_FEDERALI_OPTIONS, etaPrincipaleCategoriaFederale, type CategoriaFederale } from '@/lib/settore-giovanile'
 
 // ── Tipi ────────────────────────────────────────────────────────────────────
 
-type StepId = 1 | 2 | 3 | 4
+type StepId = 1 | 2 | 3 | 4 | 5
 
 interface ClubData {
   nome: string
@@ -22,16 +24,6 @@ interface InvitoStaff {
   email: string
 }
 
-const CATEGORIE_GIOVANILI = [
-  { id: 'u6',  label: 'Scuola Calcio U6-U8' },
-  { id: 'u10', label: 'Pulcini U9-U10' },
-  { id: 'u12', label: 'Pulcini U11-U12' },
-  { id: 'u14', label: 'Esordienti U13-U14' },
-  { id: 'u16', label: 'Giovanissimi U15-U16' },
-  { id: 'u18', label: 'Allievi U17-U18' },
-  { id: 'u20', label: 'Primavera U19-U20' },
-]
-
 const RUOLI_STAFF: InvitoStaff[] = [
   { ruolo: 'segretario',      label: 'Segretario',         email: '' },
   { ruolo: 'ds',              label: 'Direttore Sportivo', email: '' },
@@ -42,6 +34,9 @@ const RUOLI_STAFF: InvitoStaff[] = [
 ]
 
 const CATEGORIE_SELECT = [
+  { value: 'serie_a',          label: 'Serie A' },
+  { value: 'serie_b',          label: 'Serie B' },
+  { value: 'serie_c',          label: 'Serie C (Lega Pro)' },
   { value: 'serie_d',          label: 'Serie D' },
   { value: 'eccellenza',       label: 'Eccellenza' },
   { value: 'promozione',       label: 'Promozione' },
@@ -89,6 +84,7 @@ export default function OnboardingPage() {
     nome: '', citta: '', provincia: '', categoria: 'eccellenza',
     anno_fondazione: '', colori_sociali: '',
   })
+  const [tipoProdotto, setTipoProdotto] = useState<'club_agonistico' | 'scuola_calcio_standalone'>('club_agonistico')
 
   // Step 2
   const [categorieSelezionate, setCategorieSelezionate] = useState<string[]>([])
@@ -116,11 +112,13 @@ export default function OnboardingPage() {
 
       const { data: club } = await supabase
         .from('clubs')
-        .select('onboarding_step, onboarding_completed, nome, citta, provincia, categoria, anno_fondazione, colori_sociali')
+        .select('onboarding_step, onboarding_completed, nome, citta, provincia, categoria, anno_fondazione, colori_sociali, tipo_prodotto')
         .eq('id', utente.club_id)
         .maybeSingle()
 
       if (!club) return
+
+      if (club.tipo_prodotto === 'scuola_calcio_standalone') setTipoProdotto('scuola_calcio_standalone')
 
       // Se già completato → redirect dashboard
       if (club.onboarding_completed) {
@@ -128,7 +126,7 @@ export default function OnboardingPage() {
         return
       }
 
-      const savedStep = Math.max(1, Math.min(4, club.onboarding_step ?? 1)) as StepId
+      const savedStep = Math.max(1, Math.min(5, club.onboarding_step ?? 1)) as StepId
       setStep(savedStep)
 
       if (club.nome) {
@@ -158,9 +156,10 @@ export default function OnboardingPage() {
       nome:            clubData.nome.trim(),
       citta:           clubData.citta.trim(),
       provincia:       clubData.provincia.trim() || null,
-      categoria:       clubData.categoria,
+      categoria:       tipoProdotto === 'scuola_calcio_standalone' ? 'scuola_calcio' : clubData.categoria,
       anno_fondazione: clubData.anno_fondazione ? parseInt(clubData.anno_fondazione) : null,
       colori_sociali:  clubData.colori_sociali.trim() || null,
+      tipo_prodotto:   tipoProdotto,
     }).eq('id', clubId)
     await saveStep(2)
     setStep(2)
@@ -175,8 +174,8 @@ export default function OnboardingPage() {
     const squadre = [
       { nome: 'Prima Squadra', categoria_eta: 'prima_squadra' },
       ...categorieSelezionate.map(cat => ({
-        nome: CATEGORIE_GIOVANILI.find(c => c.id === cat)?.label ?? cat,
-        categoria_eta: cat,
+        nome: CATEGORIE_FEDERALI_OPTIONS.find(c => c.value === cat)?.label ?? cat,
+        categoria_eta: etaPrincipaleCategoriaFederale(cat as CategoriaFederale),
       })),
     ]
 
@@ -240,6 +239,8 @@ export default function OnboardingPage() {
     }
   }
 
+  const isPro = isCategoriaPro(clubData.categoria)
+
   // ── Render ───────────────────────────────────────────────────────────────
 
   return (
@@ -260,16 +261,20 @@ export default function OnboardingPage() {
       {/* Progress bar */}
       <div style={{ width: '100%', maxWidth: 580, marginBottom: 40 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
-          {['Club', 'Squadre', 'Staff', 'Pronti'].map((label, i) => {
+          {(isPro
+            ? ['Club', 'Squadre', 'Staff', 'Pronti', 'Pro']
+            : ['Club', 'Squadre', 'Staff', 'Pronti']
+          ).map((label, i) => {
             const n = (i + 1) as StepId
             const done = step > n
             const active = step === n
+            const isPropStep = isPro && n === 5
             return (
               <div key={n} style={{ textAlign: 'center', flex: 1 }}>
                 <div style={{
                   width: 28, height: 28, borderRadius: '50%', margin: '0 auto 6px',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  background: done ? 'var(--accent)' : active ? 'rgba(200,240,0,0.15)' : 'var(--surface)',
+                  background: done ? 'var(--accent)' : active ? (isPropStep ? 'rgba(200,240,0,0.2)' : 'rgba(200,240,0,0.15)') : 'var(--surface)',
                   border: `1px solid ${done || active ? 'var(--accent)' : 'var(--border)'}`,
                   fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 12,
                   color: done ? '#000' : active ? 'var(--accent)' : 'var(--gray)',
@@ -291,7 +296,7 @@ export default function OnboardingPage() {
           <div style={{
             position: 'absolute', top: 0, left: 0, height: '100%',
             background: 'var(--accent)',
-            width: `${((step - 1) / 3) * 100}%`,
+            width: `${((step - 1) / (isPro ? 4 : 3)) * 100}%`,
             transition: 'width 0.4s ease',
           }} />
         </div>
@@ -321,6 +326,43 @@ export default function OnboardingPage() {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
               <div>
+                <label style={labelStyle}>Che tipo di società sei?</label>
+                <div style={{ display: 'flex', gap: 8, marginBottom: 10 }}>
+                  <button
+                    type="button"
+                    onClick={() => setTipoProdotto('club_agonistico')}
+                    style={{
+                      flex: 1, padding: '10px 12px', cursor: 'pointer',
+                      background: tipoProdotto === 'club_agonistico' ? 'var(--accent)' : 'transparent',
+                      color: tipoProdotto === 'club_agonistico' ? '#000' : 'var(--gray)',
+                      border: `1px solid ${tipoProdotto === 'club_agonistico' ? 'var(--accent)' : 'var(--border)'}`,
+                      fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.04em',
+                    }}
+                  >
+                    Club agonistico
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTipoProdotto('scuola_calcio_standalone')}
+                    style={{
+                      flex: 1, padding: '10px 12px', cursor: 'pointer',
+                      background: tipoProdotto === 'scuola_calcio_standalone' ? 'var(--accent)' : 'transparent',
+                      color: tipoProdotto === 'scuola_calcio_standalone' ? '#000' : 'var(--gray)',
+                      border: `1px solid ${tipoProdotto === 'scuola_calcio_standalone' ? 'var(--accent)' : 'var(--border)'}`,
+                      fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.04em',
+                    }}
+                  >
+                    Scuola calcio
+                  </button>
+                </div>
+                <p style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
+                  {tipoProdotto === 'scuola_calcio_standalone'
+                    ? 'Iscrizioni, quote mensili, calendario per categoria, valutazioni mensili dei ragazzi, gestione campi — senza la burocrazia del campionato agonistico.'
+                    : 'Campionato, tesseramenti FIGC, distinte gara, mercato, squalifiche, compliance COVISOC.'}
+                </p>
+              </div>
+
+              <div>
                 <label style={labelStyle}>Nome società *</label>
                 <input style={inputStyle} placeholder="es. ASD Atletico Roma"
                   value={clubData.nome}
@@ -342,18 +384,20 @@ export default function OnboardingPage() {
                 </div>
               </div>
 
-              <div>
-                <label style={labelStyle}>Categoria</label>
-                <select
-                  style={{ ...inputStyle, cursor: 'pointer' }}
-                  value={clubData.categoria}
-                  onChange={e => setClubData(d => ({ ...d, categoria: e.target.value }))}
-                >
-                  {CATEGORIE_SELECT.map(c => (
-                    <option key={c.value} value={c.value}>{c.label}</option>
-                  ))}
-                </select>
-              </div>
+              {tipoProdotto === 'club_agonistico' && (
+                <div>
+                  <label style={labelStyle}>Categoria</label>
+                  <select
+                    style={{ ...inputStyle, cursor: 'pointer' }}
+                    value={clubData.categoria}
+                    onChange={e => setClubData(d => ({ ...d, categoria: e.target.value }))}
+                  >
+                    {CATEGORIE_SELECT.map(c => (
+                      <option key={c.value} value={c.value}>{c.label}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div>
@@ -426,10 +470,10 @@ export default function OnboardingPage() {
 
             {/* Settore giovanile */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 32 }}>
-              {CATEGORIE_GIOVANILI.map(cat => {
-                const sel = categorieSelezionate.includes(cat.id)
+              {CATEGORIE_FEDERALI_OPTIONS.map(cat => {
+                const sel = categorieSelezionate.includes(cat.value)
                 return (
-                  <label key={cat.id} style={{
+                  <label key={cat.value} style={{
                     display: 'flex', alignItems: 'center', gap: 12,
                     padding: '12px 16px', cursor: 'pointer',
                     border: `1px solid ${sel ? 'rgba(200,240,0,0.4)' : 'var(--border)'}`,
@@ -439,7 +483,7 @@ export default function OnboardingPage() {
                       type="checkbox"
                       checked={sel}
                       onChange={() => setCategorieSelezionate(prev =>
-                        sel ? prev.filter(c => c !== cat.id) : [...prev, cat.id]
+                        sel ? prev.filter(c => c !== cat.value) : [...prev, cat.value]
                       )}
                       style={{ width: 16, height: 16, accentColor: 'var(--accent)', cursor: 'pointer' }}
                     />
@@ -583,17 +627,132 @@ export default function OnboardingPage() {
               </div>
             </div>
 
-            <button onClick={handleComplete} disabled={saving} style={{
-              width: '100%', padding: '16px 24px',
-              background: 'var(--accent)', color: '#000',
-              fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 15,
-              textTransform: 'uppercase', letterSpacing: '0.08em', border: 'none',
-              cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.6 : 1,
-            }}>
-              {saving ? 'Accesso in corso...' : 'Entra nella tua dashboard →'}
+            <button
+              onClick={async () => {
+                if (isPro) {
+                  await saveStep(5)
+                  setStep(5)
+                } else {
+                  handleComplete()
+                }
+              }}
+              disabled={saving}
+              style={{
+                width: '100%', padding: '16px 24px',
+                background: 'var(--accent)', color: '#000',
+                fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 15,
+                textTransform: 'uppercase', letterSpacing: '0.08em', border: 'none',
+                cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.6 : 1,
+              }}
+            >
+              {saving ? 'Accesso in corso...' : isPro ? 'Avanti →' : 'Entra nella tua dashboard →'}
             </button>
           </div>
         )}
+        {/* ─── STEP 5 — PRO ───────────────────────────────────────── */}
+        {step === 5 && (
+          <div>
+            {/* Badge Pro */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
+              <div style={{
+                padding: '4px 12px', background: 'rgba(200,240,0,0.12)',
+                border: '1px solid rgba(200,240,0,0.4)', fontSize: 11,
+                fontFamily: 'var(--font-mono)', letterSpacing: '0.1em',
+                textTransform: 'uppercase', color: 'var(--accent)',
+              }}>
+                Moduli Pro
+              </div>
+            </div>
+
+            <h2 style={{
+              fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 20,
+              textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--white)',
+              marginBottom: 8,
+            }}>
+              Sei un club professionistico — hai accesso a funzioni avanzate
+            </h2>
+            <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: 28 }}>
+              ClubIS include moduli dedicati ai club di Serie C e superiori. Puoi configurarli ora oppure accedervi in qualsiasi momento dal menu laterale.
+            </p>
+
+            {/* Lista moduli */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 32 }}>
+              {[
+                {
+                  icon: '📋',
+                  nome: 'Contratti Professionisti',
+                  desc: 'Gestisci contratti con premi, clausole rescissorie e genera il PDF ufficiale Lega Pro.',
+                  href: '/dashboard/ds/contratti-pro',
+                },
+                {
+                  icon: '🛡',
+                  nome: 'Compliance COVISOC',
+                  desc: 'Monitora scadenze federali, stipendi, IRPEF e attestazioni. Indicatore rischio penalizzazione in tempo reale.',
+                  href: '/dashboard/segretario/compliance-pro',
+                },
+                {
+                  icon: '📰',
+                  nome: 'Comunicati Lega Pro',
+                  desc: 'Carica i comunicati ufficiali in PDF e importa automaticamente squalifiche e ammende.',
+                  href: '/dashboard/segretario/figc/comunicati-legapro',
+                },
+                {
+                  icon: '📝',
+                  nome: 'Liste Campionato',
+                  desc: 'Compila Lista A (max 23) e Lista B under con alert automatici su limiti e vincoli anagrafici.',
+                  href: '/dashboard/ds/liste-pro',
+                },
+              ].map(m => (
+                <div key={m.nome} style={{
+                  display: 'flex', alignItems: 'flex-start', gap: 14,
+                  padding: '14px 16px',
+                  border: '1px solid var(--border)',
+                  background: 'rgba(255,255,255,0.02)',
+                }}>
+                  <span style={{ fontSize: 20, flexShrink: 0, lineHeight: 1.2 }}>{m.icon}</span>
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--white)', marginBottom: 4 }}>{m.nome}</div>
+                    <div style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.5 }}>{m.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* CTA */}
+            <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+              <button
+                onClick={async () => {
+                  await handleComplete()
+                  // handleComplete fa il redirect, ma aggiungiamo il link compliance come destinazione
+                }}
+                disabled={saving}
+                style={{
+                  flex: 1, padding: '14px 20px',
+                  background: 'var(--accent)', color: '#000',
+                  fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 14,
+                  textTransform: 'uppercase', letterSpacing: '0.06em', border: 'none',
+                  cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.6 : 1,
+                }}
+              >
+                {saving ? 'Accesso in corso...' : 'Entra nella dashboard →'}
+              </button>
+            </div>
+            <div style={{ marginTop: 12, textAlign: 'center' }}>
+              <button
+                onClick={handleComplete}
+                disabled={saving}
+                style={{
+                  background: 'transparent', border: 'none',
+                  color: 'var(--gray)', cursor: 'pointer', fontSize: 12,
+                  textDecoration: 'underline',
+                }}
+              >
+                Lo faccio dopo
+              </button>
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   )

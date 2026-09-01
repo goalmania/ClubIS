@@ -1,5 +1,7 @@
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserContext } from '@/lib/impersonation'
+import { getSquadreAllenatore, categoriaFederaleDaEta } from '@/lib/settore-giovanile'
+import CambiaCategoriaAllenatore from '@/components/ui/CambiaCategoriaAllenatore'
 import { redirect } from 'next/navigation'
 
 const PLATFORM_ADMIN_EMAILS = [
@@ -8,11 +10,8 @@ const PLATFORM_ADMIN_EMAILS = [
 ]
 
 export default async function PresidenteStaffPage() {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth/login')
-  const { data: utente, error: utenteError } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-  if (utenteError || !utente) redirect('/auth/errore')
+  const ctx = await getUserContext()
+  if (!ctx) redirect('/auth/login')
 
   const admin = createAdminClient()
   // Auto-fix: segna gli account piattaforma come super_admin se non ancora fatto
@@ -22,14 +21,31 @@ export default async function PresidenteStaffPage() {
   const { data: staff } = await admin
     .from('utenti')
     .select('id, nome, cognome, ruolo, email, telefono, attivo, ultimo_accesso')
-    .eq('club_id', utente.club_id)
+    .eq('club_id', ctx.clubId)
     .neq('is_super_admin', true)
     .order('ruolo')
   const { data: collaboratori } = await admin
     .from('collaboratori_staff')
     .select('*, utenti(nome, cognome, ruolo)')
-    .eq('club_id', utente.club_id)
+    .eq('club_id', ctx.clubId)
     .eq('attivo', true)
+
+  const { data: clubData } = await admin
+    .from('clubs')
+    .select('tipo_prodotto')
+    .eq('id', ctx.clubId)
+    .maybeSingle()
+  const isScuolaCalcio = clubData?.tipo_prodotto === 'scuola_calcio_standalone'
+
+  // Categoria federale attualmente assegnata a ciascun allenatore (solo scuola calcio)
+  const categoriaPerAllenatore: Record<string, string | null> = {}
+  if (isScuolaCalcio) {
+    const allenatori = (staff ?? []).filter(s => s.ruolo === 'allenatore')
+    await Promise.all(allenatori.map(async a => {
+      const squadre = await getSquadreAllenatore(admin, { clubId: ctx.clubId, allenatoreId: a.id, soloAttive: false })
+      categoriaPerAllenatore[a.id] = squadre.length > 0 ? categoriaFederaleDaEta(squadre[0].categoria_eta) : null
+    }))
+  }
   const roleLabel: Record<string, string> = {
     presidente: 'Presidente', ds: 'Dir. Sportivo', segretario: 'Segretario',
     allenatore: 'Allenatore', osservatore: 'Osservatore', medico: 'Medico', famiglia: 'Famiglia',
@@ -61,6 +77,9 @@ export default async function PresidenteStaffPage() {
               <span className={`badge ${roleBadge[s.ruolo] ?? 'badge-grigio'}`} style={{ fontSize: 11 }}>
                 {roleLabel[s.ruolo] ?? s.ruolo}
               </span>
+              {isScuolaCalcio && s.ruolo === 'allenatore' && (
+                <CambiaCategoriaAllenatore allenatoreId={s.id} categoriaAttuale={categoriaPerAllenatore[s.id] ?? null} />
+              )}
               {!s.attivo && <span className="badge badge-rosso" style={{ fontSize: 10 }}>Disattivo</span>}
             </div>
           ))}

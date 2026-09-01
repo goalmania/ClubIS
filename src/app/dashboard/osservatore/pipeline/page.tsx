@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import { formatData } from '@/lib/helpers'
 
 type Report = {
@@ -57,6 +58,7 @@ function Avatar({ name }: { name?: string }) {
 export default function PipelinePage() {
   const router = useRouter()
   const supabase = createClient()
+  const clubId = useClubId()
 
   const [reports, setReports] = useState<Report[]>([])
   const [loading, setLoading] = useState(true)
@@ -64,17 +66,16 @@ export default function PipelinePage() {
   const [dragOver, setDragOver] = useState<string | null>(null)
 
   const load = useCallback(async () => {
+    if (!clubId) return
     setLoading(true)
-    const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', (await supabase.auth.getUser()).data.user?.id ?? '').single()
-    if (!utente) { setLoading(false); return }
     const { data } = await supabase
       .from('report_scouting')
       .select('id, nome_giocatore_ext, club_attuale_ext, ruolo, tecnica, tattica, fisico, mentale, stato_pipeline, data_osservazione')
-      .eq('club_richiedente_id', utente.club_id)
+      .eq('club_richiedente_id', clubId)
       .order('data_osservazione', { ascending: false })
     setReports(data ?? [])
     setLoading(false)
-  }, [supabase])
+  }, [supabase, clubId])
 
   useEffect(() => { load() }, [load])
 

@@ -1,3 +1,4 @@
+import * as XLSX from 'xlsx'
 import type { ImportSchema } from './schemas'
 
 export interface ParseResult<T> {
@@ -14,7 +15,63 @@ export function parseCSV(testo: string, schema: ImportSchema): ParseResult<Recor
     return { validi: [], errori: [{ riga: 0, messaggio: 'File vuoto o senza dati', dati_raw: {} }], totale: 0 }
   }
 
-  const header = righe[0].split(separatore).map(h => normalizzaHeader(h))
+  const celle2D = righe.map(r => r.split(separatore).map(c => c.trim().replace(/^["']|["']$/g, '')))
+  return parseRows(celle2D, schema)
+}
+
+/**
+ * Legge un file Excel (.xlsx/.xls) e restituisce lo stesso ParseResult del CSV,
+ * riusando identica logica di mappatura colonne/validazione (parseRows).
+ * Le celle formattate come data in Excel vengono lette come oggetti Date reali
+ * (cellDates:true) invece che come stringa, per evitare l'ambiguità
+ * GG/MM/AAAA vs MM/GG/AAAA che dipenderebbe dal locale del file.
+ */
+export async function parseExcel(file: File, schema: ImportSchema): Promise<ParseResult<Record<string, unknown>>> {
+  let workbook: XLSX.WorkBook
+  try {
+    const buffer = await file.arrayBuffer()
+    workbook = XLSX.read(buffer, { type: 'array', cellDates: true })
+  } catch {
+    return {
+      validi: [], totale: 0,
+      errori: [{ riga: 0, messaggio: 'Impossibile leggere il file Excel: assicurati che sia un .xlsx o .xls valido e non danneggiato.', dati_raw: {} }],
+    }
+  }
+
+  const sheetName = workbook.SheetNames[0]
+  if (!sheetName) {
+    return { validi: [], errori: [{ riga: 0, messaggio: 'Il file Excel non contiene nessun foglio.', dati_raw: {} }], totale: 0 }
+  }
+
+  const ws: XLSX.WorkSheet = workbook.Sheets[sheetName]
+  const raw = XLSX.utils.sheet_to_json<unknown[]>(ws, { header: 1, blankrows: false })
+  const celle2D = raw.map(riga => riga.map(cellaExcelToString))
+
+  if (celle2D.length < 2) {
+    return { validi: [], errori: [{ riga: 0, messaggio: 'Il foglio Excel è vuoto o contiene solo l\'intestazione', dati_raw: {} }], totale: 0 }
+  }
+
+  return parseRows(celle2D, schema)
+}
+
+function cellaExcelToString(v: unknown): string {
+  if (v == null) return ''
+  if (v instanceof Date) {
+    const y = v.getFullYear()
+    const m = String(v.getMonth() + 1).padStart(2, '0')
+    const d = String(v.getDate()).padStart(2, '0')
+    return `${y}-${m}-${d}` // ISO — già nel formato che parseDataItaliana riconosce
+  }
+  return String(v).trim()
+}
+
+/**
+ * Nucleo di validazione condiviso tra CSV ed Excel: riceve una griglia di
+ * celle già come stringhe (prima riga = intestazione) e produce righe valide
+ * mappate sui campi DB dello schema, con relativi errori per riga.
+ */
+function parseRows(celle2D: string[][], schema: ImportSchema): ParseResult<Record<string, unknown>> {
+  const header = celle2D[0].map(h => normalizzaHeader(h))
 
   // colonna index → DB field name
   const colonneMap = new Map<number, string>()
@@ -47,11 +104,10 @@ export function parseCSV(testo: string, schema: ImportSchema): ParseResult<Recor
 
   const validi: Record<string, unknown>[] = []
   const errori: ParseResult<Record<string, unknown>>['errori'] = []
-  const numericFields = ['importo', 'altezza_cm', 'peso_kg', 'numero_maglia']
+  const numericFields = ['importo', 'altezza_cm', 'peso_kg', 'numero_maglia', 'importo_totale', 'importo_pagato']
 
-  righe.slice(1).forEach((riga, idx) => {
+  celle2D.slice(1).forEach((celle, idx) => {
     const numRiga = idx + 2
-    const celle = riga.split(separatore).map(c => c.trim().replace(/^["']|["']$/g, ''))
 
     const record: Record<string, unknown> = {}
     let hasError = false
@@ -108,7 +164,7 @@ export function parseCSV(testo: string, schema: ImportSchema): ParseResult<Recor
     if (!hasError) validi.push(record)
   })
 
-  return { validi, errori, totale: righe.length - 1 }
+  return { validi, errori, totale: celle2D.length - 1 }
 }
 
 function detectSeparatore(testo: string): string {
@@ -120,7 +176,7 @@ function detectSeparatore(testo: string): string {
 
 function normalizzaHeader(h: string): string {
   return h.toLowerCase().trim()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
     .replace(/[^a-z0-9_]/g, '_')
     .replace(/_+/g, '_').replace(/^_|_$/g, '')
 }

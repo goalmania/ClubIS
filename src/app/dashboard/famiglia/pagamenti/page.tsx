@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect, useCallback, useRef } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 // supabase client usato solo per Realtime subscriptions
 
@@ -40,6 +41,19 @@ const STATO_RATA: Record<string, { label: string; colore: string; bg: string }> 
   pagata:     { label: 'Pagata',          colore: '#00C8A0', bg: 'rgba(0,200,160,0.08)'  },
 }
 
+const STATO_ISCRIZIONE: Record<string, { label: string; colore: string; bg: string }> = {
+  non_pagato: { label: 'Da pagare',   colore: '#F59E0B', bg: 'rgba(245,158,11,0.08)' },
+  parziale:   { label: 'Parziale',    colore: '#F59E0B', bg: 'rgba(245,158,11,0.08)' },
+  pagato:     { label: 'Pagata',      colore: '#00C8A0', bg: 'rgba(0,200,160,0.08)'  },
+  esonerato:  { label: 'Esonerata',   colore: '#9CA3AF', bg: 'rgba(156,163,175,0.08)'},
+  rimborsato: { label: 'Rimborsata',  colore: '#9CA3AF', bg: 'rgba(156,163,175,0.08)'},
+}
+
+const MESE_LABEL_ISCR: Record<number, string> = {
+  1: 'Gennaio', 2: 'Febbraio', 3: 'Marzo', 4: 'Aprile', 5: 'Maggio', 6: 'Giugno',
+  7: 'Luglio', 8: 'Agosto', 9: 'Settembre', 10: 'Ottobre', 11: 'Novembre', 12: 'Dicembre',
+}
+
 /* ── tipi ─────────────────────────────────────────────────────────────── */
 interface QuotaMensile {
   id: string
@@ -49,6 +63,28 @@ interface QuotaMensile {
   data_pagamento: string | null
   metodo_pagamento: string | null
   note: string | null
+  giocatore?: { nome: string; cognome: string } | null
+}
+
+interface QuotaIscrizione {
+  id: string
+  giocatore_id: string
+  stagione: string
+  mese: number
+  importo_totale: number
+  importo_pagato: number
+  stato: string
+  scadenza: string | null
+  giocatore?: { nome: string; cognome: string } | null
+}
+
+interface Abbonamento {
+  id: string
+  giocatore_id: string
+  importo_centesimi: number
+  stato: 'in_attesa' | 'attivo' | 'pausa' | 'cancellato'
+  pausa_da: 'famiglia' | 'societa' | null
+  created_at: string
 }
 
 interface Rata {
@@ -67,6 +103,7 @@ interface Piano {
   descrizione: string
   importo_totale: number
   rate: Rata[]
+  giocatore?: { nome: string; cognome: string } | null
 }
 
 interface ClubInfo {
@@ -74,6 +111,7 @@ interface ClubInfo {
   iban: string | null
   bic: string | null
   intestatario_conto: string | null
+  stripe_connect_charges_enabled?: boolean
 }
 
 /* ── Modal pagamento ──────────────────────────────────────────────────── */
@@ -126,7 +164,7 @@ function ModalPaga({
           {/* Metodo */}
           <div style={{ marginBottom: 16 }}>
             <label className="label">Metodo di pagamento</label>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(72px, 1fr))', gap: 8 }}>
               {(['bonifico', 'contanti', 'carta', 'app'] as const).map(m => (
                 <button key={m} onClick={() => setMetodo(m)} style={{
                   padding: '10px 6px', border: `1px solid ${metodo === m ? 'var(--accent)' : 'var(--border-solid)'}`,
@@ -192,18 +230,103 @@ function ModalPaga({
 export default function FamigliaPagamentiPage() {
   const supabase   = createClient()
   const chanRef    = useRef<any>(null)
+  const searchParams = useSearchParams()
+  const router     = useRouter()
 
   const [giocatoreNome, setGiocatoreNome] = useState('')
+  const [multiFigli,    setMultiFigli]    = useState(false)
   const [club,          setClub]          = useState<ClubInfo | null>(null)
   const [quote,         setQuote]         = useState<QuotaMensile[]>([])
+  const [quoteIscr,     setQuoteIscr]     = useState<QuotaIscrizione[]>([])
+  const [abbonamenti,   setAbbonamenti]   = useState<Abbonamento[]>([])
   const [piani,         setPiani]         = useState<Piano[]>([])
   const [loading,       setLoading]       = useState(true)
-  const [modal,         setModal]         = useState<{ tipo: 'mensile'; quota: QuotaMensile } | { tipo: 'rata'; rata: Rata; piano: Piano } | null>(null)
+  const [modal,         setModal]         = useState<{ tipo: 'mensile'; quota: QuotaMensile } | { tipo: 'rata'; rata: Rata; piano: Piano } | { tipo: 'iscrizione'; quota: QuotaIscrizione } | null>(null)
   const [toast,         setToast]         = useState<{ msg: string; tipo: 'ok' | 'err' } | null>(null)
+  const [pagandoId,     setPagandoId]     = useState<string | null>(null)
+  const [abbAzioneId,   setAbbAzioneId]   = useState<string | null>(null)
+  const [selezionate,   setSelezionate]   = useState<Set<string>>(new Set())
 
   function showToast(msg: string, tipo: 'ok' | 'err' = 'ok') {
     setToast({ msg, tipo })
     setTimeout(() => setToast(null), 4000)
+  }
+
+  async function pagaConCarta(tipo: 'iscrizione' | 'quota' | 'rata', id: string) {
+    setPagandoId(id)
+    try {
+      const res  = await fetch('/api/famiglia/pagamenti/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tipo, id }),
+      })
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.error ?? 'Errore avvio pagamento')
+      window.location.href = json.url
+    } catch (err: any) {
+      showToast(err.message ?? 'Errore avvio pagamento', 'err')
+      setPagandoId(null)
+    }
+  }
+
+  function toggleSelezione(id: string) {
+    setSelezionate(prev => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  async function pagaSelezionateConCarta() {
+    const ids = Array.from(selezionate)
+    if (ids.length === 0) return
+    setPagandoId('__multi__')
+    try {
+      const res  = await fetch('/api/famiglia/pagamenti/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tipo: 'iscrizione', ids }),
+      })
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.error ?? 'Errore avvio pagamento')
+      window.location.href = json.url
+    } catch (err: any) {
+      showToast(err.message ?? 'Errore avvio pagamento', 'err')
+      setPagandoId(null)
+    }
+  }
+
+  async function attivaAbbonamento(giocatoreId: string) {
+    setAbbAzioneId(giocatoreId)
+    try {
+      const res  = await fetch('/api/famiglia/pagamenti/abbonamento', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ giocatoreId }),
+      })
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.error ?? 'Errore avvio addebito automatico')
+      window.location.href = json.url
+    } catch (err: any) {
+      showToast(err.message ?? 'Errore avvio addebito automatico', 'err')
+      setAbbAzioneId(null)
+    }
+  }
+
+  async function annullaAbbonamento(id: string) {
+    setAbbAzioneId(id)
+    try {
+      const res  = await fetch(`/api/famiglia/pagamenti/abbonamento?id=${id}`, { method: 'DELETE' })
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.error ?? 'Errore annullamento')
+      showToast('Addebito automatico annullato.')
+      await ricaricaTutto()
+    } catch (err: any) {
+      showToast(err.message ?? 'Errore annullamento', 'err')
+    } finally {
+      setAbbAzioneId(null)
+    }
   }
 
   /* ── carica quote mensili via API ── */
@@ -224,10 +347,18 @@ export default function FamigliaPagamentiPage() {
       ...p,
       rate: (p.rate_pagamento ?? []).sort((a: Rata, b: Rata) => a.numero_rata - b.numero_rata),
     })))
-    // Nome giocatore
-    if (json.famiglia?.giocatore) {
+    setQuoteIscr((json.quoteIscrizione ?? []).sort((a: QuotaIscrizione, b: QuotaIscrizione) =>
+      (b.stagione || '').localeCompare(a.stagione || '') || (b.mese ?? 0) - (a.mese ?? 0)
+    ))
+    setAbbonamenti(json.abbonamenti ?? [])
+    // Nome giocatore (solo se un unico figlio collegato)
+    const nFigli = (json.famiglie ?? []).length
+    setMultiFigli(nFigli > 1)
+    if (nFigli <= 1 && json.famiglia?.giocatore) {
       const g = json.famiglia.giocatore
       setGiocatoreNome(`${g.nome} ${g.cognome}`)
+    } else {
+      setGiocatoreNome('')
     }
     // Info club (IBAN, etc.)
     if (json.club) setClub(json.club as ClubInfo)
@@ -243,6 +374,15 @@ export default function FamigliaPagamentiPage() {
     ricaricaTutto()
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Torna qui da Stripe dopo un pagamento con carta riuscito
+  useEffect(() => {
+    if (searchParams.get('pagamento') === 'ok') {
+      showToast('Pagamento ricevuto! Grazie.')
+      router.replace('/dashboard/famiglia/pagamenti')
+      ricaricaTutto()
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   /* ── realtime — ascolta aggiornamenti alle rate (es. segretario conferma) ── */
   useEffect(() => {
     if (chanRef.current) supabase.removeChannel(chanRef.current)
@@ -255,7 +395,16 @@ export default function FamigliaPagamentiPage() {
     return () => { supabase.removeChannel(ch) }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  /* ── KPI unificati (quote mensili + piani/rate) ── */
+  /* ── KPI unificati (quota iscrizione + quote mensili + piani/rate) ── */
+
+  // Quota iscrizione (sistema principale)
+  const oggiStr = new Date().toISOString().split('T')[0]
+  const pagatoIscr    = quoteIscr.reduce((s, q) => s + Number(q.importo_pagato), 0)
+  const daPagareIscr   = quoteIscr.filter(q => q.stato !== 'pagato' && q.stato !== 'esonerato')
+    .reduce((s, q) => s + (Number(q.importo_totale) - Number(q.importo_pagato)), 0)
+  const inRitardoIscr = quoteIscr.filter(q =>
+    q.stato !== 'pagato' && q.stato !== 'esonerato' && q.scadenza && q.scadenza < oggiStr
+  ).length
 
   // Quote mensili
   const quotaMensileCorrente = quote.find(q => {
@@ -276,12 +425,13 @@ export default function FamigliaPagamentiPage() {
   const totalePiani    = piani.reduce((s, p) => s + Number(p.importo_totale), 0)
 
   // Totali unificati
-  const pagatoTot   = pagatoQuote  + pagatoRate
-  const daPagareTot = daPagareQuote + daPagareRate
-  const inRitardoTot = inRitardoQuote + inRitardoRate
+  const pagatoTot   = pagatoIscr + pagatoQuote  + pagatoRate
+  const daPagareTot = daPagareIscr + daPagareQuote + daPagareRate
+  const inRitardoTot = inRitardoIscr + inRitardoQuote + inRitardoRate
 
-  const haDati  = quote.length > 0 || piani.length > 0
+  const haDati  = quoteIscr.length > 0 || quote.length > 0 || piani.length > 0
   const haPiani = piani.length > 0
+  const haIscr  = quoteIscr.length > 0
 
   /* ── render ── */
   return (
@@ -300,7 +450,7 @@ export default function FamigliaPagamentiPage() {
         <>
           {/* ── KPI UNIFICATI (quote mensili + piani/rate) ── */}
           {haDati && (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginBottom: 28 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 10, marginBottom: 28 }}>
 
               {/* Card 1: quota mensile corrente (se esiste) oppure totale piani */}
               <div style={{ background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2, padding: '14px 16px' }}>
@@ -343,6 +493,188 @@ export default function FamigliaPagamentiPage() {
             </div>
           )}
 
+          {/* ── QUOTA ISCRIZIONE (sistema principale) ── */}
+          {haIscr && (
+            <div style={{ marginBottom: 32 }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray)', marginBottom: 12 }}>
+                Quota iscrizione
+              </div>
+
+              {/* Addebito automatico — un blocco per ogni figlio con una quota,
+                  mai obbligatorio: il pagamento manuale mese per mese sotto
+                  resta sempre disponibile. */}
+              {club?.stripe_connect_charges_enabled && Array.from(new Set(quoteIscr.map(q => q.giocatore_id))).map(gid => {
+                const qEsempio = quoteIscr.find(q => q.giocatore_id === gid)
+                const abb = abbonamenti.find(a => a.giocatore_id === gid)
+                const nomeFiglio = multiFigli && qEsempio?.giocatore ? `${qEsempio.giocatore.nome} ${qEsempio.giocatore.cognome} — ` : ''
+
+                if (!abb) {
+                  return (
+                    <div key={gid} style={{
+                      display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10,
+                      padding: '10px 14px', marginBottom: 8,
+                      background: 'rgba(200,240,0,0.03)', border: '1px solid rgba(200,240,0,0.15)', borderRadius: 3,
+                    }}>
+                      <span style={{ fontSize: 12, color: 'var(--gray)' }}>
+                        🔁 {nomeFiglio}Vuoi non doverci più pensare ogni mese?
+                      </span>
+                      <button className="btn btn-secondary btn-sm" style={{ fontSize: 11, padding: '4px 12px' }}
+                        disabled={abbAzioneId === gid}
+                        onClick={() => attivaAbbonamento(gid)}>
+                        {abbAzioneId === gid ? 'Un attimo…' : '🔁 Attiva addebito automatico'}
+                      </button>
+                    </div>
+                  )
+                }
+
+                if (abb.stato === 'attivo' || abb.stato === 'in_attesa') {
+                  return (
+                    <div key={gid} style={{
+                      display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10,
+                      padding: '10px 14px', marginBottom: 8,
+                      background: 'rgba(0,200,160,0.05)', border: '1px solid rgba(0,200,160,0.2)', borderRadius: 3,
+                    }}>
+                      <span style={{ fontSize: 12, color: '#00C8A0' }}>
+                        {abb.stato === 'attivo'
+                          ? `✓ ${nomeFiglio}Addebito automatico attivo — ${fmt(abb.importo_centesimi / 100)}/mese`
+                          : `⏳ ${nomeFiglio}Attivazione addebito automatico in corso…`}
+                      </span>
+                      {abb.stato === 'attivo' && (
+                        <button style={{ background: 'none', border: 'none', color: 'var(--gray)', fontSize: 10, textDecoration: 'underline', cursor: 'pointer' }}
+                          disabled={abbAzioneId === abb.id}
+                          onClick={() => annullaAbbonamento(abb.id)}>
+                          {abbAzioneId === abb.id ? 'Un attimo…' : 'Annulla'}
+                        </button>
+                      )}
+                    </div>
+                  )
+                }
+
+                // pausa
+                return (
+                  <div key={gid} style={{
+                    display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10,
+                    padding: '10px 14px', marginBottom: 8,
+                    background: 'rgba(245,158,11,0.05)', border: '1px solid rgba(245,158,11,0.25)', borderRadius: 3,
+                  }}>
+                    <span style={{ fontSize: 12, color: '#F59E0B' }}>
+                      {abb.pausa_da === 'societa'
+                        ? `⏸ ${nomeFiglio}Addebito automatico sospeso dalla società — contattala per riattivarlo`
+                        : `⚠ ${nomeFiglio}Carta rifiutata — l'addebito automatico è in pausa`}
+                    </span>
+                    {abb.pausa_da !== 'societa' && (
+                      <button style={{ background: 'none', border: 'none', color: 'var(--gray)', fontSize: 10, textDecoration: 'underline', cursor: 'pointer' }}
+                        disabled={abbAzioneId === abb.id}
+                        onClick={() => annullaAbbonamento(abb.id)}>
+                        {abbAzioneId === abb.id ? 'Un attimo…' : 'Annulla e riprova'}
+                      </button>
+                    )}
+                  </div>
+                )
+              })}
+
+              {(() => {
+                const payabili = quoteIscr.filter(q =>
+                  (q.stato === 'non_pagato' || q.stato === 'parziale') && (Number(q.importo_totale) - Number(q.importo_pagato)) > 0
+                )
+                if (!club?.stripe_connect_charges_enabled || payabili.length <= 1) return null
+                const selPresenti = payabili.filter(q => selezionate.has(q.id))
+                const totaleSel = selPresenti.reduce((s, q) => s + (Number(q.importo_totale) - Number(q.importo_pagato)), 0)
+                return (
+                  <div style={{
+                    display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10,
+                    padding: '10px 14px', marginBottom: 8,
+                    background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border)', borderRadius: 3,
+                  }}>
+                    <span style={{ fontSize: 12, color: 'var(--gray)' }}>
+                      {selPresenti.length > 0
+                        ? `${selPresenti.length} selezionate — ${fmt(totaleSel)} (+commissione ClubIS Pay)`
+                        : 'Seleziona più quote per pagarle insieme in un unico pagamento'}
+                    </span>
+                    {selPresenti.length > 0 && (
+                      <button className="btn btn-primary btn-sm" style={{ fontSize: 11, padding: '4px 12px' }}
+                        disabled={pagandoId === '__multi__'}
+                        onClick={pagaSelezionateConCarta}>
+                        {pagandoId === '__multi__' ? 'Un attimo…' : `💳 Paga selezionate (${selPresenti.length})`}
+                      </button>
+                    )}
+                  </div>
+                )
+              })()}
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {quoteIscr.map(q => {
+                  const sc = STATO_ISCRIZIONE[q.stato] ?? STATO_ISCRIZIONE.non_pagato
+                  const dovuto = Number(q.importo_totale) - Number(q.importo_pagato)
+                  const inRitardo = q.stato !== 'pagato' && q.stato !== 'esonerato' && !!q.scadenza && q.scadenza < oggiStr
+                  const puoPagare = (q.stato === 'non_pagato' || q.stato === 'parziale') && dovuto > 0
+                  const mostraCheckbox = puoPagare && club?.stripe_connect_charges_enabled
+                    && quoteIscr.filter(x => (x.stato === 'non_pagato' || x.stato === 'parziale') && (Number(x.importo_totale) - Number(x.importo_pagato)) > 0).length > 1
+
+                  return (
+                    <div key={q.id} style={{
+                      display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                      padding: '12px 16px',
+                      background: sc.bg,
+                      border: `1px solid ${(inRitardo ? '#EF4444' : sc.colore)}30`,
+                      borderRadius: 3,
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                        {mostraCheckbox && (
+                          <input type="checkbox" checked={selezionate.has(q.id)} onChange={() => toggleSelezione(q.id)}
+                            style={{ width: 16, height: 16, cursor: 'pointer', accentColor: 'var(--accent)' }} />
+                        )}
+                        <div style={{ minWidth: 110 }}>
+                          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, color: 'var(--white)', textTransform: 'capitalize' }}>
+                            {q.mese ? MESE_LABEL_ISCR[q.mese] ?? q.mese : `Stagione ${q.stagione}`}
+                          </div>
+                          {multiFigli && q.giocatore && (
+                            <div style={{ fontSize: 10, color: 'var(--accent)', fontFamily: 'var(--font-mono)', marginTop: 2 }}>
+                              {q.giocatore.nome} {q.giocatore.cognome}
+                            </div>
+                          )}
+                          {q.stato === 'parziale' && (
+                            <div style={{ fontSize: 10, color: '#F59E0B', fontFamily: 'var(--font-mono)', marginTop: 2 }}>
+                              {fmt(Number(q.importo_pagato))} già pagati
+                            </div>
+                          )}
+                          {inRitardo && (
+                            <div style={{ fontSize: 10, color: '#EF4444', fontFamily: 'var(--font-mono)', marginTop: 2 }}>
+                              ⚠ scaduta il {formatData(q.scadenza)}
+                            </div>
+                          )}
+                        </div>
+                        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 18, color: 'var(--white)' }}>
+                          {q.stato === 'pagato' ? fmt(Number(q.importo_totale)) : fmt(dovuto)}
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <span style={{
+                          padding: '3px 9px', borderRadius: 2, fontSize: 10, fontWeight: 700,
+                          fontFamily: 'var(--font-mono)', textTransform: 'uppercase',
+                          background: sc.bg, color: sc.colore, border: `1px solid ${sc.colore}50`,
+                        }}>{sc.label}</span>
+                        {puoPagare && club?.stripe_connect_charges_enabled && (
+                          <button className="btn btn-primary btn-sm" style={{ fontSize: 11, padding: '4px 12px' }}
+                            disabled={pagandoId === q.id}
+                            onClick={() => pagaConCarta('iscrizione', q.id)}>
+                            {pagandoId === q.id ? 'Un attimo…' : '💳 Paga con carta'}
+                          </button>
+                        )}
+                        {puoPagare && !club?.stripe_connect_charges_enabled && (
+                          <button className="btn btn-secondary btn-sm" style={{ fontSize: 11, padding: '4px 12px' }}
+                            onClick={() => setModal({ tipo: 'iscrizione', quota: q })}>
+                            Ho pagato →
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
           {/* ── QUOTE MENSILI ── */}
           {quote.length > 0 && (
             <div style={{ marginBottom: 32 }}>
@@ -367,6 +699,11 @@ export default function FamigliaPagamentiPage() {
                           <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, color: 'var(--white)', textTransform: 'capitalize' }}>
                             {nomeMese(q.mese_competenza)}
                           </div>
+                          {multiFigli && q.giocatore && (
+                            <div style={{ fontSize: 10, color: 'var(--accent)', fontFamily: 'var(--font-mono)', marginTop: 2 }}>
+                              {q.giocatore.nome} {q.giocatore.cognome}
+                            </div>
+                          )}
                           {q.stato === 'pagata' && q.data_pagamento && (
                             <div style={{ fontSize: 10, color: '#00C8A0', fontFamily: 'var(--font-mono)', marginTop: 2 }}>
                               ✓ {formatData(q.data_pagamento)} {q.metodo_pagamento ? `· ${q.metodo_pagamento}` : ''}
@@ -388,7 +725,20 @@ export default function FamigliaPagamentiPage() {
                           fontFamily: 'var(--font-mono)', textTransform: 'uppercase',
                           background: sc.bg, color: sc.colore, border: `1px solid ${sc.colore}50`,
                         }}>{sc.label}</span>
-                        {puoPagare && (
+                        {puoPagare && club?.stripe_connect_charges_enabled && (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <button className="btn btn-primary btn-sm" style={{ fontSize: 11, padding: '4px 12px' }}
+                              disabled={pagandoId === q.id}
+                              onClick={() => pagaConCarta('quota', q.id)}>
+                              {pagandoId === q.id ? 'Un attimo…' : '💳 Paga con carta'}
+                            </button>
+                            <button style={{ background: 'none', border: 'none', color: 'var(--gray)', fontSize: 10, textDecoration: 'underline', cursor: 'pointer' }}
+                              onClick={() => setModal({ tipo: 'mensile', quota: q })}>
+                              altri metodi
+                            </button>
+                          </div>
+                        )}
+                        {puoPagare && !club?.stripe_connect_charges_enabled && (
                           <button className="btn btn-primary btn-sm" style={{ fontSize: 11, padding: '4px 12px' }}
                             onClick={() => setModal({ tipo: 'mensile', quota: q })}>
                             Paga →
@@ -423,7 +773,14 @@ export default function FamigliaPagamentiPage() {
                     <div key={piano.id} style={{ background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2, overflow: 'hidden' }}>
                       <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border-solid)' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, textTransform: 'uppercase', color: 'var(--white)' }}>{piano.descrizione}</div>
+                          <div>
+                            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, textTransform: 'uppercase', color: 'var(--white)' }}>{piano.descrizione}</div>
+                            {multiFigli && piano.giocatore && (
+                              <div style={{ fontSize: 10, color: 'var(--accent)', fontFamily: 'var(--font-mono)', marginTop: 2 }}>
+                                {piano.giocatore.nome} {piano.giocatore.cognome}
+                              </div>
+                            )}
+                          </div>
                           <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 18, color: 'var(--white)' }}>{fmt(piano.importo_totale)}</div>
                         </div>
                         <div style={{ height: 5, background: 'var(--border-solid)', borderRadius: 3, overflow: 'hidden' }}>
@@ -459,7 +816,20 @@ export default function FamigliaPagamentiPage() {
                               </div>
                               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                                 <span style={{ padding: '3px 8px', borderRadius: 2, fontSize: 10, fontWeight: 700, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', background: sc.bg, color: sc.colore, border: `1px solid ${sc.colore}40` }}>{sc.label}</span>
-                                {puoPagare && (
+                                {puoPagare && club?.stripe_connect_charges_enabled && (
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                    <button className="btn btn-primary btn-sm" style={{ fontSize: 11, padding: '4px 12px' }}
+                                      disabled={pagandoId === rata.id}
+                                      onClick={() => pagaConCarta('rata', rata.id)}>
+                                      {pagandoId === rata.id ? 'Un attimo…' : '💳 Paga con carta'}
+                                    </button>
+                                    <button style={{ background: 'none', border: 'none', color: 'var(--gray)', fontSize: 10, textDecoration: 'underline', cursor: 'pointer' }}
+                                      onClick={() => setModal({ tipo: 'rata', rata, piano })}>
+                                      altri metodi
+                                    </button>
+                                  </div>
+                                )}
+                                {puoPagare && !club?.stripe_connect_charges_enabled && (
                                   <button className="btn btn-primary btn-sm" style={{ fontSize: 11, padding: '4px 12px' }}
                                     onClick={() => setModal({ tipo: 'rata', rata, piano })}>
                                     Paga →
@@ -499,43 +869,65 @@ export default function FamigliaPagamentiPage() {
       )}
 
       {/* Modal pagamento */}
-      {modal && (
-        <ModalPaga
-          titolo={modal.tipo === 'mensile'
-            ? `Dichiara pagamento — ${nomeMese(modal.quota.mese_competenza)}`
-            : `Dichiara pagamento — Rata ${modal.rata.numero_rata}`}
-          importo={modal.tipo === 'mensile' ? Number(modal.quota.importo_mensile) : Number(modal.rata.importo)}
-          causale={modal.tipo === 'mensile'
-            ? `Quota mensile ${nomeMese(modal.quota.mese_competenza)} — ${giocatoreNome}`
-            : `${modal.piano.descrizione} Rata ${modal.rata.numero_rata} — ${giocatoreNome}`}
-          club={club}
-          onClose={() => setModal(null)}
-          onSave={async (metodo, dataPag, note) => {
-            if (modal.tipo === 'mensile') {
-              const res  = await fetch(`/api/settore-giovanile/quote?id=${modal.quota.id}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ metodo_pagamento: metodo, data_pagamento: dataPag, note }),
-              })
-              const json = await res.json()
-              if (!res.ok) return json.error ?? 'Errore'
-            } else {
-              // Usa l'API dedicata che bypassa RLS con createAdminClient
-              const res  = await fetch(`/api/famiglia/piani?rata_id=${modal.rata.id}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ metodo_pagamento: metodo, data_pagamento: dataPag, note }),
-              })
-              const json = await res.json()
-              if (!res.ok) return json.error ?? 'Errore'
-            }
-            setModal(null)
-            showToast('Pagamento dichiarato! La segreteria lo verificherà a breve.')
-            await ricaricaTutto()
-            return null
-          }}
-        />
-      )}
+      {modal && (() => {
+        const titolo = modal.tipo === 'mensile'
+          ? `Dichiara pagamento — ${nomeMese(modal.quota.mese_competenza)}`
+          : modal.tipo === 'rata'
+          ? `Dichiara pagamento — Rata ${modal.rata.numero_rata}`
+          : `Dichiara pagamento — ${modal.quota.mese ? (MESE_LABEL_ISCR[modal.quota.mese] ?? '') : `Stagione ${modal.quota.stagione}`}`
+        const importo = modal.tipo === 'mensile' ? Number(modal.quota.importo_mensile)
+          : modal.tipo === 'rata' ? Number(modal.rata.importo)
+          : Number(modal.quota.importo_totale) - Number(modal.quota.importo_pagato)
+        const causale = modal.tipo === 'mensile'
+          ? `Quota mensile ${nomeMese(modal.quota.mese_competenza)} — ${giocatoreNome}`
+          : modal.tipo === 'rata'
+          ? `${modal.piano.descrizione} Rata ${modal.rata.numero_rata} — ${giocatoreNome}`
+          : `Quota iscrizione — ${giocatoreNome}`
+
+        return (
+          <ModalPaga
+            titolo={titolo}
+            importo={importo}
+            causale={causale}
+            club={club}
+            onClose={() => setModal(null)}
+            onSave={async (metodo, dataPag, note) => {
+              if (modal.tipo === 'mensile') {
+                const res  = await fetch(`/api/settore-giovanile/quote?id=${modal.quota.id}`, {
+                  method: 'PATCH',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ metodo_pagamento: metodo, data_pagamento: dataPag, note }),
+                })
+                const json = await res.json()
+                if (!res.ok) return json.error ?? 'Errore'
+              } else if (modal.tipo === 'rata') {
+                // Usa l'API dedicata che bypassa RLS con createAdminClient
+                const res  = await fetch(`/api/famiglia/piani?rata_id=${modal.rata.id}`, {
+                  method: 'PATCH',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ metodo_pagamento: metodo, data_pagamento: dataPag, note }),
+                })
+                const json = await res.json()
+                if (!res.ok) return json.error ?? 'Errore'
+              } else {
+                // quota_iscrizione: nessuna scrittura diretta — solo notifica
+                // alla segreteria, che registra il pagamento a mano.
+                const res  = await fetch('/api/famiglia/pagamenti/dichiarazione', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ quotaId: modal.quota.id, metodo, note }),
+                })
+                const json = await res.json()
+                if (!res.ok) return json.error ?? 'Errore'
+              }
+              setModal(null)
+              showToast('Pagamento dichiarato! La segreteria lo verificherà a breve.')
+              await ricaricaTutto()
+              return null
+            }}
+          />
+        )
+      })()}
 
       {/* Toast */}
       {toast && (

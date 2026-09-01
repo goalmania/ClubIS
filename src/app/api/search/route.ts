@@ -38,10 +38,10 @@ const PAGINE_CIS = [
 
   // SEGRETARIO
   { label: 'Panoramica Segreteria', sub: 'Segretario', path: '/dashboard/segretario', ruoli: ['segretario'], kw: 'home dashboard segreteria riepilogo' },
-  { label: 'Giocatori', sub: 'Anagrafica', path: '/dashboard/segretario/giocatori', ruoli: ['segretario'], kw: 'giocatori calciatori atleti anagrafica rosa' },
-  { label: 'Gruppi / Squadre', sub: 'Anagrafica', path: '/dashboard/segretario/gruppi', ruoli: ['segretario'], kw: 'gruppi squadre settore giovanile categorie' },
+  { label: 'Giocatori', sub: 'Anagrafica', path: '/dashboard/segretario/giocatori', ruoli: ['segretario'], ruoliScuolaCalcio: ['presidente'], kw: 'giocatori calciatori atleti anagrafica rosa' },
+  { label: 'Gruppi / Squadre', sub: 'Anagrafica', path: '/dashboard/segretario/gruppi', ruoli: ['segretario'], ruoliScuolaCalcio: ['presidente'], kw: 'gruppi squadre settore giovanile categorie' },
   { label: 'Tesseramenti', sub: 'Anagrafica', path: '/dashboard/segretario/tesseramenti', ruoli: ['segretario'], kw: 'tesseramenti federazione figc tessere registrazioni' },
-  { label: 'Certificati Medici', sub: 'Anagrafica', path: '/dashboard/segretario/certificati', ruoli: ['segretario'], kw: 'certificati medici idoneità visite mediche scadenza' },
+  { label: 'Certificati Medici', sub: 'Anagrafica', path: '/dashboard/segretario/certificati', ruoli: ['segretario'], ruoliScuolaCalcio: ['presidente'], kw: 'certificati medici idoneità visite mediche scadenza' },
   { label: 'Disponibilità Rosa Seg.', sub: 'Gare', path: '/dashboard/segretario/disponibilita', ruoli: ['segretario'], kw: 'disponibilità rosa convocazioni' },
   { label: 'Partite', sub: 'Gare', path: '/dashboard/segretario/partite', ruoli: ['segretario'], kw: 'partite calendario gare campionato risultati' },
   { label: 'Distinte Gara', sub: 'Gare', path: '/dashboard/segretario/distinte', ruoli: ['segretario'], kw: 'distinte gara formazione convocati allineamento' },
@@ -56,8 +56,8 @@ const PAGINE_CIS = [
   { label: 'Portafoglio FIGC', sub: 'FIGC', path: '/dashboard/segretario/figc/portafoglio', ruoli: ['segretario'], kw: 'portafoglio figc crediti tasse ammende pagamento' },
   { label: 'Pagamenti', sub: 'Finanze', path: '/dashboard/segretario/pagamenti', ruoli: ['segretario', 'presidente', 'team_manager'], kw: 'pagamenti rate quote mensili famiglie' },
   { label: 'Rimborsi SEPA', sub: 'Finanze', path: '/dashboard/segretario/rimborsi', ruoli: ['segretario'], kw: 'rimborsi sepa bonifico bancario addebito diretto' },
-  { label: 'Quote Iscrizione', sub: 'Finanze', path: '/dashboard/segretario/quote', ruoli: ['segretario'], kw: 'quote iscrizione rette mensili pagamento famiglie' },
-  { label: 'Prima Nota', sub: 'Finanze', path: '/dashboard/segretario/prima-nota', ruoli: ['segretario'], kw: 'prima nota contabilità entrate uscite registro cassa' },
+  { label: 'Quote Iscrizione', sub: 'Finanze', path: '/dashboard/segretario/quote', ruoli: ['segretario'], ruoliScuolaCalcio: ['presidente'], kw: 'quote iscrizione rette mensili pagamento famiglie' },
+  { label: 'Prima Nota', sub: 'Finanze', path: '/dashboard/segretario/prima-nota', ruoli: ['segretario'], ruoliScuolaCalcio: ['presidente'], kw: 'prima nota contabilità entrate uscite registro cassa' },
   { label: 'Fornitori & Clienti', sub: 'Finanze', path: '/dashboard/segretario/fornitori', ruoli: ['segretario'], kw: 'fornitori clienti fatture acquisti servizi' },
   { label: 'Quietanze', sub: 'Finanze', path: '/dashboard/segretario/quietanze', ruoli: ['segretario'], kw: 'quietanze iscrizione campionato ricevute' },
   { label: 'Registro IVA', sub: 'Finanze', path: '/dashboard/segretario/registro-iva', ruoli: ['segretario'], kw: 'registro iva fatture acquisti vendite iva' },
@@ -65,12 +65,12 @@ const PAGINE_CIS = [
   { label: 'Config. Finanziaria', sub: 'Finanze', path: '/dashboard/segretario/configurazione-finanziaria', ruoli: ['segretario'], kw: 'configurazione finanziaria impostazioni tariffe' },
   { label: 'Sconti', sub: 'Finanze', path: '/dashboard/segretario/sconti', ruoli: ['segretario'], kw: 'sconti agevolazioni borse studio riduzioni quote' },
   { label: 'Settore Giovanile', sub: 'Gestione', path: '/dashboard/segretario/settore-giovanile', ruoli: ['segretario'], kw: 'settore giovanile squadre categorie under leve' },
-  { label: 'Iscrizioni Online', sub: 'Gestione', path: '/dashboard/segretario/iscrizioni', ruoli: ['segretario'], kw: 'iscrizioni online form registrazione nuovi giocatori' },
+  { label: 'Iscrizioni Online', sub: 'Gestione', path: '/dashboard/segretario/iscrizioni', ruoli: ['segretario'], ruoliScuolaCalcio: ['presidente'], kw: 'iscrizioni online form registrazione nuovi giocatori' },
   { label: 'Compensi', sub: 'Gestione', path: '/dashboard/segretario/compensi', ruoli: ['segretario'], kw: 'compensi staff allenatori rimborsi pagamento' },
   { label: 'Documenti', sub: 'Gestione', path: '/dashboard/segretario/documenti', ruoli: ['segretario'], kw: 'documenti moduli pdf contratti lettere' },
   { label: 'Compliance', sub: 'Gestione', path: '/dashboard/segretario/compliance', ruoli: ['segretario'], kw: 'compliance adempimenti regole normativa obblighi' },
-  { label: 'Archivio', sub: 'Gestione', path: '/dashboard/segretario/archivio', ruoli: ['segretario'], kw: 'archivio vecchi documenti storico stagioni passate' },
-  { label: 'Import Dati', sub: 'Gestione', path: '/dashboard/segretario/import', ruoli: ['segretario'], kw: 'import importa dati csv carica excel' },
+  { label: 'Archivio', sub: 'Gestione', path: '/dashboard/segretario/archivio', ruoli: ['segretario'], ruoliScuolaCalcio: ['presidente'], kw: 'archivio vecchi documenti storico stagioni passate' },
+  { label: 'Import Dati', sub: 'Gestione', path: '/dashboard/segretario/import', ruoli: ['segretario'], ruoliScuolaCalcio: ['presidente'], kw: 'import importa dati csv carica excel' },
 
   // ALLENATORE
   { label: 'Panoramica Allenatore', sub: 'Allenatore', path: '/dashboard/allenatore', ruoli: ['allenatore'], kw: 'home dashboard coach mister' },
@@ -158,10 +158,18 @@ export async function GET(req: Request) {
   const supabase = createAdminClient()
   const { clubId, ruolo } = ctx
 
+  // Alcune pagine segretario sono visibili anche al presidente, ma solo per
+  // i club scuola calcio (dove il presidente ha in dashboard tutte le
+  // funzioni segretario) — i club agonistici non cambiano comportamento.
+  const { data: clubData } = await supabase.from('clubs').select('tipo_prodotto').eq('id', clubId).maybeSingle()
+  const isScuolaCalcio = clubData?.tipo_prodotto === 'scuola_calcio_standalone'
+  const paginaVisibile = (p: typeof PAGINE_CIS[number]) =>
+    p.ruoli.includes(ruolo) || (isScuolaCalcio && (p as any).ruoliScuolaCalcio?.includes(ruolo))
+
   // Con query vuota restituiamo solo pagine rapide (prime 8)
   if (q.length < 2) {
     const pagineRapide = PAGINE_CIS
-      .filter(p => p.ruoli.includes(ruolo))
+      .filter(paginaVisibile)
       .slice(0, 8)
       .map(p => ({ tipo: 'pagina', id: p.path, label: p.label, sublabel: p.sub, path: p.path, icon: '→', categoria: 'Accesso rapido' }))
     return Response.json({ risultati: pagineRapide })
@@ -254,7 +262,7 @@ export async function GET(req: Request) {
 
   // ── 1. Pagine ──────────────────────────────────────────────────────────────
   const pagineMatch = PAGINE_CIS.filter(p =>
-    p.ruoli.includes(ruolo) && matchSearch(q, p.label, p.sub, p.kw)
+    paginaVisibile(p) && matchSearch(q, p.label, p.sub, p.kw)
   ).slice(0, 6)
 
   out.push(...pagineMatch.map(p => ({

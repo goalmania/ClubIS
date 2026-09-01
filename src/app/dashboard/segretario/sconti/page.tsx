@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import { PageHeader, Modal, Toast, EmptyState } from '@/components/ui'
 
 const SCONTI_DEFAULT = [
@@ -45,7 +46,7 @@ export default function ScontiPage() {
   const [form, setForm] = useState({ nome: '', tipo: 'percentuale', valore: '', note: '' })
   const [saving, setSaving] = useState(false)
   const [toast, setToast] = useState<{ msg: string; tipo: 'success' | 'error' } | null>(null)
-  const [clubId, setClubId] = useState<string | null>(null)
+  const clubId = useClubId()
 
   // Applica sconto
   const [rate, setRate] = useState<RataConPiano[]>([])
@@ -58,17 +59,13 @@ export default function ScontiPage() {
   const [rateConSconto, setRateConSconto] = useState<any[]>([])
 
   const carica = useCallback(async () => {
+    if (!clubId) return
     setLoading(true)
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
-    const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-    if (!utente) return
-    setClubId(utente.club_id)
 
     const { data } = await supabase
       .from('sconti_listino')
       .select('*')
-      .eq('club_id', utente.club_id)
+      .eq('club_id', clubId)
       .order('created_at')
     setSconti(data ?? [])
 
@@ -76,7 +73,7 @@ export default function ScontiPage() {
     const { data: rateData } = await supabase
       .from('rate_pagamento')
       .select(`id, numero_rata, importo, importo_originale, scadenza, stato, piano_id(id, descrizione, famiglie(nome, cognome), giocatori(nome, cognome))`)
-      .eq('club_id', utente.club_id)
+      .eq('club_id', clubId)
       .in('stato', ['in_attesa', 'in_ritardo'])
       .order('scadenza')
       .limit(100)
@@ -86,13 +83,13 @@ export default function ScontiPage() {
     const { data: scontate } = await supabase
       .from('rate_pagamento')
       .select(`id, numero_rata, importo, importo_originale, sconto_importo, scadenza, sconto_id, piano_id(descrizione, famiglie(nome, cognome), giocatori(nome, cognome)), sconti_listino:sconto_id(nome)`)
-      .eq('club_id', utente.club_id)
+      .eq('club_id', clubId)
       .not('sconto_id', 'is', null)
       .gt('sconto_importo', 0)
     setRateConSconto(scontate ?? [])
 
     setLoading(false)
-  }, [supabase])
+  }, [supabase, clubId])
 
   useEffect(() => { carica() }, [carica])
 

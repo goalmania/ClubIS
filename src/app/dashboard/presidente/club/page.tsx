@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { safeUpdatePayload } from '@/lib/supabase/db'
+import { useClubId } from '@/lib/club-context'
 
 type Club = {
   id: string
@@ -85,11 +86,21 @@ const FORMA_GIURIDICA = [
   { key: 'altro',            label: 'Altro' },
 ]
 
-const CATEGORIA_LABEL: Record<string, string> = {
-  calcio_11: 'Calcio 11', calcio_5: 'Calcio a 5', calcio_8: 'Calcio a 8',
-  basket: 'Basket', pallavolo: 'Pallavolo', tennis: 'Tennis',
-  nuoto: 'Nuoto', atletica: 'Atletica', altro: 'Altro',
-}
+// Valori allineati all'enum Postgres categoria_club (vedi supabase/schema.sql)
+const CATEGORIA_CLUB = [
+  { key: 'serie_a',           label: 'Serie A' },
+  { key: 'serie_b',           label: 'Serie B' },
+  { key: 'serie_c',           label: 'Serie C' },
+  { key: 'serie_d',           label: 'Serie D' },
+  { key: 'eccellenza',        label: 'Eccellenza' },
+  { key: 'promozione',        label: 'Promozione' },
+  { key: 'prima_categoria',   label: 'Prima Categoria' },
+  { key: 'seconda_categoria', label: 'Seconda Categoria' },
+  { key: 'terza_categoria',   label: 'Terza Categoria' },
+  { key: 'scuola_calcio',     label: 'Scuola Calcio' },
+]
+
+const CATEGORIA_LABEL: Record<string, string> = Object.fromEntries(CATEGORIA_CLUB.map(c => [c.key, c.label]))
 
 const PIANO_LABEL: Record<string, string> = { base: 'Base', pro: 'Pro', elite: 'Elite' }
 const PIANO_COLOR: Record<string, string> = { base: 'var(--gray)', pro: 'var(--accent)', elite: '#88aaff' }
@@ -112,7 +123,9 @@ function Grid({ children }: { children: React.ReactNode }) {
 
 export default function InfoClubPage() {
   const supabase = createClient()
-  const [clubId,   setClubId]   = useState<string | null>(null)
+  // Club effettivo della richiesta corrente (rispetta l'impersonation del
+  // super admin e la risoluzione per-dispositivo) — vedi src/lib/club-context.tsx.
+  const clubId = useClubId()
   const [club,     setClub]     = useState<Club | null>(null)
   const [tab,      setTab]      = useState<TabKey>('generale')
   const [loading,  setLoading]  = useState(true)
@@ -128,18 +141,18 @@ export default function InfoClubPage() {
 
   useEffect(() => {
     const load = async () => {
+      if (!clubId) return
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
-      const { data: u } = await supabase.from('utenti').select('club_id, ruolo').eq('id', user.id).single()
+      const { data: u } = await supabase.from('utenti').select('ruolo').eq('id', user.id).single()
       if (!u) return
-      setClubId(u.club_id)
       setCanEdit(['presidente', 'ds', 'segretario'].includes(u.ruolo))
-      const { data: c } = await supabase.from('clubs').select('*').eq('id', u.club_id).single()
+      const { data: c } = await supabase.from('clubs').select('*').eq('id', clubId).single()
       if (c) { setClub(c as Club); setForm(c as Club) }
       setLoading(false)
     }
     load()
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [clubId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const salva = async () => {
     if (!clubId) return
@@ -329,8 +342,11 @@ export default function InfoClubPage() {
                   {FORMA_GIURIDICA.map(f => <option key={f.key} value={f.key}>{f.label}</option>)}
                 </select>
               </F>
-              <F label="Sport / Categoria">
-                <input className="input" value={form.categoria ?? ''} onChange={e => setForm(p => ({ ...p, categoria: e.target.value || null }))} placeholder="es. calcio_11" />
+              <F label="Categoria">
+                <select className="input" value={form.categoria ?? ''} onChange={e => setForm(p => ({ ...p, categoria: e.target.value || null }))} style={{ background: '#1a1a1a', color: 'var(--white)' }}>
+                  <option value="">— Seleziona —</option>
+                  {CATEGORIA_CLUB.map(c => <option key={c.key} value={c.key}>{c.label}</option>)}
+                </select>
               </F>
               <F label="Anno fondazione">
                 <input className="input" type="number" value={form.anno_fondazione ?? ''} onChange={e => setForm(p => ({ ...p, anno_fondazione: parseInt(e.target.value) || null }))} placeholder="es. 1985" />

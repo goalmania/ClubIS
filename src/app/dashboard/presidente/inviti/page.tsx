@@ -1,7 +1,9 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { useTipoProdotto } from '@/lib/club-context'
+import { CATEGORIE_FEDERALI_OPTIONS } from '@/lib/settore-giovanile'
 
-const RUOLI_STAFF = [
+const RUOLI_STAFF_AGONISTICO = [
   { ruolo: 'segretario',    label: 'Segretario',          icona: '📋' },
   { ruolo: 'allenatore',    label: 'Allenatore',          icona: '🧢' },
   { ruolo: 'medico',        label: 'Medico',              icona: '⚕️' },
@@ -10,6 +12,14 @@ const RUOLI_STAFF = [
   { ruolo: 'osservatore',   label: 'Osservatore',         icona: '👁' },
   { ruolo: 'ufficio_stampa', label: 'Ufficio Stampa',     icona: '📰' },
   { ruolo: 'custode',       label: 'Custode',             icona: '🔑' },
+]
+
+// Scuola calcio: niente ds/team_manager/osservatore/ufficio_stampa/custode —
+// non servono in un club che non gioca campionati assoluti. L'allenatore non
+// compare qui: si invita per categoria (vedi sezione dedicata sotto).
+const RUOLI_STAFF_SCUOLA_CALCIO = [
+  { ruolo: 'segretario', label: 'Segretario', icona: '📋' },
+  { ruolo: 'medico',     label: 'Medico',     icona: '⚕️' },
 ]
 
 const RUOLI_ATLETI = [
@@ -25,9 +35,14 @@ interface Invito {
   scadenza:      string | null
   created_at:    string
   giocatore_id?: string | null
+  categoria_federale?: string | null
 }
 
 export default function InvitiPage() {
+  const tipoProdotto = useTipoProdotto()
+  const isScuolaCalcio = tipoProdotto === 'scuola_calcio_standalone'
+  const RUOLI_STAFF = isScuolaCalcio ? RUOLI_STAFF_SCUOLA_CALCIO : RUOLI_STAFF_AGONISTICO
+
   const [inviti,      setInviti]     = useState<Invito[]>([])
   const [loading,     setLoading]    = useState(true)
   const [generating,  setGenerating] = useState<string | null>(null)
@@ -55,13 +70,14 @@ export default function InvitiPage() {
     return () => { mounted = false }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  async function generaLink(ruolo: string, conGiocatore = false) {
+  async function generaLink(ruolo: string, conGiocatore = false, categoriaFederale?: string) {
     if (conGiocatore && !giocatoreId) {
       setErrore('Seleziona prima un atleta dalla lista.')
       return
     }
+    const key = categoriaFederale ? `${ruolo}:${categoriaFederale}` : ruolo
     setErrore(null)
-    setGenerating(ruolo)
+    setGenerating(key)
     try {
       const res = await fetch('/api/inviti/genera', {
         method: 'POST',
@@ -70,6 +86,7 @@ export default function InvitiPage() {
           ruolo,
           scadenzaGiorni: scadGiorni,
           giocatoreId: conGiocatore ? giocatoreId : undefined,
+          categoriaFederale,
         }),
       })
       const json = await res.json()
@@ -84,6 +101,7 @@ export default function InvitiPage() {
           token:        json.token,
           usato:        false,
           giocatore_id: conGiocatore ? giocatoreId : null,
+          categoria_federale: categoriaFederale ?? null,
           scadenza:     scadGiorni
             ? new Date(Date.now() + scadGiorni * 86400000).toISOString()
             : null,
@@ -210,6 +228,33 @@ export default function InvitiPage() {
           ))}
         </div>
 
+        {/* Allenatori per categoria (solo scuola calcio) — più allenatori possono
+            condividere la stessa categoria (es. titolare + assistente) */}
+        {isScuolaCalcio && (
+          <>
+            <div style={{ marginBottom: 6, fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+              Allenatori per categoria
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 10, marginBottom: 20 }}>
+              {CATEGORIE_FEDERALI_OPTIONS.map(({ value, label }) => {
+                const key = `allenatore:${value}`
+                return (
+                  <button
+                    key={value}
+                    onClick={() => generaLink('allenatore', false, value)}
+                    disabled={generating === key}
+                    className="btn btn-ghost"
+                    style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'flex-start', fontSize: 12, border: '1px solid var(--border)' }}
+                  >
+                    <span>🧢</span>
+                    <span>{generating === key ? 'Generazione...' : `Invita — ${label}`}</span>
+                  </button>
+                )
+              })}
+            </div>
+          </>
+        )}
+
         {/* Famiglie & Giocatori */}
         <div style={{ marginBottom: 10, fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Famiglie & Giocatori</div>
         <div style={{ marginBottom: 12 }}>
@@ -264,7 +309,10 @@ export default function InvitiPage() {
             {inviti.map(invito => {
               const scaduto  = isScaduto(invito.scadenza)
               const link     = getLink(invito.token)
-              const ruoloObj = [...RUOLI_STAFF, ...RUOLI_ATLETI].find(r => r.ruolo === invito.ruolo)
+              const ruoloObj = [...RUOLI_STAFF_AGONISTICO, ...RUOLI_ATLETI].find(r => r.ruolo === invito.ruolo)
+              const categoriaLabel = invito.categoria_federale
+                ? CATEGORIE_FEDERALI_OPTIONS.find(c => c.value === invito.categoria_federale)?.label
+                : null
 
               return (
                 <div
@@ -284,6 +332,9 @@ export default function InvitiPage() {
                       color: 'var(--white)',
                     }}>
                       {ruoloObj?.label ?? invito.ruolo}
+                      {categoriaLabel && (
+                        <span style={{ marginLeft: 8, color: 'var(--accent)', fontSize: 10 }}>· {categoriaLabel}</span>
+                      )}
                       {invito.usato && (
                         <span style={{ marginLeft: 8, color: 'var(--gray)', fontSize: 10 }}>· USATO</span>
                       )}

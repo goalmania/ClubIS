@@ -1,6 +1,7 @@
 'use client'
 import { useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import { useSharedData } from '@/hooks/useSharedData'
 import { Modal, Toast } from '@/components/ui'
 
@@ -76,8 +77,8 @@ function TabButton({ label, active, onClick }: { label: string; active: boolean;
 export default function PresidenteRisultatiPage() {
   const supabase = createClient()
 
+  const clubId = useClubId()
   const [tab, setTab]             = useState<Tab>('risultati')
-  const [clubId, setClubId]       = useState<string | null>(null)
   const [sqIds, setSqIds]         = useState<{ id: string; nome: string }[]>([])
   const [bySquadra, setBySquadra] = useState<Record<string, SquadraStats>>({})
 
@@ -89,14 +90,10 @@ export default function PresidenteRisultatiPage() {
   /* ── Load ────────────────────────────────────────────────────── */
 
   const load = useCallback(async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
-    const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-    if (!utente) return
-    setClubId(utente.club_id)
+    if (!clubId) return
 
     const { data: squadre } = await supabase
-      .from('squadre').select('id, nome, categoria_eta').eq('club_id', utente.club_id).eq('attiva', true)
+      .from('squadre').select('id, nome, categoria_eta').eq('club_id', clubId).eq('attiva', true)
     const sq = squadre ?? []
     setSqIds(sq)
     setForm(prev => ({ ...prev, squadraId: prev.squadraId || sq[0]?.id || '' }))
@@ -122,7 +119,7 @@ export default function PresidenteRisultatiPage() {
       else { result[p.squadra_id].s++; isCasa ? result[p.squadra_id].sCasa++ : result[p.squadra_id].sTrasf++ }
     })
     setBySquadra(result)
-  }, [])
+  }, [clubId])
 
   useSharedData(load)
 

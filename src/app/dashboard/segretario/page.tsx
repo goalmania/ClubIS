@@ -1,18 +1,18 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserContext } from '@/lib/impersonation'
 import { redirect } from 'next/navigation'
 import ObiettiviWidget from '@/components/ui/ObiettiviWidget'
 import PortafoglioFIGC from '@/components/ui/PortafoglioFIGC'
 import AzioniRapide from '@/components/ui/AzioniRapide'
 import ScadenzeFIGCWidget from '@/components/features/ScadenzeFIGCWidget'
+import RischioCovisocWidget from '@/components/features/RischioCovisocWidget'
 
 export default async function SegretarioDashboard() {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth/login')
+  const ctx = await getUserContext()
+  if (!ctx) redirect('/auth/login')
+  const { clubId } = ctx
 
-  const { data: utente, error: utenteError } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-  if (utenteError || !utente) redirect('/auth/errore')
-  const clubId = utente.club_id
+  const supabase = createAdminClient()
 
   const oggi = new Date()
   const tra30 = new Date(oggi); tra30.setDate(oggi.getDate() + 30)
@@ -25,6 +25,7 @@ export default async function SegretarioDashboard() {
     { count: quoteArretrate },
     { data: prossimePartite },
     { data: ultimiMessaggi },
+    { data: clubInfo },
   ] = await Promise.all([
     supabase.from('tesseramenti').select('*', { count: 'exact', head: true })
       .eq('club_id', clubId).eq('stato', 'attivo'),
@@ -49,7 +50,10 @@ export default async function SegretarioDashboard() {
       .eq('club_id', clubId)
       .order('inviato_at', { ascending: false })
       .limit(4),
+    supabase.from('clubs').select('tipo_prodotto').eq('id', clubId).maybeSingle(),
   ])
+
+  const isScuolaCalcio = clubInfo?.tipo_prodotto === 'scuola_calcio_standalone'
 
   const certUrgenti = certInScadenza?.filter(c => new Date(c.data_scadenza) <= tra7) ?? []
   const certProssimi = certInScadenza?.filter(c => new Date(c.data_scadenza) > tra7) ?? []
@@ -66,9 +70,14 @@ export default async function SegretarioDashboard() {
         </p>
       </div>
 
-      <ScadenzeFIGCWidget compact={true} />
+      {!isScuolaCalcio && (
+        <>
+          <ScadenzeFIGCWidget compact={true} />
+          <RischioCovisocWidget />
+        </>
+      )}
 
-      <AzioniRapide ruolo="segretario" />
+      <AzioniRapide ruolo="segretario" variante={isScuolaCalcio ? 'scuola_calcio' : 'agonistico'} />
 
       <ObiettiviWidget clubId={clubId} ruolo="segretario" />
 
@@ -187,7 +196,7 @@ export default async function SegretarioDashboard() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
           {/* Portafoglio FIGC */}
-          <PortafoglioFIGC clubId={clubId} />
+          {!isScuolaCalcio && <PortafoglioFIGC clubId={clubId} />}
 
           {/* Azioni rapide */}
           <div className="card" style={{ padding: '18px' }}>
@@ -195,12 +204,23 @@ export default async function SegretarioDashboard() {
               Azioni rapide
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <QuickAction href="/dashboard/segretario/giocatori/nuovo" label="+ Aggiungi giocatore" />
-              <QuickAction href="/dashboard/segretario/rimborsi" label="Genera bonifici SEPA" />
-              <QuickAction href="/dashboard/segretario/partite/nuova" label="+ Crea partita" />
-              <QuickAction href="/dashboard/segretario/distinte" label="Genera distinta gara" />
-              <QuickAction href="/dashboard/segretario/quote" label="Gestisci quote" />
-              <QuickAction href="/dashboard/segretario/messaggi/nuovo" label="Invia comunicazione" />
+              {isScuolaCalcio ? (
+                <>
+                  <QuickAction href="/dashboard/segretario/giocatori/nuovo" label="+ Aggiungi ragazzo" />
+                  <QuickAction href="/dashboard/segretario/iscrizioni" label="Gestisci iscrizioni" />
+                  <QuickAction href="/dashboard/segretario/quote" label="Gestisci quote" />
+                  <QuickAction href="/dashboard/segretario/messaggi/nuovo" label="Invia comunicazione" />
+                </>
+              ) : (
+                <>
+                  <QuickAction href="/dashboard/segretario/giocatori/nuovo" label="+ Aggiungi giocatore" />
+                  <QuickAction href="/dashboard/segretario/rimborsi" label="Genera bonifici SEPA" />
+                  <QuickAction href="/dashboard/segretario/partite/nuova" label="+ Crea partita" />
+                  <QuickAction href="/dashboard/segretario/distinte" label="Genera distinta gara" />
+                  <QuickAction href="/dashboard/segretario/quote" label="Gestisci quote" />
+                  <QuickAction href="/dashboard/segretario/messaggi/nuovo" label="Invia comunicazione" />
+                </>
+              )}
             </div>
           </div>
 

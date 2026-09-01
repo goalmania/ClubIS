@@ -11,8 +11,8 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json()
-  const { ruolo, scadenzaGiorni, giocatoreId } = body as {
-    ruolo: string; scadenzaGiorni?: number; giocatoreId?: string
+  const { ruolo, scadenzaGiorni, giocatoreId, categoriaFederale } = body as {
+    ruolo: string; scadenzaGiorni?: number; giocatoreId?: string; categoriaFederale?: string
   }
 
   if (!ruolo) {
@@ -35,6 +35,7 @@ export async function POST(req: NextRequest) {
       creato_da:    ctx.userId,
       scadenza,
       giocatore_id: giocatoreId ?? null,
+      categoria_federale: ruolo === 'allenatore' ? (categoriaFederale ?? null) : null,
     })
     .select('id, token')
     .single()

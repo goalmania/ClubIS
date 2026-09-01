@@ -1,6 +1,7 @@
 'use client'
 import { useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import { Modal, FormField, FormGrid, Select, Toast } from '@/components/ui'
 import { useSharedData } from '@/hooks/useSharedData'
 import Link from 'next/link'
@@ -27,7 +28,7 @@ const fmtDate = (d: Date) => d.toISOString().split('T')[0]
 
 export default function ProgrammazionePage() {
   const supabase = createClient()
-  const [clubId, setClubId] = useState<string | null>(null)
+  const clubId = useClubId()
   const [squadre, setSquadre] = useState<any[]>([])
   const [allenamenti, setAllenamenti] = useState<any[]>([])
   const [partite, setPartite] = useState<any[]>([])
@@ -52,12 +53,6 @@ export default function ProgrammazionePage() {
   fineSett.setDate(inizioSett.getDate() + 13)
 
   const load = useCallback(async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
-    const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-    if (!utente) return
-    setClubId(utente.club_id)
-
     const sq: any[] = await fetch('/api/squadre').then(r => r.json()).catch(() => [])
     setSquadre(sq)
     if (sq.length && !sqSel) setSqSel(sq[0].id)
@@ -65,13 +60,13 @@ export default function ProgrammazionePage() {
     const [{ data: alls }, { data: pars }] = await Promise.all([
       supabase.from('allenamenti')
         .select('id, data, ora, luogo, obiettivo, tipo')
-        .eq('club_id', utente.club_id)
+        .eq('club_id', clubId)
         .gte('data', fmtDate(inizioSett))
         .lte('data', fmtDate(fineSett))
         .order('data'),
       supabase.from('partite')
         .select('id, data_ora, avversario, casa_trasferta')
-        .eq('club_id', utente.club_id)
+        .eq('club_id', clubId)
         .gte('data_ora', inizioSett.toISOString())
         .lte('data_ora', fineSett.toISOString())
         .order('data_ora'),
@@ -130,7 +125,8 @@ export default function ProgrammazionePage() {
         </button>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 8, marginBottom: 20 }}>
+      <div className="scroll-x-mobile" style={{ marginBottom: 20 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 8, minWidth: 700 }}>
         {giorni.map(d => {
           const dStr = fmtDate(d)
           const alls = allenamenti.filter(a => a.data === dStr)
@@ -181,6 +177,7 @@ export default function ProgrammazionePage() {
             </div>
           )
         })}
+      </div>
       </div>
 
       {/* Legenda */}

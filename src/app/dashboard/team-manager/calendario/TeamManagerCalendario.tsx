@@ -11,6 +11,9 @@ import itLocale from '@fullcalendar/core/locales/it'
 
 import { createClient } from '@/lib/supabase/client'
 import { Modal, Toast, PageHeader } from '@/components/ui'
+import { useGiocatoriClub, GiocatoreClubOption } from '@/hooks/useGiocatoriClub'
+import { useTipoProdotto } from '@/lib/club-context'
+import { labelSquadra } from '@/lib/settore-giovanile'
 
 type TipologiaEvento =
   | 'allenamento'
@@ -21,9 +24,10 @@ type TipologiaEvento =
 
 type PrioritaEvento = 'bassa' | 'media' | 'alta' | 'urgente'
 
-type SquadOption = { id: string; nome: string }
+type SquadOption = { id: string; nome: string; categoria_eta: string }
+type CampoOption = { id: string; nome: string }
 type StaffOption = { id: string; nome: string; cognome: string; ruolo: string }
-type PlayerOption = { id: string; nome: string; cognome: string }
+type PlayerOption = GiocatoreClubOption
 
 type CalendarEvent = {
   id: string
@@ -92,6 +96,7 @@ function uniq(arr: string[]) {
 
 export default function TeamManagerCalendario() {
   const supabase = useMemo(() => createClient(), [])
+  const isScuolaCalcio = useTipoProdotto() === 'scuola_calcio_standalone'
 
   const [clubId, setClubId] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -100,7 +105,8 @@ export default function TeamManagerCalendario() {
   // Options for selects
   const [squadre, setSquadre] = useState<SquadOption[]>([])
   const [staff, setStaff] = useState<StaffOption[]>([])
-  const [giocatori, setGiocatori] = useState<PlayerOption[]>([])
+  const [campi, setCampi] = useState<CampoOption[]>([])
+  const { giocatori } = useGiocatoriClub(clubId)
 
   // Filters
   const [filtersTipologia, setFiltersTipologia] = useState<TipologiaEvento[]>([])
@@ -131,6 +137,7 @@ export default function TeamManagerCalendario() {
     luogo_testo: '',
     luogo_lat: null as number | null,
     luogo_lng: null as number | null,
+    campoId: '' as string,
     priorita: 'media' as PrioritaEvento,
     partecipanti: {
       squadre: [] as string[],
@@ -177,7 +184,7 @@ export default function TeamManagerCalendario() {
     const sRes = await fetch('/api/squadre')
     if (sRes.ok) {
       const sData = await sRes.json()
-      setSquadre((sData as any[]).map(x => ({ id: x.id, nome: x.nome })))
+      setSquadre((sData as any[]).map(x => ({ id: x.id, nome: x.nome, categoria_eta: x.categoria_eta })))
     }
 
     // Staff — via API server-side (adminClient, bypassa RLS, scoped al club)
@@ -188,14 +195,14 @@ export default function TeamManagerCalendario() {
       setStaff((stData as any[]).map(x => ({ id: x.id, nome: x.nome, cognome: x.cognome, ruolo: x.ruolo })))
     }
 
-    // Giocatori — via API server-side che interroga per squadra_id (include importati con club_id NULL)
-    const gRes = await fetch('/api/giocatori/tutti')
-    if (gRes.ok) {
-      const gData = await gRes.json()
-      setGiocatori((gData as any[]).map(p => ({ id: p.id, nome: p.nome, cognome: p.cognome })))
-    } else {
-      setGiocatori([])
+    // Campi — per collegare l'evento a un campo e far comparire la prenotazione
+    const cRes = await fetch('/api/campi')
+    if (cRes.ok) {
+      const cJson = await cRes.json()
+      setCampi((cJson.campi as any[] ?? []).filter(c => c.attivo).map(x => ({ id: x.id, nome: x.nome })))
     }
+
+    // Giocatori caricati via useGiocatoriClub(clubId) — si aggiorna automaticamente
   }
 
   const loadEvents = async (startIso: string, endIso: string) => {
@@ -256,6 +263,7 @@ export default function TeamManagerCalendario() {
       luogo_testo: '',
       luogo_lat: null,
       luogo_lng: null,
+      campoId: '',
       priorita: 'media',
       partecipanti: { squadre: [], staff: [], giocatori: [] },
       note: '',
@@ -297,6 +305,7 @@ export default function TeamManagerCalendario() {
       luogo_testo: ev.luogo_testo ?? '',
       luogo_lat: ev.luogo_lat ?? null,
       luogo_lng: ev.luogo_lng ?? null,
+      campoId: ev.campo_id ?? '',
       priorita: ev.priorita as PrioritaEvento,
       partecipanti: {
         squadre: ev.partecipanti?.squadre ?? [],
@@ -395,7 +404,7 @@ export default function TeamManagerCalendario() {
       setToast({ msg: 'Luogo è obbligatorio', tipo: 'error' })
       return
     }
-    if (!form.note.trim()) {
+    if (!isScuolaCalcio && !form.note.trim()) {
       setToast({ msg: 'Note è obbligatorio', tipo: 'error' })
       return
     }
@@ -428,6 +437,7 @@ export default function TeamManagerCalendario() {
             luogo_testo: form.luogo_testo,
             luogo_lat: form.luogo_lat,
             luogo_lng: form.luogo_lng,
+            campo_id: form.campoId || null,
             priorita: form.priorita,
             note: form.note,
             partecipanti,
@@ -482,6 +492,7 @@ export default function TeamManagerCalendario() {
           luogo_testo: form.luogo_testo,
           luogo_lat: form.luogo_lat,
           luogo_lng: form.luogo_lng,
+          campo_id: form.campoId || null,
           priorita: form.priorita,
           note: form.note,
           partecipanti,
@@ -546,6 +557,7 @@ export default function TeamManagerCalendario() {
                 luogo_testo: '',
                 luogo_lat: null,
                 luogo_lng: null,
+                campoId: '',
                 priorita: 'media',
                 partecipanti: { squadre: [], staff: [], giocatori: [] },
                 note: '',
@@ -611,7 +623,7 @@ export default function TeamManagerCalendario() {
                         checked={filtersSquadre.includes(s.id)}
                         onChange={() => setFiltersSquadre(prev => toggleListItem(s.id, prev))}
                       />
-                      <span>{s.nome}</span>
+                      <span>{labelSquadra(s, isScuolaCalcio)}</span>
                     </label>
                   ))}
                 </div>
@@ -643,7 +655,7 @@ export default function TeamManagerCalendario() {
                         checked={filtersGiocatori.includes(p.id)}
                         onChange={() => setFiltersGiocatori(prev => toggleListItem(p.id, prev))}
                       />
-                      <span>{p.cognome} {p.nome}</span>
+                      <span>{p.numero_maglia != null ? `#${p.numero_maglia} ` : ''}{p.cognome} {p.nome}</span>
                     </label>
                   ))}
                 </div>
@@ -852,6 +864,22 @@ export default function TeamManagerCalendario() {
                   </span>
                 </div>
               </div>
+
+              {isScuolaCalcio && campi.length > 0 && (
+                <div style={{ marginTop: 14 }}>
+                  <label className="label">Campo (per tenere traccia delle prenotazioni)</label>
+                  <select
+                    className="input"
+                    value={form.campoId}
+                    onChange={(e) => setForm(f => ({ ...f, campoId: e.target.value }))}
+                  >
+                    <option value="">— Nessuno —</option>
+                    {campi.map(c => (
+                      <option key={c.id} value={c.id}>{c.nome}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
             </div>
 
             <div>
@@ -873,7 +901,7 @@ export default function TeamManagerCalendario() {
                               partecipanti: { ...f.partecipanti, squadre: toggleListItem(s.id, f.partecipanti.squadre) },
                             }))}
                           />
-                          {s.nome}
+                          {labelSquadra(s, isScuolaCalcio)}
                         </label>
                       ))}
                     </div>
@@ -945,7 +973,7 @@ export default function TeamManagerCalendario() {
                               partecipanti: { ...f.partecipanti, giocatori: toggleListItem(p.id, f.partecipanti.giocatori) },
                             }))}
                           />
-                          {p.cognome} {p.nome}
+                          {p.numero_maglia != null ? `#${p.numero_maglia} ` : ''}{p.cognome} {p.nome}
                         </label>
                       ))}
                     </div>
@@ -955,7 +983,7 @@ export default function TeamManagerCalendario() {
 
               <div style={{ marginTop: 10 }}>
                 <label className="label">
-                  Note <span style={{ color: 'var(--accent-red)', marginLeft: 3 }}>*</span>
+                  Note {!isScuolaCalcio && <span style={{ color: 'var(--accent-red)', marginLeft: 3 }}>*</span>}
                 </label>
                 <textarea
                   className="input"

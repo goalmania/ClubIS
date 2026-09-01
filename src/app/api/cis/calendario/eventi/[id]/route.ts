@@ -1,7 +1,7 @@
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { NextRequest, NextResponse } from 'next/server'
 import { generateScheduledNotificationsForEvent } from '@/lib/notifications/NotificationService'
+import { getClubFromSession } from '@/lib/server-helpers'
 
 function parseMaybeArray(value: unknown): string[] {
   if (!value) return []
@@ -11,22 +11,12 @@ function parseMaybeArray(value: unknown): string[] {
 }
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
-  const sessionClient = createClient()
+  const session = await getClubFromSession()
+  if (!session) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
 
   const supabase = createAdminClient()
   const eventId = params.id
-
-  const { data: { user } } = await sessionClient.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
-
-  const { data: utente, error: utenteError } = await supabase
-    .from('utenti')
-    .select('club_id')
-    .eq('id', user.id)
-    .single()
-  if (utenteError || !utente) return NextResponse.json({ error: 'Utente non valido' }, { status: 403 })
-
-  const clubId = utente.club_id
+  const clubId = session.clubId
 
   const { data: evento, error } = await supabase
     .from('eventi_calendario')
@@ -39,6 +29,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       luogo_testo,
       luogo_lat,
       luogo_lng,
+      campo_id,
       priorita,
       note,
       eventi_partecipanti(tipo_partecipante,squadra_id,staff_id,giocatore_id),
@@ -68,19 +59,18 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 }
 
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
-  const sessionClient = createClient()
+  const session = await getClubFromSession()
+  if (!session) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
 
   const supabase = createAdminClient()
   const eventId = params.id
+  const clubId = session.clubId
 
   const body = await req.json().catch(() => null) as any
   if (!body) return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
 
-  const { data: { user } } = await sessionClient.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
-
   // Best-effort fetch per calcolare `data` quando arriva solo start/end
-  const { data: existing } = await supabase.from('eventi_calendario').select('id').eq('id', eventId).single()
+  const { data: existing } = await supabase.from('eventi_calendario').select('id').eq('id', eventId).eq('club_id', clubId).single()
   if (!existing) return NextResponse.json({ error: 'Evento non trovato' }, { status: 404 })
 
   const start = body.data_ora_inizio ?? body.start ?? null
@@ -92,6 +82,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   if (body.luogo_testo) updateFields.luogo_testo = body.luogo_testo
   if (body.luogo_lat !== undefined) updateFields.luogo_lat = body.luogo_lat
   if (body.luogo_lng !== undefined) updateFields.luogo_lng = body.luogo_lng
+  if ('campo_id' in body) updateFields.campo_id = body.campo_id || null
   if (typeof body.note === 'string') updateFields.note = body.note
 
   if (start) updateFields.data_ora_inizio = start
@@ -107,6 +98,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       .from('eventi_calendario')
       .update(updateFields)
       .eq('id', eventId)
+      .eq('club_id', clubId)
     if (updateError) return NextResponse.json({ error: updateError.message }, { status: 500 })
   }
 
@@ -116,9 +108,6 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     const squadre = parseMaybeArray(partecipanti.squadre)
     const staff = parseMaybeArray(partecipanti.staff)
     const giocatori = parseMaybeArray(partecipanti.giocatori)
-
-    const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-    const clubId = utente?.club_id
 
     const { error: delPartsError } = await supabase
       .from('eventi_partecipanti')
@@ -140,8 +129,6 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   // Allegati (replace metadata only)
   if (Array.isArray(body.allegati)) {
     const allegati = body.allegati
-    const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-    const clubId = utente?.club_id
 
     const { error: delAllegatiError } = await supabase
       .from('eventi_allegati')
@@ -175,18 +162,16 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
-  const sessionClient = createClient()
+  const session = await getClubFromSession()
+  if (!session) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
 
   const supabase = createAdminClient()
   const eventId = params.id
 
-  const { data: { user } } = await sessionClient.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
-
   // Invalidate outbox future legata all'evento
   await supabase.from('cis_notification_outbox').delete().eq('evento_id', eventId)
 
-  const { error } = await supabase.from('eventi_calendario').delete().eq('id', eventId)
+  const { error } = await supabase.from('eventi_calendario').delete().eq('id', eventId).eq('club_id', session.clubId)
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
   return NextResponse.json({ ok: true })

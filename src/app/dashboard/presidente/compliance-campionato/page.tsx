@@ -2,11 +2,21 @@
 import FeatureGate from '@/components/FeatureGate'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import { PageHeader, Toast } from '@/components/ui'
 import Link from 'next/link'
+import { stagioneCorrente } from '@/lib/helpers'
+import { isPro, isSerieD, isLndRegionale, isFemminile } from '@/lib/categorie-club'
+import { STAGIONE_CORRENTE as STAGIONE_CORRENTE_LABEL } from '@/lib/scadenze-figc'
 
-const STAGIONE = '2024-25'
-const STAGIONE_PREC = '2023-24'
+function stagionePrecedente(corrente: string): string {
+  const annoInizio = parseInt(corrente.split('-')[0], 10) - 1
+  const fine = (annoInizio + 1).toString().slice(2)
+  return `${annoInizio}-${fine}`
+}
+
+const STAGIONE = stagioneCorrente()
+const STAGIONE_PREC = stagionePrecedente(STAGIONE)
 
 interface CheckResult {
   ok: boolean
@@ -17,6 +27,8 @@ interface CheckResult {
 
 interface ClubInfo {
   id: string
+  categoria: string
+  genere: string
   statuto_conforme: boolean
   ras_aggiornato: boolean
   figc_affiliazione_stagione: string | null
@@ -40,21 +52,18 @@ function fmtPct(v: number, tot: number) {
 
 export default function ComplianceCampionatoPage() {
   const supabase = createClient()
+  const clubId = useClubId()
   const [club, setClub] = useState<ClubInfo | null>(null)
   const [checks, setChecks] = useState<Check[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState<string | null>(null)
   const [toast, setToast] = useState<{ msg: string; tipo: 'success' | 'error' } | null>(null)
 
-  useEffect(() => { load() }, [])
+  useEffect(() => { load() }, [clubId])
 
   async function load() {
+    if (!clubId) return
     setLoading(true)
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
-    const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-    if (!utente) return
-    const clubId = utente.club_id
     const oggi = new Date().toISOString().split('T')[0]
 
     const [
@@ -68,7 +77,7 @@ export default function ComplianceCampionatoPage() {
     ] = await Promise.all([
       // Club info per flag booleani
       supabase.from('clubs')
-        .select('id, statuto_conforme, ras_aggiornato, figc_affiliazione_stagione, figc_affiliazione_pagata')
+        .select('id, categoria, genere, statuto_conforme, ras_aggiornato, figc_affiliazione_stagione, figc_affiliazione_pagata')
         .eq('id', clubId)
         .single(),
 
@@ -372,6 +381,76 @@ export default function ComplianceCampionatoPage() {
               </div>
             ))}
           </div>
+
+          {/* Adempimenti specifici per categoria */}
+          {club && isPro(club.categoria) && (
+            <div className="card" style={{
+              marginTop: 20, padding: '18px 24px',
+              border: '1px solid var(--accent)',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap',
+            }}>
+              <div>
+                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 4 }}>
+                  Compliance di iscrizione categoria {club.categoria.replace(/_/g, ' ')}
+                </div>
+                <div style={{ fontSize: 12, color: 'var(--grigio-4)' }}>
+                  Fideiussione/Licenza Nazionale, COVISOC, mercato e liste campionato per la tua categoria sono gestiti nel modulo dedicato.
+                </div>
+              </div>
+              <Link href="/dashboard/segretario/compliance-pro" className="btn btn-primary btn-sm">
+                Vai a Compliance COVISOC
+              </Link>
+            </div>
+          )}
+
+          {club && isLndRegionale(club.categoria) && (
+            <div className="card" style={{ marginTop: 20, padding: '18px 24px' }}>
+              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 10 }}>
+                Adempimenti specifici Eccellenza/Promozione — stagione {STAGIONE_CORRENTE_LABEL}
+              </div>
+              <ul style={{ fontSize: 12, color: 'var(--grigio-4)', lineHeight: 1.8, paddingLeft: 18, margin: 0 }}>
+                <li>Iscrizione telematica al Comitato Regionale di competenza: tassa associativa LND, diritto di iscrizione e Coppa, acconto spese attività, assicurazione tesserati (importi di riferimento — variano per Comitato Regionale).</li>
+                <li>Obbligo di una squadra Juniores U19 (o alternativa U18/U21): la mancata partecipazione comporta un'ammenda.</li>
+                <li>Finestre tesseramento LND: 1 luglio–30 settembre e 1–16 dicembre.</li>
+              </ul>
+              <div style={{ marginTop: 10 }}>
+                <Link href="/dashboard/segretario/scadenze-figc" className="btn btn-secondary btn-sm">Vai a Scadenze FIGC</Link>
+              </div>
+            </div>
+          )}
+
+          {club && isSerieD(club.categoria) && (
+            <div className="card" style={{ marginTop: 20, padding: '18px 24px' }}>
+              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 10 }}>
+                Adempimenti specifici Serie D — stagione {STAGIONE_CORRENTE_LABEL}
+              </div>
+              <ul style={{ fontSize: 12, color: 'var(--grigio-4)', lineHeight: 1.8, paddingLeft: 18, margin: 0 }}>
+                <li>Iscrizione telematica nazionale LND (termine perentorio) con tassa associativa, assicurazione tesserati, diritti di iscrizione e acconto spese (importi di riferimento — verificare il comunicato ufficiale LND).</li>
+                <li>Deposito fideiussione bancaria o garanzia alternativa (importo di riferimento 31.000€).</li>
+                <li>Verifica della documentazione da parte della Co.Vi.So.D. entro i termini indicati dal comunicato ufficiale.</li>
+                <li>Finestre tesseramento LND: 1 luglio–30 settembre e 1–16 dicembre.</li>
+              </ul>
+              <div style={{ marginTop: 10 }}>
+                <Link href="/dashboard/segretario/scadenze-figc" className="btn btn-secondary btn-sm">Vai a Scadenze FIGC</Link>
+              </div>
+            </div>
+          )}
+
+          {club && isFemminile(club.genere) && (
+            <div className="card" style={{ marginTop: 20, padding: '18px 24px' }}>
+              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 10 }}>
+                Adempimenti specifici Attività Femminile — stagione {STAGIONE_CORRENTE_LABEL}
+              </div>
+              <ul style={{ fontSize: 12, color: 'var(--grigio-4)', lineHeight: 1.8, paddingLeft: 18, margin: 0 }}>
+                <li>Serie A/B/C Femminile sono gestite direttamente dalla Divisione Calcio Femminile FIGC (non da Lega Serie A/COVISOC come il calcio maschile): iscrizione e requisiti seguono un iter e un comunicato ufficiale dedicati.</li>
+                <li>Eccellenza/Promozione Femminile fanno capo al Comitato Regionale LND di competenza, con iter analogo al settore maschile ma comunicati e finestre specifici.</li>
+                <li>Finestre tesseramento e obblighi di settore giovanile femminile: verificare sempre il comunicato ufficiale della Divisione Calcio Femminile o del proprio Comitato Regionale — importi e scadenze non sono ancora verificati in questa sezione.</li>
+              </ul>
+              <div style={{ marginTop: 10 }}>
+                <Link href="/dashboard/segretario/scadenze-figc" className="btn btn-secondary btn-sm">Vai a Scadenze FIGC</Link>
+              </div>
+            </div>
+          )}
 
           {/* Info footer */}
           <div style={{

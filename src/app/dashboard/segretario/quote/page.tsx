@@ -1,7 +1,8 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { PageHeader, EmptyState, Toast, Drawer, FormField, FormGrid, Modal } from '@/components/ui'
+import { useClubId, useTipoProdotto } from '@/lib/club-context'
+import { PageHeader, EmptyState, Toast, Drawer, FormField, FormGrid, Modal, TabBar } from '@/components/ui'
 import { stagioneCorrente } from '@/lib/helpers'
 
 function generaStagioni(): string[] {
@@ -15,11 +16,38 @@ function generaStagioni(): string[] {
 
 const STAGIONI = generaStagioni()
 
+// Mesi di una stagione scuola calcio (settembre → giugno), nell'ordine in cui si susseguono
+const MESI_SCUOLA = [
+  { n: 9,  label: 'Settembre' }, { n: 10, label: 'Ottobre' }, { n: 11, label: 'Novembre' },
+  { n: 12, label: 'Dicembre' },  { n: 1,  label: 'Gennaio' }, { n: 2,  label: 'Febbraio' },
+  { n: 3,  label: 'Marzo' },     { n: 4,  label: 'Aprile' },  { n: 5,  label: 'Maggio' },
+  { n: 6,  label: 'Giugno' },
+]
+const MESE_LABEL: Record<number, string> = Object.fromEntries(MESI_SCUOLA.map(m => [m.n, m.label]))
+
+function meseCorrenteDefault(): number {
+  const oggi = new Date().getMonth() + 1
+  return MESI_SCUOLA.some(m => m.n === oggi) ? oggi : 9
+}
+
+// Se il segretario non imposta una scadenza esplicita, ne calcoliamo una di
+// default (il 10 del mese di competenza) — senza questa data la quota non
+// verrebbe mai intercettata dal promemoria automatico alle famiglie.
+function scadenzaDefaultPerMese(stagione: string, mese: number): string {
+  const annoBase = parseInt(stagione.split('-')[0], 10)
+  const anno = mese >= 9 ? annoBase : annoBase + 1
+  return `${anno}-${String(mese).padStart(2, '0')}-10`
+}
+
 export default function QuotePage() {
   const supabase = createClient()
+  const clubId = useClubId()
+  const isScuolaCalcio = useTipoProdotto() === 'scuola_calcio_standalone'
+
   const [quote,   setQuote]   = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [filtro,  setFiltro]  = useState<'tutti' | 'non_pagato' | 'parziale' | 'pagato'>('tutti')
+  const [meseFiltro, setMeseFiltro] = useState<number | 'tutti'>('tutti')
   const [toast,   setToast]   = useState<{ msg: string; tipo: 'success' | 'error' } | null>(null)
   const [stagione,setStagione]= useState(() => {
     const anno = new Date().getFullYear()
@@ -27,9 +55,8 @@ export default function QuotePage() {
     const annoBase = mese >= 6 ? anno : anno - 1
     return `${annoBase}-${String(annoBase + 1).slice(-2)}`
   })
-  const [clubId,  setClubId]  = useState<string | null>(null)
 
-  // Drawer — nuova quota
+  // Drawer — nuova quota (club agonistici: quota unica di stagione)
   const [drawerOpen,     setDrawerOpen]     = useState(false)
   const [giocatoriList,  setGiocatoriList]  = useState<any[]>([])
   const [nGiocatoreId,   setNGiocatoreId]   = useState('')
@@ -40,7 +67,17 @@ export default function QuotePage() {
   const [nNote,          setNNote]          = useState('')
   const [saving,         setSaving]         = useState(false)
 
-  // Piano di pagamento dialog
+  // Drawer — genera quota mensile (solo scuola calcio)
+  const [drawerMeseOpen, setDrawerMeseOpen] = useState(false)
+  const [mModalita,      setMModalita]      = useState<'tutti' | 'singolo'>('tutti')
+  const [mGiocatoreId,   setMGiocatoreId]   = useState('')
+  const [mMese,          setMMese]          = useState(() => meseCorrenteDefault())
+  const [mImporto,       setMImporto]       = useState('')
+  const [mScadenza,      setMScadenza]      = useState('')
+  const [mNote,          setMNote]          = useState('')
+  const [savingMese,     setSavingMese]     = useState(false)
+
+  // Piano di pagamento dialog (solo club agonistici)
   const [chiediPiano,    setChiediPiano]    = useState(false)
   const [nRate,          setNRate]          = useState('3')
   const [primaScadenza,  setPrimaScadenza]  = useState('')
@@ -49,36 +86,105 @@ export default function QuotePage() {
 
   /* ── Load ──────────────────────────────────────────────────────── */
 
+  // Colma in automatico eventuali tesserati attivi che non hanno la quota per
+  // un mese già aperto per gli altri (es. aggiunti prima di questo fix, o
+  // arrivati da un percorso diverso dal form "Aggiungi giocatore"). Copia
+  // importo e scadenza già in uso per quel mese. Idempotente: se non manca
+  // nulla non scrive niente.
+  async function colmaQuoteMancanti(righeAttuali: any[]) {
+    if (!clubId) return righeAttuali
+    const mesiEsistenti = [...new Set(righeAttuali.filter(q => q.mese > 0).map(q => q.mese))]
+    if (mesiEsistenti.length === 0) return righeAttuali
+
+    const { data: tesserati } = await supabase
+      .from('tesseramenti')
+      .select('giocatore_id, data_inizio')
+      .eq('club_id', clubId)
+      .eq('stato', 'attivo')
+    if (!tesserati || tesserati.length === 0) return righeAttuali
+
+    // Se un giocatore ha più tesseramenti attivi, tiene la data di inizio più
+    // vecchia (la sua prima iscrizione) come riferimento per il mese di partenza.
+    const meseIscrizionePerGiocatore = new Map<string, string | null>()
+    for (const t of tesserati) {
+      const cur = meseIscrizionePerGiocatore.get(t.giocatore_id)
+      if (cur === undefined || (t.data_inizio && (!cur || t.data_inizio < cur))) {
+        meseIscrizionePerGiocatore.set(t.giocatore_id, t.data_inizio)
+      }
+    }
+
+    const presente = new Set(righeAttuali.map(q => `${q.giocatore_id}:${q.mese}`))
+    const perMese = new Map<number, { importo_totale: number; scadenza: string | null }>()
+    for (const m of mesiEsistenti) {
+      const ref = righeAttuali.find(q => q.mese === m)
+      if (ref) perMese.set(m, { importo_totale: ref.importo_totale, scadenza: ref.scadenza })
+    }
+
+    // Stagione scuola calcio: settembre(9)..dicembre(12), gennaio(1)..giugno(6).
+    // Normalizza l'ordine cronologico reale per confrontare "mese >= iscrizione".
+    const ordineStagione = (m: number) => (m >= 7 ? m : m + 12)
+
+    const daCreare: any[] = []
+    for (const [gid, dataInizio] of meseIscrizionePerGiocatore.entries()) {
+      const meseIscrizione = dataInizio ? new Date(dataInizio).getMonth() + 1 : 1
+      const soglia = ordineStagione(meseIscrizione)
+      for (const m of mesiEsistenti) {
+        if (ordineStagione(m) < soglia) continue
+        if (presente.has(`${gid}:${m}`)) continue
+        const dati = perMese.get(m)
+        if (!dati) continue
+        daCreare.push({
+          giocatore_id: gid, club_id: clubId, stagione, mese: m,
+          importo_totale: dati.importo_totale, importo_pagato: 0, stato: 'non_pagato',
+          scadenza: dati.scadenza,
+        })
+      }
+    }
+    if (daCreare.length === 0) return righeAttuali
+
+    const { data: creati } = await supabase
+      .from('quote_iscrizione')
+      .upsert(daCreare, { onConflict: 'giocatore_id,club_id,stagione,mese', ignoreDuplicates: true })
+      .select('*, giocatori(id, nome, cognome)')
+
+    return [...righeAttuali, ...(creati ?? [])]
+  }
+
   const load = useCallback(async () => {
+    if (!clubId) return
     setLoading(true)
-    const { data: { user } }  = await supabase.auth.getUser()
-    if (!user) return
-    const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-    if (!utente) return
-    setClubId(utente.club_id)
 
     const { data } = await supabase
       .from('quote_iscrizione')
       .select('*, giocatori(id, nome, cognome)')
-      .eq('club_id', utente.club_id)
+      .eq('club_id', clubId)
       .eq('stagione', stagione)
+      .order('mese')
       .order('stato')
-    setQuote(data ?? [])
+
+    let righe = data ?? []
+    if (isScuolaCalcio) righe = await colmaQuoteMancanti(righe)
+
+    setQuote(righe)
     setLoading(false)
-  }, [stagione])
+  }, [stagione, clubId, isScuolaCalcio])
 
   useEffect(() => { load() }, [load])
 
-  /* ── Apri drawer ───────────────────────────────────────────────── */
-
-  async function apriDrawer() {
-    if (!clubId) return
+  const caricaTesseratiAttivi = useCallback(async () => {
+    if (!clubId) return [] as any[]
     const { data: tesserati } = await supabase
       .from('tesseramenti')
       .select('giocatori(id, nome, cognome)')
       .eq('club_id', clubId)
       .eq('stato', 'attivo')
-    setGiocatoriList(tesserati?.map(t => t.giocatori as any).filter(Boolean) ?? [])
+    return tesserati?.map(t => t.giocatori as any).filter(Boolean) ?? []
+  }, [clubId])
+
+  /* ── Apri drawer (agonistico) ──────────────────────────────────── */
+
+  async function apriDrawer() {
+    setGiocatoriList(await caricaTesseratiAttivi())
     setNGiocatoreId('')
     setNStagione(stagione)
     setNImporto('')
@@ -88,7 +194,20 @@ export default function QuotePage() {
     setDrawerOpen(true)
   }
 
-  /* ── Salva quota ───────────────────────────────────────────────── */
+  /* ── Apri drawer (quota mensile scuola calcio) ────────────────── */
+
+  async function apriDrawerMese() {
+    setGiocatoriList(await caricaTesseratiAttivi())
+    setMModalita('tutti')
+    setMGiocatoreId('')
+    setMMese(meseCorrenteDefault())
+    setMImporto('')
+    setMScadenza('')
+    setMNote('')
+    setDrawerMeseOpen(true)
+  }
+
+  /* ── Salva quota (agonistico) ──────────────────────────────────── */
 
   async function salvaQuota() {
     if (!nGiocatoreId || !nImporto) {
@@ -130,13 +249,81 @@ export default function QuotePage() {
     }
   }
 
-  /* ── Crea piano di pagamento ───────────────────────────────────── */
+  /* ── Genera quota/e mensile/i (scuola calcio) ─────────────────── */
+
+  async function generaQuoteMensili() {
+    if (!mImporto || !clubId) {
+      setToast({ msg: 'L\'importo della quota è obbligatorio', tipo: 'error' }); return
+    }
+    if (mModalita === 'singolo' && !mGiocatoreId) {
+      setToast({ msg: 'Seleziona un giocatore', tipo: 'error' }); return
+    }
+    setSavingMese(true)
+    const importo = parseFloat(mImporto)
+
+    if (mModalita === 'tutti') {
+      const ids = [...new Set(giocatoriList.map(g => g.id))]
+      if (ids.length === 0) {
+        setSavingMese(false)
+        setToast({ msg: 'Nessun tesserato attivo trovato', tipo: 'error' }); return
+      }
+      const payload = ids.map(id => ({
+        giocatore_id:   id,
+        club_id:        clubId,
+        stagione,
+        mese:           mMese,
+        importo_totale: importo,
+        importo_pagato: 0,
+        stato:          'non_pagato',
+        scadenza:       mScadenza || scadenzaDefaultPerMese(stagione, mMese),
+        note:           mNote || null,
+      }))
+      const { data, error } = await supabase
+        .from('quote_iscrizione')
+        .upsert(payload, { onConflict: 'giocatore_id,club_id,stagione,mese', ignoreDuplicates: true })
+        .select('id')
+      setSavingMese(false)
+      if (error) { setToast({ msg: error.message, tipo: 'error' }); return }
+
+      const creati  = data?.length ?? 0
+      const saltati = ids.length - creati
+      setToast({
+        msg: `${creati} quote di ${MESE_LABEL[mMese]} create` + (saltati > 0 ? ` — ${saltati} già esistenti, saltate` : ''),
+        tipo: 'success',
+      })
+      setDrawerMeseOpen(false)
+      load()
+    } else {
+      const { error } = await supabase.from('quote_iscrizione').insert({
+        giocatore_id:   mGiocatoreId,
+        club_id:        clubId,
+        stagione,
+        mese:           mMese,
+        importo_totale: importo,
+        importo_pagato: 0,
+        stato:          'non_pagato',
+        scadenza:       mScadenza || scadenzaDefaultPerMese(stagione, mMese),
+        note:           mNote || null,
+      })
+      setSavingMese(false)
+      if (error) {
+        const msg = error.code === '23505'
+          ? `Quota di ${MESE_LABEL[mMese]} già esistente per questo giocatore`
+          : error.message
+        setToast({ msg, tipo: 'error' }); return
+      }
+      setToast({ msg: `Quota di ${MESE_LABEL[mMese]} creata`, tipo: 'success' })
+      setDrawerMeseOpen(false)
+      load()
+    }
+  }
+
+  /* ── Crea piano di pagamento (agonistico) ─────────────────────── */
 
   async function creaPiano() {
     if (!ultimaQuotaId || !primaScadenza || !nRate || !nGiocatoreId || !clubId) return
     setSavingPiano(true)
 
-    // Trova la famiglia collegata al giocatore
     const { data: famData } = await supabase
       .from('famiglie')
       .select('id')
@@ -150,7 +337,6 @@ export default function QuotePage() {
       return
     }
 
-    // Crea il piano in piani_pagamento (struttura corretta, visibile alla famiglia)
     const importoTot = parseFloat(nImporto)
     const { data: piano, error: errPiano } = await supabase
       .from('piani_pagamento')
@@ -169,7 +355,6 @@ export default function QuotePage() {
       return
     }
 
-    // Crea le rate con i campi corretti
     const n = parseInt(nRate)
     const importoRata = importoTot / n
     const scad = new Date(primaScadenza)
@@ -210,6 +395,24 @@ export default function QuotePage() {
       data_pagamento: new Date().toISOString().split('T')[0],
       registrato_da:  user!.id,
     })
+
+    // Scuola calcio: la quota incassata entra subito in Prima Nota come
+    // entrata, senza doverla ribattere a mano.
+    if (isScuolaCalcio && clubId) {
+      const quota = quote.find(q => q.id === quotaId)
+      const nomeGiocatore = quota?.giocatori ? `${quota.giocatori.cognome} ${quota.giocatori.nome}` : ''
+      const meseLabel = quota ? MESE_LABEL[quota.mese] ?? '' : ''
+      await supabase.from('prima_nota').insert({
+        club_id:      clubId,
+        tipo:         'entrata',
+        categoria:    'quote_iscrizione',
+        importo,
+        data:         new Date().toISOString().split('T')[0],
+        descrizione:  `Quota ${meseLabel} — ${nomeGiocatore}`.trim(),
+        registrato_da: user!.id,
+      })
+    }
+
     setToast({ msg: 'Pagamento registrato', tipo: 'success' })
     load()
   }
@@ -220,7 +423,10 @@ export default function QuotePage() {
 
   /* ── Derived ───────────────────────────────────────────────────── */
 
-  const filtrate = quote.filter(q => filtro === 'tutti' || q.stato === filtro)
+  const filtrate = quote
+    .filter(q => filtro === 'tutti' || q.stato === filtro)
+    .filter(q => !isScuolaCalcio || meseFiltro === 'tutti' || q.mese === meseFiltro)
+
   const totArretrato = quote
     .filter(q => q.stato !== 'pagato' && q.stato !== 'esonerato')
     .reduce((s, q) => s + (q.importo_totale - q.importo_pagato), 0)
@@ -230,13 +436,19 @@ export default function QuotePage() {
     pagato: 'badge-verde', esonerato: 'badge-grigio', rimborsato: 'badge-blu',
   }
 
+  const nQuoteScadute = quote.filter(q => q.stato !== 'pagato').length
+
   /* ── Render ────────────────────────────────────────────────────── */
 
   return (
     <div>
       <PageHeader
-        title="Quote iscrizione"
-        subtitle={`Stagione ${stagione} · Arretrato totale: €${totArretrato.toFixed(0)}`}
+        title={isScuolaCalcio ? 'Quote mensili' : 'Quote iscrizione'}
+        subtitle={
+          isScuolaCalcio
+            ? `Stagione ${stagione} · Retta mensile dei tesserati · Arretrato totale: €${totArretrato.toFixed(0)}`
+            : `Stagione ${stagione} · Arretrato totale: €${totArretrato.toFixed(0)}`
+        }
         actions={
           <div style={{ display: 'flex', gap: 10 }}>
             <select className="input" style={{ width: 120 }} value={stagione} onChange={e => setStagione(e.target.value)}>
@@ -244,21 +456,46 @@ export default function QuotePage() {
                 <option key={s} value={s}>{s}</option>
               ))}
             </select>
-            <button className="btn btn-primary btn-sm" onClick={apriDrawer}>+ Nuova quota</button>
+            {isScuolaCalcio ? (
+              <button className="btn btn-primary btn-sm" onClick={apriDrawerMese}>+ Nuova quota mensile</button>
+            ) : (
+              <button className="btn btn-primary btn-sm" onClick={apriDrawer}>+ Nuova quota</button>
+            )}
           </div>
         }
       />
+
+      {isScuolaCalcio && (
+        <div className="alert" style={{ marginBottom: 20, fontSize: 13, background: 'var(--grigio-6)', border: '1px solid var(--border-solid)' }}>
+          💡 Ogni mese genera una quota per tutti i tesserati (o per un solo giocatore) con l'importo della retta
+          mensile. Segna il pagamento quando arriva, mese per mese — come una palestra.
+        </div>
+      )}
 
       {totArretrato > 0 && (
         <div className="alert alert-warning" style={{ marginBottom: 20 }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
           </svg>
-          Arretrato totale da riscuotere: <strong>€{totArretrato.toFixed(2)}</strong> su {quote.filter(q => q.stato !== 'pagato').length} giocatori.
+          Arretrato totale da riscuotere: <strong>€{totArretrato.toFixed(2)}</strong> su {nQuoteScadute} {isScuolaCalcio ? 'quote mensili' : 'giocatori'}.
         </div>
       )}
 
-      {/* Filtri */}
+      {/* Tab mesi — solo scuola calcio */}
+      {isScuolaCalcio && (
+        <div style={{ marginBottom: 14 }}>
+          <TabBar
+            tabs={[
+              { key: 'tutti', label: 'Tutti i mesi', count: quote.length },
+              ...MESI_SCUOLA.map(m => ({ key: String(m.n), label: m.label, count: quote.filter(q => q.mese === m.n).length })),
+            ]}
+            active={String(meseFiltro)}
+            onChange={v => setMeseFiltro(v === 'tutti' ? 'tutti' : parseInt(v))}
+          />
+        </div>
+      )}
+
+      {/* Filtri stato */}
       <div style={{ display: 'flex', gap: 10, marginBottom: 16 }}>
         {([
           { v: 'tutti' as const,      l: `Tutti (${quote.length})` },
@@ -284,13 +521,19 @@ export default function QuotePage() {
         {loading ? (
           <div style={{ padding: '60px 20px', textAlign: 'center', color: 'var(--grigio-4)' }}>Caricamento...</div>
         ) : filtrate.length === 0 ? (
-          <EmptyState icon="💶" title="Nessuna quota" subtitle="Aggiungi la prima quota per iniziare" action={{ label: '+ Nuova quota', href: '#' }} />
+          <EmptyState
+            icon="💶"
+            title={isScuolaCalcio ? 'Nessuna quota mensile' : 'Nessuna quota'}
+            subtitle={isScuolaCalcio ? 'Genera la prima quota mensile per iniziare' : 'Aggiungi la prima quota per iniziare'}
+            action={{ label: isScuolaCalcio ? '+ Nuova quota mensile' : '+ Nuova quota', href: '#' }}
+          />
         ) : (
           <div className="table-wrap">
             <table>
               <thead>
                 <tr>
                   <th>Giocatore</th>
+                  {isScuolaCalcio && <th>Mese</th>}
                   <th>Totale</th>
                   <th>Pagato</th>
                   <th>Da pagare</th>
@@ -307,6 +550,11 @@ export default function QuotePage() {
                   return (
                     <tr key={q.id}>
                       <td style={{ fontWeight: 500, fontSize: 13 }}>{g?.cognome} {g?.nome}</td>
+                      {isScuolaCalcio && (
+                        <td style={{ fontSize: 12, color: 'var(--grigio-3)' }}>
+                          {q.mese ? MESE_LABEL[q.mese] ?? q.mese : '—'}
+                        </td>
+                      )}
                       <td style={{ fontFamily: 'var(--font-mono)', fontSize: 13 }}>€{q.importo_totale.toFixed(0)}</td>
                       <td>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -363,7 +611,7 @@ export default function QuotePage() {
         )}
       </div>
 
-      {/* ── Drawer nuova quota ──────────────────────────────────────── */}
+      {/* ── Drawer nuova quota (club agonistici) ──────────────────── */}
       <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)} title="Nuova quota iscrizione" width={560}>
         <FormField label="Giocatore" required>
           <select
@@ -462,7 +710,80 @@ export default function QuotePage() {
         </div>
       </Drawer>
 
-      {/* ── Modal piano di pagamento ────────────────────────────────── */}
+      {/* ── Drawer nuova quota mensile (scuola calcio) ────────────── */}
+      <Drawer open={drawerMeseOpen} onClose={() => setDrawerMeseOpen(false)} title="Nuova quota mensile" width={560}>
+        <FormField label="A chi si applica" required>
+          <select className="input" style={{ width: '100%' }} value={mModalita} onChange={e => setMModalita(e.target.value as 'tutti' | 'singolo')}>
+            <option value="tutti">Tutti i tesserati attivi ({giocatoriList.length})</option>
+            <option value="singolo">Un solo giocatore</option>
+          </select>
+        </FormField>
+
+        {mModalita === 'singolo' && (
+          <FormField label="Giocatore" required>
+            <select className="input" style={{ width: '100%' }} value={mGiocatoreId} onChange={e => setMGiocatoreId(e.target.value)}>
+              <option value="">— Seleziona giocatore —</option>
+              {giocatoriList.map(g => (
+                <option key={g.id} value={g.id}>{g.cognome} {g.nome}</option>
+              ))}
+            </select>
+          </FormField>
+        )}
+
+        <FormGrid cols={2}>
+          <FormField label="Mese" required>
+            <select className="input" style={{ width: '100%' }} value={mMese} onChange={e => setMMese(parseInt(e.target.value))}>
+              {MESI_SCUOLA.map(m => (
+                <option key={m.n} value={m.n}>{m.label}</option>
+              ))}
+            </select>
+          </FormField>
+          <FormField label="Importo retta mensile (€)" required>
+            <input
+              className="input" type="number" min="0" step="5" style={{ width: '100%' }}
+              value={mImporto} onChange={e => setMImporto(e.target.value)} placeholder="40"
+            />
+          </FormField>
+        </FormGrid>
+
+        <FormField label="Scadenza pagamento">
+          <input className="input" type="date" style={{ width: '100%' }} value={mScadenza} onChange={e => setMScadenza(e.target.value)} />
+          <p style={{ fontSize: 11, color: 'var(--grigio-4)', marginTop: 4 }}>
+            Se lasci vuoto, viene impostato automaticamente il 10 del mese di competenza — serve per avvisare le famiglie in tempo.
+          </p>
+        </FormField>
+
+        <FormField label="Note">
+          <textarea
+            className="input" rows={2} style={{ width: '100%', resize: 'vertical' as const }}
+            value={mNote} onChange={e => setMNote(e.target.value)} placeholder="Eventuali sconti, esenzioni..."
+          />
+        </FormField>
+
+        {mModalita === 'tutti' && (
+          <div style={{
+            padding: '10px 14px', borderRadius: 8, background: 'var(--grigio-6)',
+            fontSize: 12, color: 'var(--grigio-3)', marginBottom: 8,
+          }}>
+            💡 Se un giocatore ha già una quota per {MESE_LABEL[mMese]}, non verrà duplicata: viene saltato in automatico.
+          </div>
+        )}
+
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 8 }}>
+          <button className="btn btn-secondary btn-sm" onClick={() => setDrawerMeseOpen(false)}>
+            Annulla
+          </button>
+          <button
+            className="btn btn-primary"
+            onClick={generaQuoteMensili}
+            disabled={savingMese || !mImporto || (mModalita === 'singolo' && !mGiocatoreId)}
+          >
+            {savingMese ? 'Genero…' : 'Genera quota mensile'}
+          </button>
+        </div>
+      </Drawer>
+
+      {/* ── Modal piano di pagamento (solo club agonistici) ───────── */}
       <Modal open={chiediPiano} onClose={() => setChiediPiano(false)} title="Piano di pagamento" width={440}>
         <p style={{ fontSize: 13, color: 'var(--grigio-3)', marginBottom: 20 }}>
           Vuoi creare un piano di pagamento con rate mensili per questa quota di{' '}

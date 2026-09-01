@@ -1,41 +1,47 @@
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
+import { getUserContext } from '@/lib/impersonation'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import ObiettiviWidget from '@/components/ui/ObiettiviWidget'
 import AzioniRapide from '@/components/ui/AzioniRapide'
 import DMScoutWidget from '@/components/ui/DMScoutWidget'
+import { getSquadreAllenatore } from '@/lib/settore-giovanile'
 
 export default async function AllenatoreDashboard() {
-  const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth/login')
+  const ctx = await getUserContext()
+  if (!ctx) redirect('/auth/login')
+  const { clubId, userId } = ctx
 
-  const { data: utente, error: utenteError } = await supabase
+  const supabase = createAdminClient()
+
+  const { data: utente } = await supabase
     .from('utenti')
-    .select('club_id, nome, squadre_ids')
-    .eq('id', user.id)
-    .single()
-  if (utenteError || !utente) redirect('/auth/errore')
+    .select('nome')
+    .eq('id', userId)
+    .maybeSingle()
 
   const { data: clubData } = await supabase
     .from('clubs')
     .select('dmscout_abbonamento_attivo, dmscout_abbonamento_scadenza')
-    .eq('id', utente.club_id)
+    .eq('id', clubId)
     .maybeSingle()
+
+  const { data: clubTipo } = await supabase
+    .from('clubs')
+    .select('tipo_prodotto')
+    .eq('id', clubId)
+    .maybeSingle()
+
+  const isScuolaCalcio = clubTipo?.tipo_prodotto === 'scuola_calcio_standalone'
 
   const oggi = new Date()
   const oggiStr = oggi.toISOString().split('T')[0]
   const tra7 = new Date(oggi); tra7.setDate(oggi.getDate() + 7)
 
-  // Squadre dell'allenatore
-  const { data: squadre } = await supabase
-    .from('squadre')
-    .select('id, nome, categoria_eta')
-    .eq('club_id', utente.club_id)
-    .eq('allenatore_id', user.id)
-    .eq('attiva', true)
+  // Squadre dell'allenatore (titolare o co-allenatore)
+  const squadre = await getSquadreAllenatore(supabase, { clubId, allenatoreId: userId })
 
-  const squadraIds = squadre?.map(s => s.id) ?? []
+  const squadraIds = squadre.map(s => s.id)
 
   const [
     { data: prossimaSessione },
@@ -84,25 +90,61 @@ export default async function AllenatoreDashboard() {
 
   const sqNome = (id: string) => squadre?.find(s => s.id === id)?.nome ?? '—'
 
+  // Scuola calcio: eventi del Calendario (riunioni, visite mediche, trasferte,
+  // ecc.) in cui il mister o una sua squadra sono partecipanti selezionati —
+  // altrimenti restano visibili solo a chi li ha creati.
+  const EVENTO_LABEL: Record<string, string> = {
+    allenamento: 'Allenamento', partita: 'Partita', riunione: 'Riunione',
+    visita_medica: 'Visita medica', trasferta: 'Trasferta',
+  }
+  const EVENTO_ICONA: Record<string, string> = {
+    allenamento: '🏃', partita: '⚽', riunione: '📋', visita_medica: '🏥', trasferta: '🚌',
+  }
+  let prossimiEventi: { id: string; tipologia: string; data_ora_inizio: string; luogo_testo: string | null }[] = []
+  if (isScuolaCalcio) {
+    const orParts = [`staff_id.eq.${userId}`]
+    if (squadraIds.length > 0) orParts.push(`squadra_id.in.(${squadraIds.join(',')})`)
+    const { data: partecipazioni } = await supabase
+      .from('eventi_partecipanti')
+      .select('evento_id')
+      .eq('club_id', clubId)
+      .or(orParts.join(','))
+
+    const eventoIds = [...new Set((partecipazioni ?? []).map((p: any) => p.evento_id))]
+    if (eventoIds.length > 0) {
+      const { data } = await supabase
+        .from('eventi_calendario')
+        .select('id, tipologia, data_ora_inizio, luogo_testo')
+        .in('id', eventoIds)
+        .gte('data_ora_inizio', oggi.toISOString())
+        .lte('data_ora_inizio', tra7.toISOString())
+        .order('data_ora_inizio')
+        .limit(5)
+      prossimiEventi = data ?? []
+    }
+  }
+
   return (
     <div>
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Ciao, {utente.nome}</h1>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Ciao, {utente?.nome ?? ''}</h1>
         <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>
           {oggi.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' })}
           {squadre && squadre.length > 0 && ` · ${squadre.map(s => s.nome).join(', ')}`}
         </p>
       </div>
 
-      <AzioniRapide ruolo="allenatore" />
+      <AzioniRapide ruolo="allenatore" variante={isScuolaCalcio ? 'scuola_calcio' : 'agonistico'} />
 
-      <DMScoutWidget
-        attivo={clubData?.dmscout_abbonamento_attivo ?? false}
-        scadenza={clubData?.dmscout_abbonamento_scadenza ?? null}
-        clubId={utente.club_id}
-      />
+      {!isScuolaCalcio && (
+        <DMScoutWidget
+          attivo={clubData?.dmscout_abbonamento_attivo ?? false}
+          scadenza={clubData?.dmscout_abbonamento_scadenza ?? null}
+          clubId={clubId}
+        />
+      )}
 
-      <ObiettiviWidget clubId={utente.club_id} ruolo="allenatore" />
+      <ObiettiviWidget clubId={clubId} ruolo="allenatore" />
 
       {/* Prossimo allenamento — card prominente */}
       {prossimaSessione?.[0] && (
@@ -142,7 +184,7 @@ export default async function AllenatoreDashboard() {
       )}
 
       {/* Stat cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 28 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 14, marginBottom: 28 }}>
         <div className="stat-card">
           <div className="stat-label">Squadre</div>
           <div className="stat-value">{squadre?.length ?? 0}</div>
@@ -175,7 +217,7 @@ export default async function AllenatoreDashboard() {
       </div>
 
       {/* 2 colonne */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 20 }}>
+      <div className="stack-mobile" style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 20 }}>
         {/* Ultimi allenamenti */}
         <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
           <div style={{
@@ -256,6 +298,31 @@ export default async function AllenatoreDashboard() {
               ))}
             </div>
           </div>
+
+          {/* Prossimi eventi calendario (scuola calcio) */}
+          {isScuolaCalcio && prossimiEventi.length > 0 && (
+            <div className="card" style={{ padding: 18 }}>
+              <div style={{ fontSize: 11, fontWeight: 500, color: 'var(--grigio-4)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>
+                Prossimi eventi
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {prossimiEventi.map(e => (
+                  <div key={e.id} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+                    <span style={{ fontSize: 16 }}>{EVENTO_ICONA[e.tipologia] ?? '📅'}</span>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 600 }}>{EVENTO_LABEL[e.tipologia] ?? e.tipologia}</div>
+                      <div style={{ fontSize: 12, color: 'var(--grigio-3)' }}>
+                        {new Date(e.data_ora_inizio).toLocaleDateString('it-IT', { weekday: 'short', day: 'numeric', month: 'short' })}
+                        {' · '}
+                        {new Date(e.data_ora_inizio).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}
+                        {e.luogo_testo && ` · ${e.luogo_testo}`}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Prossima partita card */}
           {prossimaPartita?.[0] && (

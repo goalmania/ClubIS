@@ -1,18 +1,13 @@
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { NextRequest, NextResponse } from 'next/server'
+import { getClubFromSession } from '@/lib/server-helpers'
 
 export async function GET(req: NextRequest) {
-  const sessionClient = createClient()
+  const session = await getClubFromSession()
+  if (!session) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
 
   const supabase = createAdminClient()
-  const { data: { user } } = await sessionClient.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
-
-  const { data: utente } = await supabase
-    .from('utenti').select('club_id').eq('id', user.id).single()
-  if (!utente) return NextResponse.json({ error: 'Utente non trovato' }, { status: 400 })
-  const clubId = utente.club_id
+  const clubId = session.clubId
 
   const anno = parseInt(req.nextUrl.searchParams.get('anno') ?? String(new Date().getFullYear()), 10)
 

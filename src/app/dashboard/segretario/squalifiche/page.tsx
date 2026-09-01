@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import { Modal, Toast } from '@/components/ui'
 import Link from 'next/link'
 
@@ -27,7 +28,7 @@ const today = new Date().toISOString().split('T')[0]
 
 export default function SqualifichePage() {
   const supabase = createClient()
-  const [clubId, setClubId] = useState<string | null>(null)
+  const clubId = useClubId()
   const [squadreIds, setSquadreIds] = useState<string[]>([])
   const [squalifiche, setSqualifiche] = useState<Squalifica[]>([])
   const [giocatori, setGiocatori] = useState<GiocatoreOption[]>([])
@@ -46,32 +47,22 @@ export default function SqualifichePage() {
   useEffect(() => { init() }, [])
 
   const init = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
+    if (!clubId) return
 
-    const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-    if (!utente) return
-    setClubId(utente.club_id)
-
-    const [{ data: sq }, { data: tess }, { data: sqd }] = await Promise.all([
-      supabase
-        .from('squalifiche')
-        .select('id, giocatore_id, motivo, partite_restanti, giornate_squalifica, data_inizio, data_fine, comunicato_figc, giocatori(nome, cognome, numero_maglia)')
-        .eq('club_id', utente.club_id)
-        .or(`partite_restanti.gt.0,data_fine.gte.${today}`)
-        .order('data_inizio', { ascending: false }),
+    const [sqRes, { data: tess }, { data: sqd }] = await Promise.all([
+      fetch('/api/squalifiche').then(r => r.json()),
       supabase
         .from('tesseramenti')
         .select('numero_maglia, giocatori(id, nome, cognome)')
-        .eq('club_id', utente.club_id)
+        .eq('club_id', clubId)
         .eq('stato', 'attivo'),
       supabase
         .from('squadre')
         .select('id')
-        .eq('club_id', utente.club_id),
+        .eq('club_id', clubId),
     ])
 
-    setSqualifiche((sq ?? []) as unknown as Squalifica[])
+    setSqualifiche(Array.isArray(sqRes) ? sqRes : [])
     setSquadreIds((sqd ?? []).map((s: any) => s.id))
     setGiocatori(
       (tess ?? [])
@@ -104,40 +95,46 @@ export default function SqualifichePage() {
       setToast({ msg: 'Giocatore, data inizio e giornate sono obbligatori', tipo: 'error' })
       return
     }
-    if (!clubId) return
     setSaving(true)
 
     const dataFine = await calcDataFine(form.data_inizio, form.giornate)
 
-    const { error } = await supabase.from('squalifiche').insert({
-      club_id: clubId,
-      giocatore_id: form.giocatore_id,
-      motivo: form.motivo || null,
-      partite_restanti: form.giornate,
-      giornate_squalifica: form.giornate,
-      data_inizio: form.data_inizio,
-      data_fine: dataFine,
-      comunicato_figc: form.comunicato_figc || null,
+    const res = await fetch('/api/squalifiche', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        giocatore_id: form.giocatore_id,
+        motivo: form.motivo || 'Squalifica manuale',
+        giornate: form.giornate,
+        data_inizio: form.data_inizio,
+        data_fine: dataFine,
+        comunicato_figc: form.comunicato_figc || null,
+      }),
     })
 
+    const json = await res.json()
     setSaving(false)
-    if (error) {
-      setToast({ msg: error.message, tipo: 'error' })
+
+    if (!res.ok || json.error) {
+      setToast({ msg: json.error ?? 'Errore sconosciuto', tipo: 'error' })
     } else {
       setToast({ msg: 'Squalifica inserita', tipo: 'success' })
       setModalOpen(false)
       setForm({ giocatore_id: '', comunicato_figc: '', data_inizio: today, giornate: 1, motivo: '' })
-      init()
+      const updated = await fetch('/api/squalifiche').then(r => r.json())
+      setSqualifiche(Array.isArray(updated) ? updated : [])
     }
   }
 
   const segnaRientro = async (id: string) => {
-    const { error } = await supabase
-      .from('squalifiche')
-      .update({ partite_restanti: 0, giornate_rimanenti: 0 })
-      .eq('id', id)
-    if (error) {
-      setToast({ msg: error.message, tipo: 'error' })
+    const res = await fetch('/api/squalifiche', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    })
+    const json = await res.json()
+    if (!res.ok || json.error) {
+      setToast({ msg: json.error ?? 'Errore', tipo: 'error' })
     } else {
       setToast({ msg: 'Rientro registrato', tipo: 'success' })
       setSqualifiche(prev => prev.filter(s => s.id !== id))

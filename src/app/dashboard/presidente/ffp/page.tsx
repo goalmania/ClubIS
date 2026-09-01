@@ -1,13 +1,12 @@
 import { createClient } from '@/lib/supabase/server'
+import { getUserContext } from '@/lib/impersonation'
 import { redirect } from 'next/navigation'
 
 export default async function FFPBudgetPage() {
   const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth/login')
-  const { data: utente, error: utenteError } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-  if (utenteError || !utente) redirect('/auth/errore')
-  const clubId = utente.club_id
+  const ctx = await getUserContext()
+  if (!ctx) redirect('/auth/login')
+  const clubId = ctx.clubId
 
   const { data: movimenti } = await supabase
     .from('prima_nota')

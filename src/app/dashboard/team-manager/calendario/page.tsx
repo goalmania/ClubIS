@@ -1,11 +1,11 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import TeamManagerCalendario from './TeamManagerCalendario'
+import CalendarioClientOnly from './CalendarioClientOnly'
 
 export default async function TMCalendarioPage() {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
-  return <TeamManagerCalendario />
+  return <CalendarioClientOnly />
 }

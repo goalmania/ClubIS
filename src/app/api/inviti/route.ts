@@ -12,7 +12,7 @@ export async function GET() {
   const [invitiRes, giocRes] = await Promise.all([
     admin
       .from('inviti_club')
-      .select('id, ruolo, token, usato, scadenza, created_at, giocatore_id')
+      .select('id, ruolo, token, usato, scadenza, created_at, giocatore_id, categoria_federale')
       .eq('club_id', clubId)
       .order('created_at', { ascending: false }),
     admin

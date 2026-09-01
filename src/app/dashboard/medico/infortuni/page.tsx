@@ -1,12 +1,13 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import Link from 'next/link'
 import FormInfortunio from '@/components/forms/FormInfortunio'
 
 export default function MedicoInfortuniPage() {
   const supabase = createClient()
-  const [clubId, setClubId] = useState<string | null>(null)
+  const clubId = useClubId()
   const [infortuni, setInfortuni] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [openDrawer, setOpenDrawer] = useState(false)
@@ -14,22 +15,18 @@ export default function MedicoInfortuniPage() {
 
   useEffect(() => {
     async function init() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-      const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-      if (!utente) return
-      setClubId(utente.club_id)
+      if (!clubId) return
 
       const { data } = await supabase
         .from('infortuni')
         .select('id, tipo, zona_corpo, gravita, data_infortunio, data_rientro_prevista, data_rientro_effettiva, diagnosi, terapia, giocatori(nome, cognome, ruolo_principale)')
-        .eq('club_id', utente.club_id)
+        .eq('club_id', clubId)
         .order('data_infortunio', { ascending: false })
       setInfortuni(data ?? [])
       setLoading(false)
     }
     init()
-  }, [refresh])
+  }, [refresh, clubId])
 
   const attivi = infortuni.filter(i => !i.data_rientro_effettiva)
   const risolti = infortuni.filter(i => i.data_rientro_effettiva)

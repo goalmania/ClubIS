@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 
 /* ─── Costanti ───────────────────────────────────────────────────── */
 
@@ -194,22 +195,14 @@ function LineChart({ mesi }: { mesi: MeseData[] }) {
 
 export default function BudgetPage() {
   const supabase = createClient()
+  const clubId = useClubId()
 
-  const [clubId, setClubId]       = useState<string | null>(null)
   const [stagione, setStagione]   = useState('2026-27')
   const [budgetItems, setBudgetItems] = useState<BudgetItem[]>([])
   const [editValues, setEditValues]   = useState<Record<string, number>>({})
   const [mesiData, setMesiData]   = useState<MeseData[]>([])
   const [loading, setLoading]     = useState(true)
   const [saving, setSaving]       = useState<string | null>(null)
-
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user) return
-      supabase.from('utenti').select('club_id').eq('id', user.id).single()
-        .then(({ data }) => { if (data) setClubId(data.club_id) })
-    })
-  }, [])
 
   useEffect(() => {
     if (!clubId) return

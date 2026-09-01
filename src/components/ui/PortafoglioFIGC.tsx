@@ -1,9 +1,10 @@
 /**
  * PortafoglioFIGC — widget server component
- * Stima il saldo del portafoglio FIGC basandosi sull'ultima ricarica
- * e sui costi dei tesseramenti effettuati da quella data.
+ * Stima il saldo del portafoglio FIGC: totale ricaricato meno il costo di
+ * tutti i tesseramenti effettuati dalla prima ricarica registrata in poi.
  */
 import { createClient } from '@/lib/supabase/server'
+import { calcolaSaldoPortafoglio } from '@/lib/figc/portafoglio'
 
 interface Props {
   clubId: string
@@ -29,38 +30,26 @@ export default async function PortafoglioFIGC({ clubId }: Props) {
       .from('ricariche_portafoglio_figc')
       .select('id, importo, data, note')
       .eq('club_id', clubId)
-      .order('data', { ascending: false })
-      .limit(10),
+      .order('data', { ascending: false }),
     supabase
       .from('tesseramenti')
-      .select('tipo_tesseramento, created_at')
+      .select('tipo, created_at')
       .eq('club_id', clubId)
-      .eq('stato', 'attivo')
       .order('created_at', { ascending: false }),
   ])
 
-  const costoDefinitivo = Number(club?.costo_tesseramento_definitivo ?? 8)
-  const costoPrestito   = Number(club?.costo_tesseramento_prestito   ?? 5)
+  const costi = {
+    costo_definitivo: Number(club?.costo_tesseramento_definitivo ?? 8),
+    costo_prestito:   Number(club?.costo_tesseramento_prestito   ?? 5),
+  }
 
-  // Ultima ricarica
   const ultimaRicarica = ricariche?.[0] ?? null
-  const dataRicarica   = ultimaRicarica?.data ?? null
 
-  // Tesseramenti effettuati DOPO l'ultima ricarica
-  const tessDaRicarica = (tesseramenti ?? []).filter((t: any) => {
-    if (!dataRicarica) return true
-    return (t.created_at as string).split('T')[0] >= dataRicarica
-  })
-
-  const costoTesseramenti = tessDaRicarica.reduce((s: number, t: any) => {
-    return s + (t.tipo_tesseramento === 'prestito' ? costoPrestito : costoDefinitivo)
-  }, 0)
-
-  const saldoStimato = ultimaRicarica
-    ? Number(ultimaRicarica.importo) - costoTesseramenti
-    : null
-
-  const totalRicaricato = (ricariche ?? []).reduce((s: number, r: any) => s + Number(r.importo), 0)
+  // Saldo cumulativo: totale ricaricato - costo di tutti i tesseramenti dalla
+  // prima ricarica registrata in poi (conta anche i tesserati poi svincolati:
+  // il credito FIGC già consumato non si recupera).
+  const { saldo: saldoStimato, totalRicaricato, costoTesseramenti, tesseramentiConteggiati } =
+    calcolaSaldoPortafoglio(ricariche ?? [], tesseramenti ?? [], costi)
 
   const saldoColor =
     saldoStimato === null ? 'var(--gray)'
@@ -124,10 +113,10 @@ export default async function PortafoglioFIGC({ clubId }: Props) {
 
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)' }}>
-            Tesseramenti da ricarica
+            Tesseramenti conteggiati
           </span>
           <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--white)' }}>
-            {tessDaRicarica.length} (—{fmt(costoTesseramenti)})
+            {tesseramentiConteggiati} (—{fmt(costoTesseramenti)})
           </span>
         </div>
 

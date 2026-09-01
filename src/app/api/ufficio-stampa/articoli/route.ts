@@ -1,17 +1,13 @@
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { NextRequest, NextResponse } from 'next/server'
+import { getClubFromSession } from '@/lib/server-helpers'
 
 // Genera un template articolo a partire da una partita
 export async function GET(req: NextRequest) {
-  const sessionClient = createClient()
+  const session = await getClubFromSession()
+  if (!session) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
 
   const supabase = createAdminClient()
-  const { data: { user } } = await sessionClient.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
-
-  const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-  if (!utente) return NextResponse.json({ error: 'Utente non trovato' }, { status: 404 })
 
   const url = new URL(req.url)
   const partitaId = url.searchParams.get('partita_id')
@@ -24,6 +20,9 @@ export async function GET(req: NextRequest) {
     .single()
 
   if (pErr || !partita) return NextResponse.json({ error: 'Partita non trovata' }, { status: 404 })
+  if ((partita as any).squadre?.club_id !== session.clubId) {
+    return NextResponse.json({ error: 'Partita non trovata' }, { status: 404 })
+  }
 
   // Recupera statistiche e convocazioni per la partita
   const [

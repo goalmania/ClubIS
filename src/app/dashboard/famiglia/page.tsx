@@ -1,175 +1,90 @@
-'use client'
-import { useState, useEffect, useRef } from 'react'
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/server'
+import { createClient as createAdmin } from '@supabase/supabase-js'
+import { redirect } from 'next/navigation'
+import { getFamigliaCollegamenti, type FamigliaCollegamento } from '@/lib/famiglia'
+import { getUserContext } from '@/lib/impersonation'
 import { formatData, formatEuro } from '@/lib/helpers'
 import Link from 'next/link'
 import AzioniRapide from '@/components/ui/AzioniRapide'
 
-export default function FamigliaDashboard() {
-  // Stable client ref — never recreated on re-render
-  const supabase = useRef(createClient()).current
-  const [stato, setStato] = useState<'loading' | 'ok' | 'no_giocatore' | 'errore'>('loading')
-  const [giocatore, setGiocatore] = useState<any>(null)
-  const [familiaNome, setFamiliaNome] = useState<string>('')
-  const [quota, setQuota] = useState<any>(null)
-  const [presenze, setPresenze] = useState<{ tot: number; presenti: number }>({ tot: 0, presenti: 0 })
-  const [valutazioni, setValutazioni] = useState<any[]>([])
-  const [prossimi, setProssimi] = useState<any[]>([])
-  const [messaggi, setMessaggi] = useState<any[]>([])
+type DatiGiocatore = {
+  giocatore: any
+  clubId: string | null
+  quota: any
+  presenze: { tot: number; presenti: number }
+  valutazioni: any[]
+  prossimi: any[]
+  messaggi: any[]
+}
 
-  useEffect(() => {
-    let mounted = true
+async function caricaDatiGiocatore(admin: any, giocatoreId: string, clubIdIn: string | null): Promise<DatiGiocatore> {
+  const { data: giocatore } = await admin
+    .from('giocatori')
+    .select('id, nome, cognome, data_nascita, ruolo_principale, foto_url')
+    .eq('id', giocatoreId)
+    .maybeSingle()
 
-    async function load() {
-      try {
-        const { data: { user } } = await supabase.auth.getUser()
-        if (!user || !mounted) return
+  let clubId = clubIdIn
+  if (!clubId) {
+    const { data: tess } = await admin
+      .from('tesseramenti')
+      .select('club_id')
+      .eq('giocatore_id', giocatoreId)
+      .eq('stato', 'attivo')
+      .maybeSingle()
+    clubId = tess?.club_id ?? null
+  }
 
-        // Cerca l'utente in tabella utenti
-        const { data: utente } = await supabase
-          .from('utenti')
-          .select('club_id, ruolo')
-          .eq('id', user.id)
-          .maybeSingle()
+  const [quotaRes, presenzeRes, valRes, prossimiRes, msgRes] = await Promise.allSettled([
+    admin.from('quote_iscrizione')
+      .select('importo_totale, importo_pagato, stato, scadenza')
+      .eq('giocatore_id', giocatoreId)
+      .order('created_at', { ascending: false })
+      .limit(1),
 
-        // Cerca il collegamento famiglia→giocatore
-        const { data: fam } = await supabase
-          .from('famiglie')
-          .select('giocatore_id, nome, cognome, email')
-          .eq('auth_user_id', user.id)
-          .maybeSingle()
+    admin.from('presenze')
+      .select('presente')
+      .eq('giocatore_id', giocatoreId)
+      .gte('registrato_at', new Date(Date.now() - 30 * 86400000).toISOString()),
 
-        let giocatoreId: string | null = fam?.giocatore_id ?? null
-        let clubId: string | null = utente?.club_id ?? null
+    admin.from('valutazioni_tecniche')
+      .select('data, tecnica, tattica, fisico, mentale, note')
+      .eq('giocatore_id', giocatoreId)
+      .eq('visibile_famiglia', true)
+      .order('data', { ascending: false })
+      .limit(3),
 
-        if (fam?.nome) setFamiliaNome(fam.nome)
+    clubId
+      ? admin.from('partite')
+          .select('id, avversario, data_ora, casa_trasferta')
+          .eq('club_id', clubId)
+          .gte('data_ora', new Date().toISOString())
+          .eq('stato', 'programmata')
+          .order('data_ora')
+          .limit(3)
+      : Promise.resolve({ data: [] }),
 
-        // Se abbiamo giocatoreId ma non clubId, trovalo dal tesseramento
-        if (giocatoreId && !clubId) {
-          const { data: tess } = await supabase
-            .from('tesseramenti')
-            .select('club_id')
-            .eq('giocatore_id', giocatoreId)
-            .eq('stato', 'attivo')
-            .maybeSingle()
-          clubId = tess?.club_id ?? null
-        }
+    clubId
+      ? admin.from('messaggi')
+          .select('id, titolo, tipo, inviato_at')
+          .eq('club_id', clubId)
+          .order('inviato_at', { ascending: false })
+          .limit(4)
+      : Promise.resolve({ data: [] }),
+  ])
 
-        // Se nessun collegamento trovato, mostra stato no_giocatore
-        if (!giocatoreId) {
-          // Ultimo tentativo: cerca in famiglie via email
-          const { data: famByEmail } = await supabase
-            .from('famiglie')
-            .select('giocatore_id, nome, cognome')
-            .eq('email', user.email ?? '')
-            .maybeSingle()
+  const quota = quotaRes.status === 'fulfilled' ? ((quotaRes.value as any).data?.[0] ?? null) : null
+  const presRows = presenzeRes.status === 'fulfilled' ? ((presenzeRes.value as any).data ?? []) : []
+  const presenze = { tot: presRows.length, presenti: presRows.filter((p: any) => p.presente).length }
+  const valutazioni = valRes.status === 'fulfilled' ? ((valRes.value as any).data ?? []) : []
+  const prossimi = prossimiRes.status === 'fulfilled' ? ((prossimiRes.value as any).data ?? []) : []
+  const messaggi = msgRes.status === 'fulfilled' ? ((msgRes.value as any).data ?? []) : []
 
-          if (famByEmail?.giocatore_id) {
-            giocatoreId = famByEmail.giocatore_id
-            if (famByEmail.nome) setFamiliaNome(famByEmail.nome)
-          } else {
-            if (mounted) setStato('no_giocatore')
-            return
-          }
-        }
+  return { giocatore, clubId, quota, presenze, valutazioni, prossimi, messaggi }
+}
 
-        // Carica dati giocatore
-        const { data: g } = await supabase
-          .from('giocatori')
-          .select('id, nome, cognome, data_nascita, ruolo_principale, foto_url')
-          .eq('id', giocatoreId)
-          .maybeSingle()
-
-        if (!g || !mounted) {
-          setStato('no_giocatore')
-          return
-        }
-        setGiocatore(g)
-
-        // Carica tutto in parallelo con gestione errori individuale
-        const [quotaRes, presenzeRes, valRes, prossimiRes, msgRes] = await Promise.allSettled([
-          // Quota più recente
-          supabase.from('quote_iscrizione')
-            .select('importo_totale, importo_pagato, stato, scadenza')
-            .eq('giocatore_id', giocatoreId)
-            .order('created_at', { ascending: false })
-            .limit(1),
-
-          // Presenze ultimi 30 giorni
-          supabase.from('presenze')
-            .select('presente')
-            .eq('giocatore_id', giocatoreId)
-            .gte('registrato_at', new Date(Date.now() - 30 * 86400000).toISOString()),
-
-          // Valutazioni visibili alla famiglia
-          supabase.from('valutazioni_tecniche')
-            .select('data, tecnica, tattica, fisico, mentale, note')
-            .eq('giocatore_id', giocatoreId)
-            .eq('visibile_famiglia', true)
-            .order('data', { ascending: false })
-            .limit(3),
-
-          // Prossime partite del club
-          clubId
-            ? supabase.from('partite')
-                .select('id, avversario, data_ora, casa_trasferta')
-                .eq('club_id', clubId)
-                .gte('data_ora', new Date().toISOString())
-                .eq('stato', 'programmata')
-                .order('data_ora')
-                .limit(3)
-            : Promise.resolve({ data: [] }),
-
-          // Messaggi recenti del club
-          clubId
-            ? supabase.from('messaggi')
-                .select('id, titolo, tipo, inviato_at')
-                .eq('club_id', clubId)
-                .order('inviato_at', { ascending: false })
-                .limit(4)
-            : Promise.resolve({ data: [] }),
-        ])
-
-        if (!mounted) return
-
-        if (quotaRes.status === 'fulfilled') {
-          const data = (quotaRes.value as any).data
-          setQuota(data?.[0] ?? null)
-        }
-        if (presenzeRes.status === 'fulfilled') {
-          const pres = (presenzeRes.value as any).data ?? []
-          setPresenze({ tot: pres.length, presenti: pres.filter((p: any) => p.presente).length })
-        }
-        if (valRes.status === 'fulfilled') setValutazioni((valRes.value as any).data ?? [])
-        if (prossimiRes.status === 'fulfilled') setProssimi((prossimiRes.value as any).data ?? [])
-        if (msgRes.status === 'fulfilled') setMessaggi((msgRes.value as any).data ?? [])
-
-        setStato('ok')
-
-      } catch (e) {
-        console.error('Errore dashboard famiglia:', e)
-        if (mounted) setStato('errore')
-      }
-    }
-
-    load()
-    return () => { mounted = false }
-  }, [supabase])
-
-  /* ─── Loading ─────────────────────────────────────────────── */
-  if (stato === 'loading') return (
-    <div style={{ padding: '60px', textAlign: 'center', color: 'var(--gray)' }}>
-      <div style={{
-        fontFamily: 'var(--font-mono)', fontSize: '0.65rem',
-        letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 12,
-      }}>
-        Caricamento...
-      </div>
-    </div>
-  )
-
-  /* ─── No giocatore (o admin in modalità anteprima) ───────── */
-  if (stato === 'no_giocatore') return (
+function NoGiocatorePreview() {
+  return (
     <div style={{ padding: 40, textAlign: 'center' }}>
       <div style={{ fontSize: 36, marginBottom: 12 }}>👨‍👩‍👧</div>
       <div style={{
@@ -203,28 +118,16 @@ export default function FamigliaDashboard() {
       </div>
     </div>
   )
+}
 
-  /* ─── Errore ──────────────────────────────────────────────── */
-  if (stato === 'errore') return (
-    <div style={{ maxWidth: 500, margin: '60px auto', textAlign: 'center' }}>
-      <div style={{ fontSize: 40, marginBottom: 16 }}>⚠️</div>
-      <div style={{
-        fontFamily: 'var(--font-display)', fontWeight: 900,
-        fontSize: 22, textTransform: 'uppercase', color: 'var(--rosso)',
-        marginBottom: 8,
-      }}>
-        Errore di caricamento
-      </div>
-      <p style={{ fontSize: 14, color: 'var(--gray)', marginBottom: 20 }}>
-        Si è verificato un errore. Riprova tra qualche momento.
-      </p>
-      <button className="btn btn-secondary" onClick={() => window.location.reload()}>
-        Riprova
-      </button>
-    </div>
-  )
-
-  /* ─── Dashboard ───────────────────────────────────────────── */
+function DashboardContent({
+  familiaNome, giocatore, quota, presenze, valutazioni, prossimi, messaggi,
+  collegamenti, selectedGiocatoreId,
+}: DatiGiocatore & {
+  familiaNome: string
+  collegamenti: FamigliaCollegamento[]
+  selectedGiocatoreId: string
+}) {
   const percPresenze = presenze.tot > 0
     ? Math.round(presenze.presenti / presenze.tot * 100) : null
 
@@ -254,6 +157,30 @@ export default function FamigliaDashboard() {
         </p>
       </div>
 
+      {/* Selettore figlio multiplo */}
+      {collegamenti.length > 1 && (
+        <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
+          {collegamenti.map(f => {
+            const gc = f.giocatori as any
+            const active = f.giocatore_id === selectedGiocatoreId
+            return (
+              <Link
+                key={f.id}
+                href={`/dashboard/famiglia?figlio=${f.giocatore_id}`}
+                style={{
+                  padding: '6px 14px', borderRadius: 2, fontSize: 12, fontWeight: 600,
+                  textDecoration: 'none', border: '1px solid var(--border-solid)',
+                  background: active ? 'var(--accent)' : 'transparent',
+                  color: active ? '#000' : 'var(--white)',
+                }}
+              >
+                {gc?.nome} {gc?.cognome}
+              </Link>
+            )
+          })}
+        </div>
+      )}
+
       <AzioniRapide ruolo="famiglia" />
 
       {/* Alert pagamenti */}
@@ -275,7 +202,7 @@ export default function FamigliaDashboard() {
 
       {/* KPI */}
       <div data-onboarding="card-profilo-figlio" style={{
-        display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)',
+        display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
         gap: 1, background: 'var(--border)', marginBottom: 24,
       }}>
         {[
@@ -314,7 +241,7 @@ export default function FamigliaDashboard() {
       </div>
 
       {/* Grid 2 colonne */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
+      <div className="stack-mobile" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
 
         {/* Prossimi eventi */}
         <div className="card" data-onboarding="sezione-calendario" style={{ padding: 0, overflow: 'hidden' }}>
@@ -416,7 +343,7 @@ export default function FamigliaDashboard() {
       )}
 
       {/* Link rapidi */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 10 }}>
         {[
           { href: '/dashboard/famiglia/calendario',   label: 'Calendario',  icon: '📅' },
           { href: '/dashboard/famiglia/sviluppo',     label: 'Progressi',   icon: '⭐' },
@@ -443,5 +370,59 @@ export default function FamigliaDashboard() {
         ))}
       </div>
     </div>
+  )
+}
+
+export default async function FamigliaDashboard({
+  searchParams,
+}: {
+  searchParams?: Record<string, string | string[] | undefined>
+}) {
+  const ctx = await getUserContext()
+  if (!ctx) redirect('/auth/login')
+  if (ctx.ruolo !== 'famiglia') redirect('/dashboard')
+
+  const url        = process.env.NEXT_PUBLIC_SUPABASE_URL!
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+  const admin = createAdmin(url, serviceKey, { auth: { autoRefreshToken: false, persistSession: false } })
+
+  /* ── Percorso impersonation: usa giocatoreId dal cookie ── */
+  if (ctx.isImpersonating) {
+    if (!ctx.giocatoreId) return <NoGiocatorePreview />
+
+    const dati = await caricaDatiGiocatore(admin, ctx.giocatoreId, ctx.clubId)
+    if (!dati.giocatore) return <NoGiocatorePreview />
+
+    return (
+      <DashboardContent
+        {...dati}
+        familiaNome=""
+        collegamenti={[]}
+        selectedGiocatoreId={ctx.giocatoreId}
+      />
+    )
+  }
+
+  /* ── Percorso utente famiglia reale ── */
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/auth/login')
+
+  const collegamenti = await getFamigliaCollegamenti(supabase as any, user)
+  if (!collegamenti.length) redirect('/auth/famiglia-setup')
+
+  const figlioParam = searchParams?.figlio
+  const selectedId  = Array.isArray(figlioParam) ? figlioParam[0] : figlioParam
+  const fam = collegamenti.find(f => f.giocatore_id === selectedId) ?? collegamenti[0]
+
+  const dati = await caricaDatiGiocatore(admin, fam.giocatore_id, null)
+
+  return (
+    <DashboardContent
+      {...dati}
+      familiaNome={fam.nome ?? ''}
+      collegamenti={collegamenti}
+      selectedGiocatoreId={fam.giocatore_id}
+    />
   )
 }

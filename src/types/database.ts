@@ -19,6 +19,11 @@ export type CategoriaClub =
   | 'seconda_categoria' | 'terza_categoria' | 'scuola_calcio'
 
 export type PianoAbbonamento = 'base' | 'pro' | 'elite'
+/** Tipo di organizzazione abbonata: club agonistico o scuola calcio standalone.
+ * Non confondere con CategoriaClub, che ha un valore 'scuola_calcio' col
+ * significato diverso di "settore più giovane dentro un club agonistico". */
+export type TipoProdottoClub = 'club_agonistico' | 'scuola_calcio_standalone'
+export type Genere = 'maschile' | 'femminile'
 export type CategoriaEta = 'u6'|'u8'|'u10'|'u12'|'u13'|'u14'|'u15'|'u16'|'u17'|'u19'|'juniores'|'primavera'|'prima_squadra'|'femminile'
 export type RuoloCampo = 'portiere'|'difensore_centrale'|'terzino'|'centrocampista_difensivo'|'centrocampista'|'trequartista'|'ala'|'seconda_punta'|'centravanti'
 export type Piede = 'destro' | 'sinistro' | 'ambidestro'
@@ -44,11 +49,13 @@ export interface Club {
   nome_esteso?: string
   figc_codice?: string
   categoria: CategoriaClub
+  genere: Genere
   citta: string
   provincia?: string
   regione?: string
   logo_url?: string
   piano_abbonamento: PianoAbbonamento
+  tipo_prodotto: TipoProdottoClub
   abbonamento_scadenza?: string
   email_ufficiale?: string
   telefono?: string
@@ -68,6 +75,8 @@ export interface Utente {
   foto_url?: string
   attivo: boolean
   is_super_admin: boolean
+  /** Account demo vendite: può "Visualizza come" solo sui club a cui è già iscritto */
+  is_demo_account?: boolean
   ultimo_accesso?: string
   created_at: string
   /** Per utenti con ruolo 'famiglia': FK al record giocatore del figlio */
@@ -79,6 +88,7 @@ export interface Squadra {
   club_id: string
   nome: string
   categoria_eta: CategoriaEta
+  genere: Genere
   stagione: string
   allenatore_id?: string
   campo_default?: string

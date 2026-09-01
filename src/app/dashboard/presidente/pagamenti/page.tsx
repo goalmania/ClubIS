@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import { Modal, Toast } from '@/components/ui'
 import Link from 'next/link'
 
@@ -112,8 +113,8 @@ function statoColor(stati: string[]): string {
 /* ─── Componente principale ───────────────────────────────────── */
 export default function PresidentePagamentiPage() {
   const supabase = createClient()
+  const clubId = useClubId()
 
-  const [clubId, setClubId]       = useState<string | null>(null)
   const [kpi, setKpi]             = useState<KpiData | null>(null)
   const [piani, setPiani]         = useState<PianoRecente[]>([])
   const [loading, setLoading]     = useState(true)
@@ -130,12 +131,8 @@ export default function PresidentePagamentiPage() {
 
   /* Load KPI + piani recenti */
   const loadData = useCallback(async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
-    const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-    if (!utente) return
-    const cid = utente.club_id
-    setClubId(cid)
+    if (!clubId) return
+    const cid = clubId
 
     const oggi       = new Date()
     const oggiStr    = oggi.toISOString().split('T')[0]
@@ -171,7 +168,7 @@ export default function PresidentePagamentiPage() {
       rate: p.rate_pagamento ?? [],
     })))
     setLoading(false)
-  }, [])
+  }, [clubId])
 
   useEffect(() => { loadData() }, [loadData])
 

@@ -25,9 +25,17 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
   if (!tess) return Response.json({ error: 'Tesseramento non trovato' }, { status: 404 })
 
+  const STATI_VALIDI = ['attivo', 'sospeso', 'cessato']
+
   const aggiornamenti: Record<string, unknown> = {}
   if ('squadra_id' in body) aggiornamenti.squadra_id = body.squadra_id ?? null
   if ('numero_maglia' in body) aggiornamenti.numero_maglia = body.numero_maglia ?? null
+  if ('stato' in body) {
+    if (!STATI_VALIDI.includes(body.stato)) {
+      return Response.json({ error: `Stato non valido. Valori ammessi: ${STATI_VALIDI.join(', ')}` }, { status: 400 })
+    }
+    aggiornamenti.stato = body.stato
+  }
 
   const { error } = await admin
     .from('tesseramenti')

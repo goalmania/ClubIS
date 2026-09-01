@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import { PageHeader, TabBar, Toast, Drawer, Modal, StatCard } from '@/components/ui'
 import { stagioneCorrente } from '@/lib/helpers'
 
@@ -9,13 +10,19 @@ type Richiesta = Record<string, any>
 type Modulo = Record<string, any>
 
 const tipoLabel: Record<string, string> = {
-  iscrizione: 'Iscrizione', rinnovo: 'Rinnovo',
+  raduno: 'Raduno / Open day', iscrizione: 'Iscrizione', rinnovo: 'Rinnovo',
   camp_estivo: 'Camp estivo', altro: 'Altro',
+}
+
+const pagamentoLabel: Record<string, { label: string; classe: string }> = {
+  pagato:     { label: 'Pagato',           classe: 'badge-verde' },
+  in_attesa:  { label: 'In attesa carta',  classe: 'badge-grigio' },
+  fallito:    { label: 'Pagamento fallito',classe: 'badge-rosso' },
 }
 
 export default function IscrizioniPage() {
   const supabase = createClient()
-  const [clubId, setClubId] = useState<string | null>(null)
+  const clubId = useClubId()
   const [tab, setTab] = useState<Stato>('in_attesa')
   const [richieste, setRichieste] = useState<Richiesta[]>([])
   const [moduli, setModuli] = useState<Modulo[]>([])
@@ -40,13 +47,6 @@ export default function IscrizioniPage() {
   const [noteRifiuto, setNoteRifiuto] = useState('')
   const [approving, setApproving] = useState<string | null>(null)
 
-  const init = useCallback(async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    const { data: u } = await supabase.from('utenti').select('club_id').eq('id', user!.id).single()
-    setClubId(u!.club_id)
-    return u!.club_id as string
-  }, [supabase])
-
   const loadData = useCallback(async (cid: string) => {
     setLoading(true)
     const [{ data: r }, { data: m }] = await Promise.all([
@@ -60,8 +60,8 @@ export default function IscrizioniPage() {
   }, [supabase])
 
   useEffect(() => {
-    init().then(cid => loadData(cid))
-  }, [init, loadData])
+    if (clubId) loadData(clubId)
+  }, [clubId, loadData])
 
   const filtrate = tab === 'tutte' ? richieste : richieste.filter(r => r.stato === tab)
   const counts: Record<string, number> = {
@@ -257,16 +257,16 @@ export default function IscrizioniPage() {
           <table>
             <thead>
               <tr>
-                {['Atleta', 'Genitore / Email', 'Modulo', 'Data richiesta', 'Stato', 'Azioni'].map(h => (
+                {['Atleta', 'Genitore / Email', 'Modulo', 'Data richiesta', 'Pagamento', 'Stato', 'Azioni'].map(h => (
                   <th key={h}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={6} style={{ textAlign: 'center', padding: 40, color: 'var(--grigio-4)' }}>Caricamento...</td></tr>
+                <tr><td colSpan={7} style={{ textAlign: 'center', padding: 40, color: 'var(--grigio-4)' }}>Caricamento...</td></tr>
               ) : filtrate.length === 0 ? (
-                <tr><td colSpan={6} style={{ textAlign: 'center', padding: 40, color: 'var(--grigio-4)' }}>Nessuna richiesta</td></tr>
+                <tr><td colSpan={7} style={{ textAlign: 'center', padding: 40, color: 'var(--grigio-4)' }}>Nessuna richiesta</td></tr>
               ) : filtrate.map(r => (
                 <tr key={r.id}>
                   <td style={{ fontWeight: 600 }}>{r.cognome} {r.nome}
@@ -284,6 +284,16 @@ export default function IscrizioniPage() {
                   </td>
                   <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
                     {new Date(r.created_at).toLocaleDateString('it-IT')}
+                  </td>
+                  <td>
+                    {r.pagamento_stato ? (
+                      <span className={`badge ${pagamentoLabel[r.pagamento_stato]?.classe ?? 'badge-grigio'}`}>
+                        {pagamentoLabel[r.pagamento_stato]?.label ?? r.pagamento_stato}
+                        {r.pagamento_stato === 'pagato' && r.pagamento_importo ? ` €${Number(r.pagamento_importo).toFixed(2)}` : ''}
+                      </span>
+                    ) : (
+                      <span style={{ fontSize: 11, color: 'var(--grigio-4)' }}>Gratuito</span>
+                    )}
                   </td>
                   <td>
                     <span className={`badge ${r.stato === 'approvata' ? 'badge-verde' : r.stato === 'rifiutata' ? 'badge-rosso' : 'badge-grigio'}`}>
@@ -333,6 +343,7 @@ export default function IscrizioniPage() {
               </Field>
               <Field label="Tipo">
                 <select className="input" value={mTipo} onChange={e => setMTipo(e.target.value)}>
+                  <option value="raduno">Raduno / Open day</option>
                   <option value="iscrizione">Iscrizione</option>
                   <option value="rinnovo">Rinnovo</option>
                   <option value="camp_estivo">Camp estivo</option>
@@ -363,7 +374,8 @@ export default function IscrizioniPage() {
               <Field label="Max iscrizioni">
                 <input className="input" type="number" min={1} value={mMax} onChange={e => setMMax(e.target.value)} placeholder="illimitato" />
               </Field>
-              <Field label="Quota iscrizione (€)">
+              <Field label="Quota iscrizione (€)"
+                hint="Lascia vuoto per un modulo gratuito (es. raduno/open day): nessuno step di pagamento nel form. Se inserisci un importo, il genitore dovrà pagare subito con carta per completare l'iscrizione — nessun pagamento in sede.">
                 <input className="input" type="number" min={0} step="0.01" value={mImporto} onChange={e => setMImporto(e.target.value)} placeholder="0,00" />
               </Field>
             </div>

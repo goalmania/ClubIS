@@ -1,21 +1,20 @@
 import { createClient } from '@/lib/supabase/server'
+import { getUserContext } from '@/lib/impersonation'
+import { getSquadreAllenatore } from '@/lib/settore-giovanile'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
 export default async function AllenamentiPage() {
   const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth/login')
-  const { data: utente, error: utenteError } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-  if (utenteError || !utente) redirect('/auth/errore')
+  const ctx = await getUserContext()
+  if (!ctx) redirect('/auth/login')
 
-  // Squadre assegnate all'allenatore; fallback su tutte le squadre del club
-  const { data: sqAssegnate } = await supabase.from('squadre').select('id')
-    .eq('club_id', utente.club_id).eq('allenatore_id', user.id).eq('attiva', true)
-  let sqIds = sqAssegnate?.map(s => s.id) ?? []
+  // Squadre assegnate all'allenatore (titolare o co-allenatore); fallback su tutte le squadre del club
+  const sqAssegnate = await getSquadreAllenatore(supabase, { clubId: ctx.clubId, allenatoreId: ctx.userId })
+  let sqIds = sqAssegnate.map(s => s.id)
   if (sqIds.length === 0) {
     const { data: sqClub } = await supabase.from('squadre').select('id')
-      .eq('club_id', utente.club_id).eq('attiva', true)
+      .eq('club_id', ctx.clubId).eq('attiva', true)
     sqIds = sqClub?.map(s => s.id) ?? []
   }
 

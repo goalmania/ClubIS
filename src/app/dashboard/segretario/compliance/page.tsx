@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { getUserContext } from '@/lib/impersonation'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
@@ -25,14 +26,10 @@ function ScoreBar({ value, color, thin }: { value: number; color: string; thin?:
 
 export default async function SegretarioCompliancePage() {
   const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth/login')
+  const ctx = await getUserContext()
+  if (!ctx) redirect('/auth/login')
 
-  const { data: utente, error: utenteError } = await supabase
-    .from('utenti').select('club_id').eq('id', user.id).single()
-  if (utenteError || !utente) redirect('/auth/errore')
-
-  const clubId = utente.club_id
+  const clubId = ctx.clubId
   const oggi   = new Date().toISOString().split('T')[0]
   const in30   = new Date(Date.now() + 30 * 86_400_000).toISOString().split('T')[0]
   const in90   = new Date(Date.now() + 90 * 86_400_000).toISOString().split('T')[0]

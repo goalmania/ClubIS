@@ -1,6 +1,6 @@
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { NextRequest, NextResponse } from 'next/server'
+import { getClubFromSession } from '@/lib/server-helpers'
 
 function fmtData(d: string | null | undefined): string {
   if (!d) return '—'
@@ -21,20 +21,16 @@ export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  const sessionClient = createClient()
+  const session = await getClubFromSession()
+  if (!session) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
 
   const supabase = createAdminClient()
-  const { data: { user } } = await sessionClient.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
-
-  const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-  if (!utente?.club_id) return NextResponse.json({ error: 'Club non trovato' }, { status: 403 })
 
   const { data: quietanza, error } = await supabase
     .from('quietanze')
     .select('*')
     .eq('id', params.id)
-    .eq('club_id', utente.club_id)
+    .eq('club_id', session.clubId)
     .single()
 
   if (error || !quietanza) return NextResponse.json({ error: 'Quietanza non trovata' }, { status: 404 })

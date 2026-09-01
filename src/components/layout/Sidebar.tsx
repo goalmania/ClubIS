@@ -1,11 +1,13 @@
 'use client'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import { RuoloUtente } from '@/types/database'
 import clsx from 'clsx'
 import { useScadenzeFIGCCount } from '@/hooks/useScadenzeFIGCCount'
-import { canAccess, type Feature, type PlanTier } from '@/lib/features'
+import { canAccess, type Feature, type PlanTier, type TipoProdotto } from '@/lib/features'
 import ClubSwitcher, { type ClubOption } from '@/components/layout/ClubSwitcher'
+import { isPro as isCategoriaPro } from '@/lib/categorie-club'
 
 const Icon = {
   Home:      () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
@@ -42,9 +44,12 @@ const Icon = {
   Tv:        () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="15" x="2" y="7" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></svg>,
   Image:     () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>,
   Ticket:    () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/></svg>,
+  Menu:      () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="18" y2="18"/></svg>,
+  Smartphone: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>,
+  X:         () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg>,
 }
 
-type NavVoce = { label: string; href: string; icon: keyof typeof Icon; feature?: Feature }
+type NavVoce = { label: string; href: string; icon: keyof typeof Icon; feature?: Feature; proOnly?: boolean }
 type NavSezione = { titolo?: string; voci: NavVoce[] }
 
 const navConfig: Record<RuoloUtente, NavSezione[]> = {
@@ -59,6 +64,7 @@ const navConfig: Record<RuoloUtente, NavSezione[]> = {
       { label: 'Inviti Staff', href: '/dashboard/presidente/inviti', icon: 'Link' },
       { label: 'Sponsor', href: '/dashboard/presidente/sponsor', icon: 'Handshake' },
       { label: 'Compliance campionato', href: '/dashboard/presidente/compliance-campionato', icon: 'Check', feature: 'compliance_indice' },
+      { label: 'Compliance COVISOC', href: '/dashboard/segretario/compliance-pro', icon: 'Shield', proOnly: true },
     ]},
     { titolo: 'Finanze', voci: [
       { label: 'Pagamenti', href: '/dashboard/segretario/pagamenti', icon: 'Euro' },
@@ -89,7 +95,9 @@ const navConfig: Record<RuoloUtente, NavSezione[]> = {
       { label: 'Disponibilità', href: '/dashboard/ds/disponibilita', icon: 'Check' },
       { label: 'Gestione rosa', href: '/dashboard/ds/rosa', icon: 'Users' },
       { label: 'Contratti', href: '/dashboard/ds/contratti', icon: 'FileText', feature: 'contratti_tesserati' },
+      { label: 'Contratti Pro', href: '/dashboard/ds/contratti-pro', icon: 'FileText', proOnly: true },
       { label: 'Scadenze', href: '/dashboard/ds/scadenze', icon: 'Bell' },
+      { label: 'Liste Campionato', href: '/dashboard/ds/liste-pro', icon: 'Clipboard', proOnly: true },
       { label: 'Mercato', href: '/dashboard/ds/mercato', icon: 'Target', feature: 'trattative_mercato' },
       { label: 'Budget Mercato', href: '/dashboard/ds/budget-mercato', icon: 'Euro', feature: 'budget_mercato_ds' },
       { label: 'Tracker Movimenti', href: '/dashboard/ds/tracker-mercato', icon: 'Activity', feature: 'trattative_mercato' },
@@ -114,6 +122,7 @@ const navConfig: Record<RuoloUtente, NavSezione[]> = {
     { voci: [{ label: 'Panoramica', href: '/dashboard/segretario', icon: 'Home' }] },
     { titolo: 'Anagrafica', voci: [
       { label: 'Giocatori', href: '/dashboard/segretario/giocatori', icon: 'Users' },
+      { label: 'Staff', href: '/dashboard/segretario/staff', icon: 'Users', feature: 'compensi_staff' },
       { label: 'Gruppi', href: '/dashboard/segretario/gruppi', icon: 'Layout' },
       { label: 'Tesseramenti', href: '/dashboard/segretario/tesseramenti', icon: 'FileText' },
       { label: 'Certificati medici', href: '/dashboard/segretario/certificati', icon: 'Shield' },
@@ -134,6 +143,7 @@ const navConfig: Record<RuoloUtente, NavSezione[]> = {
       { label: 'Rosa FIGC', href: '/dashboard/segretario/figc/rosa', icon: 'Users' },
       { label: 'Moduli FIGC', href: '/dashboard/segretario/figc/moduli', icon: 'FileText' },
       { label: 'Comunicati FIGC', href: '/dashboard/segretario/figc/comunicati', icon: 'FileText', feature: 'comunicati_figc_analisi' },
+      { label: 'Comunicati Lega Pro', href: '/dashboard/segretario/figc/comunicati-legapro', icon: 'FileText', proOnly: true },
       { label: 'Monitor Squalifiche', href: '/dashboard/segretario/figc/squalifiche', icon: 'AlertTriangle', feature: 'monitor_squalifiche' },
       { label: 'Portafoglio FIGC', href: '/dashboard/segretario/figc/portafoglio', icon: 'Euro' },
     ]},
@@ -156,6 +166,8 @@ const navConfig: Record<RuoloUtente, NavSezione[]> = {
     { titolo: 'Iscrizioni', voci: [
       { label: 'Iscrizioni online', href: '/dashboard/segretario/iscrizioni', icon: 'Clipboard' },
       { label: 'Compensi', href: '/dashboard/segretario/compensi', icon: 'Euro', feature: 'compensi_staff' },
+      { label: 'Contratti Pro', href: '/dashboard/segretario/contratti-pro', icon: 'FileText', proOnly: true },
+      { label: 'Liste Campionato', href: '/dashboard/segretario/liste-pro', icon: 'Clipboard', proOnly: true },
     ]},
     { titolo: 'Squadra', voci: [
       { label: 'Calendario', href: '/dashboard/segretario/calendario', icon: 'Calendar' },
@@ -172,6 +184,7 @@ const navConfig: Record<RuoloUtente, NavSezione[]> = {
     { titolo: 'Gestione', voci: [
       { label: 'Generatore Documenti', href: '/dashboard/segretario/documenti', icon: 'FileText', feature: 'genera_documenti' },
       { label: 'Compliance', href: '/dashboard/segretario/compliance', icon: 'Shield' },
+      { label: 'Compliance COVISOC', href: '/dashboard/segretario/compliance-pro', icon: 'Shield', proOnly: true },
       { label: 'Comunicazioni', href: '/dashboard/segretario/comunicazioni', icon: 'Message' },
       { label: 'Archivio', href: '/dashboard/segretario/archivio', icon: 'Folder' },
       { label: 'Import dati', href: '/dashboard/segretario/import', icon: 'Upload' },
@@ -251,6 +264,7 @@ const navConfig: Record<RuoloUtente, NavSezione[]> = {
       { label: 'Bacheca', href: '/dashboard/famiglia/messaggi', icon: 'Layout' },
       { label: 'Profilo', href: '/dashboard/famiglia/profilo', icon: 'User' },
       { label: 'Config. notifiche', href: '/dashboard/notifiche/impostazioni', icon: 'Bell' },
+      { label: 'Installa app su telefono', href: '/dashboard/famiglia/app-mobile', icon: 'Smartphone' },
     ]},
   ],
   team_manager: [
@@ -288,6 +302,7 @@ const navConfig: Record<RuoloUtente, NavSezione[]> = {
     { titolo: 'Sport', voci: [
       { label: 'Allenamenti', href: '/dashboard/giocatore/allenamenti', icon: 'Calendar' },
       { label: 'Convocazioni', href: '/dashboard/giocatore/convocazioni', icon: 'Clipboard' },
+      { label: 'Trasferte', href: '/dashboard/giocatore/trasferte', icon: 'Map' },
       { label: 'Partite', href: '/dashboard/giocatore/partite', icon: 'Trophy' },
       { label: 'Statistiche', href: '/dashboard/giocatore/statistiche', icon: 'BarChart' },
     ]},
@@ -333,6 +348,111 @@ const navConfig: Record<RuoloUtente, NavSezione[]> = {
   ],
 }
 
+// Menu ridotto per il verticale "scuola calcio standalone" (club.tipo_prodotto).
+// Non tocca navConfig sopra: i club agonistici esistenti continuano a vedere
+// esattamente lo stesso menu di sempre. Copre solo i ruoli previsti per una
+// scuola calcio (presidente, segretario, allenatore/mister, famiglia); gli
+// altri ruoli (ds, osservatore, medico, custode, ufficio_stampa, team_manager,
+// giocatore) ricadono sul navConfig agonistico come fallback difensivo — non
+// dovrebbero comparire in questo verticale, ma se succede non rompono nulla.
+// Link solo a pagine già esistenti e riusabili as-is: le pagine specifiche
+// per scuola calcio non ancora costruite (campi/prenotazioni, convocazioni
+// torneo con RSVP genitore, rubrica valutazione dedicata) non sono linkate
+// qui finché non esistono.
+const navConfigScuolaCalcio: Partial<Record<RuoloUtente, NavSezione[]>> = {
+  presidente: [
+    { voci: [{ label: 'Panoramica', href: '/dashboard/presidente', icon: 'Home' }] },
+    { titolo: 'Scuola Calcio', voci: [
+      { label: 'Info Scuola', href: '/dashboard/presidente/club', icon: 'Shield' },
+      { label: 'Staff', href: '/dashboard/presidente/staff', icon: 'Users' },
+      { label: 'Abbonamento', href: '/dashboard/presidente/abbonamento', icon: 'Tag' },
+      { label: 'Inviti Staff', href: '/dashboard/presidente/inviti', icon: 'Link' },
+    ]},
+    { titolo: 'Anagrafica', voci: [
+      { label: 'Ragazzi', href: '/dashboard/segretario/giocatori', icon: 'Users' },
+      { label: 'Gruppi & Categorie', href: '/dashboard/segretario/gruppi', icon: 'Layout' },
+      { label: 'Certificati medici', href: '/dashboard/segretario/certificati', icon: 'Shield' },
+    ]},
+    { titolo: 'Iscrizioni & Quote', voci: [
+      { label: 'Iscrizioni online', href: '/dashboard/segretario/iscrizioni', icon: 'Clipboard' },
+      { label: 'Quote mensili', href: '/dashboard/segretario/quote', icon: 'FileText' },
+      { label: 'Pagamenti famiglie', href: '/dashboard/segretario/pagamenti', icon: 'Euro' },
+      { label: 'Prima nota', href: '/dashboard/segretario/prima-nota', icon: 'BarChart' },
+    ]},
+    { titolo: 'Finanze', voci: [
+      { label: 'Entrate & Uscite', href: '/dashboard/presidente/finanze', icon: 'BarChart' },
+      { label: 'Pagamenti online', href: '/dashboard/presidente/pagamenti-online', icon: 'Euro' },
+    ]},
+    { titolo: 'Attività', voci: [
+      { label: 'Calendario', href: '/dashboard/segretario/calendario', icon: 'Calendar' },
+      { label: 'Campi', href: '/dashboard/segretario/campi', icon: 'Stadium' },
+      { label: 'Partite', href: '/dashboard/segretario/partite', icon: 'Trophy' },
+      { label: 'Import Calendario FIGC', href: '/dashboard/segretario/figc/calendario', icon: 'Calendar' },
+      { label: 'Trasferte & Tornei', href: '/dashboard/segretario/trasferte', icon: 'Map' },
+      { label: 'Presenze Allenamento', href: '/dashboard/segretario/presenze-allenamento', icon: 'Check' },
+      { label: 'Materiale', href: '/dashboard/segretario/materiale', icon: 'Folder' },
+    ]},
+    { titolo: 'Gestione', voci: [
+      { label: 'Archivio documenti', href: '/dashboard/segretario/archivio', icon: 'Folder' },
+      { label: 'Import dati', href: '/dashboard/segretario/import', icon: 'Upload' },
+    ]},
+    { voci: [
+      { label: 'Comunicazioni', href: '/dashboard/presidente/comunicazioni', icon: 'Message' },
+      { label: 'Bacheca', href: '/dashboard/presidente/messaggi', icon: 'Layout' },
+      { label: 'Config. notifiche', href: '/dashboard/notifiche/impostazioni', icon: 'Bell' },
+    ]},
+  ],
+  segretario: [
+    { voci: [{ label: 'Panoramica', href: '/dashboard/segretario', icon: 'Home' }] },
+    { titolo: 'Anagrafica', voci: [
+      { label: 'Ragazzi', href: '/dashboard/segretario/giocatori', icon: 'Users' },
+      { label: 'Gruppi & Categorie', href: '/dashboard/segretario/gruppi', icon: 'Layout' },
+      { label: 'Certificati medici', href: '/dashboard/segretario/certificati', icon: 'Shield' },
+    ]},
+    { titolo: 'Iscrizioni & Quote', voci: [
+      { label: 'Iscrizioni online', href: '/dashboard/segretario/iscrizioni', icon: 'Clipboard' },
+      { label: 'Quote mensili', href: '/dashboard/segretario/quote', icon: 'FileText' },
+      { label: 'Pagamenti', href: '/dashboard/segretario/pagamenti', icon: 'Euro' },
+      { label: 'Prima nota', href: '/dashboard/segretario/prima-nota', icon: 'BarChart' },
+    ]},
+    { titolo: 'Attività', voci: [
+      { label: 'Calendario', href: '/dashboard/segretario/calendario', icon: 'Calendar' },
+      { label: 'Campi', href: '/dashboard/segretario/campi', icon: 'Stadium' },
+      { label: 'Partite', href: '/dashboard/segretario/partite', icon: 'Trophy' },
+      { label: 'Import Calendario FIGC', href: '/dashboard/segretario/figc/calendario', icon: 'Calendar' },
+      { label: 'Trasferte & Tornei', href: '/dashboard/segretario/trasferte', icon: 'Map' },
+      { label: 'Presenze Allenamento', href: '/dashboard/segretario/presenze-allenamento', icon: 'Check' },
+      { label: 'Materiale', href: '/dashboard/segretario/materiale', icon: 'Folder' },
+    ]},
+    { titolo: 'Gestione', voci: [
+      { label: 'Comunicazioni', href: '/dashboard/segretario/comunicazioni', icon: 'Message' },
+      { label: 'Archivio documenti', href: '/dashboard/segretario/archivio', icon: 'Folder' },
+      { label: 'Import dati', href: '/dashboard/segretario/import', icon: 'Upload' },
+      { label: 'Inviti Staff', href: '/dashboard/segretario/inviti', icon: 'Link' },
+    ]},
+    { voci: [
+      { label: 'Bacheca', href: '/dashboard/segretario/messaggi', icon: 'Layout' },
+      { label: 'Config. notifiche', href: '/dashboard/notifiche/impostazioni', icon: 'Bell' },
+    ]},
+  ],
+  allenatore: [
+    { voci: [{ label: 'Panoramica', href: '/dashboard/allenatore', icon: 'Home' }] },
+    { titolo: 'La mia categoria', voci: [
+      { label: 'Rosa', href: '/dashboard/allenatore/rosa', icon: 'Users' },
+      { label: 'Allenamenti', href: '/dashboard/allenatore/allenamenti', icon: 'Calendar' },
+      { label: 'Presenze', href: '/dashboard/allenatore/presenze', icon: 'Check' },
+    ]},
+    { titolo: 'Sviluppo', voci: [
+      { label: 'Valutazioni mensili', href: '/dashboard/allenatore/valutazioni', icon: 'Star' },
+    ]},
+    { voci: [
+      { label: 'Bacheca', href: '/dashboard/allenatore/messaggi', icon: 'Layout' },
+      { label: 'Config. notifiche', href: '/dashboard/notifiche/impostazioni', icon: 'Bell' },
+    ]},
+  ],
+  famiglia: navConfig.famiglia,
+}
+
 const ruoloLabel: Record<RuoloUtente, string> = {
   presidente: 'Presidente', ds: 'Direttore Sportivo', segretario: 'Segretario',
   allenatore: 'Allenatore', osservatore: 'Osservatore', medico: 'Medico',
@@ -349,14 +469,20 @@ interface SidebarProps {
   planTier?: PlanTier
   userClubs?: ClubOption[]
   activeClubId?: string
+  tipoProdotto?: TipoProdotto
 }
 
-export default function Sidebar({ ruolo, utente, club, notifiche = 0, isSuperAdmin = false, planTier = 'starter', userClubs, activeClubId }: SidebarProps) {
+export default function Sidebar({ ruolo, utente, club, notifiche = 0, isSuperAdmin = false, planTier = 'starter', userClubs, activeClubId, tipoProdotto = 'club_agonistico' }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
-  const sezioni = navConfig[ruolo] ?? navConfig.segretario
+  const isPro = isCategoriaPro(club.categoria)
+  const sezioni = (tipoProdotto === 'scuola_calcio_standalone' ? navConfigScuolaCalcio[ruolo] : undefined) ?? navConfig[ruolo] ?? navConfig.segretario
   const scadenzeUrgenti = useScadenzeFIGCCount()
   const iniziali = `${utente.nome[0] ?? '?'}${utente.cognome[0] ?? ''}`.toUpperCase()
+  const [mobileOpen, setMobileOpen] = useState(false)
+
+  // Chiude il drawer mobile ogni volta che cambia pagina (click su un link o back/forward)
+  useEffect(() => { setMobileOpen(false) }, [pathname])
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' })
@@ -376,7 +502,22 @@ export default function Sidebar({ ruolo, utente, club, notifiche = 0, isSuperAdm
   }
 
   return (
-    <aside style={{
+    <>
+      {/* Bottone hamburger — visibile solo sotto gli 860px (vedi globals.css) */}
+      <button
+        className="sidebar-mobile-toggle"
+        onClick={() => setMobileOpen(true)}
+        aria-label="Apri il menu"
+      >
+        <Icon.Menu />
+      </button>
+
+      {/* Sfondo scuro dietro al drawer, chiude al tap */}
+      {mobileOpen && (
+        <div className="sidebar-backdrop" onClick={() => setMobileOpen(false)} />
+      )}
+
+    <aside className={clsx('sidebar-shell', { 'sidebar-open': mobileOpen })} style={{
       width: 240,
       minHeight: '100vh',
       background: '#0d0d0d',
@@ -384,11 +525,18 @@ export default function Sidebar({ ruolo, utente, club, notifiche = 0, isSuperAdm
       display: 'flex',
       flexDirection: 'column',
       flexShrink: 0,
-      position: 'sticky',
-      top: 0,
-      height: '100vh',
       overflowY: 'auto',
     }}>
+      {/* Pulsante chiudi — visibile solo nel drawer mobile */}
+      <button
+        className="sidebar-mobile-toggle"
+        onClick={() => setMobileOpen(false)}
+        aria-label="Chiudi il menu"
+        style={{ position: 'absolute', top: 12, right: 12, left: 'auto' }}
+      >
+        <Icon.X />
+      </button>
+
       {/* Selettore multi-club (visibile solo se l'utente ha 2+ club) */}
       {userClubs && userClubs.length > 1 && activeClubId && (
         <ClubSwitcher clubs={userClubs} activeClubId={activeClubId} />
@@ -461,13 +609,17 @@ export default function Sidebar({ ruolo, utente, club, notifiche = 0, isSuperAdm
                 {sezione.titolo}
               </div>
             )}
-            {sezione.voci.filter(voce => !voce.feature || canAccess(voce.feature, planTier)).map(voce => {
+            {sezione.voci.filter(voce =>
+              (!voce.feature || canAccess(voce.feature, planTier)) &&
+              (!voce.proOnly || isPro)
+            ).map(voce => {
               const IconComp = Icon[voce.icon]
               const attiva = isActive(voce.href)
               return (
                 <Link
                   key={voce.href}
                   href={voce.href}
+                  onClick={() => setMobileOpen(false)}
                   className={clsx('sidebar-nav-link', { active: attiva })}
                   style={{
                     display: 'flex', alignItems: 'center', gap: 10,
@@ -566,5 +718,6 @@ export default function Sidebar({ ruolo, utente, club, notifiche = 0, isSuperAdm
         </button>
       </div>
     </aside>
+    </>
   )
 }

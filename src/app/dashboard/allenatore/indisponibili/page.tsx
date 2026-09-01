@@ -139,7 +139,7 @@ export default async function IndisponibiliPage() {
       </div>
 
       {/* ── Stat cards ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 24 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 14, marginBottom: 24 }}>
         <div className="stat-card">
           <div className="stat-label">🏥 Infortunati</div>
           <div className="stat-value" style={{ color: 'var(--accent-red)' }}>{infortunati.length}</div>
@@ -159,7 +159,7 @@ export default async function IndisponibiliPage() {
       </div>
 
       {/* ── Tre colonne ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 20 }}>
 
         {/* Infortunati */}
         <div className="card" style={{ padding: 0, overflow: 'hidden' }}>

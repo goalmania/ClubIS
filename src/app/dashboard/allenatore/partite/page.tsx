@@ -1,6 +1,7 @@
 'use client'
 import { useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import Link from 'next/link'
 import { useSharedData } from '@/hooks/useSharedData'
 import { Modal, Toast } from '@/components/ui'
@@ -86,8 +87,8 @@ function TabBtn({ label, active, onClick }: { label: string; active: boolean; on
 export default function AllenatorePartitePage() {
   const supabase = createClient()
 
+  const clubId = useClubId()
   const [tab, setTab]             = useState<Tab>('risultati')
-  const [clubId, setClubId]       = useState<string | null>(null)
   const [sqIds, setSqIds]         = useState<{ id: string; nome: string }[]>([])
   const [bySquadra, setBySquadra] = useState<Record<string, SquadraStats>>({})
   const [prossime, setProssime]   = useState<any[]>([])
@@ -100,12 +101,6 @@ export default function AllenatorePartitePage() {
   /* ── Load ────────────────────────────────────────────────────── */
 
   const load = useCallback(async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
-    const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-    if (!utente) return
-    setClubId(utente.club_id)
-
     const sq: any[] = await fetch('/api/squadre').then(r => r.json()).catch(() => [])
     setSqIds(sq)
     setForm(prev => ({ ...prev, squadraId: prev.squadraId || sq[0]?.id || '' }))
@@ -269,7 +264,7 @@ export default function AllenatorePartitePage() {
               <div key={sq.id} style={{ marginBottom: 24 }}>
                 <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--grigio-4)', fontFamily: 'var(--font-display)', marginBottom: 10 }}>{sq.nome}</div>
                 {tot > 0 && (
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 10, marginBottom: 14 }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))', gap: 10, marginBottom: 14 }}>
                     {[
                       { l: 'Giocate', v: tot },
                       { l: 'Punti',   v: sq.v * 3 + sq.p,                          c: 'var(--verde)' },
@@ -369,7 +364,7 @@ export default function AllenatorePartitePage() {
               <div key={sq.id} style={{ marginBottom: 28 }}>
                 <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--grigio-4)', fontFamily: 'var(--font-display)', marginBottom: 12 }}>{sq.nome}</div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 10, marginBottom: 14 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))', gap: 10, marginBottom: 14 }}>
                   {[
                     { l: 'Giocate', v: tot },
                     { l: 'Punti',   v: sq.v * 3 + sq.p, c: 'var(--verde)' },

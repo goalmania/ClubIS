@@ -5,6 +5,45 @@ import { getFamigliaCollegamenti } from '@/lib/famiglia'
 import { getUserContext } from '@/lib/impersonation'
 import Link from 'next/link'
 
+// eventi_calendario/eventi_partecipanti hanno RLS basata su my_club_id(), che
+// risolve solo utenti con riga in "utenti" (staff). Le famiglie non hanno una
+// riga utenti, quindi qui si usa sempre l'admin client con filtro esplicito
+// sul giocatore/squadra — stesso pattern già usato in questa pagina per
+// sessioni_allenamento/partite.
+async function caricaEventiCalendarioGiocatore(
+  admin: any,
+  clubId: string,
+  giocatoreId: string,
+  squadraId: string | null,
+  oggi: Date,
+  fine: Date
+) {
+  const orFilter = squadraId
+    ? `giocatore_id.eq.${giocatoreId},squadra_id.eq.${squadraId}`
+    : `giocatore_id.eq.${giocatoreId}`
+
+  const { data: partecipazioni } = await admin
+    .from('eventi_partecipanti')
+    .select('evento_id')
+    .eq('club_id', clubId)
+    .or(orFilter)
+
+  const eventoIds = [...new Set((partecipazioni ?? []).map((p: any) => p.evento_id))]
+  if (eventoIds.length === 0) return []
+
+  const { data: eventi } = await admin
+    .from('eventi_calendario')
+    .select('id, tipologia, data_ora_inizio, luogo_testo, note')
+    .in('id', eventoIds)
+    .gte('data_ora_inizio', oggi.toISOString())
+    .lte('data_ora_inizio', fine.toISOString())
+    .order('data_ora_inizio')
+
+  return (eventi ?? []).map((e: any) => ({
+    id: e.id, data_ora: e.data_ora_inizio, tipologia: e.tipologia, campo: e.luogo_testo, note: e.note,
+  }))
+}
+
 /* ── Bottoni vista (client island) ─────────────────────────────────── */
 // Non servono useState: cambiamo solo il searchParam
 function VistaBtns({ vista, base }: { vista: string; base: string }) {
@@ -31,21 +70,32 @@ function VistaBtns({ vista, base }: { vista: string; base: string }) {
   )
 }
 
+const EVENTO_ICONA: Record<string, string> = {
+  allenamento: '🏃', partita: '⚽', riunione: '📋', visita_medica: '🏥', trasferta: '🚌',
+}
+const EVENTO_LABEL: Record<string, string> = {
+  allenamento: 'Allenamento', partita: 'Partita', riunione: 'Riunione',
+  visita_medica: 'Visita medica', trasferta: 'Trasferta',
+}
+
 /* ── Griglia eventi per giorno ──────────────────────────────────────── */
 function CalendarioView({
   sessioni,
   partite,
+  eventi,
   vista,
   baseHref,
 }: {
   sessioni: any[]
   partite: any[]
+  eventi: any[]
   vista: string
   baseHref: string
 }) {
   const tutti = [
     ...sessioni.map(s => ({ ...s, _tipo: 'allenamento' as const })),
     ...partite.map(p => ({ ...p, _tipo: 'partita' as const })),
+    ...eventi.map(e => ({ ...e, _tipo: 'evento_calendario' as const })),
   ].sort((a, b) => new Date(a.data_ora).getTime() - new Date(b.data_ora).getTime())
 
   const giorni: Record<string, any[]> = {}
@@ -94,19 +144,21 @@ function CalendarioView({
                   <div key={i} style={{
                     padding: '14px 18px', background: '#111',
                     border: '1px solid var(--border-solid)', borderRadius: 2,
-                    borderLeft: `3px solid ${e._tipo === 'partita' ? '#00C8A0' : '#F59E0B'}`,
+                    borderLeft: `3px solid ${e._tipo === 'partita' ? '#00C8A0' : e._tipo === 'evento_calendario' ? '#8B5CF6' : '#F59E0B'}`,
                     display: 'flex', alignItems: 'center', gap: 16,
                   }}>
                     <div style={{
                       width: 44, height: 44, borderRadius: 2, flexShrink: 0,
-                      background: e._tipo === 'partita' ? 'rgba(0,200,160,0.1)' : 'rgba(245,158,11,0.1)',
+                      background: e._tipo === 'partita' ? 'rgba(0,200,160,0.1)' : e._tipo === 'evento_calendario' ? 'rgba(139,92,246,0.1)' : 'rgba(245,158,11,0.1)',
                       display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20,
                     }}>
-                      {e._tipo === 'partita' ? '⚽' : '🏃'}
+                      {e._tipo === 'partita' ? '⚽' : e._tipo === 'evento_calendario' ? (EVENTO_ICONA[e.tipologia] ?? '📅') : '🏃'}
                     </div>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--white)' }}>
-                        {e._tipo === 'partita' ? `vs ${e.avversario}` : `Allenamento — ${e.tipologia}`}
+                        {e._tipo === 'partita' ? `vs ${e.avversario}`
+                          : e._tipo === 'evento_calendario' ? (EVENTO_LABEL[e.tipologia] ?? e.tipologia)
+                          : `Allenamento — ${e.tipologia}`}
                       </div>
                       <div style={{ fontSize: 12, color: 'var(--gray)', marginTop: 3, fontFamily: 'var(--font-mono)' }}>
                         Ore {new Date(e.data_ora).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}
@@ -183,7 +235,7 @@ export default async function FamigliaCalendarioPage({
     const clubId    = tess?.club_id ?? ctx.clubId
     const squadraId = tess?.squadra_id ?? null
 
-    const [{ data: sessioni }, { data: partite }] = await Promise.all([
+    const [{ data: sessioni }, { data: partite }, eventiCalendario] = await Promise.all([
       squadraId
         ? admin.from('sessioni_allenamento')
             .select('id, data_ora, tipologia, campo, durata_minuti, stato')
@@ -192,16 +244,19 @@ export default async function FamigliaCalendarioPage({
             .lte('data_ora', fine.toISOString())
             .order('data_ora')
         : Promise.resolve({ data: [] }),
-      admin.from('partite')
-        .select('id, avversario, data_ora, casa_trasferta, tipo, stato')
-        .eq('club_id', clubId)
-        .gte('data_ora', oggi.toISOString())
-        .lte('data_ora', fine.toISOString())
-        .order('data_ora'),
+      squadraId
+        ? admin.from('partite')
+            .select('id, avversario, data_ora, casa_trasferta, tipo, stato')
+            .eq('squadra_id', squadraId)
+            .gte('data_ora', oggi.toISOString())
+            .lte('data_ora', fine.toISOString())
+            .order('data_ora')
+        : Promise.resolve({ data: [] }),
+      caricaEventiCalendarioGiocatore(admin, clubId, ctx.giocatoreId, squadraId, oggi, fine),
     ])
 
     const baseHref = `/dashboard/famiglia/calendario?figlio=${ctx.giocatoreId}`
-    return <CalendarioView sessioni={sessioni ?? []} partite={partite ?? []} vista={vista} baseHref={baseHref} />
+    return <CalendarioView sessioni={sessioni ?? []} partite={partite ?? []} eventi={eventiCalendario} vista={vista} baseHref={baseHref} />
   }
 
   /* ── Utente famiglia reale ── */
@@ -223,7 +278,13 @@ export default async function FamigliaCalendarioPage({
     .eq('stato', 'attivo')
     .maybeSingle()
 
-  const [{ data: sessioni }, { data: partite }] = tess
+  const adminForEventi = createAdmin(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { auth: { autoRefreshToken: false, persistSession: false } }
+  )
+
+  const [{ data: sessioni }, { data: partite }, eventiCalendario] = tess
     ? await Promise.all([
         supabase.from('sessioni_allenamento')
           .select('id, data_ora, tipologia, campo, durata_minuti, stato')
@@ -233,12 +294,13 @@ export default async function FamigliaCalendarioPage({
           .order('data_ora'),
         supabase.from('partite')
           .select('id, avversario, data_ora, casa_trasferta, tipo, stato')
-          .eq('club_id', tess.club_id)
+          .eq('squadra_id', tess.squadra_id)
           .gte('data_ora', oggi.toISOString())
           .lte('data_ora', fine.toISOString())
           .order('data_ora'),
+        caricaEventiCalendarioGiocatore(adminForEventi, tess.club_id, fam.giocatore_id, tess.squadra_id, oggi, fine),
       ])
-    : [{ data: [] }, { data: [] }]
+    : [{ data: [] }, { data: [] }, []]
 
   const baseHref = `/dashboard/famiglia/calendario?figlio=${fam.giocatore_id}`
 
@@ -271,6 +333,7 @@ export default async function FamigliaCalendarioPage({
       <CalendarioView
         sessioni={sessioni ?? []}
         partite={partite ?? []}
+        eventi={eventiCalendario ?? []}
         vista={vista}
         baseHref={baseHref}
       />

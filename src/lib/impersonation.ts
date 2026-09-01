@@ -2,6 +2,7 @@ import { cookies } from 'next/headers'
 import type { RuoloUtente } from '@/types/database'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { resolveDeviceClub } from '@/lib/multi-club'
 
 export const IMPERSONATION_COOKIE = 'cis-impersonate'
 
@@ -30,6 +31,40 @@ export function readImpersonation(): ImpersonationData | null {
   }
 }
 
+/**
+ * Come readImpersonation(), ma verificato per userId. Il cookie è condiviso
+ * per browser, non per utente: se sullo stesso browser un altro utente aveva
+ * lasciato un'impersonation attiva (es. un super_admin), un nuovo login NON
+ * deve ereditarla automaticamente.
+ * - super_admin: fiducia totale (comportamento invariato, può impersonare
+ *   qualsiasi club per design).
+ * - account demo: il cookie viene onorato SOLO se il club appartiene
+ *   davvero a questo utente (user_clubs.status='accepted'), altrimenti
+ *   viene ignorato.
+ */
+export async function readVerifiedImpersonation(
+  userId: string,
+  isSuperAdmin: boolean,
+  isDemoAccount: boolean,
+): Promise<ImpersonationData | null> {
+  if (!isSuperAdmin && !isDemoAccount) return null
+
+  const impersonation = readImpersonation()
+  if (!impersonation) return null
+  if (isSuperAdmin) return impersonation
+
+  const db = createAdminClient()
+  const { data: membership } = await db
+    .from('user_clubs')
+    .select('club_id')
+    .eq('user_id', userId)
+    .eq('club_id', impersonation.clubId)
+    .eq('status', 'accepted')
+    .maybeSingle()
+
+  return membership ? impersonation : null
+}
+
 export type UserContext = {
   userId: string
   clubId: string
@@ -53,16 +88,29 @@ export async function getUserContext(): Promise<UserContext | null> {
   const db = createAdminClient()
   const { data: utente } = await db
     .from('utenti')
-    .select('club_id, ruolo, is_super_admin, giocatore_figlio_id')
+    .select('club_id, ruolo, is_super_admin, is_demo_account, giocatore_figlio_id')
     .eq('id', user.id)
     .maybeSingle()
 
   if (!utente) return null
 
-  const impersonation = utente.is_super_admin ? readImpersonation() : null
+  const impersonation = await readVerifiedImpersonation(user.id, !!utente.is_super_admin, !!utente.is_demo_account)
 
-  // utenti.club_id è sempre il club attivo — aggiornato da /api/club/switch
-  let clubId: string = impersonation?.clubId ?? utente.club_id
+  // Per i super admin usa impersonation, altrimenti risolve il club per questo dispositivo.
+  // resolveDeviceClub legge user_device_clubs (keyed by device cookie) e valida l'accesso;
+  // se mancante o non autorizzato, fallback su utenti.club_id.
+  let clubId: string = impersonation?.clubId
+    ?? (utente.ruolo !== 'famiglia'
+        ? await resolveDeviceClub(user.id, utente.club_id)
+        : utente.club_id)
+
+  // Mantieni utenti.club_id allineato al club del dispositivo corrente.
+  // La funzione RLS my_club_id() legge utenti.club_id: se diverge dal club
+  // risolto per questo dispositivo, le query client-side vengono bloccate.
+  if (!impersonation && utente.ruolo !== 'famiglia' && clubId !== utente.club_id) {
+    await db.from('utenti').update({ club_id: clubId }).eq('id', user.id)
+  }
+
   let giocatoreId: string | undefined = impersonation?.giocatoreId ?? utente.giocatore_figlio_id ?? undefined
 
   // Se utente famiglia senza club_id o giocatore_figlio_id (registrato via link invito),

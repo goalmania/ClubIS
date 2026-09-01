@@ -114,7 +114,7 @@ export default function AllenamentiPage() {
       </div>
 
       {/* Statistiche rapide */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 24 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: 12, marginBottom: 24 }}>
         {[
           { label: 'Presenze', val: presenze, color: 'var(--accent)' },
           { label: 'Assenze', val: assenze, color: 'var(--rosso)' },

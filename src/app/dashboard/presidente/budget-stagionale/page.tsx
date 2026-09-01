@@ -337,18 +337,23 @@ export default function BudgetStagionalePage() {
 
   const load = useCallback(async () => {
     setLoading(true)
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
-    const { data: utente } = await supabase.from('utenti').select('club_id, ruolo').eq('id', user.id).single()
-    if (!utente) return
-    setClubId(utente.club_id)
-    setRuolo(utente.ruolo)
+    // Risolve club_id e ruolo tramite /api/user-context, che rispetta
+    // l'impersonation del super admin (vedi getUserContext in lib/impersonation.ts).
+    // Una query diretta su utenti.club_id ignorerebbe l'impersonation e
+    // mostrerebbe i dati del club reale dell'utente loggato invece di
+    // quello impersonato.
+    const ctxRes = await fetch('/api/user-context')
+    if (!ctxRes.ok) { setLoading(false); return }
+    const ctx: { clubId: string; ruolo: string } = await ctxRes.json()
+    if (!ctx.clubId) { setLoading(false); return }
+    setClubId(ctx.clubId)
+    setRuolo(ctx.ruolo)
 
     const [bs, ep, up, pn] = await Promise.all([
-      supabase.from('budget_stagionale').select('*').eq('club_id', utente.club_id).eq('stagione_riferimento', stagione).maybeSingle(),
-      supabase.from('entrate_previste').select('*').eq('club_id', utente.club_id).eq('stagione_riferimento', stagione).order('mese_riferimento').order('categoria'),
-      supabase.from('uscite_previste').select('*').eq('club_id', utente.club_id).eq('stagione_riferimento', stagione).order('mese_riferimento').order('categoria'),
-      supabase.from('prima_nota').select('tipo, importo, data').eq('club_id', utente.club_id)
+      supabase.from('budget_stagionale').select('*').eq('club_id', ctx.clubId).eq('stagione_riferimento', stagione).maybeSingle(),
+      supabase.from('entrate_previste').select('*').eq('club_id', ctx.clubId).eq('stagione_riferimento', stagione).order('mese_riferimento').order('categoria'),
+      supabase.from('uscite_previste').select('*').eq('club_id', ctx.clubId).eq('stagione_riferimento', stagione).order('mese_riferimento').order('categoria'),
+      supabase.from('prima_nota').select('tipo, importo, data').eq('club_id', ctx.clubId)
         .gte('data', `${annoInizio}-07-01`).lte('data', `${annoInizio + 1}-06-30`),
     ])
 
@@ -370,7 +375,10 @@ export default function BudgetStagionalePage() {
   const totEntratePrev   = entratePrev.reduce((s, v) => s + Number(v.importo_previsto), 0)
   const totUscitePrev    = uscitePrev.reduce((s, v) => s + Number(v.importo_previsto), 0)
   const saldoPrevisto    = totEntratePrev - totUscitePrev
-  const percBudget       = budget?.budget_totale_stagione ? Math.round((usciteEffettive / budget.budget_totale_stagione) * 100) : 0
+  // Il budget si considera "consumato" in base alle uscite previste (impegnate: ingaggi
+  // giocatori/staff + altre voci pianificate), non alle uscite effettive di prima nota —
+  // altrimenti un compenso impegnato ma non ancora pagato non risulterebbe scalato dal tetto.
+  const percBudget       = budget?.budget_totale_stagione ? Math.round((totUscitePrev / budget.budget_totale_stagione) * 100) : 0
 
   // Per il grafico mensile (solo mesi con dati)
   const datiMensili = MESI.map((lbl, i) => {
@@ -485,6 +493,16 @@ export default function BudgetStagionalePage() {
           >
             ↓ Esporta PDF
           </button>
+          {canEdit && (
+            <button
+              className="btn btn-primary btn-sm"
+              style={{ marginLeft: 6 }}
+              onClick={() => { setTab('configura'); setEditTetto(true) }}
+              data-onboarding="btn-impostazioni-budget-stagionale"
+            >
+              + Impostazioni budget
+            </button>
+          )}
         </div>
       </div>
 
@@ -498,9 +516,9 @@ export default function BudgetStagionalePage() {
           <div className="stat-sub">limite stagionale</div>
         </div>
         <div className="stat-card">
-          <div className="stat-label">Uscite effettive</div>
-          <div className="stat-value" style={{ color: 'var(--rosso)' }}>{fmt(usciteEffettive)}</div>
-          <div className="stat-sub">da prima nota</div>
+          <div className="stat-label">Uscite impegnate</div>
+          <div className="stat-value" style={{ color: 'var(--rosso)' }}>{fmt(totUscitePrev)}</div>
+          <div className="stat-sub">previsto (ingaggi + voci pianificate)</div>
         </div>
         <div className="stat-card">
           <div className="stat-label">Saldo previsto</div>
@@ -514,7 +532,7 @@ export default function BudgetStagionalePage() {
           <div className="stat-value" style={{ color: percBudget >= 90 ? 'var(--rosso)' : percBudget >= 70 ? 'var(--ambra)' : 'var(--accent)' }}>
             {budget ? `${percBudget}%` : '—'}
           </div>
-          <div className="stat-sub">uscite vs tetto</div>
+          <div className="stat-sub">impegnato vs tetto</div>
         </div>
       </div>
 
@@ -541,7 +559,7 @@ export default function BudgetStagionalePage() {
           <div style={{ display: 'grid', gridTemplateColumns: '220px 160px 1fr', gap: 20, marginBottom: 24, alignItems: 'start' }}>
             <div className="card" style={{ padding: '20px 16px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
               <div style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--grigio-4)', letterSpacing: '0.1em' }}>BUDGET CONSUMATO</div>
-              <GaugeBudget speso={usciteEffettive} totale={budget?.budget_totale_stagione ?? 0} />
+              <GaugeBudget speso={totUscitePrev} totale={budget?.budget_totale_stagione ?? 0} />
             </div>
             <div className="card" style={{ padding: '20px 16px' }}>
               <Semaforo perc={percBudget} />
@@ -740,7 +758,7 @@ export default function BudgetStagionalePage() {
           <div style={{ marginTop: 16, padding: '12px 16px', background: 'var(--grigio-6)', borderRadius: 6, display: 'flex', gap: 24, flexWrap: 'wrap' }}>
             <span style={{ fontSize: 12, color: 'var(--grigio-3)' }}>Uscite effettive (prima nota): <strong style={{ color: 'var(--rosso)' }}>{fmt(usciteEffettive)}</strong></span>
             <span style={{ fontSize: 12, color: 'var(--grigio-3)' }}>Differenza: <strong style={{ color: usciteEffettive <= totUscitePrev ? 'var(--verde)' : 'var(--rosso)' }}>{fmt(usciteEffettive - totUscitePrev)}</strong></span>
-            {budget && <span style={{ fontSize: 12, color: 'var(--grigio-3)' }}>Tetto residuo: <strong style={{ color: usciteEffettive > budget.budget_totale_stagione ? 'var(--rosso)' : 'var(--verde)' }}>{fmt(budget.budget_totale_stagione - usciteEffettive)}</strong></span>}
+            {budget && <span style={{ fontSize: 12, color: 'var(--grigio-3)' }}>Tetto residuo: <strong style={{ color: totUscitePrev > budget.budget_totale_stagione ? 'var(--rosso)' : 'var(--verde)' }}>{fmt(budget.budget_totale_stagione - totUscitePrev)}</strong></span>}
           </div>
         </div>
       )}

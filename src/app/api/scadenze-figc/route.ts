@@ -1,6 +1,6 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { getUserContext } from '@/lib/impersonation'
-import { SCADENZE_DEFAULT } from '@/lib/scadenze-figc'
+import { getScadenzeDefaultPerCategoria } from '@/lib/scadenze-figc'
 import { NextRequest } from 'next/server'
 
 export async function GET() {
@@ -45,7 +45,13 @@ export async function POST(req: NextRequest) {
       return Response.json({ msg: 'Scadenze già presenti', count })
     }
 
-    const records = SCADENZE_DEFAULT.map(s => ({
+    const { data: club } = await supabase
+      .from('clubs')
+      .select('categoria, genere')
+      .eq('id', ctx.clubId)
+      .single()
+
+    const records = getScadenzeDefaultPerCategoria(club?.categoria, club?.genere).map(s => ({
       club_id: ctx.clubId,
       stato: 'da_fare',
       ...s,

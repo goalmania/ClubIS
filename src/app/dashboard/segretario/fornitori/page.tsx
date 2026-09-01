@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import { formatEuro } from '@/lib/helpers'
 import { matchSearch } from '@/lib/search'
 
@@ -76,7 +77,7 @@ const EMPTY_PAG: Omit<Pagamento, 'id' | 'fornitore_id'> = {
 
 export default function FornitoriPage() {
   const supabase = createClient()
-  const [clubId,     setClubId]     = useState<string | null>(null)
+  const clubId = useClubId()
   const [tab,        setTab]        = useState<'fornitori' | 'pagamenti'>('fornitori')
   const [filtroTipo, setFiltroTipo] = useState<'tutti' | 'fornitore' | 'cliente' | 'entrambi'>('tutti')
   const [search,     setSearch]     = useState('')
@@ -100,16 +101,12 @@ export default function FornitoriPage() {
 
   useEffect(() => {
     const load = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-      const { data: u } = await supabase.from('utenti').select('club_id').eq('id', user.id).single()
-      if (!u) return
-      setClubId(u.club_id)
-      await reload(u.club_id)
+      if (!clubId) return
+      await reload(clubId)
       setLoading(false)
     }
     load()
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [clubId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const reload = async (cid: string) => {
     const [{ data: f }, { data: p }] = await Promise.all([

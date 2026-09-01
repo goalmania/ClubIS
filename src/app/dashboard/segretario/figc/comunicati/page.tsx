@@ -2,8 +2,10 @@
 import FeatureGate from '@/components/FeatureGate'
 import { useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import { PageHeader, Toast } from '@/components/ui'
 import type { AbbinamentoProvvedimento } from '@/lib/figc/parser-comunicati'
+import { useGenereClub } from '@/hooks/useGenereClub'
 
 /* ─── Tipi locali ────────────────────────────────────────────── */
 
@@ -34,6 +36,8 @@ const COMITATI = [
 
 export default function ComunicatiFIGCPage() {
   const supabase = createClient()
+  const clubId = useClubId()
+  const { isFemminile } = useGenereClub()
 
   /* Step corrente */
   const [step, setStep]       = useState<Step>(1)
@@ -68,17 +72,15 @@ export default function ComunicatiFIGCPage() {
 
   const analizza = useCallback(async () => {
     if (!testo.trim()) { showToast('Incolla prima il testo del comunicato.', 'error'); return }
+    if (!clubId) return
     setLoading(true)
 
     try {
       // Carica rosa per il select manuale di step 2
-      const { data: utente } = await supabase
-        .from('utenti').select('club_id').eq('id', (await supabase.auth.getUser()).data.user!.id).single()
-
       const { data: tess } = await supabase
         .from('tesseramenti')
         .select('giocatori(id, nome, cognome)')
-        .eq('club_id', utente!.club_id)
+        .eq('club_id', clubId)
         .eq('stato', 'attivo')
 
       const rosaData = (tess ?? [])
@@ -108,7 +110,7 @@ export default function ComunicatiFIGCPage() {
     } finally {
       setLoading(false)
     }
-  }, [testo, comitato, numCom, dataCom, supabase])
+  }, [testo, comitato, numCom, dataCom, supabase, clubId])
 
   /* ── Step 2 → 3: applica provvedimenti ───────────────────── */
 
@@ -119,15 +121,21 @@ export default function ComunicatiFIGCPage() {
     // Costruisce la lista: usa override se presente, altrimenti abbinamento auto
     const provvedimenti = abbinamenti
       .map((a, i) => {
-        const gId = overrides[i] ?? a.giocatore_id
-        if (!gId) return null
+        const gId    = overrides[i] ?? a.giocatore_id
+        const isAmmenda = a.provvedimento.tipo === 'ammenda'
+        // Per ammende il giocatore è opzionale; per gli altri tipi è obbligatorio
+        if (!isAmmenda && !gId) return null
+        // Parsa importo dal campo durata (es. "€ 50")
+        const importoMatch = a.provvedimento.durata.match(/[\d]+(?:[.,]\d+)?/)
+        const importo = importoMatch ? parseFloat(importoMatch[0].replace(',', '.')) : null
         return {
           tipo:         a.provvedimento.tipo,
-          giocatore_id: gId,
+          giocatore_id: gId ?? null,
           durata:       a.provvedimento.durata,
           giornate:     a.provvedimento.giornate,
           cognome_raw:  a.provvedimento.cognome_raw,
           nome_raw:     a.provvedimento.nome_raw,
+          importo:      isAmmenda ? importo : null,
         }
       })
       .filter(Boolean)
@@ -166,7 +174,11 @@ export default function ComunicatiFIGCPage() {
 
   /* ─── Render ─────────────────────────────────────────────── */
 
-  const abbinati    = abbinamenti.filter((a, i) => (overrides[i] ?? a.giocatore_id) !== null).length
+  // Ammende non richiedono giocatore abbinato → contano sempre come "abbinate"
+  const abbinati = abbinamenti.filter((a, i) => {
+    if (a.provvedimento.tipo === 'ammenda') return true
+    return (overrides[i] ?? a.giocatore_id) !== null
+  }).length
   const nonAbbinati = abbinamenti.length - abbinati
 
   return (
@@ -182,7 +194,7 @@ export default function ComunicatiFIGCPage() {
 
           <div style={{ maxWidth: 860, margin: '0 auto', padding: '32px 24px' }}>
             <PageHeader
-              title="Comunicati FIGC"
+              title={isFemminile ? 'Comunicati Divisione Calcio Femminile' : 'Comunicati FIGC'}
               subtitle="Incolla il testo del C.U. per estrarre e applicare i provvedimenti"
             />
 
@@ -418,24 +430,51 @@ export default function ComunicatiFIGCPage() {
                             </div>
                           </div>
 
-                          {/* Select abbinamento */}
+                          {/* Select abbinamento / info ammenda */}
                           <div>
-                            <select
-                              className="input"
-                              style={{ width: '100%', fontSize: 12 }}
-                              value={gId ?? ''}
-                              onChange={e => setOverrides(prev => ({
-                                ...prev,
-                                [i]: e.target.value || null as any,
-                              }))}
-                            >
-                              <option value="">— Non abbinare —</option>
-                              {rosa.map(g => (
-                                <option key={g.id} value={g.id}>
-                                  {g.cognome} {g.nome}
-                                </option>
-                              ))}
-                            </select>
+                            {a.provvedimento.tipo === 'ammenda' ? (
+                              <div>
+                                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', marginBottom: 5 }}>
+                                  USCITA IN PRIMA NOTA — AMMENDE FIGC
+                                </div>
+                                <select
+                                  className="input"
+                                  style={{ width: '100%', fontSize: 12, marginBottom: 6 }}
+                                  value={gId ?? ''}
+                                  onChange={e => setOverrides(prev => ({
+                                    ...prev,
+                                    [i]: e.target.value || null as any,
+                                  }))}
+                                >
+                                  <option value="">— A carico del club —</option>
+                                  {rosa.map(g => (
+                                    <option key={g.id} value={g.id}>
+                                      {g.cognome} {g.nome}
+                                    </option>
+                                  ))}
+                                </select>
+                                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--accent)' }}>
+                                  Importo: {a.provvedimento.durata || '—'} → registrato in contabilità
+                                </div>
+                              </div>
+                            ) : (
+                              <select
+                                className="input"
+                                style={{ width: '100%', fontSize: 12 }}
+                                value={gId ?? ''}
+                                onChange={e => setOverrides(prev => ({
+                                  ...prev,
+                                  [i]: e.target.value || null as any,
+                                }))}
+                              >
+                                <option value="">— Non abbinare —</option>
+                                {rosa.map(g => (
+                                  <option key={g.id} value={g.id}>
+                                    {g.cognome} {g.nome}
+                                  </option>
+                                ))}
+                              </select>
+                            )}
                           </div>
                         </div>
                       )

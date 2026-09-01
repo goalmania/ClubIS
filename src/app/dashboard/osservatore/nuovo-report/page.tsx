@@ -1,12 +1,14 @@
 'use client'
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import { useRouter } from 'next/navigation'
 import { FormField, FormGrid, FormSection, SectionCard, Select, BackButton, Toast, RatingInput } from '@/components/ui'
 
 export default function NuovoReportScoutingPage() {
   const router   = useRouter()
   const supabase = createClient()
+  const clubId   = useClubId()
 
   const [loading, setLoading] = useState(false)
   const [toast,   setToast]   = useState<{ msg: string; tipo: 'success' | 'error' } | null>(null)
@@ -43,11 +45,11 @@ export default function NuovoReportScoutingPage() {
   const salva = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!nomeGiocatore.trim()) { setToast({ msg: 'Inserisci il nome del giocatore', tipo: 'error' }); return }
+    if (!clubId) return
     setLoading(true)
 
     try {
       const { data: { user } } = await supabase.auth.getUser()
-      const { data: utente }   = await supabase.from('utenti').select('club_id').eq('id', user!.id).single()
 
       const media = mediaCalcolata()
 
@@ -55,7 +57,7 @@ export default function NuovoReportScoutingPage() {
         nome_giocatore_ext:   nomeGiocatore.trim(),
         club_attuale_ext:     clubAttuale.trim() || null,
         osservatore_id:       user!.id,
-        club_richiedente_id:  utente!.club_id,
+        club_richiedente_id:  clubId,
         data_osservazione:    dataOss,
         partita_osservata:    partitaOss.trim() || null,
         tecnica:              tecnica ?? null,

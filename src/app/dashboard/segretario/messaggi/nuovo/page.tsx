@@ -1,12 +1,14 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 import { useRouter } from 'next/navigation'
 import { FormField, SectionCard, BackButton, Toast } from '@/components/ui'
 
 export default function NuovoMessaggioPage() {
   const router = useRouter()
   const supabase = createClient()
+  const clubId = useClubId()
   const [squadre, setSquadre] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const [toast, setToast] = useState<{ msg: string; tipo: 'success' | 'error' } | null>(null)
@@ -16,29 +18,28 @@ export default function NuovoMessaggioPage() {
   const [destinatariSel, setDestinatariSel] = useState<string[]>([])
 
   useEffect(() => {
+    if (!clubId) return
     async function load() {
-      const { data: { user } } = await supabase.auth.getUser()
-      const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user!.id).single()
-      const { data: sq } = await supabase.from('squadre').select('id, nome').eq('club_id', utente!.club_id).eq('attiva', true)
+      const { data: sq } = await supabase.from('squadre').select('id, nome').eq('club_id', clubId!).eq('attiva', true)
       setSquadre(sq ?? [])
     }
     load()
-  }, [])
+  }, [clubId, supabase])
 
   const toggleSquadra = (id: string) => setDestinatariSel(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id])
 
   const salva = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!titolo.trim() || !corpo.trim()) { setToast({ msg: 'Titolo e testo obbligatori', tipo: 'error' }); return }
+    if (!clubId) return
     setLoading(true)
     try {
       const { data: { user } } = await supabase.auth.getUser()
-      const { data: utente } = await supabase.from('utenti').select('club_id').eq('id', user!.id).single()
       const dest = destinatariSel.length > 0
         ? destinatariSel.map(id => ({ tipo: 'squadra', id }))
-        : [{ tipo: 'club', id: utente!.club_id }]
+        : [{ tipo: 'club', id: clubId }]
       const { error } = await supabase.from('messaggi').insert({
-        club_id: utente!.club_id,
+        club_id: clubId,
         mittente_id: user!.id,
         titolo: titolo.trim(),
         corpo: corpo.trim(),

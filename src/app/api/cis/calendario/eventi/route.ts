@@ -1,7 +1,8 @@
-import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { NextRequest, NextResponse } from 'next/server'
 import { generateScheduledNotificationsForEvent } from '@/lib/notifications/NotificationService'
+import { getClubFromSession } from '@/lib/server-helpers'
+import { getUserContext } from '@/lib/impersonation'
 
 const TIPOL_LABEL: Record<string, string> = {
   allenamento: 'Allenamento',
@@ -20,7 +21,8 @@ function parseCsv(value: string | null | undefined) {
 }
 
 export async function GET(req: NextRequest) {
-  const sessionClient = createClient()
+  const session = await getClubFromSession()
+  if (!session) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
 
   const supabase = createAdminClient()
 
@@ -36,18 +38,7 @@ export async function GET(req: NextRequest) {
   const staff = parseCsv(req.nextUrl.searchParams.get('staff'))
   const giocatori = parseCsv(req.nextUrl.searchParams.get('giocatori'))
 
-  const { data: { user } } = await sessionClient.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
-
-  const { data: utente, error: utenteError } = await supabase
-    .from('utenti')
-    .select('club_id')
-    .eq('id', user.id)
-    .single()
-
-  if (utenteError || !utente) return NextResponse.json({ error: 'Utente non valido' }, { status: 403 })
-
-  const clubId = utente.club_id
+  const clubId = session.clubId
 
   const { data: eventi, error } = await supabase
     .from('eventi_calendario')
@@ -124,7 +115,8 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const sessionClient = createClient()
+  const ctx = await getUserContext()
+  if (!ctx) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
 
   const supabase = createAdminClient()
   const body = await req.json().catch(() => null)
@@ -138,6 +130,7 @@ export async function POST(req: NextRequest) {
     luogo_testo,
     luogo_lat,
     luogo_lng,
+    campo_id,
     priorita,
     note,
     partecipanti,
@@ -150,17 +143,7 @@ export async function POST(req: NextRequest) {
   }
   if (!partecipanti) return NextResponse.json({ error: 'Partecipanti mancanti' }, { status: 400 })
 
-  const { data: { user } } = await sessionClient.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'Non autenticato' }, { status: 401 })
-
-  const { data: utente, error: utenteError } = await supabase
-    .from('utenti')
-    .select('club_id')
-    .eq('id', user.id)
-    .single()
-
-  if (utenteError || !utente) return NextResponse.json({ error: 'Utente non valido' }, { status: 403 })
-  const clubId = utente.club_id
+  const clubId = ctx.clubId
 
   const { data: eventoIns, error: eventoError } = await supabase
     .from('eventi_calendario')
@@ -173,9 +156,10 @@ export async function POST(req: NextRequest) {
       luogo_testo,
       luogo_lat: luogo_lat ?? null,
       luogo_lng: luogo_lng ?? null,
+      campo_id: campo_id || null,
       priorita,
       note,
-      creato_da: user.id,
+      creato_da: ctx.userId,
     })
     .select('id')
     .single()

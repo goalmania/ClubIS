@@ -2,6 +2,7 @@
 import FeatureGate from '@/components/FeatureGate'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useClubId } from '@/lib/club-context'
 
 const STAGIONI = ['2024/25', '2025/26', '2026/27', '2027/28']
 
@@ -97,19 +98,9 @@ export default function TrackerMercatoDS() {
   const [trattative, setTrattative] = useState<Trattativa[]>([])
   const [budgetMercato, setBudgetMercato] = useState(0)
   const [loading, setLoading] = useState(true)
-  const [clubId, setClubId] = useState<string | null>(null)
+  const clubId = useClubId()
   const [filtroStato, setFiltroStato] = useState('tutti')
   const [filtroTipo, setFiltroTipo] = useState('tutti')
-
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data }: { data: { user: { id: string } | null } }) => {
-      if (!data.user) return
-      supabase.from('utenti').select('club_id').eq('id', data.user.id).single()
-        .then(({ data: u }: { data: { club_id: string } | null }) => {
-          if (u?.club_id) setClubId(u.club_id)
-        })
-    })
-  }, [])
 
   useEffect(() => {
     if (!clubId) return
