@@ -57,6 +57,17 @@ export interface Club {
   piano_abbonamento: PianoAbbonamento
   tipo_prodotto: TipoProdottoClub
   abbonamento_scadenza?: string
+  // Campi abbonamento gestiti da Stripe / webhook (vedi migration
+  // 20260509_001_subscription_fields.sql e 20260909_feat_club_rinnovo_automatico.sql).
+  // Storicamente letti nel codice via `(club as any)`; tipizzati qui come opzionali.
+  plan_tier?: 'starter' | 'pro' | 'elite'
+  plan_status?: 'active' | 'inactive' | 'trial' | 'expired'
+  trial_ends_at?: string
+  current_period_end?: string
+  stripe_customer_id?: string
+  stripe_subscription_id?: string
+  /** true = rinnovo automatico disattivato dal titolare */
+  cancel_at_period_end?: boolean
   email_ufficiale?: string
   telefono?: string
   attivo: boolean

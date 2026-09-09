@@ -182,6 +182,7 @@ const navConfig: Record<RuoloUtente, NavSezione[]> = {
       { label: 'Visite Mediche', href: '/dashboard/segretario/visite', icon: 'Activity' },
     ]},
     { titolo: 'Gestione', voci: [
+      { label: 'Abbonamento', href: '/dashboard/presidente/abbonamento', icon: 'Tag' },
       { label: 'Generatore Documenti', href: '/dashboard/segretario/documenti', icon: 'FileText', feature: 'genera_documenti' },
       { label: 'Compliance', href: '/dashboard/segretario/compliance', icon: 'Shield' },
       { label: 'Compliance COVISOC', href: '/dashboard/segretario/compliance-pro', icon: 'Shield', proOnly: true },
@@ -425,6 +426,7 @@ const navConfigScuolaCalcio: Partial<Record<RuoloUtente, NavSezione[]>> = {
       { label: 'Materiale', href: '/dashboard/segretario/materiale', icon: 'Folder' },
     ]},
     { titolo: 'Gestione', voci: [
+      { label: 'Abbonamento', href: '/dashboard/presidente/abbonamento', icon: 'Tag' },
       { label: 'Comunicazioni', href: '/dashboard/segretario/comunicazioni', icon: 'Message' },
       { label: 'Archivio documenti', href: '/dashboard/segretario/archivio', icon: 'Folder' },
       { label: 'Import dati', href: '/dashboard/segretario/import', icon: 'Upload' },
