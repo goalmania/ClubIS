@@ -120,6 +120,9 @@ export async function POST(req: NextRequest) {
     plan_status: 'active',
     plan_tier,
     piano_abbonamento: plan_tier === 'starter' ? 'base' : plan_tier,
+    // Attivazione da dmfootballservices.it = intento di rinnovo automatico.
+    // Se poi manca una carta su Stripe l'admin lo vede come "No carta".
+    cancel_at_period_end: false,
   }
 
   if (current_period_end) {

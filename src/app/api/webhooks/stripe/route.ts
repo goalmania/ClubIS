@@ -363,7 +363,8 @@ export async function POST(req: NextRequest) {
           // titolareClubIdsForStripeCustomer sopra).
           await db
             .from('clubs')
-            .update({ plan_tier: plan, plan_status: 'active' })
+            // Nuovo pagamento andato a buon fine → rinnovo automatico ON
+            .update({ plan_tier: plan, plan_status: 'active', cancel_at_period_end: false })
             .in('id', titolareClubIds)
 
           await db
@@ -391,6 +392,7 @@ export async function POST(req: NextRequest) {
             citta: '',
             plan_tier: plan,
             plan_status: 'active',
+            cancel_at_period_end: false,
             stripe_customer_id: stripeCustomerId,
             stripe_subscription_id: session.subscription ?? null,
             onboarding_completed: false,
@@ -432,7 +434,7 @@ export async function POST(req: NextRequest) {
         } else {
           // Club già esiste: aggiorna piano
           await db.from('clubs')
-            .update({ plan_tier: plan, plan_status: 'active', stripe_customer_id: stripeCustomerId })
+            .update({ plan_tier: plan, plan_status: 'active', cancel_at_period_end: false, stripe_customer_id: stripeCustomerId })
             .eq('id', existingClub.id)
         }
         break
@@ -629,6 +631,43 @@ export async function POST(req: NextRequest) {
       }
 
       // ─────────────────────────────────────────────────────
+      // Modifica di una subscription (tra cui il toggle del rinnovo
+      // automatico fatto da /api/abbonamento/rinnovo-automatico o dallo
+      // stesso Stripe). Evento frequente e idempotente: qui teniamo solo
+      // allineati `cancel_at_period_end` e `current_period_end` sul club,
+      // senza toccare plan_tier/plan_status (li gestiscono gli altri case).
+      case 'customer.subscription.updated': {
+        const sub = event.data.object
+
+        // Le rette famiglia usano pause/delete, non questo flag — se la
+        // subscription è una retta, qui non c'è niente da fare.
+        const { data: retta } = await db
+          .from('retta_abbonamenti')
+          .select('id')
+          .eq('stripe_subscription_id', sub.id)
+          .maybeSingle()
+        if (retta) break
+
+        const stripeCustomerId: string = sub.customer
+        const clubIds = await titolareClubIdsForStripeCustomer(db, stripeCustomerId)
+
+        if (clubIds.length > 0) {
+          // current_period_end è top-level nelle API "classiche" e sotto
+          // items.data[0] nelle più recenti — leggiamo entrambe.
+          const periodEnd: number | undefined =
+            sub.current_period_end ?? sub.items?.data?.[0]?.current_period_end
+          const update: Record<string, unknown> = {
+            cancel_at_period_end: !!sub.cancel_at_period_end,
+          }
+          if (periodEnd) {
+            update.current_period_end = new Date(periodEnd * 1000).toISOString()
+          }
+          await db.from('clubs').update(update).in('id', clubIds)
+        }
+        break
+      }
+
+      // ─────────────────────────────────────────────────────
       case 'customer.subscription.deleted': {
         const sub = event.data.object
 
@@ -653,7 +692,7 @@ export async function POST(req: NextRequest) {
 
         if (clubIds.length > 0) {
           await db.from('clubs')
-            .update({ plan_status: 'inactive', plan_tier: 'starter' })
+            .update({ plan_status: 'inactive', plan_tier: 'starter', cancel_at_period_end: false })
             .in('id', clubIds)
         }
         break

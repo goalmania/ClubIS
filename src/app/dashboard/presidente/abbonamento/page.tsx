@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import RinnovoAutomaticoControls from './RinnovoAutomaticoControls'
 
 export default async function AbbonamentoPage() {
   const supabase = createClient()
@@ -15,7 +16,7 @@ export default async function AbbonamentoPage() {
 
   const { data: club } = await supabase
     .from('clubs')
-    .select('nome, plan_status, plan_tier, trial_ends_at, current_period_end, dmscout_abbonamento_attivo, dmscout_abbonamento_scadenza')
+    .select('nome, plan_status, plan_tier, trial_ends_at, current_period_end, stripe_subscription_id, cancel_at_period_end, tipo_prodotto, dmscout_abbonamento_attivo, dmscout_abbonamento_scadenza')
     .eq('id', utente.club_id)
     .maybeSingle()
 
@@ -26,6 +27,9 @@ export default async function AbbonamentoPage() {
   const planTier: string = (club as any)?.plan_tier ?? 'starter'
   const trialEndsAt: string | null = (club as any)?.trial_ends_at ?? null
   const currentPeriodEnd: string | null = (club as any)?.current_period_end ?? null
+  const hasStripeSubscription = !!(club as any)?.stripe_subscription_id
+  const cancelAtPeriodEnd: boolean = (club as any)?.cancel_at_period_end ?? false
+  const isScuolaCalcio = (club as any)?.tipo_prodotto === 'scuola_calcio_standalone'
 
   const isTrial = planStatus === 'trial'
   const isActive = planStatus === 'active'
@@ -156,6 +160,17 @@ export default async function AbbonamentoPage() {
             </div>
           )}
 
+          {isActive && (
+            <div style={{ marginBottom: 20 }}>
+              <RinnovoAutomaticoControls
+                hasStripeSubscription={hasStripeSubscription}
+                cancelAtPeriodEnd={cancelAtPeriodEnd}
+                currentPeriodEnd={currentPeriodEnd}
+                isScuolaCalcio={isScuolaCalcio}
+              />
+            </div>
+          )}
+
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
             {(isTrial || isExpired) && (
               <a
@@ -165,16 +180,6 @@ export default async function AbbonamentoPage() {
                 className="btn btn-primary btn-sm"
               >
                 {isExpired ? 'Rinnova ClubIS →' : 'Abbonati ora →'}
-              </a>
-            )}
-            {isActive && (
-              <a
-                href="https://dmfootballservices.it/#prezzi"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn btn-secondary btn-sm"
-              >
-                Gestisci abbonamento →
               </a>
             )}
             <a

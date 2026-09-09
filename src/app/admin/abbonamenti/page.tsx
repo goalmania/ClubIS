@@ -13,7 +13,7 @@ export default function AdminAbbonamentiPage() {
     async function load() {
       const { data } = await supabase
         .from('clubs')
-        .select('id, nome, citta, plan_status, plan_tier, trial_ends_at, current_period_end, dmscout_abbonamento_attivo, dmscout_abbonamento_scadenza, attivo')
+        .select('id, nome, citta, plan_status, plan_tier, trial_ends_at, current_period_end, stripe_subscription_id, cancel_at_period_end, dmscout_abbonamento_attivo, dmscout_abbonamento_scadenza, attivo')
         .order('nome')
       setClubs(data ?? [])
       setLoading(false)
@@ -34,6 +34,7 @@ export default function AdminAbbonamentiPage() {
   const trialScaduti = clubs.filter(c => c.plan_status === 'trial' && c.trial_ends_at && new Date(c.trial_ends_at) <= oggi)
   const abbonatiAttivi = clubs.filter(c => c.plan_status === 'active')
   const scaduti = clubs.filter(c => c.plan_status === 'expired' || c.plan_status === 'inactive')
+  const attiviSenzaRinnovo = abbonatiAttivi.filter(c => !c.stripe_subscription_id)
 
   function statoClubIS(c: any) {
     if (c.plan_status === 'trial') {
@@ -46,6 +47,13 @@ export default function AdminAbbonamentiPage() {
     if (c.plan_status === 'active') return { label: 'Attivo', cls: 'badge-verde' }
     if (c.plan_status === 'expired') return { label: 'Scaduto', cls: 'badge-rosso' }
     return { label: 'Inattivo', cls: 'badge-grigio' }
+  }
+
+  function rinnovoAuto(c: any) {
+    if (c.plan_status !== 'active') return { label: '—', cls: 'badge-grigio' }
+    if (!c.stripe_subscription_id) return { label: 'No carta', cls: 'badge-rosso' }
+    if (c.cancel_at_period_end) return { label: 'Disdetto', cls: 'badge-ambra' }
+    return { label: 'Sì', cls: 'badge-verde' }
   }
 
   function statoDMScout(c: any) {
@@ -64,7 +72,7 @@ export default function AdminAbbonamentiPage() {
       <div style={{ marginBottom: 24 }}>
         <h1 style={{ fontSize: 22, fontWeight: 600 }}>Gestione Abbonamenti</h1>
         <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 2 }}>
-          {clubs.length} club — {abbonatiAttivi.length} attivi · {trialAttivi.length} in trial · {scaduti.length + trialScaduti.length} scaduti
+          {clubs.length} club — {abbonatiAttivi.length} attivi · {trialAttivi.length} in trial · {scaduti.length + trialScaduti.length} scaduti · {attiviSenzaRinnovo.length} senza rinnovo auto
         </p>
       </div>
 
@@ -96,6 +104,7 @@ export default function AdminAbbonamentiPage() {
                   <th>ClubIS</th>
                   <th>Piano</th>
                   <th>Scadenza ClubIS</th>
+                  <th>Rinnovo auto</th>
                   <th>DM Scout</th>
                   <th>Scadenza DM Scout</th>
                   <th>Modifica piano</th>
@@ -104,6 +113,7 @@ export default function AdminAbbonamentiPage() {
               <tbody>
                 {clubs.map(c => {
                   const cs = statoClubIS(c)
+                  const ra = rinnovoAuto(c)
                   const ds = statoDMScout(c)
                   const scadenzaClubIS = c.plan_status === 'trial' ? c.trial_ends_at : c.current_period_end
                   return (
@@ -119,6 +129,7 @@ export default function AdminAbbonamentiPage() {
                       <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
                         {scadenzaClubIS ? new Date(scadenzaClubIS).toLocaleDateString('it-IT') : '—'}
                       </td>
+                      <td><span className={`badge ${ra.cls}`}>{ra.label}</span></td>
                       <td><span className={`badge ${ds.cls}`}>{ds.label}</span></td>
                       <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
                         {c.dmscout_abbonamento_scadenza
