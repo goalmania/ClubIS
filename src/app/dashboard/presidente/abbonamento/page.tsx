@@ -183,7 +183,7 @@ export default async function AbbonamentoPage() {
               </a>
             )}
             <a
-              href="https://wa.me/393334218596"
+              href="https://wa.me/393510800258"
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-secondary btn-sm"
@@ -290,7 +290,7 @@ export default async function AbbonamentoPage() {
               </a>
             )}
             <a
-              href="https://wa.me/393334218596"
+              href="https://wa.me/393510800258"
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-secondary btn-sm"

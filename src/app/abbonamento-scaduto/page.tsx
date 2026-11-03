@@ -296,7 +296,7 @@ function AbbonamentoContent() {
 
         {/* Supporto */}
         <a
-          href="https://wa.me/393334218596"
+          href="https://wa.me/393510800258"
           target="_blank"
           rel="noopener noreferrer"
           style={{

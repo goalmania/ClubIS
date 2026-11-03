@@ -5,7 +5,7 @@
 
 # Condizioni di Abbonamento — CIS (Club Information System)
 
-**Fornitore:** Paolo Di Muro
+**Fornitore:** DM Football Services
 **Servizio:** CIS, piattaforma gestionale per società sportive, erogata in modalità SaaS (Software as a Service) via web all'indirizzo [dominio CIS]
 
 ## 1. Oggetto

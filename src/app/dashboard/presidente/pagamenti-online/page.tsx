@@ -16,7 +16,7 @@ type Stato = {
 
 type StepStato = 'fatto' | 'attivo' | 'attesa'
 
-const WHATSAPP_SUPPORTO = 'https://wa.me/393334218596'
+const WHATSAPP_SUPPORTO = 'https://wa.me/393510800258'
 
 export default function PagamentiOnlinePage() {
   const searchParams = useSearchParams()
