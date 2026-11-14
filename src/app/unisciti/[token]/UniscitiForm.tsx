@@ -125,7 +125,7 @@ export default function UniscitiForm({
             fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)',
             marginTop: 4,
           }}>
-            {clubCategoria.toUpperCase()}{clubCitta ? ` · ${clubCitta}` : ''}
+            {clubCategoria.replace(/_/g, ' ')}{clubCitta ? ` · ${clubCitta}` : ''}
           </div>
         </div>
 

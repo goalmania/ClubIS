@@ -412,7 +412,7 @@ export default function GestioneAccountPage() {
                             </div>
                             {!m.attivo && (
                               <div style={{ fontSize: 12, color: '#ef4444', fontFamily: 'var(--font-mono)' }}>
-                                DISATTIVO
+                                Disattivo
                               </div>
                             )}
                           </div>

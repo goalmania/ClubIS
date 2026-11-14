@@ -69,7 +69,7 @@ export default async function VistaDisponibilita({ clubId, ruolo, squadraIds }: 
           textTransform: 'none', marginBottom: 10,
           display: 'flex', alignItems: 'center', gap: 14,
         }}>
-          DISPONIBILITÀ ROSA
+          Disponibilità rosa
           <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
         </div>
         <h1 style={{
@@ -152,7 +152,7 @@ export default async function VistaDisponibilita({ clubId, ruolo, squadraIds }: 
                 flexShrink: 0,
               }}
             >
-              GESTISCI CERTIFICATI →
+              Gestisci certificati →
             </Link>
           )}
         </div>
@@ -223,7 +223,7 @@ export default async function VistaDisponibilita({ clubId, ruolo, squadraIds }: 
                       fontSize: 12, color: 'var(--grigio-4)',
                       fontFamily: 'var(--font-mono)', marginTop: 1,
                     }}>
-                      {g.ruolo_principale.replace(/_/g, ' ').toUpperCase()}
+                      {g.ruolo_principale.replace(/_/g, ' ')}
                     </div>
                   )}
                 </div>

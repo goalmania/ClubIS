@@ -75,7 +75,7 @@ function GaugeBudget({ speso, totale }: { speso: number; totale: number }) {
         </text>
         <text x={cx} y={cy + 14} textAnchor="middle"
           style={{ fontFamily: 'var(--font-mono)', fontSize: 12, fill: '#666' }}>
-          UTILIZZATO
+          Utilizzato
         </text>
       </svg>
       <div style={{ textAlign: 'center' }}>
@@ -102,7 +102,7 @@ function Semaforo({ perc }: { perc: number }) {
       border: '1px solid var(--grigio-5)',
     }}>
       <div style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: 'var(--grigio-4)', letterSpacing: '0', marginBottom: 8 }}>
-        STATO BUDGET
+        Stato budget
       </div>
       {(['verde','giallo','rosso'] as const).map(s => (
         <div key={s} style={{
@@ -558,7 +558,7 @@ export default function BudgetStagionalePage() {
           {/* Gauge + Semaforo */}
           <div style={{ display: 'grid', gridTemplateColumns: '220px 160px 1fr', gap: 20, marginBottom: 24, alignItems: 'start' }}>
             <div className="card" style={{ padding: '20px 16px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-              <div style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: 'var(--grigio-4)', letterSpacing: '0' }}>BUDGET CONSUMATO</div>
+              <div style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: 'var(--grigio-4)', letterSpacing: '0' }}>Budget consumato</div>
               <GaugeBudget speso={totUscitePrev} totale={budget?.budget_totale_stagione ?? 0} />
             </div>
             <div className="card" style={{ padding: '20px 16px' }}>
@@ -566,7 +566,7 @@ export default function BudgetStagionalePage() {
             </div>
             {/* Riepilogo numeri */}
             <div className="card" style={{ padding: '20px 24px' }}>
-              <div style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: 'var(--grigio-4)', letterSpacing: '0', marginBottom: 14 }}>RIEPILOGO FINANZIARIO</div>
+              <div style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: 'var(--grigio-4)', letterSpacing: '0', marginBottom: 14 }}>Riepilogo finanziario</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {[
                   { lbl: 'Entrate previste', val: totEntratePrev, colore: 'rgba(200,240,0,0.5)' },

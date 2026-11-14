@@ -59,33 +59,25 @@ export default function ImpiantiDashboardWidget({ ruolo }: Props) {
     : '/dashboard/presidente/impianti'
 
   return (
-    <div className="card" style={{ padding: 0, overflow: 'hidden', marginBottom: 20 }}>
+    <div className="card" style={{ padding: '16px 18px 18px', marginBottom: 20 }}>
       <div style={{
-        padding: '12px 18px', borderBottom: '1px solid var(--border)',
+        marginBottom: 12,
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
       }}>
-        <div style={{
-          fontFamily: 'var(--font-display)', fontWeight: 700,
-          textTransform: 'none', fontSize: 12, letterSpacing: '0',
-        }}>
-          🏟 Stato Impianti
-        </div>
+        <h2 style={{ fontSize: 17, fontWeight: 600, letterSpacing: '-0.01em' }}>
+          Stato impianti
+        </h2>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
           {ticketAperti > 0 && (
             <span style={{
-              fontSize: 12, padding: '2px 8px',
-              background: 'rgba(255,68,68,0.15)', border: '1px solid rgba(255,68,68,0.4)',
-              color: '#ff4444', fontFamily: 'var(--font-mono)',
-              letterSpacing: '0', textTransform: 'none',
+              fontSize: 12, fontWeight: 600, padding: '2px 9px', borderRadius: 999,
+              background: 'rgba(255,68,68,0.14)', color: '#ff6b6b',
             }}>
               {ticketAperti} ticket aperti
             </span>
           )}
-          <Link href={detailHref} style={{
-            fontSize: 12, color: 'var(--gray)', fontFamily: 'var(--font-mono)',
-            textDecoration: 'none', letterSpacing: '0', textTransform: 'none',
-          }}>
-            DETTAGLIO →
+          <Link href={detailHref} className="arrow-link">
+            Dettaglio →
           </Link>
         </div>
       </div>
@@ -95,33 +87,28 @@ export default function ImpiantiDashboardWidget({ ruolo }: Props) {
           Caricamento stato impianti...
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 0 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 8 }}>
           {(Object.entries(AREE_IMPIANTO) as [AreaImpianto, typeof AREE_IMPIANTO[AreaImpianto]][]).map(([key, meta]) => {
             const stato = stati[key] ?? 'giallo'
             const sem = SEMAFORO[stato]
             return (
               <div key={key} style={{
-                padding: '12px 16px',
-                borderRight: '1px solid var(--border)',
-                borderBottom: '1px solid var(--border)',
-                background: sem.bg,
+                padding: '10px 12px',
+                borderRadius: 14,
+                background: 'var(--surface-3)',
                 display: 'flex', alignItems: 'center', gap: 10,
               }}>
-                <span style={{ fontSize: 18, flexShrink: 0 }}>{meta.icona}</span>
+                <span style={{ fontSize: 17, flexShrink: 0, width: 34, height: 34, borderRadius: 10, background: sem.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{meta.icona}</span>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{
-                    fontFamily: 'var(--font-display)', fontWeight: 700,
-                    textTransform: 'none', fontSize: 12,
-                    letterSpacing: '0', marginBottom: 2,
+                    fontWeight: 600, fontSize: 14, marginBottom: 1,
                   }}>
                     {meta.label}
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                    <span style={{ color: sem.color, fontSize: 12 }}>●</span>
+                    <span style={{ width: 7, height: 7, borderRadius: 999, background: sem.color }} />
                     <span style={{
-                      fontSize: 12, color: sem.color,
-                      fontFamily: 'var(--font-mono)', textTransform: 'none',
-                      letterSpacing: '0',
+                      fontSize: 12.5, color: sem.color, fontWeight: 500,
                     }}>
                       {STATO_LABEL[stato]}
                     </span>

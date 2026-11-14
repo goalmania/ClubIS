@@ -105,7 +105,7 @@ export default function ScadenzeFIGCWidget({ compact = false }: Props) {
           fontSize: 12, color: 'var(--grigio-3)', fontFamily: 'var(--font-mono)',
           textDecoration: 'none', letterSpacing: '0', textTransform: 'none',
         }}>
-          GESTISCI →
+          Gestisci →
         </Link>
       </div>
 

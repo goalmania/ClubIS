@@ -253,7 +253,7 @@ export default function ConfigurazioneFinanziariaPage() {
                     <div style={{ flex: 1 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                         <span style={{ fontWeight: 600, fontSize: 14, color: 'var(--white)' }}>{c.nome}</span>
-                        {c.predefinito && <span style={{ fontSize: 11, fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none', color: 'var(--accent)', background: 'rgba(200,240,0,0.1)', padding: '2px 6px', borderRadius: 8 }}>PREDEFINITO</span>}
+                        {c.predefinito && <span style={{ fontSize: 11, fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none', color: 'var(--accent)', background: 'rgba(200,240,0,0.1)', padding: '2px 6px', borderRadius: 8 }}>Predefinito</span>}
                       </div>
                       <div style={{ fontSize: 12, color: 'var(--gray)', marginTop: 2, display: 'flex', gap: 14, flexWrap: 'wrap' }}>
                         {c.banca && <span>{c.banca}</span>}
@@ -334,7 +334,7 @@ export default function ConfigurazioneFinanziariaPage() {
                           <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: 700, color: tipo === 'entrata' ? 'var(--verde)' : 'var(--rosso)', width: 40, flexShrink: 0 }}>{cat.codice}</span>
                           <span style={{ fontSize: 13, color: 'var(--white)', flex: 1 }}>{cat.descrizione}</span>
                           {cat.is_sistema && (
-                            <span style={{ fontSize: 11, fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none', color: 'var(--gray)', background: 'var(--surface-2)', padding: '2px 6px', borderRadius: 8 }}>SISTEMA</span>
+                            <span style={{ fontSize: 11, fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none', color: 'var(--gray)', background: 'var(--surface-2)', padding: '2px 6px', borderRadius: 8 }}>Sistema</span>
                           )}
                         </div>
                       ))}
@@ -554,10 +554,10 @@ function generaHTMLReport(
   return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:Arial,sans-serif;font-size:11pt;margin:40px}h1{font-size:14pt}h2{font-size:12pt;margin-top:24px}table{width:100%;border-collapse:collapse;margin:8px 0}th{background:#f0f0f0;padding:6px 10px;text-align:left;font-size:10pt}td{padding:5px 10px;border-bottom:1px solid #e0e0e0;font-size:11pt}.tot{font-weight:bold;font-size:12pt}.saldo{font-size:14pt;font-weight:bold;margin-top:16px}</style></head><body>
 <h1>REPORT FINANZIARIO — ${anno}</h1>
 <p>Generato il: ${oggi}</p>
-<h2 style="color:green">ENTRATE</h2>
+<h2 style="color:green">Entrate</h2>
 <table><thead><tr><th>Cod.</th><th>Categoria</th><th style="text-align:right">Importo</th></tr></thead><tbody>${rows(entratePerCat, 'green')}</tbody></table>
 <p class="tot" style="color:green">TOTALE ENTRATE: € ${fmt(totEntrate)}</p>
-<h2 style="color:red">USCITE</h2>
+<h2 style="color:red">Uscite</h2>
 <table><thead><tr><th>Cod.</th><th>Categoria</th><th style="text-align:right">Importo</th></tr></thead><tbody>${rows(uscitePerCat, 'red')}</tbody></table>
 <p class="tot" style="color:red">TOTALE USCITE: € ${fmt(totUscite)}</p>
 <hr><p class="saldo" style="color:${saldo >= 0 ? 'green' : 'red'}">SALDO: ${saldo >= 0 ? '+' : ''}€ ${fmt(saldo)}</p>

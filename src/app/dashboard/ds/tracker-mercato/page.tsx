@@ -163,7 +163,7 @@ export default function TrackerMercatoDS() {
           </div>
 
           {loading ? (
-            <div style={{ color: 'var(--gray)', padding: 48, textAlign: 'center', fontFamily: 'var(--font-mono)', fontSize: '0.82rem', letterSpacing: 2 }}>CARICAMENTO...</div>
+            <div style={{ color: 'var(--gray)', padding: 48, textAlign: 'center', fontFamily: 'var(--font-mono)', fontSize: '0.82rem', letterSpacing: 0 }}>Caricamento...</div>
           ) : (
             <>
               {/* contatori per tipo */}
@@ -242,7 +242,7 @@ export default function TrackerMercatoDS() {
                     </button>
                   ))}
                 </div>
-                <span style={{ marginLeft: 'auto', fontFamily: 'var(--font-mono)', fontSize: '0.78rem', color: 'var(--text-muted)', letterSpacing: 2 }}>
+                <span style={{ marginLeft: 'auto', fontFamily: 'var(--font-mono)', fontSize: '0.78rem', color: 'var(--text-muted)', letterSpacing: 0 }}>
                   {filtrate.length} / {trattative.length}
                 </span>
               </div>
@@ -250,7 +250,7 @@ export default function TrackerMercatoDS() {
               {/* tabella */}
               <div className="card" style={{ overflow: 'hidden' }}>
                 {filtrate.length === 0 ? (
-                  <div style={{ padding: 48, textAlign: 'center', color: 'var(--gray)', fontFamily: 'var(--font-mono)', fontSize: '0.82rem', letterSpacing: 2 }}>
+                  <div style={{ padding: 48, textAlign: 'center', color: 'var(--gray)', fontFamily: 'var(--font-mono)', fontSize: '0.82rem', letterSpacing: 0 }}>
                     {trattative.length === 0 ? 'NESSUNA TRATTATIVA REGISTRATA' : 'NESSUNA CORRISPONDENZA CON I FILTRI'}
                   </div>
                 ) : (

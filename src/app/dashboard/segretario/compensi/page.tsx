@@ -325,7 +325,7 @@ export default function CompensiPage() {
                 ))}
                 {report.length > 0 && (
                   <tr style={{ background: 'var(--grigio-mid)', borderTop: '2px solid var(--border-solid)' }}>
-                    <td style={{ fontWeight: 700 }}>TOTALI</td>
+                    <td style={{ fontWeight: 700 }}>Totali</td>
                     {(['lordo','esente','imponibile','ritenuta','netto'] as const).map(k => (
                       <td key={k} style={{ fontFamily: 'var(--font-mono)', fontWeight: 700 }}>{fmt(report.reduce((s,r) => s + r[k], 0))}</td>
                     ))}

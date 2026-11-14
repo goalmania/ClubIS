@@ -133,7 +133,7 @@ export default function BudgetMercatoDS() {
           </div>
 
           {loading ? (
-            <div style={{ color: 'var(--gray)', padding: 48, textAlign: 'center', fontFamily: 'var(--font-mono)', fontSize: '0.82rem', letterSpacing: 2 }}>CARICAMENTO...</div>
+            <div style={{ color: 'var(--gray)', padding: 48, textAlign: 'center', fontFamily: 'var(--font-mono)', fontSize: '0.82rem', letterSpacing: 0 }}>Caricamento...</div>
           ) : (
             <>
               {budgetMercato === 0 && (
@@ -177,11 +177,11 @@ export default function BudgetMercatoDS() {
               <div className="card" style={{ overflow: 'hidden' }}>
                 <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border-solid)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.85rem', letterSpacing: '0', textTransform: 'none', color: 'var(--white)' }}>Tutte le trattative</span>
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', color: 'var(--text-muted)', letterSpacing: 2 }}>{trattative.length} OPERAZIONI</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', color: 'var(--text-muted)', letterSpacing: 0 }}>{trattative.length} OPERAZIONI</span>
                 </div>
                 {trattative.length === 0 ? (
-                  <div style={{ padding: 40, textAlign: 'center', color: 'var(--gray)', fontFamily: 'var(--font-mono)', fontSize: '0.82rem', letterSpacing: 2 }}>
-                    NESSUNA TRATTATIVA REGISTRATA
+                  <div style={{ padding: 40, textAlign: 'center', color: 'var(--gray)', fontFamily: 'var(--font-mono)', fontSize: '0.82rem', letterSpacing: 0 }}>
+                    Nessuna trattativa registrata
                   </div>
                 ) : (
                   <div className="table-wrap">

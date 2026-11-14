@@ -265,8 +265,8 @@ export default function PrimaNotaPage() {
                     <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{fmtDataTabella(m.data)}</td>
                     <td>
                       <span className={`badge ${m.tipo === 'entrata' ? 'badge-verde' : 'badge-rosso'}`}>{m.tipo}</span>
-                      {isStornato && <span className="badge badge-grigio" style={{ marginLeft: 4, fontSize: 11 }}>STORNATO</span>}
-                      {isStorno && <span className="badge" style={{ marginLeft: 4, fontSize: 11, background: 'var(--accent-orange-lt)', color: 'var(--accent-orange)' }}>STORNO</span>}
+                      {isStornato && <span className="badge badge-grigio" style={{ marginLeft: 4, fontSize: 11 }}>Stornato</span>}
+                      {isStorno && <span className="badge" style={{ marginLeft: 4, fontSize: 11, background: 'var(--accent-orange-lt)', color: 'var(--accent-orange)' }}>Storno</span>}
                     </td>
                     <td style={{ fontSize: 12, color: 'var(--grigio-3)', textTransform: 'capitalize' }}>{m.categoria.replace(/_/g, ' ')}</td>
                     <td style={{ fontSize: 13 }}>

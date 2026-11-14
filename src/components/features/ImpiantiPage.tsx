@@ -221,7 +221,7 @@ export default function ImpiantiPage({ defaultTab = 'dashboard' }: Props) {
 
           <div style={{ marginBottom: 20 }}>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', letterSpacing: '0', textTransform: 'none', color: 'var(--text-muted)', marginBottom: 10 }}>
-              STATO AREE
+              Stato aree
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10 }}>
               {(Object.entries(AREE_IMPIANTO) as [AreaImpianto, typeof AREE_IMPIANTO[AreaImpianto]][]).map(([key, meta]) => {

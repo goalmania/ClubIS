@@ -123,7 +123,7 @@ export default function ConvocazioniPage() {
             <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--rosso)', background: 'rgba(255,60,60,0.08)', padding: '3px 8px', border: '1px solid rgba(255,60,60,0.2)' }}>✕ NON DISPONIBILE</span>
           )}
           {c.stato_risposta === 'in_attesa' && (
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--ambra)', padding: '3px 8px', border: '1px solid var(--border)' }}>IN ATTESA</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--ambra)', padding: '3px 8px', border: '1px solid var(--border)' }}>In attesa</span>
           )}
           {showActions && c.stato_risposta === 'in_attesa' && (
             <div style={{ display: 'flex', gap: 6 }}>

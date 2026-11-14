@@ -187,7 +187,7 @@ export default function CompletaProfiloPage() {
                       </div>
                       {c.link && (
                         <a href={c.link} target="_blank" rel="noreferrer" style={{ fontSize: 12, color: 'var(--accent)', textDecoration: 'none', fontFamily: 'var(--font-mono)', letterSpacing: '0' }}>
-                          LEGGI →
+                          Leggi →
                         </a>
                       )}
                     </div>

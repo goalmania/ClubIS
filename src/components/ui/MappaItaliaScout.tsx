@@ -198,7 +198,7 @@ export default function MappaItaliaScout({ giocatori }: Props) {
 
         {/* Legenda */}
         <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600, marginBottom: 2 }}>LEGENDA VOTO MEDIO</div>
+          <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600, marginBottom: 2 }}>Legenda voto medio</div>
           {[
             { label: '≥ 8 — Ottimo',  color: COLORI.ottimo },
             { label: '7 — Buono',     color: COLORI.buono },

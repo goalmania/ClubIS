@@ -55,16 +55,16 @@ export default function ImpersonationBanner({
 
   return (
     <div style={{
-      position: 'sticky',
-      top: 0,
-      zIndex: 100,
-      background: 'linear-gradient(90deg, var(--accent-red), var(--accent-orange))',
-      color: 'white',
-      padding: '10px 20px',
+      position: 'relative',
+      zIndex: 60,
+      background: 'rgba(255,153,0,0.12)',
+      color: '#ffad33',
+      padding: '8px 20px',
+      flexWrap: 'wrap',
+      gap: 8,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
       fontSize: 13,
       fontWeight: 500,
     }}>
@@ -74,7 +74,7 @@ export default function ImpersonationBanner({
           <path d="M19 20h-2a4 4 0 0 0-8 0H7a6 6 0 0 1 12 0Z"/>
         </svg>
         <span>
-          <strong>Modalità impersonation</strong> — stai visualizzando come{' '}
+          <strong>Impersonation</strong> · stai visualizzando come{' '}
           <strong>{(ruoloLabel as any)?.[ruolo] ?? ruolo}</strong>
           {clubNome && <> · {clubNome}</>}
         </span>
@@ -86,16 +86,16 @@ export default function ImpersonationBanner({
           disabled={loading || switching}
           style={{
             padding: '6px 10px',
-            background: 'rgba(255,255,255,0.15)',
-            border: '1px solid rgba(255,255,255,0.4)',
+            background: 'var(--surface-3)',
+            border: 'none',
             borderRadius: 10,
-            color: 'white',
+            color: 'var(--white)',
             fontSize: 12,
             fontWeight: 600,
           }}
         >
           {RUOLI_IMPERSONABILI.map((r) => (
-            <option key={r} value={r} style={{ color: 'black' }}>
+            <option key={r} value={r}>
               {(ruoloLabel as Record<RuoloUtente, string>)[r] ?? r}
             </option>
           ))}
@@ -105,10 +105,10 @@ export default function ImpersonationBanner({
           disabled={loading || switching || switchingRole === ruolo}
           style={{
             padding: '6px 10px',
-            background: 'rgba(255,255,255,0.2)',
-            border: '1px solid rgba(255,255,255,0.4)',
+            background: 'var(--surface-3)',
+            border: 'none',
             borderRadius: 10,
-            color: 'white',
+            color: 'var(--white)',
             fontSize: 12,
             fontWeight: 600,
             cursor: 'pointer',
@@ -122,10 +122,10 @@ export default function ImpersonationBanner({
           disabled={loading || switching}
           style={{
             padding: '6px 14px',
-            background: 'rgba(255,255,255,0.2)',
-            border: '1px solid rgba(255,255,255,0.4)',
+            background: 'var(--surface-3)',
+            border: 'none',
             borderRadius: 10,
-            color: 'white',
+            color: 'var(--white)',
             fontSize: 12,
             fontWeight: 600,
             cursor: 'pointer',

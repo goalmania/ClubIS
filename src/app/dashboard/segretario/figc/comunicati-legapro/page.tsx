@@ -334,7 +334,7 @@ function ComunicatiLegaProContent() {
                       fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700,
                       color: '#60a5fa', letterSpacing: '0',
                     }}>
-                      LEGA PRO
+                      Lega pro
                     </span>
                   </div>
 

@@ -401,7 +401,7 @@ export default function DocumentiPage() {
                 letterSpacing: '0', textTransform: 'none', color: 'var(--text-muted)',
                 padding: '0 0 10px 0', marginBottom: 6,
               }}>
-                CATEGORIE
+                Categorie
               </div>
 
               {SIDEBAR_ITEMS.map((item, i) => {

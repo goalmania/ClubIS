@@ -124,7 +124,7 @@ export default function PortafoglioFIGCPage() {
             <input type="number" min="0" step="0.01" className="input" style={{ width: '100%' }} placeholder="100.00" value={importo} onChange={e => setImporto(e.target.value)} />
           </div>
           <div>
-            <label style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', display: 'block', marginBottom: 6 }}>DATA RICARICA</label>
+            <label style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', display: 'block', marginBottom: 6 }}>Data ricarica</label>
             <input type="date" className="input" style={{ width: '100%' }} value={data} onChange={e => setData(e.target.value)} />
           </div>
           <div>

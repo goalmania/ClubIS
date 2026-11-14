@@ -168,10 +168,10 @@ export default function AllenamentiPage() {
                   <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--rosso)', background: 'rgba(255,60,60,0.08)', padding: '3px 8px', border: '1px solid rgba(255,60,60,0.2)' }}>✕ ASSENTE</span>
                 )}
                 {statoPres === null && s.stato === 'programmato' && (
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', padding: '3px 8px', border: '1px solid var(--border)' }}>PROGRAMMATO</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', padding: '3px 8px', border: '1px solid var(--border)' }}>Programmato</span>
                 )}
                 {s.stato === 'annullato' && (
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--ambra)', padding: '3px 8px', border: '1px solid var(--border)' }}>ANNULLATO</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--ambra)', padding: '3px 8px', border: '1px solid var(--border)' }}>Annullato</span>
                 )}
               </div>
             </div>

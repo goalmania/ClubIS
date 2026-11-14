@@ -252,7 +252,7 @@ export default function ComunicatiFIGCPage() {
                     {/* Comitato */}
                     <div>
                       <label style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', display: 'block', marginBottom: 5 }}>
-                        COMITATO
+                        Comitato
                       </label>
                       <select
                         value={comitato}
@@ -280,7 +280,7 @@ export default function ComunicatiFIGCPage() {
                     {/* Data */}
                     <div>
                       <label style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', display: 'block', marginBottom: 5 }}>
-                        DATA C.U.
+                        Data c.u.
                       </label>
                       <input
                         type="date"
@@ -296,7 +296,7 @@ export default function ComunicatiFIGCPage() {
                   <div style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 12, alignItems: 'flex-start' }}>
                     <div>
                       <label style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', display: 'block', marginBottom: 5 }}>
-                        DECORRENZA SQUALIFICHE
+                        Decorrenza squalifiche
                       </label>
                       <input
                         type="date"

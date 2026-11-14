@@ -195,7 +195,7 @@ function DashboardContent({
             fontSize: 12, letterSpacing: '0', textTransform: 'none',
             color: 'inherit', textDecoration: 'none', fontWeight: 700, whiteSpace: 'nowrap',
           }}>
-            PAGA ORA →
+            Paga ora →
           </Link>
         </div>
       )}
