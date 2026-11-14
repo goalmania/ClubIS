@@ -492,7 +492,6 @@ const mobileTabs: Partial<Record<RuoloUtente, { href: string; label: string }[]>
   ufficio_stampa: [{ href: '/dashboard/ufficio-stampa/calendario-media', label: 'Calendario' }, { href: '/dashboard/ufficio-stampa/interviste', label: 'Interviste' }, { href: '/dashboard/ufficio-stampa/locandine', label: 'Locandine' }],
 }
 
-const Chevron = () => <svg className="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
 const StarIcon = ({ filled }: { filled: boolean }) => <svg width="13" height="13" viewBox="0 0 24 24" fill={filled ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinejoin="round" aria-hidden="true"><path d="M12 2.5 15 9l7 .9-5.2 4.8 1.4 7.3L12 18.4 5.8 22l1.4-7.3L2 9.9 9 9z"/></svg>
 const DotsIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
 
@@ -517,10 +516,8 @@ export default function Sidebar({ ruolo, utente, club, notifiche = 0, isSuperAdm
   const iniziali = `${utente.nome[0] ?? '?'}${utente.cognome[0] ?? ''}`.toUpperCase()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [query, setQuery] = useState('')
-  const [aperte, setAperte] = useState<string[]>([])
   const [preferiti, setPreferiti] = useState<string[]>([])
 
-  const keyAperte = `cis:nav-aperte:${ruolo}`
   const keyPreferiti = `cis:nav-preferiti:${ruolo}`
 
   // Chiude il pannello mobile ogni volta che cambia pagina
@@ -565,21 +562,9 @@ export default function Sidebar({ ruolo, utente, club, notifiche = 0, isSuperAdm
 
   const home = sezioni[0]?.voci[0]
 
-  // La sezione che contiene la pagina corrente è sempre aperta
-  const sezioneAttiva = sezioni.find(s => s.titolo && s.voci.some(v => isActive(v.href)))?.titolo
-
   useEffect(() => {
-    setAperte(leggiLista(keyAperte))
     setPreferiti(leggiLista(keyPreferiti))
-  }, [keyAperte, keyPreferiti])
-
-  const toggleSezione = (titolo: string) => {
-    setAperte(prev => {
-      const next = prev.includes(titolo) ? prev.filter(t => t !== titolo) : [...prev, titolo]
-      salvaLista(keyAperte, next)
-      return next
-    })
-  }
+  }, [keyPreferiti])
 
   const togglePreferito = (href: string) => {
     setPreferiti(prev => {
@@ -780,28 +765,14 @@ export default function Sidebar({ ruolo, utente, club, notifiche = 0, isSuperAdm
                     </div>
                   )
                 }
-                const aperta = q !== '' || sezione.titolo === sezioneAttiva || aperte.includes(sezione.titolo)
-                const nBadge = voci.reduce((n, v) => n + badgeFor(v), 0)
-                const idLista = `nav-sez-${si}`
                 return (
-                  <div key={si} style={{ marginBottom: 2 }}>
-                    <button
-                      type="button"
-                      className="sidebar-section-btn"
-                      aria-expanded={aperta}
-                      aria-controls={idLista}
-                      onClick={() => toggleSezione(sezione.titolo!)}
-                    >
-                      <span style={{ flex: 1 }}>{sezione.titolo}</span>
-                      {!aperta && nBadge > 0 && <span style={{ width: 7, height: 7, borderRadius: 999, background: 'var(--accent-red)' }} aria-label="Ci sono avvisi" />}
-                      <span style={{ fontWeight: 500, color: 'var(--text-tertiary)' }}>{voci.length}</span>
-                      <Chevron />
-                    </button>
-                    {aperta && (
-                      <div id={idLista} style={{ display: 'flex', flexDirection: 'column', gap: 1, padding: '2px 0 6px' }}>
-                        {voci.map(v => renderVoce(v))}
-                      </div>
-                    )}
+                  <div key={si} style={{ marginTop: 10 }}>
+                    <div style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--gray)', padding: '6px 10px 4px' }}>
+                      {sezione.titolo}
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                      {voci.map(v => renderVoce(v))}
+                    </div>
                   </div>
                 )
               })}

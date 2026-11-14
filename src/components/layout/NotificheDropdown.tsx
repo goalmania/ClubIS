@@ -201,324 +201,150 @@ export default function NotificheDropdown({ userId, clubId, initialCount }: Prop
     await fetch('/api/notifiche?lette=true', { method: 'DELETE' })
   }
 
+  const XIcon = ({ size = 14 }: { size?: number }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+  )
+
   return (
     <>
-      {/* ── Bell button ──────────────────────────────────────────────── */}
       <div ref={dropdownRef} style={{ position: 'relative', flexShrink: 0 }}>
         <button
           onClick={() => setOpen(v => !v)}
-          style={{
-            display:        'flex',
-            alignItems:     'center',
-            gap:            8,
-            padding:        '6px 12px',
-            background:     open ? 'rgba(200,240,0,0.12)' : 'rgba(200,240,0,0.06)',
-            border:         '1px solid rgba(200,240,0,0.2)',
-            borderRadius:   10,
-            cursor:         'pointer',
-            color:          'var(--white)',
-            transition:     'background 0.15s',
-            position:       'relative',
-          }}
-          aria-label="Notifiche"
+          className="topbar-icon-btn"
+          style={{ background: open ? 'var(--surface-3)' : undefined }}
+          aria-label={nonLette > 0 ? `Notifiche, ${nonLette} da leggere` : 'Notifiche'}
+          aria-expanded={open}
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
             <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
           </svg>
-          <span style={{ fontFamily: 'var(--font-display)', fontSize: 12, fontWeight: 700, textTransform: 'none', letterSpacing: '0' }}>
-            Notifiche
-          </span>
           {nonLette > 0 && (
             <span style={{
-              background:    '#ef4444',
-              color:         '#fff',
-              fontSize:      12,
-              fontWeight:    700,
-              fontFamily:    'var(--font-mono)',
-              padding:       '1px 6px',
-              borderRadius:  14,
-              minWidth:      18,
-              textAlign:     'center',
-              lineHeight:    '16px',
+              position: 'absolute', top: -4, right: -4,
+              background: 'var(--accent-red)', color: '#fff',
+              fontSize: 11, fontWeight: 700,
+              minWidth: 18, height: 18, padding: '0 5px', borderRadius: 999,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              border: '2px solid var(--black)',
             }}>
               {nonLette > 99 ? '99+' : nonLette}
             </span>
           )}
         </button>
 
-        {/* ── Dropdown panel ──────────────────────────────────────────── */}
         {open && (
-          <div style={{
-            position:    'absolute',
-            top:         'calc(100% + 8px)',
-            right:       0,
-            width:       380,
-            maxHeight:   520,
-            background:  'var(--surface-2)',
-            border:      '1px solid rgba(255,255,255,0.1)',
-            borderRadius: 12,
-            boxShadow:   '0 8px 40px rgba(0,0,0,0.6)',
-            zIndex:      1000,
-            display:     'flex',
-            flexDirection: 'column',
-            overflow:    'hidden',
-          }}>
-            {/* Header */}
-            <div style={{
-              padding:       '14px 16px',
-              borderBottom:  '1px solid rgba(255,255,255,0.08)',
-              display:       'flex',
-              alignItems:    'center',
-              justifyContent:'space-between',
-              flexShrink:    0,
-            }}>
-              <div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--white)' }}>
-                  Notifiche
-                  {nonLette > 0 && (
-                    <span style={{
-                      marginLeft: 8, background: '#ef4444', color: '#fff',
-                      fontSize: 12, fontWeight: 700, padding: '1px 6px', borderRadius: 14,
-                    }}>
-                      {nonLette} nuove
-                    </span>
-                  )}
+          <>
+          <div className="notif-backdrop" onClick={() => setOpen(false)} />
+          <div className="notif-panel" role="dialog" aria-label="Notifiche">
+            <div style={{ padding: '16px 16px 10px', display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: '-0.02em', color: 'var(--white)' }}>Notifiche</div>
+                <div style={{ fontSize: 13, color: 'var(--gray)' }}>
+                  {nonLette > 0 ? `${nonLette} da leggere` : 'Tutto letto'}
                 </div>
-                <div style={{ fontSize: 12, color: '#888', marginTop: 2 }}>Aggiornate in tempo reale</div>
               </div>
-              <div style={{ display: 'flex', gap: 8 }}>
-                {nonLette > 0 && (
-                  <button
-                    onClick={segnaLettaTutte}
-                    style={{
-                      fontSize: 12, color: '#c8f000', background: 'none',
-                      border: '1px solid rgba(200,240,0,0.3)', borderRadius: 10,
-                      padding: '4px 10px', cursor: 'pointer', fontWeight: 600,
-                    }}
-                  >
-                    Segna tutte lette
-                  </button>
-                )}
-                <button
-                  onClick={() => setOpen(false)}
-                  style={{ background: 'none', border: 'none', color: 'var(--gray)', cursor: 'pointer', fontSize: 18, lineHeight: 1 }}
-                >
-                  ✕
-                </button>
-              </div>
+              {nonLette > 0 && (
+                <button onClick={segnaLettaTutte} className="btn btn-sm btn-ghost">Segna tutte lette</button>
+              )}
+              <button onClick={() => setOpen(false)} aria-label="Chiudi" style={{ width: 30, height: 30, borderRadius: 999, border: 0, background: 'var(--surface-3)', color: 'var(--label)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <XIcon size={13} />
+              </button>
             </div>
 
-            {/* Lista */}
-            <div style={{ overflowY: 'auto', flex: 1 }}>
+            <div style={{ overflowY: 'auto', flex: 1, padding: '0 8px 8px' }}>
               {loading ? (
-                <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--gray)', fontSize: 13 }}>
-                  Caricamento…
-                </div>
+                <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--gray)', fontSize: 14 }}>Caricamento…</div>
               ) : notifiche.length === 0 ? (
-                <div style={{ padding: '48px 20px', textAlign: 'center' }}>
-                  <div style={{ fontSize: 32, marginBottom: 12 }}>🔔</div>
-                  <div style={{ fontSize: 13, color: 'var(--gray)' }}>Nessuna notifica</div>
+                <div style={{ padding: '48px 20px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+                  <div style={{ width: 52, height: 52, borderRadius: 16, background: 'var(--surface-3)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--gray)' }}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+                  </div>
+                  <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--white)' }}>Nessuna notifica</div>
+                  <div style={{ fontSize: 13, color: 'var(--gray)' }}>Qui trovi scadenze, pagamenti e messaggi del club.</div>
                 </div>
               ) : (
                 notifiche.map(n => (
                   <div
                     key={n.id}
                     onClick={() => cliccaNotifica(n)}
+                    className="notif-row"
                     style={{
-                      padding:      '13px 16px',
-                      borderBottom: '1px solid rgba(255,255,255,0.05)',
-                      cursor:       urlSicura(n.azione_url) ? 'pointer' : 'default',
-                      background:   n.letta ? 'transparent' : 'rgba(200,240,0,0.04)',
-                      display:      'flex',
-                      gap:          12,
-                      alignItems:   'flex-start',
-                      transition:   'background 0.1s',
+                      cursor: urlSicura(n.azione_url) ? 'pointer' : 'default',
+                      background: n.letta ? undefined : 'rgba(200,240,0,0.05)',
                     }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.04)' }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.background = n.letta ? 'transparent' : 'rgba(200,240,0,0.04)' }}
                   >
-                    {/* Dot non letta */}
                     <div style={{
-                      width: 8, height: 8, borderRadius: '50%', flexShrink: 0, marginTop: 4,
-                      background: n.letta ? 'transparent' : '#c8f000',
-                      border: n.letta ? '1px solid rgba(255,255,255,0.15)' : 'none',
-                    }} />
-
-                    {/* Emoji tipo */}
-                    <div style={{ fontSize: 18, flexShrink: 0, lineHeight: 1.2 }}>
+                      width: 38, height: 38, borderRadius: 11, flexShrink: 0,
+                      background: 'var(--surface-3)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: 18, position: 'relative',
+                    }}>
                       {TIPO_EMOJI[n.tipo] ?? '🔔'}
+                      {!n.letta && <span style={{ position: 'absolute', top: -2, left: -2, width: 10, height: 10, borderRadius: 999, background: 'var(--accent)', border: '2px solid var(--surface-2)' }} />}
                     </div>
 
-                    {/* Contenuto */}
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 3, flexWrap: 'wrap' }}>
-                        <div style={{
-                          fontSize:   13,
-                          fontWeight: n.letta ? 400 : 700,
-                          color:      n.letta ? '#ccc' : '#fff',
-                          lineHeight: 1.35,
-                        }}>
+                      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                        <div style={{ flex: 1, minWidth: 0, fontSize: 14, fontWeight: n.letta ? 500 : 600, color: n.letta ? 'var(--label)' : 'var(--white)', lineHeight: 1.35 }}>
                           {n.titolo}
                         </div>
-                        {n.ruolo_destinatario && RUOLO_LABEL[n.ruolo_destinatario] && (
-                          <span style={{
-                            fontSize: 11, padding: '1px 5px',
-                            background: 'rgba(200,240,0,0.1)',
-                            border: '1px solid rgba(200,240,0,0.25)',
-                            color: '#c8f000', borderRadius: 8,
-                            fontFamily: 'var(--font-mono)', letterSpacing: '0',
-                            textTransform: 'none', flexShrink: 0,
-                          }}>
-                            {RUOLO_LABEL[n.ruolo_destinatario]}
-                          </span>
-                        )}
+                        <span style={{ fontSize: 12, color: 'var(--gray)', flexShrink: 0 }}>{tempoFa(n.creata_at)}</span>
                       </div>
-                      <div style={{
-                        fontSize:   12,
-                        color:      '#888',
-                        lineHeight: 1.4,
-                        overflow:   'hidden',
-                        display:    '-webkit-box',
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: 'vertical' as const,
-                      }}>
+                      <div style={{ fontSize: 13, color: 'var(--gray)', lineHeight: 1.4, marginTop: 2, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as const }}>
                         {n.messaggio}
                       </div>
-                      <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>
-                        {tempoFa(n.creata_at)}
-                        {urlSicura(n.azione_url) && (
-                          <span style={{ marginLeft: 6, color: '#c8f000', opacity: 0.7 }}>→ Vai</span>
-                        )}
-                      </div>
+                      {n.ruolo_destinatario && RUOLO_LABEL[n.ruolo_destinatario] && (
+                        <span className="badge badge-grigio" style={{ marginTop: 6 }}>{RUOLO_LABEL[n.ruolo_destinatario]}</span>
+                      )}
                     </div>
 
-                    {/* Delete */}
-                    <button
-                      onClick={(e) => eliminaNotifica(n.id, e)}
-                      style={{
-                        background: 'none', border: 'none', color: 'var(--text-muted)',
-                        cursor: 'pointer', fontSize: 14, flexShrink: 0,
-                        padding: '0 2px',
-                        opacity: 0,
-                        transition: 'opacity 0.1s',
-                      }}
-                      onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '1' }}
-                      onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.opacity = '0' }}
-                      aria-label="Elimina"
-                    >
-                      ✕
+                    <button onClick={(e) => eliminaNotifica(n.id, e)} className="notif-del" aria-label="Elimina notifica">
+                      <XIcon size={12} />
                     </button>
                   </div>
                 ))
               )}
             </div>
 
-            {/* Footer */}
-            <div style={{
-              padding:        '10px 16px',
-              borderTop:      '1px solid rgba(255,255,255,0.08)',
-              display:        'flex',
-              justifyContent: 'space-between',
-              alignItems:     'center',
-              flexShrink:     0,
-            }}>
+            <div style={{ padding: '10px 16px', borderTop: '1px solid var(--separator)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
               {notifiche.some(n => n.letta) ? (
-                <button
-                  onClick={eliminaLette}
-                  style={{
-                    background: 'none', border: 'none', color: 'var(--gray)',
-                    fontSize: 12, cursor: 'pointer',
-                  }}
-                >
-                  Elimina lette
-                </button>
+                <button onClick={eliminaLette} className="btn btn-sm" style={{ background: 'transparent', color: 'var(--gray)', paddingLeft: 0 }}>Elimina lette</button>
               ) : <div />}
-              <button
-                onClick={() => { setOpen(false); router.push('/dashboard/notifiche') }}
-                style={{
-                  background: 'none', border: 'none', color: '#c8f000',
-                  fontSize: 12, fontWeight: 600, cursor: 'pointer',
-                }}
-              >
-                Impostazioni notifiche →
+              <button onClick={() => { setOpen(false); router.push('/dashboard/notifiche') }} className="btn btn-sm btn-ghost" style={{ paddingRight: 0 }}>
+                Impostazioni
               </button>
             </div>
           </div>
+          </>
         )}
       </div>
 
-      {/* ── Toast per notifiche in arrivo ────────────────────────────── */}
-      <div style={{
-        position: 'fixed',
-        bottom:   24,
-        right:    24,
-        zIndex:   9999,
-        display:  'flex',
-        flexDirection: 'column',
-        gap:      10,
-        pointerEvents: 'none',
-      }}>
+      <div className="notif-toasts">
         {toasts.map(t => (
           <div
             key={t.id}
             onClick={() => cliccaToast(t)}
+            className="notif-toast"
             style={{
-              background:   'var(--surface-2)',
-              border:       '1px solid rgba(200,240,0,0.3)',
-              borderLeft:   '3px solid #c8f000',
-              borderRadius: 12,
-              padding:      '14px 16px',
-              width:        340,
-              cursor:       urlSicura(t.azione_url) ? 'pointer' : 'default',
-              boxShadow:    '0 4px 24px rgba(0,0,0,0.5)',
-              pointerEvents:'auto',
-              animation:    toastsLeaving.has(t.id) ? 'slideOutRight 0.3s ease forwards' : 'slideInRight 0.3s ease',
-              display:      'flex',
-              gap:          12,
-              alignItems:   'flex-start',
+              cursor: urlSicura(t.azione_url) ? 'pointer' : 'default',
+              animation: toastsLeaving.has(t.id) ? 'toastOut 0.25s ease forwards' : 'toastIn 0.35s cubic-bezier(0.32,0.72,0,1)',
             }}
           >
-            <div style={{ fontSize: 20, flexShrink: 0 }}>
+            <div style={{ width: 36, height: 36, borderRadius: 10, background: 'var(--surface-3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, flexShrink: 0 }}>
               {TIPO_EMOJI[t.tipo] ?? '🔔'}
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: '#fff', marginBottom: 3 }}>
-                {t.titolo}
-              </div>
-              <div style={{
-                fontSize: 12, color: '#999', lineHeight: 1.35,
-                overflow: 'hidden', display: '-webkit-box',
-                WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as const,
-              }}>
+              <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--white)', marginBottom: 2 }}>{t.titolo}</div>
+              <div style={{ fontSize: 13, color: 'var(--gray)', lineHeight: 1.35, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as const }}>
                 {t.messaggio}
               </div>
-              {urlSicura(t.azione_url) && (
-                <div style={{ fontSize: 12, color: '#c8f000', marginTop: 5, fontWeight: 600 }}>
-                  Tocca per vedere →
-                </div>
-              )}
             </div>
-            <button
-              onClick={(e) => { e.stopPropagation(); dismissToast(t.id) }}
-              style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 16, flexShrink: 0 }}
-            >
-              ✕
+            <button onClick={(e) => { e.stopPropagation(); dismissToast(t.id) }} aria-label="Chiudi" style={{ background: 'none', border: 'none', color: 'var(--gray)', cursor: 'pointer', flexShrink: 0, padding: 4, display: 'flex' }}>
+              <XIcon size={13} />
             </button>
           </div>
         ))}
       </div>
-
-      <style>{`
-        @keyframes slideInRight {
-          from { transform: translateX(120%); opacity: 0; }
-          to   { transform: translateX(0);   opacity: 1; }
-        }
-        @keyframes slideOutRight {
-          from { transform: translateX(0);   opacity: 1; }
-          to   { transform: translateX(120%); opacity: 0; }
-        }
-      `}</style>
     </>
   )
 }
