@@ -82,11 +82,11 @@ function ListaSection({
       {/* Header lista */}
       <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <span style={{ fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--white)' }}>
+          <span style={{ fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--white)' }}>
             {label}
           </span>
           {!isA && (
-            <span style={{ fontSize: 11, color: 'var(--grigio-3)', marginLeft: 10 }}>
+            <span style={{ fontSize: 12, color: 'var(--grigio-3)', marginLeft: 10 }}>
               Nati dal {limiLabel}
             </span>
           )}
@@ -141,13 +141,13 @@ function ListaSection({
                   <div style={{ flex: 1 }}>
                     <span style={{ fontSize: 13, color: 'var(--text-primary)' }}>{t.cognome} {t.nome}</span>
                     {t.data_nascita && (
-                      <span style={{ fontSize: 11, color: 'var(--grigio-3)', marginLeft: 8 }}>
+                      <span style={{ fontSize: 12, color: 'var(--grigio-3)', marginLeft: 8 }}>
                         {new Date(t.data_nascita).toLocaleDateString('it-IT')}
                       </span>
                     )}
                   </div>
                   {warning && (
-                    <span style={{ fontSize: 11, color: '#ffd600', background: 'rgba(255,214,0,0.1)', padding: '2px 8px' }}>
+                    <span style={{ fontSize: 12, color: '#ffd600', background: 'rgba(255,214,0,0.1)', padding: '2px 8px' }}>
                       Fuori età Lista B
                     </span>
                   )}
@@ -181,13 +181,13 @@ function ListaSection({
                     {v.cognome_tesserato} {v.nome_tesserato}
                   </span>
                   {v.data_nascita && (
-                    <span style={{ fontSize: 11, color: 'var(--grigio-3)', marginLeft: 10 }}>
+                    <span style={{ fontSize: 12, color: 'var(--grigio-3)', marginLeft: 10 }}>
                       {new Date(v.data_nascita).toLocaleDateString('it-IT')}
                     </span>
                   )}
                 </div>
                 {overeta && (
-                  <span style={{ fontSize: 11, color: '#ffd600', background: 'rgba(255,214,0,0.1)', padding: '2px 8px' }}>
+                  <span style={{ fontSize: 12, color: '#ffd600', background: 'rgba(255,214,0,0.1)', padding: '2px 8px' }}>
                     Fuori età
                   </span>
                 )}
@@ -289,7 +289,7 @@ export default function ListeProfessionisticheView() {
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.01em', color: 'var(--white)' }}>
             Liste Campionato
           </h1>
           <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>

@@ -83,7 +83,7 @@ export default function DistintePage() {
     <div style={{ animation: 'fadeIn 0.3s ease' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Distinte Gara</h1>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Distinte Gara</h1>
           <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>Archivio distinte stagione corrente</p>
         </div>
       </div>
@@ -154,7 +154,7 @@ export default function DistintePage() {
                   <tr key={p.id} style={{ borderBottom: '1px solid var(--border-light)' }}>
                     <td style={td}>
                       <div style={{ fontSize: 13, fontWeight: 500 }}>{fmtData(p.data_ora)}</div>
-                      <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{fmtOra(p.data_ora)}</div>
+                      <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{fmtOra(p.data_ora)}</div>
                     </td>
                     <td style={td}>
                       <span style={{ fontSize: 13, fontWeight: 500 }}>
@@ -162,7 +162,7 @@ export default function DistintePage() {
                       </span>
                     </td>
                     <td style={td}>
-                      <span style={{ fontSize: 11, fontWeight: 600, color: catColor, background: `${catColor}18`, padding: '2px 8px', borderRadius: 10 }}>
+                      <span style={{ fontSize: 12, fontWeight: 600, color: catColor, background: `${catColor}18`, padding: '2px 8px', borderRadius: 14 }}>
                         {p.squadra?.nome ?? LABEL_CAT[catTab]}
                       </span>
                     </td>
@@ -196,8 +196,8 @@ export default function DistintePage() {
 }
 
 const th: React.CSSProperties = {
-  padding: '10px 16px', textAlign: 'left', fontSize: 11, fontWeight: 600,
-  textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)',
+  padding: '10px 16px', textAlign: 'left', fontSize: 12, fontWeight: 600,
+  textTransform: 'none', letterSpacing: '0', color: 'var(--text-muted)',
   borderBottom: '1px solid var(--border)',
 }
 const td: React.CSSProperties = { padding: '12px 16px', fontSize: 13, verticalAlign: 'middle' }

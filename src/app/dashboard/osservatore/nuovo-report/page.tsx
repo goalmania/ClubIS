@@ -116,7 +116,7 @@ export default function NuovoReportScoutingPage() {
       <BackButton label="Torna ai report" />
 
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Nuovo report scouting</h1>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Nuovo report scouting</h1>
         <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>
           Il report sarà visibile automaticamente al Direttore Sportivo.
         </p>
@@ -178,20 +178,20 @@ export default function NuovoReportScoutingPage() {
                 <div key={item.label} style={{
                   display: 'flex', alignItems: 'center', gap: 20,
                   padding: '14px 16px',
-                  border: '1px solid var(--grigio-5)', borderRadius: 10,
+                  border: '1px solid var(--grigio-5)', borderRadius: 14,
                   background: item.val ? (item.val >= 7 ? 'var(--verde-lt)' : item.val >= 5 ? 'var(--ambra-lt)' : 'var(--rosso-lt)') : 'white',
                   transition: 'background 0.2s',
                 }}>
                   <div style={{ width: 90, flexShrink: 0 }}>
                     <div style={{ fontSize: 13, fontWeight: 600 }}>{item.label}</div>
-                    <div style={{ fontSize: 11, color: 'var(--grigio-4)', marginTop: 2, lineHeight: 1.3 }}>{item.hint}</div>
+                    <div style={{ fontSize: 12, color: 'var(--grigio-4)', marginTop: 2, lineHeight: 1.3 }}>{item.hint}</div>
                   </div>
                   <div style={{ flex: 1 }}>
                     <RatingInput value={item.val} onChange={item.set} />
                   </div>
                   {item.val && (
                     <div style={{
-                      width: 36, height: 36, borderRadius: 8, flexShrink: 0,
+                      width: 36, height: 36, borderRadius: 12, flexShrink: 0,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       fontWeight: 700, fontSize: 16, fontFamily: 'var(--font-mono)',
                       background: item.val >= 7 ? 'var(--verde)' : item.val >= 5 ? 'var(--ambra)' : 'var(--rosso)',
@@ -205,7 +205,7 @@ export default function NuovoReportScoutingPage() {
             </div>
 
             {/* Voto globale */}
-            <div style={{ marginTop: 20, padding: '16px 18px', background: 'var(--grigio-6)', borderRadius: 10 }}>
+            <div style={{ marginTop: 20, padding: '16px 18px', background: 'var(--grigio-6)', borderRadius: 14 }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
                 <div>
                   <div style={{ fontSize: 14, fontWeight: 600 }}>Voto globale</div>
@@ -215,7 +215,7 @@ export default function NuovoReportScoutingPage() {
                 </div>
                 {(votoGlobale ?? media) && (
                   <div style={{
-                    width: 50, height: 50, borderRadius: 10,
+                    width: 50, height: 50, borderRadius: 14,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontWeight: 700, fontSize: 22, fontFamily: 'var(--font-mono)',
                     background: (votoGlobale ?? media) !== null && (votoGlobale ?? media)! >= 7 ? 'var(--verde)' : (votoGlobale ?? media)! >= 5 ? 'var(--ambra)' : 'var(--rosso)',
@@ -227,7 +227,7 @@ export default function NuovoReportScoutingPage() {
               </div>
               <RatingInput value={votoGlobale} onChange={setVotoGlobale} />
               {votoGlobale && (
-                <button type="button" onClick={() => setVotoGlobale(null)} style={{ fontSize: 11, color: 'var(--grigio-4)', background: 'none', border: 'none', cursor: 'pointer', marginTop: 6 }}>
+                <button type="button" onClick={() => setVotoGlobale(null)} style={{ fontSize: 12, color: 'var(--grigio-4)', background: 'none', border: 'none', cursor: 'pointer', marginTop: 6 }}>
                   Usa media automatica
                 </button>
               )}

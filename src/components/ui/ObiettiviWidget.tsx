@@ -48,16 +48,16 @@ export default async function ObiettiviWidget({ clubId, ruolo }: Props) {
         gap: 10,
         fontFamily: 'var(--font-display)',
         fontWeight: 700,
-        textTransform: 'uppercase' as const,
-        letterSpacing: '0.08em',
+        textTransform: 'none' as const,
+        letterSpacing: '0',
         fontSize: 12,
         color: 'var(--grigio-3)',
       }}>
-        <span style={{ color: 'var(--accent)', fontSize: 10 }}>◆</span>
+        <span style={{ color: 'var(--accent)', fontSize: 12 }}>◆</span>
         Obiettivi Club
         <span style={{
           marginLeft: 'auto',
-          fontSize: 10,
+          fontSize: 12,
           fontWeight: 500,
           color: 'var(--grigio-4)',
           textTransform: 'none' as const,
@@ -87,28 +87,28 @@ export default async function ObiettiviWidget({ clubId, ruolo }: Props) {
                 fontSize: 13,
                 fontWeight: 500,
                 fontFamily: 'var(--font-display)',
-                textTransform: 'uppercase' as const,
-                letterSpacing: '0.04em',
+                textTransform: 'none' as const,
+                letterSpacing: '0',
                 color: 'var(--white)',
                 flex: 1,
               }}>
                 {o.titolo}
               </span>
-              <span className={`badge ${STATO_BADGE[o.stato] ?? 'badge-grigio'}`} style={{ flexShrink: 0, fontSize: 10 }}>
+              <span className={`badge ${STATO_BADGE[o.stato] ?? 'badge-grigio'}`} style={{ flexShrink: 0, fontSize: 12 }}>
                 {o.stato.replace('_', ' ')}
               </span>
             </div>
 
             {/* Target */}
             {o.target && (
-              <div style={{ fontSize: 11, color: 'var(--grigio-4)', marginBottom: 5 }}>
+              <div style={{ fontSize: 12, color: 'var(--grigio-4)', marginBottom: 5 }}>
                 {o.target}
               </div>
             )}
 
             {/* Scadenza */}
             {o.scadenza && (
-              <div style={{ fontSize: 10, color: 'var(--grigio-4)', marginBottom: 5, fontFamily: 'var(--font-mono)' }}>
+              <div style={{ fontSize: 12, color: 'var(--grigio-4)', marginBottom: 5, fontFamily: 'var(--font-mono)' }}>
                 Scad. {new Date(o.scadenza).toLocaleDateString('it-IT')}
               </div>
             )}

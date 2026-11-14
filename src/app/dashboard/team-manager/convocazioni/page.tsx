@@ -21,7 +21,7 @@ export default async function TMConvocazioniPage() {
   return (
     <div style={{ animation: 'fadeIn 0.3s ease' }}>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Convocazioni</h1>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Convocazioni</h1>
         <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>Gestione liste convocati per ogni partita</p>
       </div>
 
@@ -47,7 +47,7 @@ export default async function TMConvocazioniPage() {
                   </div>
                   <div style={{ textAlign: 'right' }}>
                     <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--accent-blue)' }}>{conv.length}</div>
-                    <div style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    <div style={{ fontSize: 12, color: 'var(--text-muted)', textTransform: 'none', letterSpacing: '0' }}>
                       convocati · {confermati} conf.
                     </div>
                   </div>

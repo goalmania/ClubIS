@@ -64,7 +64,7 @@ export default async function IndisponibiliPage() {
     return (
       <div style={{ animation: 'fadeIn 0.3s ease' }}>
         <div style={{ marginBottom: 24 }}>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Indisponibili</h1>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Indisponibili</h1>
           <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>Infortunati, squalificati e non idonei — situazione rosa</p>
         </div>
         <div className="card" style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)', fontSize: 13 }}>
@@ -120,7 +120,7 @@ export default async function IndisponibiliPage() {
     return (
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         {num != null && (
-          <span style={{ width: 22, height: 22, borderRadius: 4, background: 'var(--bg-input)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: 'var(--text-secondary)' }}>
+          <span style={{ width: 22, height: 22, borderRadius: 10, background: 'var(--bg-input)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)' }}>
             {num}
           </span>
         )}
@@ -132,7 +132,7 @@ export default async function IndisponibiliPage() {
   return (
     <div style={{ animation: 'fadeIn 0.3s ease' }}>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Indisponibili</h1>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Indisponibili</h1>
         <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>
           Infortunati · Squalificati · Non idonei — situazione rosa
         </p>
@@ -178,7 +178,7 @@ export default async function IndisponibiliPage() {
               </div>
               <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{i.tipo}</div>
               {(i as any).data_rientro_prevista && (
-                <div style={{ fontSize: 11, color: 'var(--accent-blue)', marginTop: 3 }}>
+                <div style={{ fontSize: 12, color: 'var(--accent-blue)', marginTop: 3 }}>
                   {formatGG((i as any).data_rientro_prevista)}
                 </div>
               )}
@@ -223,12 +223,12 @@ export default async function IndisponibiliPage() {
               </div>
               <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{v.tipo ?? 'visita medica'}</div>
               {v.data && (
-                <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 3 }}>
+                <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 3 }}>
                   {new Date(v.data).toLocaleDateString('it-IT')}
                 </div>
               )}
               {v.note && (
-                <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 2, fontStyle: 'italic' }}>
+                <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 2, fontStyle: 'italic' }}>
                   {v.note}
                 </div>
               )}

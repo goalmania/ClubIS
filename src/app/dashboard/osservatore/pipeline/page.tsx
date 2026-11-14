@@ -99,7 +99,7 @@ export default function PipelinePage() {
   return (
     <div style={{ animation: 'fadeIn 0.3s ease' }}>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Pipeline scouting</h1>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Pipeline scouting</h1>
         <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>
           Trascina le card per aggiornare lo stato
         </p>
@@ -116,7 +116,7 @@ export default function PipelinePage() {
               onDragLeave={() => setDragOver(null)}
               onDrop={() => handleDrop(col.id)}
               style={{
-                borderRadius: 10,
+                borderRadius: 14,
                 border: isOver ? `2px dashed ${col.headerColor}` : '2px solid transparent',
                 transition: 'border 0.15s',
                 minHeight: 200,
@@ -131,7 +131,7 @@ export default function PipelinePage() {
                 <span style={{ fontWeight: 600, fontSize: 13, color: col.headerColor }}>{col.label}</span>
                 <span style={{
                   background: col.headerColor, color: 'white',
-                  borderRadius: 10, padding: '2px 8px', fontSize: 11, fontWeight: 700,
+                  borderRadius: 14, padding: '2px 8px', fontSize: 12, fontWeight: 700,
                 }}>{cards.length}</span>
               </div>
 
@@ -152,7 +152,7 @@ export default function PipelinePage() {
                       style={{
                         background: dragging === r.id ? 'var(--bg-input)' : 'var(--bg-app)',
                         border: '1px solid var(--border-light)',
-                        borderRadius: 8, padding: '10px 12px',
+                        borderRadius: 12, padding: '10px 12px',
                         cursor: 'grab', opacity: dragging === r.id ? 0.5 : 1,
                         transition: 'opacity 0.15s',
                       }}
@@ -165,7 +165,7 @@ export default function PipelinePage() {
                             {r.nome_giocatore_ext ?? '—'}
                           </div>
                           {r.ruolo && (
-                            <span className="badge badge-grigio" style={{ fontSize: 10, marginTop: 2 }}>
+                            <span className="badge badge-grigio" style={{ fontSize: 12, marginTop: 2 }}>
                               {r.ruolo.replace('_', ' ')}
                             </span>
                           )}
@@ -181,7 +181,7 @@ export default function PipelinePage() {
                         )}
                       </div>
                       {/* Footer */}
-                      <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                      <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                         Ultima oss: {formatData(r.data_osservazione)}
                       </div>
                     </div>

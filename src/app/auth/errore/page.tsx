@@ -19,7 +19,7 @@ export default function ErrorePage() {
       <div style={{
         marginTop: 8,
         padding: '14px 20px',
-        borderRadius: 10,
+        borderRadius: 14,
         border: '1px solid rgba(200,240,0,0.2)',
         background: 'rgba(200,240,0,0.04)',
         textAlign: 'center',
@@ -37,7 +37,7 @@ export default function ErrorePage() {
           style={{
             display: 'inline-block',
             padding: '8px 20px',
-            borderRadius: 8,
+            borderRadius: 12,
             background: 'rgba(200,240,0,0.1)',
             border: '1px solid rgba(200,240,0,0.3)',
             color: '#c8f000',
@@ -52,8 +52,8 @@ export default function ErrorePage() {
 
       <form action="/api/auth/logout" method="POST" style={{ marginTop: 8 }}>
         <button type="submit" style={{
-          padding: '10px 24px', borderRadius: 8,
-          border: '1px solid #2a2a2a', background: '#111',
+          padding: '10px 24px', borderRadius: 12,
+          border: '1px solid var(--separator)', background: 'var(--surface-2)',
           cursor: 'pointer', fontSize: 14, color: '#888',
         }}>
           Esci

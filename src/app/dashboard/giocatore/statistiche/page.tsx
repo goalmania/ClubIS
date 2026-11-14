@@ -47,10 +47,10 @@ export default function StatisticheGiocatorePage() {
   return (
     <div>
       <div data-onboarding="sezione-statistiche" style={{ marginBottom: 28 }}>
-        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, textTransform: 'uppercase', fontSize: 26, letterSpacing: '0.04em', color: 'var(--white)' }}>
+        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 26, letterSpacing: '0', color: 'var(--white)' }}>
           Statistiche
         </div>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)', marginTop: 6 }}>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', marginTop: 6 }}>
           Riepilogo stagionale
         </div>
       </div>
@@ -63,7 +63,7 @@ export default function StatisticheGiocatorePage() {
 
       {stats.map(s => (
         <div key={s.stagione} style={{ border: '1px solid var(--border)', background: 'var(--bg-card)', padding: '20px 24px', marginBottom: 16 }}>
-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, textTransform: 'uppercase', fontSize: 16, color: 'var(--accent)', marginBottom: 20 }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 16, color: 'var(--accent)', marginBottom: 20 }}>
             Stagione {s.stagione}
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: 16 }}>
@@ -77,10 +77,10 @@ export default function StatisticheGiocatorePage() {
               { label: 'Minuti totali',     val: s.minuti_totali },
             ].map(item => (
               <div key={item.label}>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--gray)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)', textTransform: 'none', letterSpacing: '0', marginBottom: 4 }}>
                   {item.label}
                 </div>
-                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 26, color: 'var(--white)' }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 26, color: 'var(--white)' }}>
                   {item.val}
                 </div>
               </div>

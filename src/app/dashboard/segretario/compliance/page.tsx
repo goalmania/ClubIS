@@ -13,7 +13,7 @@ function coloreScore(v: number) {
 
 function ScoreBar({ value, color, thin }: { value: number; color: string; thin?: boolean }) {
   return (
-    <div style={{ height: thin ? 4 : 10, background: 'var(--bg-input)', borderRadius: 6, overflow: 'hidden' }}>
+    <div style={{ height: thin ? 4 : 10, background: 'var(--bg-input)', borderRadius: 10, overflow: 'hidden' }}>
       <div style={{
         height: '100%', width: `${Math.min(100, Math.max(0, value))}%`,
         background: color, transition: 'width 0.4s ease',
@@ -186,8 +186,8 @@ export default async function SegretarioCompliancePage() {
       {/* ── Intestazione ──────────────────────────────────────────────── */}
       <div style={{ marginBottom: 24 }}>
         <h1 style={{
-          fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900,
-          textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)',
+          fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700,
+          textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)',
         }}>
           Compliance
         </h1>
@@ -207,14 +207,14 @@ export default async function SegretarioCompliancePage() {
               N/A — nessun tesserato attivo
             </span>
           ) : (
-            <span style={{ fontSize: 22, fontWeight: 900, color: colScore, fontFamily: 'var(--font-mono)' }}>
+            <span style={{ fontSize: 22, fontWeight: 700, color: colScore, fontFamily: 'var(--font-mono)' }}>
               {scoreCompl}<span style={{ fontSize: 13, fontWeight: 400 }}>/100</span>
             </span>
           )}
         </div>
         <ScoreBar value={scoreCompl} color={colScore} />
         {nActive > 0 && (
-          <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 8 }}>
+          <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 8 }}>
             Basato su <strong style={{ color: 'var(--text-secondary)' }}>{nActive}</strong> tesserati attivi
             {' · '}Pesi: certificati 60% · tesseramenti 25% · GDPR 15%
           </div>
@@ -234,7 +234,7 @@ export default async function SegretarioCompliancePage() {
                   <span style={{ flex: 1, fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>
                     {c.label}
                   </span>
-                  <span style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginRight: 8 }}>
+                  <span style={{ fontSize: 12, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', marginRight: 8 }}>
                     peso {c.peso}
                   </span>
                   <span style={{ fontSize: 14, fontWeight: 700, color: col, fontFamily: 'var(--font-mono)', minWidth: 36, textAlign: 'right' }}>
@@ -247,7 +247,7 @@ export default async function SegretarioCompliancePage() {
 
                 {/* Dettaglio */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 7 }}>
-                  <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{c.dettaglio}</span>
+                  <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{c.dettaglio}</span>
                   <div style={{ display: 'flex', gap: 5, flexShrink: 0 }}>
                     {c.critici > 0 && (
                       <span className="badge badge-rosso">{c.critici}</span>
@@ -271,11 +271,11 @@ export default async function SegretarioCompliancePage() {
               <div style={{ flex: 1 }}>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 3 }}>
                   <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>Contratti</span>
-                  <span style={{ fontSize: 10, color: 'var(--text-muted)', fontStyle: 'italic' }}>
+                  <span style={{ fontSize: 12, color: 'var(--text-muted)', fontStyle: 'italic' }}>
                     non incluso nel punteggio
                   </span>
                 </div>
-                <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                   {nContrValidi} attivi
                   {nContrScad90 > 0 ? ` · ${nContrScad90} in scadenza entro 90gg` : ''}
                 </span>

@@ -131,7 +131,7 @@ export default function TMMaterialePage() {
     <div style={{ animation: 'fadeIn 0.3s ease' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>
             Materiale sportivo
           </h1>
           <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>
@@ -288,7 +288,7 @@ export default function TMMaterialePage() {
                         {m.descrizione ?? m.tipo}
                       </span>
                       <span className={`badge ${STATO_META[m.stato].badge}`}>{STATO_META[m.stato].label}</span>
-                      <span style={{ fontSize: 11, color: URGENZA_META[urgenza].color, fontWeight: 600 }}>
+                      <span style={{ fontSize: 12, color: URGENZA_META[urgenza].color, fontWeight: 600 }}>
                         ● {URGENZA_META[urgenza].label}
                       </span>
                     </div>
@@ -335,10 +335,10 @@ export default function TMMaterialePage() {
 
 const labelStyle: React.CSSProperties = {
   display: 'block',
-  fontSize: 11,
+  fontSize: 12,
   fontWeight: 600,
   color: 'var(--text-muted)',
   marginBottom: 5,
-  textTransform: 'uppercase',
-  letterSpacing: '0.05em',
+  textTransform: 'none',
+  letterSpacing: '0',
 }

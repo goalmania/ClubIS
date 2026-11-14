@@ -40,8 +40,8 @@ export default function ClubSwitcher({ clubs, activeClubId }: ClubSwitcherProps)
   return (
     <div style={{ padding: '8px 12px 10px', borderBottom: '1px solid var(--border-solid)' }}>
       <div style={{
-        fontFamily: 'var(--font-mono)', fontSize: 9, color: '#444',
-        textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: 5,
+        fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--text-muted)',
+        textTransform: 'none', letterSpacing: '0', marginBottom: 5,
       }}>
         Club attivo
       </div>
@@ -51,16 +51,16 @@ export default function ClubSwitcher({ clubs, activeClubId }: ClubSwitcherProps)
         disabled={switching}
         style={{
           width: '100%',
-          background: '#1a1a1a',
+          background: 'var(--surface-2)',
           color: switching ? 'var(--gray)' : 'var(--accent)',
           border: '1px solid var(--border-solid)',
-          borderRadius: 4,
+          borderRadius: 10,
           padding: '5px 8px',
           fontFamily: 'var(--font-display)',
-          fontSize: 11,
+          fontSize: 12,
           fontWeight: 700,
-          letterSpacing: '0.06em',
-          textTransform: 'uppercase',
+          letterSpacing: '0',
+          textTransform: 'none',
           cursor: switching ? 'wait' : 'pointer',
           outline: 'none',
           appearance: 'none',

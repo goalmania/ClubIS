@@ -108,7 +108,7 @@ function AbbonamentoContent() {
         maxWidth: isScuolaCalcio ? 420 : 860,
         border: '1px solid var(--border-solid)',
         background: 'var(--gray-light)',
-        borderRadius: 12,
+        borderRadius: 16,
         padding: '40px 36px',
         textAlign: 'center',
       }}>
@@ -122,7 +122,7 @@ function AbbonamentoContent() {
           justifyContent: 'center',
           background: isTrialScaduto ? 'rgba(200,240,0,0.08)' : 'rgba(255,68,68,0.08)',
           border: `1px solid ${isTrialScaduto ? 'rgba(200,240,0,0.25)' : 'rgba(255,68,68,0.25)'}`,
-          borderRadius: 12,
+          borderRadius: 16,
         }}>
           {isTrialScaduto ? (
             <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -137,10 +137,10 @@ function AbbonamentoContent() {
 
         <h1 style={{
           fontFamily: 'var(--font-display)',
-          fontSize: 22,
-          fontWeight: 900,
-          textTransform: 'uppercase',
-          letterSpacing: '0.04em',
+          fontSize: 28,
+          fontWeight: 700,
+          textTransform: 'none',
+          letterSpacing: '-0.025em',
           color: 'var(--white)',
           marginBottom: 10,
         }}>
@@ -163,9 +163,9 @@ function AbbonamentoContent() {
             <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
               <div style={{
                 display: 'inline-flex',
-                background: '#111',
+                background: 'var(--surface-2)',
                 border: '1px solid var(--border-solid)',
-                borderRadius: 10,
+                borderRadius: 14,
                 padding: 3,
               }}>
                 {['Mensile', isScuolaCalcio ? 'A stagione' : 'Annuale −15%'].map((label, i) => (
@@ -174,7 +174,7 @@ function AbbonamentoContent() {
                     onClick={() => setAnnuale(i === 1)}
                     style={{
                       padding: '7px 18px',
-                      borderRadius: 7,
+                      borderRadius: 12,
                       border: 'none',
                       background: (i === 1) === annuale ? 'var(--accent)' : 'transparent',
                       color: (i === 1) === annuale ? '#000' : 'var(--gray)',
@@ -182,7 +182,7 @@ function AbbonamentoContent() {
                       fontWeight: 700,
                       fontSize: 12,
                       cursor: 'pointer',
-                      letterSpacing: '0.04em',
+                      letterSpacing: '0',
                       transition: 'all 0.15s',
                     }}
                   >
@@ -208,7 +208,7 @@ function AbbonamentoContent() {
                     background: '#0a0a0a',
                     border: p.popular ? `1px solid ${p.colore}` : `1px solid ${p.colore}33`,
                     borderTop: `2px solid ${p.colore}`,
-                    borderRadius: 10,
+                    borderRadius: 14,
                     padding: '18px 14px',
                     position: 'relative',
                     display: 'flex',
@@ -222,28 +222,28 @@ function AbbonamentoContent() {
                         transform: 'translateX(-50%)',
                         background: p.colore,
                         color: '#000',
-                        fontSize: 9,
+                        fontSize: 11,
                         fontFamily: 'var(--font-display)',
                         fontWeight: 700,
-                        letterSpacing: '0.08em',
+                        letterSpacing: '0',
                         padding: '3px 10px',
                         borderRadius: 20,
                       }}>MOST POPULAR</div>
                     )}
 
-                    <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, color: p.colore, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 4 }}>
+                    <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, color: p.colore, letterSpacing: '0', textTransform: 'none', marginBottom: 4 }}>
                       {p.nome}
                     </div>
                     <div style={{ marginBottom: 14 }}>
-                      <span style={{ fontFamily: 'var(--font-display)', fontSize: 26, fontWeight: 900, color: 'var(--white)' }}>€{prezzo}</span>
-                      <span style={{ fontSize: 11, color: 'var(--gray)', marginLeft: 4 }}>{suffissoPrezzo}</span>
+                      <span style={{ fontFamily: 'var(--font-display)', fontSize: 26, fontWeight: 700, color: 'var(--white)' }}>€{prezzo}</span>
+                      <span style={{ fontSize: 12, color: 'var(--gray)', marginLeft: 4 }}>{suffissoPrezzo}</span>
                       {annuale && !isScuolaCalcio && (
-                        <div style={{ fontSize: 10, color: 'var(--accent)', marginTop: 3 }}>
+                        <div style={{ fontSize: 12, color: 'var(--accent)', marginTop: 3 }}>
                           €{p.fatturatoAnno.toLocaleString('it-IT')}/anno · risparmio 15%
                         </div>
                       )}
                       {annuale && isScuolaCalcio && (
-                        <div style={{ fontSize: 10, color: 'var(--accent)', marginTop: 3 }}>
+                        <div style={{ fontSize: 12, color: 'var(--accent)', marginTop: 3 }}>
                           Pagamento unico, valido per tutta la stagione
                         </div>
                       )}
@@ -251,7 +251,7 @@ function AbbonamentoContent() {
 
                     <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 16px', flex: 1 }}>
                       {p.features.map(f => (
-                        <li key={f} style={{ fontSize: 11, color: 'var(--gray)', lineHeight: 1.7, display: 'flex', gap: 6, alignItems: 'flex-start' }}>
+                        <li key={f} style={{ fontSize: 12, color: 'var(--gray)', lineHeight: 1.7, display: 'flex', gap: 6, alignItems: 'flex-start' }}>
                           <span style={{ color: p.colore, flexShrink: 0 }}>·</span>{f}
                         </li>
                       ))}
@@ -268,12 +268,12 @@ function AbbonamentoContent() {
                         background: p.popular ? p.colore : 'transparent',
                         color: p.popular ? '#000' : p.colore,
                         border: `1px solid ${p.colore}`,
-                        borderRadius: 7,
+                        borderRadius: 12,
                         fontFamily: 'var(--font-display)',
                         fontWeight: 700,
-                        fontSize: 11,
-                        letterSpacing: '0.06em',
-                        textTransform: 'uppercase',
+                        fontSize: 12,
+                        letterSpacing: '0',
+                        textTransform: 'none',
                         cursor: caricamento !== null ? 'default' : 'pointer',
                         opacity: caricamento !== null && caricamento !== p.id ? 0.5 : 1,
                       }}
@@ -289,7 +289,7 @@ function AbbonamentoContent() {
               <p style={{ fontSize: 12, color: '#ff4444', marginBottom: 16 }}>{errore}</p>
             )}
 
-            <p style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 20 }}>
+            <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 20 }}>
               IVA esclusa · Cancellazione in qualsiasi momento · I tuoi dati rimangono intatti
             </p>
         </>
@@ -307,12 +307,12 @@ function AbbonamentoContent() {
             fontFamily: 'var(--font-display)',
             fontWeight: 700,
             fontSize: 12,
-            textTransform: 'uppercase',
-            letterSpacing: '0.06em',
+            textTransform: 'none',
+            letterSpacing: '0',
             textDecoration: 'none',
             textAlign: 'center',
             border: '1px solid var(--border-solid)',
-            borderRadius: 10,
+            borderRadius: 14,
             marginBottom: 20,
           }}
         >

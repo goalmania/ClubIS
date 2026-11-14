@@ -123,7 +123,7 @@ export default function CartellaGiocatorePage() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
         <div>
           <Link href="/dashboard/medico/cartelle" style={{ fontSize: 12, color: 'var(--text-muted)', textDecoration: 'none' }}>← Cartelle cliniche</Link>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)', marginTop: 6 }}>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)', marginTop: 6 }}>
             {giocatore.cognome} {giocatore.nome}
           </h1>
           <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 4 }}>
@@ -207,7 +207,7 @@ export default function CartellaGiocatorePage() {
                           <span style={{ fontSize: 13, fontWeight: 600 }}>{i.tipo}</span>
                           {i.zona_corpo && <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{i.zona_corpo.replace(/_/g, ' ')}</span>}
                         </div>
-                        <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{new Date(i.data_infortunio).toLocaleDateString('it-IT')}</span>
+                        <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{new Date(i.data_infortunio).toLocaleDateString('it-IT')}</span>
                       </div>
                       {i.diagnosi && <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Diagnosi: {i.diagnosi}</div>}
                       {i.data_rientro_prevista && !i.data_rientro_effettiva && (
@@ -244,9 +244,9 @@ export default function CartellaGiocatorePage() {
                     <div>
                       <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)' }}>
                         {v.tipo?.replace(/_/g, ' ')}
-                        {v.struttura && <span style={{ fontSize: 11, color: 'var(--text-muted)', marginLeft: 8 }}>{v.struttura}</span>}
+                        {v.struttura && <span style={{ fontSize: 12, color: 'var(--text-muted)', marginLeft: 8 }}>{v.struttura}</span>}
                       </div>
-                      <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
+                      <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>
                         {new Date(v.data).toLocaleDateString('it-IT')}
                         {v.medico && ` · ${v.medico}`}
                       </div>
@@ -276,7 +276,7 @@ export default function CartellaGiocatorePage() {
                       <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', textTransform: 'capitalize', marginBottom: 4 }}>
                         {c.tipo?.replace('_', ' ')}
                       </div>
-                      <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                      <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                         {c.data_rilascio && `Rilasciato: ${new Date(c.data_rilascio).toLocaleDateString('it-IT')}`}
                         {c.medico && ` · ${c.medico}`}
                         {c.struttura && ` · ${c.struttura}`}
@@ -289,7 +289,7 @@ export default function CartellaGiocatorePage() {
                         </span>
                       )}
                       {giorni !== null && giorni >= 0 && giorni <= 30 && (
-                        <div style={{ fontSize: 10, color: 'var(--accent-orange)', marginTop: 4 }}>
+                        <div style={{ fontSize: 12, color: 'var(--accent-orange)', marginTop: 4 }}>
                           tra {giorni} giorni
                         </div>
                       )}

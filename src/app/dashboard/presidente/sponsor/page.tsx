@@ -163,7 +163,7 @@ export default function SponsorPage() {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Sponsor</h1>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Sponsor</h1>
           <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>
             Gestione partnership e ricavi commerciali
           </p>
@@ -250,7 +250,7 @@ export default function SponsorPage() {
                   </div>
                 )}
                 {s.settore && (
-                  <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 8 }}>
+                  <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 8 }}>
                     Settore: {s.settore}
                   </div>
                 )}
@@ -267,7 +267,7 @@ export default function SponsorPage() {
                 )}
 
                 {s.benefici && (
-                  <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 12, lineHeight: 1.4 }}>
+                  <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 12, lineHeight: 1.4 }}>
                     {s.benefici}
                   </div>
                 )}
@@ -276,7 +276,7 @@ export default function SponsorPage() {
                   <button className="btn btn-ghost btn-sm" style={{ flex: 1 }} onClick={() => apriModifica(s)}>
                     Modifica
                   </button>
-                  <span className={`badge ${statoBadge[s.stato] ?? 'badge-grigio'}`} style={{ fontSize: 10 }}>
+                  <span className={`badge ${statoBadge[s.stato] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>
                     {s.stato?.replace('_', ' ')}
                   </span>
                 </div>

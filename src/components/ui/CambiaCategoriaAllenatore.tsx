@@ -39,7 +39,7 @@ export default function CambiaCategoriaAllenatore({ allenatoreId, categoriaAttua
         value={categoria}
         onChange={e => salva(e.target.value)}
         disabled={saving}
-        style={{ fontSize: 11, padding: '4px 8px', background: '#1a1a1a', color: 'var(--white)', maxWidth: 160 }}
+        style={{ fontSize: 12, padding: '4px 8px', background: 'var(--surface-2)', color: 'var(--white)', maxWidth: 160 }}
       >
         <option value="">— Categoria —</option>
         {CATEGORIE_FEDERALI_OPTIONS.map(c => (

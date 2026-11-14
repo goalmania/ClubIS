@@ -79,11 +79,11 @@ function BadgeStato({ stato }: { stato: string }) {
     <span style={{
       display: 'inline-block',
       padding: '2px 8px',
-      fontSize: 10,
+      fontSize: 12,
       fontFamily: 'var(--font-display)',
       fontWeight: 700,
-      letterSpacing: '0.07em',
-      textTransform: 'uppercase',
+      letterSpacing: '0',
+      textTransform: 'none',
       background: colors[stato] ?? 'rgba(150,150,150,0.15)',
       color: 'var(--grigio-2)',
     }}>
@@ -316,7 +316,7 @@ export default function ContrattiProView({ clubId, ruolo }: { clubId: string; ru
         actions={
           <button
             onClick={openNuovo}
-            style={{ padding: '8px 18px', background: 'var(--accent)', border: 'none', color: 'var(--black)', fontWeight: 700, cursor: 'pointer', fontFamily: 'var(--font-display)', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.06em' }}
+            style={{ padding: '8px 18px', background: 'var(--accent)', border: 'none', color: 'var(--black)', fontWeight: 700, cursor: 'pointer', fontFamily: 'var(--font-display)', fontSize: 12, textTransform: 'none', letterSpacing: '0' }}
           >
             Nuovo contratto
           </button>
@@ -332,7 +332,7 @@ export default function ContrattiProView({ clubId, ruolo }: { clubId: string; ru
           { label: 'Scaduti', v: scaduti.length },
         ].map(({ label, v }) => (
           <div key={label} style={{ flex: 1, padding: '14px 18px', background: 'var(--grigio-7)', border: '1px solid var(--grigio-5)' }}>
-            <div style={{ fontFamily: 'var(--font-display)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--grigio-3)', marginBottom: 6 }}>{label}</div>
+            <div style={{ fontFamily: 'var(--font-display)', fontSize: 12, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-3)', marginBottom: 6 }}>{label}</div>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 22, fontWeight: 700, color: 'var(--white)' }}>{v}</div>
           </div>
         ))}
@@ -348,7 +348,7 @@ export default function ContrattiProView({ clubId, ruolo }: { clubId: string; ru
           <thead>
             <tr style={{ borderBottom: '1px solid var(--grigio-5)' }}>
               {['Tesserato', 'Tipo', 'Retribuzione lorda', 'Scadenza', 'Stato', ''].map(h => (
-                <th key={h} style={{ padding: '8px 12px', textAlign: 'left', fontFamily: 'var(--font-display)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--grigio-3)', fontWeight: 600 }}>{h}</th>
+                <th key={h} style={{ padding: '8px 12px', textAlign: 'left', fontFamily: 'var(--font-display)', fontSize: 12, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-3)', fontWeight: 600 }}>{h}</th>
               ))}
             </tr>
           </thead>
@@ -391,19 +391,19 @@ export default function ContrattiProView({ clubId, ruolo }: { clubId: string; ru
                         } catch { setToast({ msg: 'Errore generazione PDF', tipo: 'error' }) }
                       }}
                       title="Genera PDF"
-                      style={{ padding: '4px 10px', background: 'rgba(200,240,0,0.08)', border: '1px solid rgba(200,240,0,0.2)', color: 'var(--accent)', cursor: 'pointer', fontSize: 11 }}
+                      style={{ padding: '4px 10px', background: 'rgba(200,240,0,0.08)', border: '1px solid rgba(200,240,0,0.2)', color: 'var(--accent)', cursor: 'pointer', fontSize: 12 }}
                     >
                       PDF
                     </button>
                     <button
                       onClick={() => openEdit(c)}
-                      style={{ padding: '4px 10px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', cursor: 'pointer', fontSize: 11 }}
+                      style={{ padding: '4px 10px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', cursor: 'pointer', fontSize: 12 }}
                     >
                       Modifica
                     </button>
                     <button
                       onClick={() => elimina(c.id)}
-                      style={{ padding: '4px 10px', background: 'rgba(255,80,80,0.08)', border: '1px solid rgba(255,80,80,0.2)', color: '#f66', cursor: 'pointer', fontSize: 11 }}
+                      style={{ padding: '4px 10px', background: 'rgba(255,80,80,0.08)', border: '1px solid rgba(255,80,80,0.2)', color: '#f66', cursor: 'pointer', fontSize: 12 }}
                     >
                       Elimina
                     </button>
@@ -487,7 +487,7 @@ export default function ContrattiProView({ clubId, ruolo }: { clubId: string; ru
         </FormSection>
 
         <FormSection title="Agente / Procuratore sportivo">
-          <div style={{ marginBottom: 10, fontSize: 11, color: 'var(--grigio-3)' }}>Lascia vuoto se nessuna delle parti si è avvalsa di un agente.</div>
+          <div style={{ marginBottom: 10, fontSize: 12, color: 'var(--grigio-3)' }}>Lascia vuoto se nessuna delle parti si è avvalsa di un agente.</div>
           <FormGrid cols={2}>
             <FormField label="Agente del calciatore (nome)">
               <input value={form.agente_calciatore_nome} onChange={e => setF('agente_calciatore_nome', e.target.value)} placeholder="Cognome e nome agente" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)' }} />
@@ -523,7 +523,7 @@ export default function ContrattiProView({ clubId, ruolo }: { clubId: string; ru
         </FormSection>
 
         <FormSection title="Premi di rendimento">
-          <div style={{ marginBottom: 8, fontSize: 11, color: 'var(--grigio-3)' }}>
+          <div style={{ marginBottom: 8, fontSize: 12, color: 'var(--grigio-3)' }}>
             Aggiungi premi legati a obiettivi di rendimento
           </div>
           {form.premi.map((p, i) => (
@@ -563,7 +563,7 @@ export default function ContrattiProView({ clubId, ruolo }: { clubId: string; ru
               <input value={form.lega_ref} onChange={e => setF('lega_ref', e.target.value)} placeholder="N° protocollo Lega Pro" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)' }} />
             </FormField>
           </FormGrid>
-          <div style={{ marginTop: 8, padding: '8px 12px', background: 'rgba(200,240,0,0.04)', border: '1px solid rgba(200,240,0,0.12)', fontSize: 11, color: 'var(--grigio-3)', lineHeight: 1.5 }}>
+          <div style={{ marginTop: 8, padding: '8px 12px', background: 'rgba(200,240,0,0.04)', border: '1px solid rgba(200,240,0,0.12)', fontSize: 12, color: 'var(--grigio-3)', lineHeight: 1.5 }}>
             Il deposito avviene manualmente sul portale ufficiale Lega Pro. Genera il PDF da consegnare al tesserato, poi deposita sul portale.
           </div>
         </FormSection>

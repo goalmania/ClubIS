@@ -73,7 +73,7 @@ export default function FamigliaProfiloPage() {
   return (
     <div style={{ maxWidth: 640 }}>
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 26, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>
+        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 26, textTransform: 'none', letterSpacing: '-0.01em', color: 'var(--white)' }}>
           Profilo
         </div>
         <div style={{ fontSize: 13, color: 'var(--gray)', marginTop: 4 }}>
@@ -82,13 +82,13 @@ export default function FamigliaProfiloPage() {
       </div>
 
       {anteprima && (
-        <div style={{ padding: '10px 14px', marginBottom: 20, background: 'rgba(200,240,0,0.06)', border: '1px solid rgba(200,240,0,0.2)', borderRadius: 4, fontSize: 12, color: 'var(--accent)' }}>
+        <div style={{ padding: '10px 14px', marginBottom: 20, background: 'rgba(200,240,0,0.06)', border: '1px solid rgba(200,240,0,0.2)', borderRadius: 10, fontSize: 12, color: 'var(--accent)' }}>
           Modalità anteprima — i dati di contatto genitore si vedono solo con un account famiglia registrato.
         </div>
       )}
 
       {figli.length === 0 ? (
-        <div style={{ padding: 40, textAlign: 'center', color: 'var(--gray)', fontSize: 13, background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2 }}>
+        <div style={{ padding: 40, textAlign: 'center', color: 'var(--gray)', fontSize: 13, background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8 }}>
           Nessun profilo collegato.
         </div>
       ) : figli.map((f, i) => {
@@ -98,13 +98,13 @@ export default function FamigliaProfiloPage() {
         const eta = g?.data_nascita ? new Date().getFullYear() - new Date(g.data_nascita).getFullYear() : null
 
         return (
-          <div key={g?.id ?? i} style={{ marginBottom: 24, background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2, overflow: 'hidden' }}>
-            <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border-solid)', fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 15, textTransform: 'uppercase', color: 'var(--white)' }}>
+          <div key={g?.id ?? i} style={{ marginBottom: 24, background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8, overflow: 'hidden' }}>
+            <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border-solid)', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, textTransform: 'none', color: 'var(--white)' }}>
               {g?.nome} {g?.cognome}
             </div>
 
             <div style={{ padding: 18 }}>
-              <div style={{ fontSize: 11, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--gray)', marginBottom: 10 }}>
+              <div style={{ fontSize: 12, fontFamily: 'var(--font-mono)', textTransform: 'none', letterSpacing: '0', color: 'var(--gray)', marginBottom: 10 }}>
                 Dati giocatore
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 20 }}>
@@ -116,7 +116,7 @@ export default function FamigliaProfiloPage() {
 
               {fam && d && (
                 <>
-                  <div style={{ fontSize: 11, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--gray)', marginBottom: 10 }}>
+                  <div style={{ fontSize: 12, fontFamily: 'var(--font-mono)', textTransform: 'none', letterSpacing: '0', color: 'var(--gray)', marginBottom: 10 }}>
                     I tuoi dati ({fam.relazione})
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
@@ -173,7 +173,7 @@ export default function FamigliaProfiloPage() {
           position: 'fixed', bottom: 24, right: 24, zIndex: 2000,
           background: toast.tipo === 'ok' ? '#1a2e1a' : '#2e1a1a',
           border: `1px solid ${toast.tipo === 'ok' ? 'rgba(0,200,160,0.4)' : 'rgba(239,68,68,0.4)'}`,
-          borderRadius: 4, padding: '12px 18px', display: 'flex', alignItems: 'center', gap: 10,
+          borderRadius: 10, padding: '12px 18px', display: 'flex', alignItems: 'center', gap: 10,
           boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
         }}>
           <span>{toast.tipo === 'ok' ? '✓' : '⚠'}</span>
@@ -187,10 +187,10 @@ export default function FamigliaProfiloPage() {
 function Campo({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--gray)', marginBottom: 3 }}>{label}</div>
+      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'none', letterSpacing: '0', color: 'var(--gray)', marginBottom: 3 }}>{label}</div>
       <div style={{ fontSize: 13, color: 'var(--white)' }}>{value}</div>
     </div>
   )
 }
 
-const labelStyle: React.CSSProperties = { display: 'block', fontSize: 11, fontWeight: 600, color: 'var(--gray)', marginBottom: 4, textTransform: 'uppercase' }
+const labelStyle: React.CSSProperties = { display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--gray)', marginBottom: 4, textTransform: 'none' }

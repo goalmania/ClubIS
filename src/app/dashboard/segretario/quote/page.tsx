@@ -689,7 +689,7 @@ export default function QuotePage() {
 
         {nImporto && parseFloat(nImporto) > 0 && (
           <div style={{
-            padding: '10px 14px', borderRadius: 8, background: 'var(--grigio-6)',
+            padding: '10px 14px', borderRadius: 12, background: 'var(--grigio-6)',
             fontSize: 12, color: 'var(--grigio-3)', marginBottom: 8,
           }}>
             💡 Dopo il salvataggio potrai creare un piano di pagamento con rate mensili.
@@ -748,7 +748,7 @@ export default function QuotePage() {
 
         <FormField label="Scadenza pagamento">
           <input className="input" type="date" style={{ width: '100%' }} value={mScadenza} onChange={e => setMScadenza(e.target.value)} />
-          <p style={{ fontSize: 11, color: 'var(--grigio-4)', marginTop: 4 }}>
+          <p style={{ fontSize: 12, color: 'var(--grigio-4)', marginTop: 4 }}>
             Se lasci vuoto, viene impostato automaticamente il 10 del mese di competenza — serve per avvisare le famiglie in tempo.
           </p>
         </FormField>
@@ -762,7 +762,7 @@ export default function QuotePage() {
 
         {mModalita === 'tutti' && (
           <div style={{
-            padding: '10px 14px', borderRadius: 8, background: 'var(--grigio-6)',
+            padding: '10px 14px', borderRadius: 12, background: 'var(--grigio-6)',
             fontSize: 12, color: 'var(--grigio-3)', marginBottom: 8,
           }}>
             💡 Se un giocatore ha già una quota per {MESE_LABEL[mMese]}, non verrà duplicata: viene saltato in automatico.
@@ -820,7 +820,7 @@ export default function QuotePage() {
 
         {nRate && nImporto && (
           <div style={{
-            padding: '10px 14px', borderRadius: 8,
+            padding: '10px 14px', borderRadius: 12,
             background: 'rgba(200,240,0,0.06)', border: '1px solid rgba(200,240,0,0.2)',
             fontSize: 12, color: 'var(--grigio-2)', marginBottom: 16,
           }}>

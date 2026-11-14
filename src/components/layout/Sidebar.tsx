@@ -1,7 +1,7 @@
 'use client'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { RuoloUtente } from '@/types/database'
 import clsx from 'clsx'
 import { useScadenzeFIGCCount } from '@/hooks/useScadenzeFIGCCount'
@@ -474,17 +474,65 @@ interface SidebarProps {
   tipoProdotto?: TipoProdotto
 }
 
+// ── Barra in basso su mobile ─────────────────────────────────────
+// Per ogni ruolo: le 3 pagine più usate (oltre a Home e "Altro").
+// Si mostrano solo se la voce è davvero nel menu visibile di quel club
+// (piano, categoria, scuola calcio): niente link a pagine non accessibili.
+const mobileTabs: Partial<Record<RuoloUtente, { href: string; label: string }[]>> = {
+  presidente:     [{ href: '/dashboard/segretario/pagamenti', label: 'Pagamenti' }, { href: '/dashboard/presidente/disponibilita', label: 'Rosa' }, { href: '/dashboard/presidente/comunicazioni', label: 'Messaggi' }],
+  ds:             [{ href: '/dashboard/ds/rosa', label: 'Rosa' }, { href: '/dashboard/ds/partite', label: 'Partite' }, { href: '/dashboard/ds/mercato', label: 'Mercato' }],
+  segretario:     [{ href: '/dashboard/segretario/giocatori', label: 'Giocatori' }, { href: '/dashboard/segretario/calendario', label: 'Calendario' }, { href: '/dashboard/segretario/pagamenti', label: 'Pagamenti' }],
+  allenatore:     [{ href: '/dashboard/allenatore/rosa', label: 'Rosa' }, { href: '/dashboard/allenatore/allenamenti', label: 'Allenamenti' }, { href: '/dashboard/allenatore/partite', label: 'Partite' }],
+  osservatore:    [{ href: '/dashboard/osservatore/nuovo-report', label: 'Nuovo' }, { href: '/dashboard/osservatore/report', label: 'Report' }, { href: '/dashboard/osservatore/giocatori', label: 'Giocatori' }],
+  medico:         [{ href: '/dashboard/medico/cartelle', label: 'Cartelle' }, { href: '/dashboard/medico/infortuni', label: 'Infortuni' }, { href: '/dashboard/medico/visite', label: 'Visite' }],
+  famiglia:       [{ href: '/dashboard/famiglia/pagamenti', label: 'Pagamenti' }, { href: '/dashboard/famiglia/calendario', label: 'Calendario' }, { href: '/dashboard/famiglia/comunicazioni', label: 'Messaggi' }],
+  team_manager:   [{ href: '/dashboard/team-manager/calendario', label: 'Calendario' }, { href: '/dashboard/team-manager/distinte', label: 'Distinte' }, { href: '/dashboard/team-manager/trasferte', label: 'Trasferte' }],
+  giocatore:      [{ href: '/dashboard/giocatore/allenamenti', label: 'Allenamenti' }, { href: '/dashboard/giocatore/convocazioni', label: 'Convocazioni' }, { href: '/dashboard/giocatore/partite', label: 'Partite' }],
+  custode:        [{ href: '/dashboard/custode/impianti', label: 'Impianti' }],
+  ufficio_stampa: [{ href: '/dashboard/ufficio-stampa/calendario-media', label: 'Calendario' }, { href: '/dashboard/ufficio-stampa/interviste', label: 'Interviste' }, { href: '/dashboard/ufficio-stampa/locandine', label: 'Locandine' }],
+}
+
+const Chevron = () => <svg className="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+const StarIcon = ({ filled }: { filled: boolean }) => <svg width="13" height="13" viewBox="0 0 24 24" fill={filled ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinejoin="round" aria-hidden="true"><path d="M12 2.5 15 9l7 .9-5.2 4.8 1.4 7.3L12 18.4 5.8 22l1.4-7.3L2 9.9 9 9z"/></svg>
+const DotsIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+
+function leggiLista(key: string): string[] {
+  try {
+    const v = JSON.parse(localStorage.getItem(key) ?? '[]')
+    return Array.isArray(v) ? v.filter(x => typeof x === 'string') : []
+  } catch { return [] }
+}
+function salvaLista(key: string, v: string[]) {
+  try { localStorage.setItem(key, JSON.stringify(v)) } catch { /* storage non disponibile: resta in memoria */ }
+}
+
+const normalizza = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+
 export default function Sidebar({ ruolo, utente, club, notifiche = 0, isSuperAdmin = false, planTier = 'starter', userClubs, activeClubId, tipoProdotto = 'club_agonistico' }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
   const isPro = isCategoriaPro(club.categoria)
-  const sezioni = (tipoProdotto === 'scuola_calcio_standalone' ? navConfigScuolaCalcio[ruolo] : undefined) ?? navConfig[ruolo] ?? navConfig.segretario
+  const sezioniBase = (tipoProdotto === 'scuola_calcio_standalone' ? navConfigScuolaCalcio[ruolo] : undefined) ?? navConfig[ruolo] ?? navConfig.segretario
   const scadenzeUrgenti = useScadenzeFIGCCount()
   const iniziali = `${utente.nome[0] ?? '?'}${utente.cognome[0] ?? ''}`.toUpperCase()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [query, setQuery] = useState('')
+  const [aperte, setAperte] = useState<string[]>([])
+  const [preferiti, setPreferiti] = useState<string[]>([])
 
-  // Chiude il drawer mobile ogni volta che cambia pagina (click su un link o back/forward)
-  useEffect(() => { setMobileOpen(false) }, [pathname])
+  const keyAperte = `cis:nav-aperte:${ruolo}`
+  const keyPreferiti = `cis:nav-preferiti:${ruolo}`
+
+  // Chiude il pannello mobile ogni volta che cambia pagina
+  useEffect(() => { setMobileOpen(false); setQuery('') }, [pathname])
+
+  // Blocca lo scroll della pagina sotto il pannello mobile aperto
+  useEffect(() => {
+    if (!mobileOpen) return
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = prev }
+  }, [mobileOpen])
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' })
@@ -503,223 +551,287 @@ export default function Sidebar({ ruolo, utente, club, notifiche = 0, isSuperAdm
     return pathname.startsWith(href)
   }
 
+  // Voci visibili per piano/categoria, una volta sola
+  const sezioni = useMemo(() => sezioniBase
+    .map(s => ({ ...s, voci: s.voci.filter(v => (!v.feature || canAccess(v.feature, planTier)) && (!v.proOnly || isPro)) }))
+    .filter(s => s.voci.length > 0), [sezioniBase, planTier, isPro])
+
+  const tutteLeVoci = useMemo(() => {
+    const seen = new Set<string>()
+    const out: NavVoce[] = []
+    for (const s of sezioni) for (const v of s.voci) if (!seen.has(v.href)) { seen.add(v.href); out.push(v) }
+    return out
+  }, [sezioni])
+
+  const home = sezioni[0]?.voci[0]
+
+  // La sezione che contiene la pagina corrente è sempre aperta
+  const sezioneAttiva = sezioni.find(s => s.titolo && s.voci.some(v => isActive(v.href)))?.titolo
+
+  useEffect(() => {
+    setAperte(leggiLista(keyAperte))
+    setPreferiti(leggiLista(keyPreferiti))
+  }, [keyAperte, keyPreferiti])
+
+  const toggleSezione = (titolo: string) => {
+    setAperte(prev => {
+      const next = prev.includes(titolo) ? prev.filter(t => t !== titolo) : [...prev, titolo]
+      salvaLista(keyAperte, next)
+      return next
+    })
+  }
+
+  const togglePreferito = (href: string) => {
+    setPreferiti(prev => {
+      const next = prev.includes(href) ? prev.filter(h => h !== href) : [...prev, href].slice(-8)
+      salvaLista(keyPreferiti, next)
+      return next
+    })
+  }
+
+  const vociPreferite = preferiti
+    .map(h => tutteLeVoci.find(v => v.href === h))
+    .filter((v): v is NavVoce => !!v)
+
+  const q = normalizza(query.trim())
+  const risultati = q
+    ? tutteLeVoci.filter(v => normalizza(v.label).includes(q) || normalizza(sezioni.find(s => s.voci.includes(v))?.titolo ?? '').includes(q))
+    : []
+
+  const tabs = (mobileTabs[ruolo] ?? [])
+    .filter(t => tutteLeVoci.some(v => v.href === t.href))
+    .slice(0, 3)
+  const tabAttivo = tabs.find(t => isActive(t.href))
+  const homeAttiva = !!home && isActive(home.href) && !tabAttivo
+
+  const badgeFor = (voce: NavVoce) => {
+    if (voce.icon === 'Bell' && notifiche > 0) return notifiche
+    if (voce.href === '/dashboard/segretario/scadenze-figc' && scadenzeUrgenti > 0) return scadenzeUrgenti
+    return 0
+  }
+
+  const renderVoce = (voce: NavVoce, opts: { conIcona?: boolean; chiave?: string } = {}) => {
+    const IconComp = Icon[voce.icon]
+    const attiva = isActive(voce.href)
+    const badge = badgeFor(voce)
+    const pref = preferiti.includes(voce.href)
+    return (
+      <Link
+        key={opts.chiave ?? voce.href}
+        href={voce.href}
+        onClick={() => setMobileOpen(false)}
+        className={clsx('sidebar-nav-link', { active: attiva })}
+        aria-current={attiva ? 'page' : undefined}
+      >
+        {opts.conIcona !== false && <IconComp />}
+        <span style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{voce.label}</span>
+        {badge > 0 && (
+          <span style={{ background: 'var(--accent-red)', color: '#fff', fontSize: 12, fontWeight: 600, padding: '1px 7px', borderRadius: 999 }}>
+            {badge}
+          </span>
+        )}
+        {voce.href !== home?.href && (
+          <button
+            type="button"
+            className={clsx('fav-btn', { on: pref })}
+            aria-label={pref ? `Togli ${voce.label} dai preferiti` : `Aggiungi ${voce.label} ai preferiti`}
+            aria-pressed={pref}
+            onClick={e => { e.preventDefault(); e.stopPropagation(); togglePreferito(voce.href) }}
+            style={badge > 0 ? { marginLeft: 0 } : undefined}
+          >
+            <StarIcon filled={pref} />
+          </button>
+        )}
+      </Link>
+    )
+  }
+
+  const logoClub = club.logoUrl ? (
+    <div style={{ width: 34, height: 34, borderRadius: 14, flexShrink: 0, overflow: 'hidden', background: 'var(--surface-3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <img
+        src={club.logoUrl}
+        alt={club.nome}
+        style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+        onError={e => {
+          const el = e.currentTarget
+          el.style.display = 'none'
+          const parent = el.parentElement
+          if (parent) {
+            parent.style.background = 'var(--accent)'
+            parent.innerHTML = `<span style="font-weight:700;font-size:13px;color:#0a0a0a">${club.nome.slice(0, 2).toUpperCase()}</span>`
+          }
+        }}
+      />
+    </div>
+  ) : (
+    <div style={{ width: 34, height: 34, borderRadius: 14, background: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 13, color: '#0a0a0a', flexShrink: 0 }}>
+      {club.nome.slice(0, 2).toUpperCase()}
+    </div>
+  )
+
   return (
     <>
-      {/* Bottone hamburger — visibile solo sotto gli 860px (vedi globals.css) */}
-      <button
-        className="sidebar-mobile-toggle"
-        onClick={() => setMobileOpen(true)}
-        aria-label="Apri il menu"
-      >
-        <Icon.Menu />
-      </button>
-
-      {/* Sfondo scuro dietro al drawer, chiude al tap */}
-      {mobileOpen && (
-        <div className="sidebar-backdrop" onClick={() => setMobileOpen(false)} />
-      )}
-
-    <aside className={clsx('sidebar-shell', { 'sidebar-open': mobileOpen })} style={{
-      width: 240,
-      minHeight: '100vh',
-      background: '#0d0d0d',
-      borderRight: '1px solid var(--border-solid)',
-      display: 'flex',
-      flexDirection: 'column',
-      flexShrink: 0,
-      overflowY: 'auto',
-    }}>
-      {/* Pulsante chiudi — visibile solo nel drawer mobile */}
-      <button
-        className="sidebar-mobile-toggle"
-        onClick={() => setMobileOpen(false)}
-        aria-label="Chiudi il menu"
-        style={{ position: 'absolute', top: 12, right: 12, left: 'auto' }}
-      >
-        <Icon.X />
-      </button>
-
-      {/* Selettore multi-club (visibile solo se l'utente ha 2+ club) */}
-      {userClubs && userClubs.length > 1 && activeClubId && (
-        <ClubSwitcher clubs={userClubs} activeClubId={activeClubId} />
-      )}
-
-      {/* Header club */}
-      <div style={{ padding: '18px 16px 14px', borderBottom: '1px solid var(--border-solid)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          {/* Logo club — immagine se disponibile, altrimenti iniziali su lime */}
-          {club.logoUrl ? (
-            <div style={{
-              width: 32, height: 32, borderRadius: 8, flexShrink: 0,
-              overflow: 'hidden', border: '1px solid var(--border)',
-              background: '#1a1a1a', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
-              <img
-                src={club.logoUrl}
-                alt={club.nome}
-                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                onError={e => {
-                  // Fallback: nascondi img e mostra iniziali nel parent
-                  const el = e.currentTarget
-                  el.style.display = 'none'
-                  const parent = el.parentElement
-                  if (parent) {
-                    parent.style.background = 'var(--accent)'
-                    parent.innerHTML = `<span style="font-family:var(--font-display);font-weight:900;font-size:12px;color:#0a0a0a;letter-spacing:0.05em">${club.nome.slice(0, 2).toUpperCase()}</span>`
-                  }
-                }}
-              />
-            </div>
-          ) : (
-            <div style={{
-              width: 32, height: 32, borderRadius: 8,
-              background: 'var(--accent)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 12,
-              color: '#0a0a0a', letterSpacing: '0.05em',
-              flexShrink: 0,
-            }}>
-              {club.nome.slice(0, 2).toUpperCase()}
-            </div>
-          )}
-          <div style={{ minWidth: 0 }}>
-            <div style={{
-              fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 14,
-              letterSpacing: '0.08em', textTransform: 'uppercase',
-              color: 'var(--white)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-            }}>
-              {club.nome}
-            </div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-              {club.categoria.replace(/_/g, ' ')}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Navigazione */}
-      <nav style={{ flex: 1, padding: '10px 8px', overflowY: 'auto' }}>
-        {sezioni.map((sezione, si) => (
-          <div key={si} style={{ marginBottom: 4 }}>
-            {sezione.titolo && (
-              <div style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.58rem', fontWeight: 700, color: '#333',
-                textTransform: 'uppercase', letterSpacing: '0.2em',
-                padding: '12px 10px 6px',
-              }}>
-                {sezione.titolo}
-              </div>
-            )}
-            {sezione.voci.filter(voce =>
-              (!voce.feature || canAccess(voce.feature, planTier)) &&
-              (!voce.proOnly || isPro)
-            ).map(voce => {
-              const IconComp = Icon[voce.icon]
-              const attiva = isActive(voce.href)
-              return (
-                <Link
-                  key={voce.href}
-                  href={voce.href}
-                  onClick={() => setMobileOpen(false)}
-                  className={clsx('sidebar-nav-link', { active: attiva })}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: 10,
-                    padding: '8px 10px',
-                    borderRadius: 8,
-                    fontFamily: 'var(--font-display)',
-                    fontSize: '0.78rem', letterSpacing: '0.08em',
-                    textTransform: 'uppercase',
-                    textDecoration: 'none',
-                    marginBottom: 1,
-                  }}
-                >
-                  <IconComp />
-                  <span>{voce.label}</span>
-                  {voce.icon === 'Bell' && notifiche > 0 && (
-                    <span style={{
-                      marginLeft: 'auto', background: 'var(--accent-red)', color: 'white',
-                      fontFamily: 'var(--font-mono)', fontSize: 10, fontWeight: 700,
-                      padding: '1px 6px', borderRadius: 999,
-                    }}>
-                      {notifiche}
-                    </span>
-                  )}
-                  {voce.href === '/dashboard/segretario/scadenze-figc' && scadenzeUrgenti > 0 && (
-                    <span style={{
-                      marginLeft: 'auto', background: '#ff4444', color: 'white',
-                      fontFamily: 'var(--font-mono)', fontSize: 10, fontWeight: 700,
-                      padding: '1px 6px', borderRadius: 999,
-                    }}>
-                      {scadenzeUrgenti}
-                    </span>
-                  )}
-                </Link>
-              )
-            })}
-          </div>
-        ))}
+      {/* Barra in basso — visibile solo sotto gli 860px (vedi globals.css) */}
+      <nav className="mobile-tabbar" aria-label="Navigazione rapida">
+        {home && (
+          <Link href={home.href} className={clsx('mobile-tab', { active: homeAttiva && !mobileOpen })} aria-current={homeAttiva ? 'page' : undefined}>
+            <Icon.Home />
+            <span className="lbl">{ruolo === 'giocatore' ? 'Profilo' : 'Home'}</span>
+          </Link>
+        )}
+        {tabs.map(t => {
+          const voce = tutteLeVoci.find(v => v.href === t.href)!
+          const IconComp = Icon[voce.icon]
+          const attiva = tabAttivo?.href === t.href && !mobileOpen
+          return (
+            <Link key={t.href} href={t.href} className={clsx('mobile-tab', { active: attiva })} aria-current={attiva ? 'page' : undefined}>
+              <IconComp />
+              <span className="lbl">{t.label}</span>
+            </Link>
+          )
+        })}
+        <button type="button" className={clsx('mobile-tab', { active: mobileOpen || (!homeAttiva && !tabAttivo) })} onClick={() => setMobileOpen(true)} aria-label="Altro: tutte le sezioni" aria-expanded={mobileOpen}>
+          <DotsIcon />
+          <span className="lbl">Altro</span>
+          {notifiche > 0 && <span className="dot">{notifiche > 99 ? '99+' : notifiche}</span>}
+        </button>
       </nav>
 
-      {/* Admin link */}
-      {isSuperAdmin && (
-        <div style={{ padding: '0 8px 8px' }}>
-          <div style={{ height: 1, background: 'var(--border-solid)', marginBottom: 8 }} />
-          <Link
-            href="/admin"
-            style={{
-              display: 'flex', alignItems: 'center', gap: 10,
-              padding: '9px 12px', borderRadius: 8,
-              fontFamily: 'var(--font-display)', fontSize: '0.78rem',
-              letterSpacing: '0.08em', textTransform: 'uppercase',
-              textDecoration: 'none',
-              background: 'var(--accent-red-lt)', color: 'var(--accent-red)',
-              fontWeight: 600,
-            }}
-          >
-            <Icon.Settings />
-            <span>Pannello Admin</span>
-          </Link>
-        </div>
-      )}
+      {mobileOpen && <div className="sidebar-backdrop" onClick={() => setMobileOpen(false)} />}
 
-      {/* Utente / logout */}
-      <div style={{
-        padding: '12px 12px',
-        borderTop: '1px solid var(--border-solid)',
-        display: 'flex', alignItems: 'center', gap: 9,
-        background: '#0d0d0d',
+      <aside className={clsx('sidebar-shell', { 'sidebar-open': mobileOpen })} aria-label="Menu" style={{
+        width: 260,
+        background: 'var(--surface-1)',
+        borderRight: '1px solid var(--separator)',
+        display: 'flex',
+        flexDirection: 'column',
+        flexShrink: 0,
+        overflow: 'hidden',
       }}>
-        <div style={{
-          width: 32, height: 32, borderRadius: 8,
-          background: 'var(--gray-mid)', color: 'var(--accent)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontFamily: 'var(--font-display)', fontSize: 11, fontWeight: 700,
-          letterSpacing: '0.05em', textTransform: 'uppercase',
-          flexShrink: 0, border: '1px solid var(--border)',
-        }}>
-          {iniziali}
+        {/* Intestazione del pannello mobile */}
+        <div className="sidebar-sheet-header">
+          <span style={{ fontSize: 28, fontWeight: 700, letterSpacing: '-0.03em' }}>Menu</span>
+          <button type="button" onClick={() => setMobileOpen(false)} aria-label="Chiudi il menu" style={{ border: 0, background: 'var(--surface-3)', color: 'var(--white)', borderRadius: 999, height: 34, padding: '0 14px', fontSize: 15, fontWeight: 600, cursor: 'pointer' }}>
+            Fine
+          </button>
         </div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{
-            fontFamily: 'var(--font-display)', fontSize: 12, fontWeight: 600,
-            letterSpacing: '0.05em', textTransform: 'uppercase',
-            color: 'var(--white)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-          }}>
-            {utente.nome} {utente.cognome}
+
+        {/* Club */}
+        <div style={{ padding: '16px 14px 10px', display: 'flex', alignItems: 'center', gap: 10 }}>
+          {logoClub}
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <div style={{ fontWeight: 600, fontSize: 15, color: 'var(--white)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', letterSpacing: '-0.01em' }}>
+              {club.nome}
+            </div>
+            <div style={{ fontSize: 12.5, color: 'var(--gray)', textTransform: 'capitalize' }}>
+              {club.categoria.replace(/_/g, ' ')} · {ruoloLabel[ruolo]}
+            </div>
           </div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', letterSpacing: '0.08em' }}>{ruoloLabel[ruolo]}</div>
         </div>
-        <button
-          onClick={handleLogout}
-          title="Esci"
-          className="topbar-icon-btn"
-          style={{ flexShrink: 0 }}
-        >
-          <Icon.LogOut />
-        </button>
-      </div>
-    </aside>
+
+        {userClubs && userClubs.length > 1 && activeClubId && (
+          <ClubSwitcher clubs={userClubs} activeClubId={activeClubId} />
+        )}
+
+        {/* Ricerca nel menu */}
+        {tutteLeVoci.length > 8 && (
+          <div style={{ padding: '4px 12px 8px' }}>
+            <label className="sidebar-search">
+              <Icon.Search />
+              <input
+                type="search"
+                value={query}
+                onChange={e => setQuery(e.target.value)}
+                placeholder="Cerca pagina…"
+                aria-label="Cerca una pagina nel menu"
+                onKeyDown={e => {
+                  if (e.key === 'Enter' && risultati[0]) { router.push(risultati[0].href); setQuery('') }
+                  if (e.key === 'Escape') setQuery('')
+                }}
+              />
+            </label>
+          </div>
+        )}
+
+        {/* Navigazione */}
+        <nav style={{ flex: 1, padding: '2px 10px 12px', overflowY: 'auto', overscrollBehavior: 'contain' }}>
+          {q ? (
+            risultati.length > 0
+              ? <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>{risultati.map(v => renderVoce(v))}</div>
+              : <p style={{ padding: '12px 10px', fontSize: 14, color: 'var(--gray)' }}>Nessuna pagina trovata</p>
+          ) : (
+            <>
+              {home && <div style={{ marginBottom: 6 }}>{renderVoce(home)}</div>}
+
+              {vociPreferite.length > 0 && (
+                <div style={{ marginBottom: 8 }}>
+                  <div style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--gray)', padding: '8px 10px 4px' }}>Preferiti</div>
+                  {vociPreferite.map(v => renderVoce(v, { chiave: `fav-${v.href}` }))}
+                </div>
+              )}
+
+              {sezioni.map((sezione, si) => {
+                const voci = sezione.voci.filter(v => v.href !== home?.href)
+                if (voci.length === 0) return null
+                if (!sezione.titolo) {
+                  return (
+                    <div key={si} style={{ display: 'flex', flexDirection: 'column', gap: 1, marginTop: 8, paddingTop: 8, borderTop: si > 0 ? '1px solid var(--separator)' : undefined }}>
+                      {voci.map(v => renderVoce(v))}
+                    </div>
+                  )
+                }
+                const aperta = q !== '' || sezione.titolo === sezioneAttiva || aperte.includes(sezione.titolo)
+                const nBadge = voci.reduce((n, v) => n + badgeFor(v), 0)
+                const idLista = `nav-sez-${si}`
+                return (
+                  <div key={si} style={{ marginBottom: 2 }}>
+                    <button
+                      type="button"
+                      className="sidebar-section-btn"
+                      aria-expanded={aperta}
+                      aria-controls={idLista}
+                      onClick={() => toggleSezione(sezione.titolo!)}
+                    >
+                      <span style={{ flex: 1 }}>{sezione.titolo}</span>
+                      {!aperta && nBadge > 0 && <span style={{ width: 7, height: 7, borderRadius: 999, background: 'var(--accent-red)' }} aria-label="Ci sono avvisi" />}
+                      <span style={{ fontWeight: 500, color: 'var(--text-tertiary)' }}>{voci.length}</span>
+                      <Chevron />
+                    </button>
+                    {aperta && (
+                      <div id={idLista} style={{ display: 'flex', flexDirection: 'column', gap: 1, padding: '2px 0 6px' }}>
+                        {voci.map(v => renderVoce(v))}
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </>
+          )}
+        </nav>
+
+        {isSuperAdmin && (
+          <div style={{ padding: '0 10px 8px' }}>
+            <Link href="/admin" className="sidebar-nav-link" style={{ background: 'var(--accent-red-lt)', color: '#ff6b6b' }}>
+              <Icon.Settings />
+              <span>Pannello admin</span>
+            </Link>
+          </div>
+        )}
+
+        {/* Utente / logout */}
+        <div style={{ margin: '0 10px 10px', padding: 10, borderRadius: 14, background: 'var(--surface-2)', display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div className="avatar" style={{ width: 32, height: 32 }}>{iniziali}</div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--white)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {utente.nome} {utente.cognome}
+            </div>
+            <div style={{ fontSize: 12, color: 'var(--gray)' }}>{ruoloLabel[ruolo]}</div>
+          </div>
+          <button onClick={handleLogout} title="Esci" aria-label="Esci" className="topbar-icon-btn" style={{ width: 34, height: 34, background: 'transparent' }}>
+            <Icon.LogOut />
+          </button>
+        </div>
+      </aside>
     </>
   )
 }

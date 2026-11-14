@@ -46,7 +46,7 @@ export default async function OsservatoreDashboard() {
   return (
     <div>
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Area Osservatore</h1>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Area Osservatore</h1>
         <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>
           I tuoi report di scouting e statistiche personali
         </p>
@@ -113,7 +113,7 @@ export default async function OsservatoreDashboard() {
                       <td>
                         <span style={{
                           display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                          width: 28, height: 28, borderRadius: 6,
+                          width: 28, height: 28, borderRadius: 10,
                           background: (r.voto_globale ?? 0) >= 7 ? 'var(--verde-lt)' : (r.voto_globale ?? 0) >= 5 ? 'var(--ambra-lt)' : 'var(--rosso-lt)',
                           color: (r.voto_globale ?? 0) >= 7 ? 'var(--verde)' : (r.voto_globale ?? 0) >= 5 ? 'var(--ambra)' : 'var(--rosso)',
                           fontWeight: 700, fontSize: 13, fontFamily: 'var(--font-mono)',
@@ -121,8 +121,8 @@ export default async function OsservatoreDashboard() {
                           {r.voto_globale ?? '—'}
                         </span>
                       </td>
-                      <td><span className={`badge ${potenzialeColore[r.potenziale] ?? 'badge-grigio'}`} style={{ fontSize: 10 }}>{r.potenziale}</span></td>
-                      <td><span className={`badge ${esitoColore[r.esito] ?? 'badge-grigio'}`} style={{ fontSize: 10 }}>{r.esito?.replace('_', ' ')}</span></td>
+                      <td><span className={`badge ${potenzialeColore[r.potenziale] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>{r.potenziale}</span></td>
+                      <td><span className={`badge ${esitoColore[r.esito] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>{r.esito?.replace('_', ' ')}</span></td>
                     </tr>
                   ))}
                 </tbody>
@@ -149,7 +149,7 @@ export default async function OsservatoreDashboard() {
               ].map(a => (
                 <Link key={a.href} href={a.href} style={{
                   display: 'block', padding: '9px 12px',
-                  border: '1px solid var(--grigio-5)', borderRadius: 8,
+                  border: '1px solid var(--grigio-5)', borderRadius: 12,
                   fontSize: 13, color: 'var(--grigio)', textDecoration: 'none', fontWeight: 500,
                 }}>
                   {a.label}

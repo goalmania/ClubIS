@@ -20,11 +20,11 @@ function Indicatore({ label, val }: { label: string; val: number | null }) {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{label}</span>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', textTransform: 'none', letterSpacing: '0' }}>{label}</span>
         <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, color }}>{val}/10</span>
       </div>
-      <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 2, height: 4 }}>
-        <div style={{ width: `${perc}%`, height: '100%', background: color, borderRadius: 2 }} />
+      <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 8, height: 4 }}>
+        <div style={{ width: `${perc}%`, height: '100%', background: color, borderRadius: 8 }} />
       </div>
     </div>
   )
@@ -80,10 +80,10 @@ export default function ValutazioniPage() {
   return (
     <div>
       <div style={{ marginBottom: 28 }}>
-        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, textTransform: 'uppercase', fontSize: 26, letterSpacing: '0.04em', color: 'var(--white)' }}>
+        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 26, letterSpacing: '0', color: 'var(--white)' }}>
           Valutazioni
         </div>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)', marginTop: 6 }}>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', marginTop: 6 }}>
           Feedback dello staff tecnico
         </div>
       </div>
@@ -91,7 +91,7 @@ export default function ValutazioniPage() {
       {/* Medie generali */}
       {valutazioni.length > 0 && (
         <div style={{ border: '1px solid var(--border)', background: 'var(--bg-card)', padding: '20px 24px', marginBottom: 24 }}>
-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', fontSize: 13, color: 'var(--accent)', marginBottom: 16 }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 13, color: 'var(--accent)', marginBottom: 16 }}>
             Media generale
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 20 }}>
@@ -102,8 +102,8 @@ export default function ValutazioniPage() {
               { label: 'Mentale', val: media('mentale') },
             ].map(m => (
               <div key={m.label}>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 4 }}>{m.label}</div>
-                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 32, color: 'var(--white)' }}>{m.val}</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', textTransform: 'none', letterSpacing: '0', marginBottom: 4 }}>{m.label}</div>
+                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 32, color: 'var(--white)' }}>{m.val}</div>
               </div>
             ))}
           </div>
@@ -121,11 +121,11 @@ export default function ValutazioniPage() {
           <div key={v.id} style={{ border: '1px solid var(--border)', background: 'var(--bg-card)', padding: '18px 24px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
               <div>
-                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', fontSize: 13, color: 'var(--white)' }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 13, color: 'var(--white)' }}>
                   {new Date(v.data).toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric' })}
                 </div>
                 {v.allenatore && (
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', marginTop: 2 }}>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', marginTop: 2 }}>
                     {v.allenatore.nome} {v.allenatore.cognome}
                   </div>
                 )}
@@ -138,7 +138,7 @@ export default function ValutazioniPage() {
               <Indicatore label="Mentale" val={v.mentale} />
             </div>
             {v.note && (
-              <div style={{ marginTop: 14, padding: '10px 14px', background: 'rgba(255,255,255,0.03)', borderLeft: '2px solid var(--border)', fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)' }}>
+              <div style={{ marginTop: 14, padding: '10px 14px', background: 'rgba(255,255,255,0.03)', borderLeft: '2px solid var(--border)', fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)' }}>
                 {v.note}
               </div>
             )}

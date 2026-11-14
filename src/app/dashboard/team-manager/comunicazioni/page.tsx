@@ -157,7 +157,7 @@ export default function TMComunicazioniPage() {
     <div style={{ animation: 'fadeIn 0.3s ease' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Comunicazioni</h1>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Comunicazioni</h1>
           <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>Messaggi a squadra, famiglie e staff</p>
         </div>
         <button className="btn btn-primary btn-sm" onClick={() => setShowForm(v => !v)}>+ Nuovo messaggio</button>
@@ -253,13 +253,13 @@ export default function TMComunicazioniPage() {
                         <span className={`badge ${tipoBadge[m.tipo] ?? 'badge-grigio'}`}>{m.tipo}</span>
                         <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{m.titolo}</span>
                       </div>
-                      <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                      <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                         {new Date(m.inviato_at).toLocaleDateString('it-IT', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                       </span>
                     </div>
                     {m.corpo && <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: 4 }}>{m.corpo.slice(0, 180)}{m.corpo.length > 180 ? '…' : ''}</div>}
                     {m.destinatari_ruolo && (
-                      <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                      <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                         Destinatari: {Array.isArray(m.destinatari_ruolo) ? m.destinatari_ruolo.join(', ') : m.destinatari_ruolo}
                       </div>
                     )}
@@ -280,9 +280,9 @@ export default function TMComunicazioniPage() {
 
 const labelStyle: React.CSSProperties = {
   display: 'block',
-  fontSize: 11,
+  fontSize: 12,
   fontWeight: 600,
   color: 'var(--text-muted)',
   marginBottom: 4,
-  textTransform: 'uppercase',
+  textTransform: 'none',
 }

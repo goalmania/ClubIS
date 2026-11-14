@@ -52,7 +52,7 @@ export default function MedicoInfortuniPage() {
               ({g?.ruolo_principale?.replace('_', ' ')})
             </span>
           </div>
-          <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+          <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
             {new Date(i.data_infortunio).toLocaleDateString('it-IT')}
           </span>
         </div>
@@ -82,7 +82,7 @@ export default function MedicoInfortuniPage() {
     <div style={{ animation: 'fadeIn 0.3s ease' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Infortuni</h1>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Infortuni</h1>
           <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>Registro e tracking recupero</p>
         </div>
         <button data-onboarding="btn-nuovo-infortunio" className="btn btn-primary btn-sm" onClick={() => setOpenDrawer(true)}>

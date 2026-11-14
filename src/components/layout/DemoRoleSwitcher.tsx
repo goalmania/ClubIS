@@ -13,7 +13,7 @@ export default function DemoRoleSwitcher({ clubId, clubNome }: { clubId: string;
           padding: '8px 14px',
           background: 'var(--bg-input)',
           border: '1px solid var(--border)',
-          borderRadius: 8,
+          borderRadius: 12,
           color: 'var(--text-primary)',
           fontSize: 12,
           fontWeight: 600,

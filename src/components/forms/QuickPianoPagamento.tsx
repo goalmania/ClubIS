@@ -219,13 +219,13 @@ export default function QuickPianoPagamento({
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
               <label className="label" style={{ margin: 0 }}>Rate</label>
-              <div style={{ display: 'flex', gap: 0, border: '1px solid var(--border)', borderRadius: 6, overflow: 'hidden' }}>
+              <div style={{ display: 'flex', gap: 0, border: '1px solid var(--border)', borderRadius: 10, overflow: 'hidden' }}>
                 {(['auto', 'manuale'] as Modalita[]).map(m => (
                   <button key={m} onClick={() => setModalita(m)} style={{
-                    padding: '4px 12px', fontSize: 11, fontFamily: 'var(--font-mono)', cursor: 'pointer', border: 'none',
+                    padding: '4px 12px', fontSize: 12, fontFamily: 'var(--font-mono)', cursor: 'pointer', border: 'none',
                     background: modalita === m ? 'var(--accent)' : 'transparent',
                     color: modalita === m ? '#000' : 'var(--text-muted)',
-                    textTransform: 'uppercase', fontWeight: modalita === m ? 700 : 400,
+                    textTransform: 'none', fontWeight: modalita === m ? 700 : 400,
                   }}>
                     {m === 'auto' ? 'Calcola auto' : 'Manuale'}
                   </button>
@@ -261,21 +261,21 @@ export default function QuickPianoPagamento({
             {rate.length > 0 && (
               <>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                  <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{rate.length} rate generate</span>
+                  <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{rate.length} rate generate</span>
                   <span style={{ fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 700, color: 'var(--accent-green)' }}>
                     Totale: {fmt(totale)}
                   </span>
                 </div>
                 {/* Header colonne */}
                 <div style={{ display: 'grid', gridTemplateColumns: '44px 1fr 1fr', gap: 8, marginBottom: 4 }}>
-                  <div style={{ fontSize: 11, color: 'var(--text-muted)', textAlign: 'center' }}>#</div>
-                  <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Importo (€)</div>
-                  <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Scadenza</div>
+                  <div style={{ fontSize: 12, color: 'var(--text-muted)', textAlign: 'center' }}>#</div>
+                  <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Importo (€)</div>
+                  <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Scadenza</div>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: 260, overflowY: 'auto' }}>
                   {rate.map((r, i) => (
                     <div key={i} style={{ display: 'grid', gridTemplateColumns: '44px 1fr 1fr', gap: 8, alignItems: 'center' }}>
-                      <div style={{ fontSize: 12, color: 'var(--text-muted)', textAlign: 'center', background: 'var(--bg-input)', borderRadius: 6, padding: '6px 0', border: '1px solid var(--border)' }}>
+                      <div style={{ fontSize: 12, color: 'var(--text-muted)', textAlign: 'center', background: 'var(--bg-input)', borderRadius: 10, padding: '6px 0', border: '1px solid var(--border)' }}>
                         {r.numero}
                       </div>
                       <input className="input" type="number" min={0} step={0.01}
@@ -296,7 +296,7 @@ export default function QuickPianoPagamento({
                 scadenza: addMesi(prev.length),
               }])} style={{
                 marginTop: 8, padding: '6px 14px', background: 'transparent',
-                border: '1px dashed var(--border)', borderRadius: 6,
+                border: '1px dashed var(--border)', borderRadius: 10,
                 color: 'var(--text-muted)', cursor: 'pointer', fontSize: 12, width: '100%',
               }}>
                 + Aggiungi rata

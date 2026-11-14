@@ -33,7 +33,7 @@ export default async function ValutazioniPage() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Valutazioni tecniche</h1>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Valutazioni tecniche</h1>
           <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>{valutazioni?.length ?? 0} valutazioni in archivio</p>
         </div>
         <Link href="/dashboard/allenatore/valutazioni/nuova" className="btn btn-primary btn-sm" data-onboarding="btn-nuova-valutazione">+ Nuova valutazione</Link>
@@ -65,7 +65,7 @@ export default async function ValutazioniPage() {
                     <td>{voto(v.mentale)}</td>
                     <td><span style={{ fontSize: 15, fontWeight: 700, fontFamily: 'var(--font-mono)', color: col }}>{m ?? '—'}</span></td>
                     <td>
-                      <span className={`badge ${v.visibile_famiglia ? 'badge-verde' : 'badge-grigio'}`} style={{ fontSize: 10 }}>
+                      <span className={`badge ${v.visibile_famiglia ? 'badge-verde' : 'badge-grigio'}`} style={{ fontSize: 12 }}>
                         {v.visibile_famiglia ? '✓ Sì' : 'No'}
                       </span>
                     </td>

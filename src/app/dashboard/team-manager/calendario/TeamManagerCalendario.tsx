@@ -580,7 +580,7 @@ export default function TeamManagerCalendario() {
       <div className="card" style={{ padding: 18, marginBottom: 18 }}>
         <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', alignItems: 'flex-start' }}>
           <div style={{ flex: '1 1 280px' }}>
-            <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>
+            <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600, textTransform: 'none', letterSpacing: '0', marginBottom: 10 }}>
               Tipologia
             </div>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -609,7 +609,7 @@ export default function TeamManagerCalendario() {
           </div>
 
           <div style={{ flex: '1 1 280px' }}>
-            <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>
+            <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600, textTransform: 'none', letterSpacing: '0', marginBottom: 10 }}>
               Partecipanti
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -914,7 +914,7 @@ export default function TeamManagerCalendario() {
                         <button
                           type="button"
                           className="btn btn-ghost btn-sm"
-                          style={{ fontSize: 11, padding: '1px 8px', marginLeft: 8 }}
+                          style={{ fontSize: 12, padding: '1px 8px', marginLeft: 8 }}
                           onClick={e => {
                             e.stopPropagation()
                             const allIds = staff.map(s => s.id)
@@ -950,7 +950,7 @@ export default function TeamManagerCalendario() {
                         <button
                           type="button"
                           className="btn btn-ghost btn-sm"
-                          style={{ fontSize: 11, padding: '1px 8px', marginLeft: 8 }}
+                          style={{ fontSize: 12, padding: '1px 8px', marginLeft: 8 }}
                           onClick={e => {
                             e.stopPropagation()
                             const allIds = giocatori.map(p => p.id)
@@ -1005,12 +1005,12 @@ export default function TeamManagerCalendario() {
                 />
                 <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
                   {existingAllegati.length > 0 && (
-                    <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                    <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600, textTransform: 'none', letterSpacing: '0' }}>
                       Allegati esistenti
                     </div>
                   )}
                   {existingAllegati.map(a => (
-                    <div key={a.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, padding: '8px 10px', borderRadius: 8, background: 'var(--bg-input)', border: '1px solid var(--border-light)' }}>
+                    <div key={a.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, padding: '8px 10px', borderRadius: 12, background: 'var(--bg-input)', border: '1px solid var(--border-light)' }}>
                       <span style={{ fontSize: 13, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {a.file_name}
                       </span>
@@ -1020,7 +1020,7 @@ export default function TeamManagerCalendario() {
                     </div>
                   ))}
                   {newFiles.map((f, idx) => (
-                    <div key={`${f.name}-${idx}`} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, padding: '8px 10px', borderRadius: 8, background: 'var(--bg-input)', border: '1px solid var(--border-light)' }}>
+                    <div key={`${f.name}-${idx}`} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, padding: '8px 10px', borderRadius: 12, background: 'var(--bg-input)', border: '1px solid var(--border-light)' }}>
                       <span style={{ fontSize: 13, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {f.name}
                       </span>

@@ -19,7 +19,7 @@ export default async function AnalisiPartitaPage() {
   return (
     <div style={{ animation: 'fadeIn 0.3s ease' }}>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Analisi partita</h1>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Analisi partita</h1>
         <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>
           Statistiche tattiche e note post-match
         </p>
@@ -47,7 +47,7 @@ export default async function AnalisiPartitaPage() {
                     </div>
                   </div>
                   <div style={{
-                    padding: '8px 18px', borderRadius: 8,
+                    padding: '8px 18px', borderRadius: 12,
                     background: vinto ? 'var(--accent-green-lt)' : pareggio ? 'var(--accent-orange-lt)' : 'var(--accent-red-lt)',
                     color: vinto ? 'var(--accent-green)' : pareggio ? 'var(--accent-orange)' : 'var(--accent-red)',
                     fontSize: 22, fontWeight: 700, fontFamily: 'var(--font-mono)',
@@ -67,7 +67,7 @@ export default async function AnalisiPartitaPage() {
                     ].map((s, i) => (
                       <div key={i} style={{ textAlign: 'center', borderRight: i < 4 ? '1px solid var(--border-light)' : undefined }}>
                         <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>{s.v ?? '—'}</div>
-                        <div style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: 2 }}>{s.label}</div>
+                        <div style={{ fontSize: 12, color: 'var(--text-muted)', textTransform: 'none', letterSpacing: '0', marginTop: 2 }}>{s.label}</div>
                       </div>
                     ))}
                   </div>
@@ -78,7 +78,7 @@ export default async function AnalisiPartitaPage() {
                 )}
 
                 {p.note_allenatore ? (
-                  <div style={{ padding: 12, background: 'var(--bg-input)', borderRadius: 6, fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.5, borderLeft: '3px solid var(--accent-blue)' }}>
+                  <div style={{ padding: 12, background: 'var(--bg-input)', borderRadius: 10, fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.5, borderLeft: '3px solid var(--accent-blue)' }}>
                     {p.note_allenatore}
                   </div>
                 ) : (

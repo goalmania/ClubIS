@@ -194,7 +194,7 @@ export default function FornitoriPage() {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 26, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)', marginBottom: 4 }}>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 28, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)', marginBottom: 4 }}>
             Fornitori & Clienti
           </h1>
           <p style={{ fontSize: 13, color: 'var(--gray)', fontWeight: 300 }}>{fornitori.length} soggetti · {pagamenti.length} movimenti</p>
@@ -228,7 +228,7 @@ export default function FornitoriPage() {
       </div>
 
       {scaduti > 0 && (
-        <div style={{ background: 'rgba(255,60,60,0.08)', border: '1px solid rgba(255,60,60,0.3)', borderRadius: 2, padding: '10px 14px', fontSize: 13, color: 'var(--rosso)', marginBottom: 16 }}>
+        <div style={{ background: 'rgba(255,60,60,0.08)', border: '1px solid rgba(255,60,60,0.3)', borderRadius: 8, padding: '10px 14px', fontSize: 13, color: 'var(--rosso)', marginBottom: 16 }}>
           ⚠ {scaduti} pagament{scaduti === 1 ? 'o scaduto' : 'i scaduti'} — verificare la prima nota
         </div>
       )}
@@ -240,7 +240,7 @@ export default function FornitoriPage() {
             padding: '9px 20px', background: 'none', border: 'none', cursor: 'pointer',
             borderBottom: `2px solid ${tab === t ? 'var(--accent)' : 'transparent'}`,
             color: tab === t ? 'var(--accent)' : 'var(--gray)', fontSize: 13, fontWeight: tab === t ? 700 : 400,
-            textTransform: 'uppercase', letterSpacing: '0.06em', fontFamily: 'var(--font-mono)', transition: 'color 0.15s',
+            textTransform: 'none', letterSpacing: '0', fontFamily: 'var(--font-mono)', transition: 'color 0.15s',
           }}>
             {t === 'fornitori' ? `Soggetti (${fornitori.length})` : `Movimenti (${pagamenti.length})`}
           </button>
@@ -253,7 +253,7 @@ export default function FornitoriPage() {
             <input className="input" value={search} onChange={e => setSearch(e.target.value)} placeholder="Cerca..." style={{ maxWidth: 220 }} />
             {(['tutti', 'fornitore', 'cliente', 'entrambi'] as const).map(t => (
               <button key={t} onClick={() => setFiltroTipo(t)} style={{
-                padding: '6px 12px', borderRadius: 2, fontSize: 11, fontFamily: 'var(--font-mono)', letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer', border: '1px solid',
+                padding: '6px 12px', borderRadius: 8, fontSize: 12, fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none', cursor: 'pointer', border: '1px solid',
                 background:   filtroTipo === t ? 'var(--accent)' : 'transparent',
                 borderColor:  filtroTipo === t ? 'var(--accent)' : 'var(--border-solid)',
                 color:        filtroTipo === t ? '#000' : 'var(--gray)',
@@ -266,7 +266,7 @@ export default function FornitoriPage() {
           {filtratiF.length === 0 && (
             <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--gray)' }}>
               <div style={{ fontSize: 36, marginBottom: 12 }}>🏢</div>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, textTransform: 'uppercase', color: 'var(--white)', marginBottom: 6 }}>Nessun soggetto</div>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, textTransform: 'none', color: 'var(--white)', marginBottom: 6 }}>Nessun soggetto</div>
               <div style={{ fontSize: 13, marginBottom: 16 }}>Aggiungi il primo fornitore o cliente.</div>
               <button onClick={openNuovo} className="btn btn-primary btn-sm">+ Aggiungi</button>
             </div>
@@ -277,23 +277,23 @@ export default function FornitoriPage() {
               const pag = pagamenti.filter(p => p.fornitore_id === f.id)
               const daPagare = pag.filter(p => p.stato === 'da_pagare').reduce((s, p) => s + (p.tipo === 'uscita' ? p.importo : -p.importo), 0)
               return (
-                <div key={f.id} style={{ background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 14 }}>
-                  <div style={{ width: 40, height: 40, borderRadius: 2, background: 'rgba(200,240,0,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 15, color: 'var(--accent)', flexShrink: 0 }}>
+                <div key={f.id} style={{ background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 14 }}>
+                  <div style={{ width: 40, height: 40, borderRadius: 8, background: 'rgba(200,240,0,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, color: 'var(--accent)', flexShrink: 0 }}>
                     {f.nome[0]?.toUpperCase()}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                       <span style={{ fontWeight: 600, fontSize: 14, color: 'var(--white)' }}>{f.nome}</span>
-                      <span style={{ fontSize: 10, fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', textTransform: 'uppercase', color: TIPO_COLOR[f.tipo], background: `${TIPO_COLOR[f.tipo]}18`, padding: '2px 6px', borderRadius: 2 }}>
+                      <span style={{ fontSize: 12, fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none', color: TIPO_COLOR[f.tipo], background: `${TIPO_COLOR[f.tipo]}18`, padding: '2px 6px', borderRadius: 8 }}>
                         {TIPO_LABEL[f.tipo]}
                       </span>
                       {f.categoria && f.categoria !== 'altro' && (
-                        <span style={{ fontSize: 10, fontFamily: 'var(--font-mono)', color: 'var(--gray)' }}>
+                        <span style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: 'var(--gray)' }}>
                           {CATEGORIE_FORNITORE.find(c => c.key === f.categoria)?.label}
                         </span>
                       )}
                     </div>
-                    <div style={{ fontSize: 11, color: 'var(--gray)', marginTop: 2, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                    <div style={{ fontSize: 12, color: 'var(--gray)', marginTop: 2, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
                       {f.email && <span>✉ {f.email}</span>}
                       {f.telefono && <span>📞 {f.telefono}</span>}
                       {f.citta && <span>📍 {f.citta}</span>}
@@ -305,13 +305,13 @@ export default function FornitoriPage() {
                     </div>
                   )}
                   <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
-                    <button onClick={() => { setSelected(selected?.id === f.id ? null : f) }} style={{ padding: '6px 10px', background: 'transparent', border: '1px solid var(--border-solid)', borderRadius: 2, color: 'var(--gray)', fontSize: 11, cursor: 'pointer' }}>
+                    <button onClick={() => { setSelected(selected?.id === f.id ? null : f) }} style={{ padding: '6px 10px', background: 'transparent', border: '1px solid var(--border-solid)', borderRadius: 8, color: 'var(--gray)', fontSize: 12, cursor: 'pointer' }}>
                       {selected?.id === f.id ? '▲' : '▼'}
                     </button>
-                    <button onClick={() => openModifica(f)} style={{ padding: '6px 10px', background: 'transparent', border: '1px solid var(--border-solid)', borderRadius: 2, color: 'var(--gray)', fontSize: 11, cursor: 'pointer' }}>
+                    <button onClick={() => openModifica(f)} style={{ padding: '6px 10px', background: 'transparent', border: '1px solid var(--border-solid)', borderRadius: 8, color: 'var(--gray)', fontSize: 12, cursor: 'pointer' }}>
                       Modifica
                     </button>
-                    <button onClick={() => archivia(f.id)} style={{ padding: '6px 10px', background: 'transparent', border: '1px solid var(--border-solid)', borderRadius: 2, color: 'var(--gray)', fontSize: 11, cursor: 'pointer' }}>
+                    <button onClick={() => archivia(f.id)} style={{ padding: '6px 10px', background: 'transparent', border: '1px solid var(--border-solid)', borderRadius: 8, color: 'var(--gray)', fontSize: 12, cursor: 'pointer' }}>
                       Archivia
                     </button>
                   </div>
@@ -322,14 +322,14 @@ export default function FornitoriPage() {
 
           {/* Expandable detail del fornitore selezionato */}
           {selected && (
-            <div style={{ marginTop: 16, background: '#0d0d0d', border: '1px solid var(--accent)', borderRadius: 2, padding: 20 }}>
+            <div style={{ marginTop: 16, background: 'var(--surface-1)', border: '1px solid var(--accent)', borderRadius: 8, padding: 20 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, textTransform: 'uppercase', color: 'var(--accent)' }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, textTransform: 'none', color: 'var(--accent)' }}>
                   {selected.nome} — Movimenti
                 </div>
                 <button
                   onClick={() => { setPagFornitore(selected.id); setPagForm(EMPTY_PAG); setEditPag(null); setPagModal(true) }}
-                  style={{ padding: '6px 14px', background: 'var(--accent)', color: '#000', border: 'none', borderRadius: 2, fontSize: 11, fontFamily: 'var(--font-mono)', fontWeight: 700, cursor: 'pointer' }}
+                  style={{ padding: '6px 14px', background: 'var(--accent)', color: '#000', border: 'none', borderRadius: 8, fontSize: 12, fontFamily: 'var(--font-mono)', fontWeight: 700, cursor: 'pointer' }}
                 >
                   + Movimento
                 </button>
@@ -340,7 +340,7 @@ export default function FornitoriPage() {
                   <div style={{ width: 6, height: 6, borderRadius: '50%', background: STATO_COLOR[p.stato], flexShrink: 0 }} />
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 13, color: 'var(--white)' }}>{p.descrizione}</div>
-                    <div style={{ fontSize: 11, color: 'var(--gray)', marginTop: 2 }}>
+                    <div style={{ fontSize: 12, color: 'var(--gray)', marginTop: 2 }}>
                       {p.numero_fattura && `Fatt. ${p.numero_fattura} · `}
                       {p.data_scadenza && `Scad. ${new Date(p.data_scadenza).toLocaleDateString('it-IT')}`}
                       {p.data_pagamento && ` · Pag. ${new Date(p.data_pagamento).toLocaleDateString('it-IT')}`}
@@ -349,7 +349,7 @@ export default function FornitoriPage() {
                   <div style={{ fontSize: 13, fontWeight: 700, color: p.tipo === 'uscita' ? 'var(--rosso)' : 'var(--verde)', fontFamily: 'var(--font-mono)' }}>
                     {p.tipo === 'uscita' ? '−' : '+'}{formatEuro(p.importo)}
                   </div>
-                  <span style={{ fontSize: 10, fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', textTransform: 'uppercase', color: STATO_COLOR[p.stato], background: `${STATO_COLOR[p.stato]}18`, padding: '2px 8px', borderRadius: 2 }}>
+                  <span style={{ fontSize: 12, fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none', color: STATO_COLOR[p.stato], background: `${STATO_COLOR[p.stato]}18`, padding: '2px 8px', borderRadius: 8 }}>
                     {STATO_LABEL[p.stato]}
                   </span>
                   <button
@@ -360,7 +360,7 @@ export default function FornitoriPage() {
                       await supabase.from('pagamenti_fornitore').update(updates).eq('id', p.id).eq('club_id', clubId)
                       if (clubId) await reload(clubId)
                     }}
-                    style={{ padding: '4px 8px', background: 'transparent', border: '1px solid var(--border-solid)', borderRadius: 2, color: 'var(--gray)', fontSize: 10, fontFamily: 'var(--font-mono)', cursor: 'pointer' }}
+                    style={{ padding: '4px 8px', background: 'transparent', border: '1px solid var(--border-solid)', borderRadius: 8, color: 'var(--gray)', fontSize: 12, fontFamily: 'var(--font-mono)', cursor: 'pointer' }}
                   >
                     {p.stato === 'pagato' ? 'Riapri' : '✓ Paga'}
                   </button>
@@ -377,17 +377,17 @@ export default function FornitoriPage() {
             {pagamenti.length === 0 && (
               <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--gray)' }}>
                 <div style={{ fontSize: 36, marginBottom: 12 }}>💳</div>
-                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, textTransform: 'uppercase', color: 'var(--white)', marginBottom: 6 }}>Nessun movimento</div>
+                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, textTransform: 'none', color: 'var(--white)', marginBottom: 6 }}>Nessun movimento</div>
               </div>
             )}
             {pagamenti.map(p => {
               const f = fornitori.find(x => x.id === p.fornitore_id)
               return (
-                <div key={p.id} style={{ background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div key={p.id} style={{ background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
                   <div style={{ width: 6, height: 6, borderRadius: '50%', background: STATO_COLOR[p.stato], flexShrink: 0 }} />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 13, color: 'var(--white)' }}>{p.descrizione}</div>
-                    <div style={{ fontSize: 11, color: 'var(--gray)', marginTop: 2 }}>
+                    <div style={{ fontSize: 12, color: 'var(--gray)', marginTop: 2 }}>
                       {f && <span style={{ marginRight: 8 }}>{f.nome}</span>}
                       {p.data_scadenza && `Scad. ${new Date(p.data_scadenza).toLocaleDateString('it-IT')}`}
                     </div>
@@ -395,12 +395,12 @@ export default function FornitoriPage() {
                   <div style={{ fontSize: 13, fontWeight: 700, color: p.tipo === 'uscita' ? 'var(--rosso)' : 'var(--verde)', fontFamily: 'var(--font-mono)' }}>
                     {p.tipo === 'uscita' ? '−' : '+'}{formatEuro(p.importo)}
                   </div>
-                  <span style={{ fontSize: 10, fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', textTransform: 'uppercase', color: STATO_COLOR[p.stato], background: `${STATO_COLOR[p.stato]}18`, padding: '2px 8px', borderRadius: 2 }}>
+                  <span style={{ fontSize: 12, fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none', color: STATO_COLOR[p.stato], background: `${STATO_COLOR[p.stato]}18`, padding: '2px 8px', borderRadius: 8 }}>
                     {STATO_LABEL[p.stato]}
                   </span>
                   <button
                     onClick={() => { setPagFornitore(p.fornitore_id); setPagForm({ descrizione: p.descrizione, importo: p.importo, tipo: p.tipo, data_scadenza: p.data_scadenza, data_pagamento: p.data_pagamento, stato: p.stato, numero_fattura: p.numero_fattura, note: p.note }); setEditPag(p.id); setPagModal(true) }}
-                    style={{ padding: '4px 8px', background: 'transparent', border: '1px solid var(--border-solid)', borderRadius: 2, color: 'var(--gray)', fontSize: 10, cursor: 'pointer' }}
+                    style={{ padding: '4px 8px', background: 'transparent', border: '1px solid var(--border-solid)', borderRadius: 8, color: 'var(--gray)', fontSize: 12, cursor: 'pointer' }}
                   >
                     Modifica
                   </button>
@@ -414,16 +414,16 @@ export default function FornitoriPage() {
       {/* Drawer Fornitore */}
       {drawerOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', zIndex: 900, display: 'flex', justifyContent: 'flex-end' }} onClick={() => setDrawerOpen(false)}>
-          <div style={{ width: 420, background: '#111', borderLeft: '1px solid var(--border-solid)', height: '100%', overflowY: 'auto', padding: '24px 24px' }} onClick={e => e.stopPropagation()}>
+          <div style={{ width: 420, background: 'var(--surface-2)', borderLeft: '1px solid var(--border-solid)', height: '100%', overflowY: 'auto', padding: '24px 24px' }} onClick={e => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 16, textTransform: 'uppercase', color: 'var(--white)' }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16, textTransform: 'none', color: 'var(--white)' }}>
                 {drawerMode === 'nuovo' ? 'Nuovo Soggetto' : 'Modifica'}
               </div>
               <button onClick={() => setDrawerOpen(false)} style={{ background: 'none', border: 'none', color: 'var(--gray)', fontSize: 22, cursor: 'pointer' }}>×</button>
             </div>
 
             <F label="Tipo *">
-              <select className="input" value={form.tipo} onChange={e => setForm(p => ({ ...p, tipo: e.target.value as any }))} style={{ background: '#1a1a1a', color: 'var(--white)' }}>
+              <select className="input" value={form.tipo} onChange={e => setForm(p => ({ ...p, tipo: e.target.value as any }))} style={{ background: 'var(--surface-2)', color: 'var(--white)' }}>
                 <option value="fornitore">Fornitore</option>
                 <option value="cliente">Cliente</option>
                 <option value="entrambi">Entrambi (F+C)</option>
@@ -448,7 +448,7 @@ export default function FornitoriPage() {
               <F label="SDI/CodDest"><input className="input" value={form.sdi ?? ''} onChange={e => setForm(p => ({ ...p, sdi: e.target.value || null }))} /></F>
             </div>
             <F label="Categoria">
-              <select className="input" value={form.categoria ?? 'altro'} onChange={e => setForm(p => ({ ...p, categoria: e.target.value }))} style={{ background: '#1a1a1a', color: 'var(--white)' }}>
+              <select className="input" value={form.categoria ?? 'altro'} onChange={e => setForm(p => ({ ...p, categoria: e.target.value }))} style={{ background: 'var(--surface-2)', color: 'var(--white)' }}>
                 {CATEGORIE_FORNITORE.map(c => <option key={c.key} value={c.key}>{c.label}</option>)}
               </select>
             </F>
@@ -462,7 +462,7 @@ export default function FornitoriPage() {
             <F label="Note"><textarea className="input" rows={2} value={form.note ?? ''} onChange={e => setForm(p => ({ ...p, note: e.target.value || null }))} /></F>
 
             {saveError && (
-              <div style={{ marginTop: 12, padding: '8px 12px', background: 'rgba(255,60,60,0.1)', border: '1px solid rgba(255,60,60,0.3)', borderRadius: 2, fontSize: 12, color: 'var(--rosso)', fontFamily: 'var(--font-mono)' }}>
+              <div style={{ marginTop: 12, padding: '8px 12px', background: 'rgba(255,60,60,0.1)', border: '1px solid rgba(255,60,60,0.3)', borderRadius: 8, fontSize: 12, color: 'var(--rosso)', fontFamily: 'var(--font-mono)' }}>
                 Errore: {saveError}
               </div>
             )}
@@ -479,9 +479,9 @@ export default function FornitoriPage() {
       {/* Modal Pagamento */}
       {pagModal && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-          <div style={{ background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2, width: '100%', maxWidth: 480 }}>
+          <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8, width: '100%', maxWidth: 480 }}>
             <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border-solid)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 15, textTransform: 'uppercase', color: 'var(--white)' }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, textTransform: 'none', color: 'var(--white)' }}>
                 {editPag ? 'Modifica Movimento' : 'Nuovo Movimento'}
               </div>
               <button onClick={() => { setPagModal(false); setEditPag(null) }} style={{ background: 'none', border: 'none', color: 'var(--gray)', fontSize: 22, cursor: 'pointer' }}>×</button>
@@ -489,7 +489,7 @@ export default function FornitoriPage() {
             <div style={{ padding: '18px 20px' }}>
               {!editPag && (
                 <F label="Fornitore/Cliente *">
-                  <select className="input" value={pagFornitore} onChange={e => setPagFornitore(e.target.value)} style={{ background: '#1a1a1a', color: 'var(--white)' }}>
+                  <select className="input" value={pagFornitore} onChange={e => setPagFornitore(e.target.value)} style={{ background: 'var(--surface-2)', color: 'var(--white)' }}>
                     <option value="">— Seleziona —</option>
                     {fornitori.map(f => <option key={f.id} value={f.id}>{f.nome}</option>)}
                   </select>
@@ -503,7 +503,7 @@ export default function FornitoriPage() {
                   <input className="input" type="number" min="0" step="0.01" value={pagForm.importo || ''} onChange={e => setPagForm(p => ({ ...p, importo: parseFloat(e.target.value) || 0 }))} />
                 </F>
                 <F label="Tipo">
-                  <select className="input" value={pagForm.tipo} onChange={e => setPagForm(p => ({ ...p, tipo: e.target.value as any }))} style={{ background: '#1a1a1a', color: 'var(--white)' }}>
+                  <select className="input" value={pagForm.tipo} onChange={e => setPagForm(p => ({ ...p, tipo: e.target.value as any }))} style={{ background: 'var(--surface-2)', color: 'var(--white)' }}>
                     <option value="uscita">Uscita (da pagare)</option>
                     <option value="entrata">Entrata (da incassare)</option>
                   </select>
@@ -514,7 +514,7 @@ export default function FornitoriPage() {
                   <input className="input" type="date" value={pagForm.data_scadenza ?? ''} onChange={e => setPagForm(p => ({ ...p, data_scadenza: e.target.value || null }))} />
                 </F>
                 <F label="Stato">
-                  <select className="input" value={pagForm.stato} onChange={e => setPagForm(p => ({ ...p, stato: e.target.value as any }))} style={{ background: '#1a1a1a', color: 'var(--white)' }}>
+                  <select className="input" value={pagForm.stato} onChange={e => setPagForm(p => ({ ...p, stato: e.target.value as any }))} style={{ background: 'var(--surface-2)', color: 'var(--white)' }}>
                     {Object.entries(STATO_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
                   </select>
                 </F>
@@ -531,7 +531,7 @@ export default function FornitoriPage() {
                 <textarea className="input" rows={2} value={pagForm.note ?? ''} onChange={e => setPagForm(p => ({ ...p, note: e.target.value || null }))} />
               </F>
               {saveError && (
-                <div style={{ marginBottom: 10, padding: '8px 12px', background: 'rgba(255,60,60,0.1)', border: '1px solid rgba(255,60,60,0.3)', borderRadius: 2, fontSize: 12, color: 'var(--rosso)', fontFamily: 'var(--font-mono)' }}>
+                <div style={{ marginBottom: 10, padding: '8px 12px', background: 'rgba(255,60,60,0.1)', border: '1px solid rgba(255,60,60,0.3)', borderRadius: 8, fontSize: 12, color: 'var(--rosso)', fontFamily: 'var(--font-mono)' }}>
                   Errore: {saveError}
                 </div>
               )}

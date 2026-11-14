@@ -338,21 +338,21 @@ export default function CertificatiPage() {
               accept=".pdf,.jpg,.jpeg,.png,.webp"
               onChange={handleFileUpload}
               disabled={uploading || !giocatoreId}
-              style={{ flex: 1, fontFamily: 'var(--font-mono)', fontSize: 11 }}
+              style={{ flex: 1, fontFamily: 'var(--font-mono)', fontSize: 12 }}
             />
             {uploading && (
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)' }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)' }}>
                 Caricamento…
               </span>
             )}
             {fileUrl && !uploading && (
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--verde)' }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--verde)' }}>
                 ✓ Caricato
               </span>
             )}
           </div>
           {!giocatoreId && (
-            <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', marginTop: 4 }}>
+            <p style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', marginTop: 4 }}>
               Seleziona prima il giocatore per abilitare l&apos;upload
             </p>
           )}

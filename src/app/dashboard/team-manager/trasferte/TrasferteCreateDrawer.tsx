@@ -610,7 +610,7 @@ export default function TrasferteCreateDrawer() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-                    <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>
+                    <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'none', letterSpacing: '0' }}>
                       Giocatori
                     </div>
                     {giocatori.length > 0 && (
@@ -642,7 +642,7 @@ export default function TrasferteCreateDrawer() {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                       {giocatoriPerCategoria.map(gruppo => (
                         <div key={gruppo.label}>
-                          <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--accent, #c8f000)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>
+                          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent, #c8f000)', textTransform: 'none', letterSpacing: '0', marginBottom: 6 }}>
                             {gruppo.label}
                           </div>
                           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
@@ -677,7 +677,7 @@ export default function TrasferteCreateDrawer() {
                 </div>
 
                 <div>
-                  <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 10 }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'none', letterSpacing: '0', marginBottom: 10 }}>
                     Staff
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
@@ -699,7 +699,7 @@ export default function TrasferteCreateDrawer() {
                 </div>
 
                 <div>
-                  <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 10 }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'none', letterSpacing: '0', marginBottom: 10 }}>
                     Team manager
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>

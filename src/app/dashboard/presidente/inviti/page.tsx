@@ -152,15 +152,15 @@ export default function InvitiPage() {
       {/* Header */}
       <div style={{ marginBottom: 28 }}>
         <div style={{
-          fontFamily: 'var(--font-display)', fontWeight: 900,
-          textTransform: 'uppercase', fontSize: 26, letterSpacing: '0.04em',
+          fontFamily: 'var(--font-display)', fontWeight: 700,
+          textTransform: 'none', fontSize: 26, letterSpacing: '0',
           color: 'var(--white)',
         }}>
           Link Invito Staff
         </div>
         <div style={{
-          fontFamily: 'var(--font-mono)', fontSize: 11,
-          color: 'var(--gray)', marginTop: 6, letterSpacing: '0.1em',
+          fontFamily: 'var(--font-mono)', fontSize: 12,
+          color: 'var(--gray)', marginTop: 6, letterSpacing: '0',
         }}>
           Genera link monouso per invitare i membri dello staff al tuo club
         </div>
@@ -188,7 +188,7 @@ export default function InvitiPage() {
       }}>
         <div style={{
           fontFamily: 'var(--font-display)', fontWeight: 700,
-          textTransform: 'uppercase', fontSize: 13, color: 'var(--accent)',
+          textTransform: 'none', fontSize: 13, color: 'var(--accent)',
           marginBottom: 16,
         }}>
           Genera nuovo invito
@@ -196,7 +196,7 @@ export default function InvitiPage() {
 
         {/* Scadenza */}
         <div style={{ marginBottom: 16, display: 'flex', alignItems: 'center', gap: 12 }}>
-          <label style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)', letterSpacing: '0.1em' }}>
+          <label style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', letterSpacing: '0' }}>
             Scadenza:
           </label>
           {[1, 3, 7, 14, 30].map(g => (
@@ -204,7 +204,7 @@ export default function InvitiPage() {
               key={g}
               onClick={() => setScadGiorni(g)}
               className={`btn btn-sm ${scadGiorni === g ? 'btn-primary' : 'btn-ghost'}`}
-              style={{ fontSize: 11 }}
+              style={{ fontSize: 12 }}
             >
               {g}g
             </button>
@@ -212,7 +212,7 @@ export default function InvitiPage() {
         </div>
 
         {/* Staff */}
-        <div style={{ marginBottom: 6, fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Staff</div>
+        <div style={{ marginBottom: 6, fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', letterSpacing: '0', textTransform: 'none' }}>Staff</div>
         <div data-onboarding="btn-invita-staff" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 10, marginBottom: 20 }}>
           {RUOLI_STAFF.map(({ ruolo, label, icona }) => (
             <button
@@ -232,7 +232,7 @@ export default function InvitiPage() {
             condividere la stessa categoria (es. titolare + assistente) */}
         {isScuolaCalcio && (
           <>
-            <div style={{ marginBottom: 6, fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+            <div style={{ marginBottom: 6, fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', letterSpacing: '0', textTransform: 'none' }}>
               Allenatori per categoria
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 10, marginBottom: 20 }}>
@@ -256,16 +256,16 @@ export default function InvitiPage() {
         )}
 
         {/* Famiglie & Giocatori */}
-        <div style={{ marginBottom: 10, fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Famiglie & Giocatori</div>
+        <div style={{ marginBottom: 10, fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', letterSpacing: '0', textTransform: 'none' }}>Famiglie & Giocatori</div>
         <div style={{ marginBottom: 12 }}>
-          <label style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)', display: 'block', marginBottom: 6 }}>
+          <label style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', display: 'block', marginBottom: 6 }}>
             Seleziona atleta:
           </label>
           <select
             className="input"
             value={giocatoreId}
             onChange={e => setGiocatoreId(e.target.value)}
-            style={{ background: '#1a1a1a', color: 'var(--white)', maxWidth: 360 }}
+            style={{ background: 'var(--surface-2)', color: 'var(--white)', maxWidth: 360 }}
           >
             <option value="">— Scegli un atleta —</option>
             {giocatori.map(g => (
@@ -300,7 +300,7 @@ export default function InvitiPage() {
             padding: '14px 18px',
             borderBottom: '1px solid var(--border)',
             fontFamily: 'var(--font-display)', fontWeight: 700,
-            textTransform: 'uppercase', fontSize: 13, color: 'var(--white)',
+            textTransform: 'none', fontSize: 13, color: 'var(--white)',
           }}>
             Inviti generati ({inviti.length})
           </div>
@@ -328,29 +328,29 @@ export default function InvitiPage() {
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{
                       fontFamily: 'var(--font-display)', fontWeight: 700,
-                      textTransform: 'uppercase', fontSize: 12,
+                      textTransform: 'none', fontSize: 12,
                       color: 'var(--white)',
                     }}>
                       {ruoloObj?.label ?? invito.ruolo}
                       {categoriaLabel && (
-                        <span style={{ marginLeft: 8, color: 'var(--accent)', fontSize: 10 }}>· {categoriaLabel}</span>
+                        <span style={{ marginLeft: 8, color: 'var(--accent)', fontSize: 12 }}>· {categoriaLabel}</span>
                       )}
                       {invito.usato && (
-                        <span style={{ marginLeft: 8, color: 'var(--gray)', fontSize: 10 }}>· USATO</span>
+                        <span style={{ marginLeft: 8, color: 'var(--gray)', fontSize: 12 }}>· USATO</span>
                       )}
                       {!invito.usato && scaduto && (
-                        <span style={{ marginLeft: 8, color: 'var(--ambra)', fontSize: 10 }}>· SCADUTO</span>
+                        <span style={{ marginLeft: 8, color: 'var(--ambra)', fontSize: 12 }}>· SCADUTO</span>
                       )}
                     </div>
                     <div style={{
-                      fontFamily: 'var(--font-mono)', fontSize: 10,
+                      fontFamily: 'var(--font-mono)', fontSize: 12,
                       color: 'var(--gray)', marginTop: 2,
                       whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
                     }}>
                       {link}
                     </div>
                     {invito.scadenza && (
-                      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', marginTop: 2 }}>
+                      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', marginTop: 2 }}>
                         Scade: {new Date(invito.scadenza).toLocaleDateString('it-IT')}
                       </div>
                     )}
@@ -361,7 +361,7 @@ export default function InvitiPage() {
                       <button
                         className="btn btn-ghost btn-sm"
                         onClick={() => copiaLink(link, invito.id)}
-                        style={{ fontSize: 11 }}
+                        style={{ fontSize: 12 }}
                       >
                         {copied === invito.id ? '✓ Copiato' : '📋 Copia'}
                       </button>
@@ -369,7 +369,7 @@ export default function InvitiPage() {
                     <button
                       className="btn btn-ghost btn-sm"
                       onClick={() => revocaInvito(invito.id)}
-                      style={{ fontSize: 11, color: 'var(--rosso)' }}
+                      style={{ fontSize: 12, color: 'var(--rosso)' }}
                     >
                       Revoca
                     </button>

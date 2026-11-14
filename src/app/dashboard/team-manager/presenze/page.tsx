@@ -165,7 +165,7 @@ export default function TMPresenzePage() {
     <div style={{ animation: 'fadeIn 0.3s ease' }}>
       <div style={{ marginBottom: 24, display: 'flex', justifyContent: 'space-between' }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Presenze</h1>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Presenze</h1>
           <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>Riepilogo presenze agli allenamenti per giocatore</p>
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
@@ -253,7 +253,7 @@ export default function TMPresenzePage() {
             ) : isScuolaCalcio ? (
               rowsPerCategoria.flatMap(gr => ([
                 <tr key={`h-${gr.label}`} style={{ borderTop: '1px solid var(--border-light)' }}>
-                  <td colSpan={6} style={{ padding: '8px 14px', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', background: 'var(--bg-input)' }}>
+                  <td colSpan={6} style={{ padding: '8px 14px', fontSize: 12, fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--text-muted)', background: 'var(--bg-input)' }}>
                     {gr.label}
                   </td>
                 </tr>,
@@ -280,7 +280,7 @@ function RigaPresenza({ r }: { r: any }) {
       <td style={{ ...tdStyle, fontWeight: 500, color: 'var(--text-primary)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           {r.numero_maglia && (
-            <div style={{ width: 24, height: 24, borderRadius: 4, background: 'var(--bg-input)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: 'var(--text-secondary)' }}>
+            <div style={{ width: 24, height: 24, borderRadius: 10, background: 'var(--bg-input)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)' }}>
               {r.numero_maglia}
             </div>
           )}
@@ -293,7 +293,7 @@ function RigaPresenza({ r }: { r: any }) {
       <td style={{ ...tdStyle, textAlign: 'center', color: 'var(--accent-red)' }}>{r.assenti}</td>
       <td style={tdStyle}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <div style={{ flex: 1, height: 6, background: 'var(--bg-input)', borderRadius: 3, overflow: 'hidden' }}>
+          <div style={{ flex: 1, height: 6, background: 'var(--bg-input)', borderRadius: 8, overflow: 'hidden' }}>
             <div style={{
               height: '100%', width: `${r.pct}%`,
               background: r.pct >= 80 ? 'var(--accent-green)' : r.pct >= 60 ? 'var(--accent-orange)' : 'var(--accent-red)',
@@ -306,6 +306,6 @@ function RigaPresenza({ r }: { r: any }) {
   )
 }
 
-const thStyle: React.CSSProperties = { padding: '10px 14px', textAlign: 'left', fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }
+const thStyle: React.CSSProperties = { padding: '10px 14px', textAlign: 'left', fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'none', letterSpacing: '0' }
 const tdStyle: React.CSSProperties = { padding: '12px 14px', fontSize: 13, color: 'var(--text-secondary)' }
-const labelStyle: React.CSSProperties = { display: 'block', fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', marginBottom: 4, textTransform: 'uppercase' }
+const labelStyle: React.CSSProperties = { display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', marginBottom: 4, textTransform: 'none' }

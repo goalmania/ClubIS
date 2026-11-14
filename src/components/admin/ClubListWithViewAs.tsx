@@ -35,7 +35,7 @@ export default function ClubListWithViewAs({ clubs }: { clubs: Club[] }) {
               }} />
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{c.nome}</div>
-                <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
+                <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>
                   {c.citta ?? '—'}
                   {c.categoria && <> · <span style={{ textTransform: 'capitalize' }}>{c.categoria.replace(/_/g, ' ')}</span></>}
                 </div>

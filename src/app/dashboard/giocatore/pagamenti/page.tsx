@@ -86,10 +86,10 @@ export default function PagamentiGiocatorePage() {
   return (
     <div>
       <div data-onboarding="sezione-pagamenti" style={{ marginBottom: 28 }}>
-        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, textTransform: 'uppercase', fontSize: 26, letterSpacing: '0.04em', color: 'var(--white)' }}>
+        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 26, letterSpacing: '0', color: 'var(--white)' }}>
           Le mie quote
         </div>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)', marginTop: 6 }}>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', marginTop: 6 }}>
           Storico pagamenti e rate
         </div>
       </div>
@@ -102,15 +102,15 @@ export default function PagamentiGiocatorePage() {
           { label: 'Da saldare',     val: `€ ${totaleArretr.toFixed(2)}`,  color: totaleArretr > 0 ? 'var(--rosso)' : 'var(--gray)' },
         ].map(s => (
           <div key={s.label} style={{ border: '1px solid var(--border)', background: 'var(--bg-card)', padding: '16px 20px' }}>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 6 }}>{s.label}</div>
-            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 22, color: s.color }}>{s.val}</div>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', textTransform: 'none', letterSpacing: '0', marginBottom: 6 }}>{s.label}</div>
+            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 22, color: s.color }}>{s.val}</div>
           </div>
         ))}
       </div>
 
       {/* Lista quote */}
       <div style={{ border: '1px solid var(--border)', background: 'var(--bg-card)' }}>
-        <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border)', fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', fontSize: 13, color: 'var(--white)' }}>
+        <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border)', fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 13, color: 'var(--white)' }}>
           Quote iscrizione
         </div>
         {quote.length === 0 && (
@@ -131,18 +131,18 @@ export default function PagamentiGiocatorePage() {
               >
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-                    <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', fontSize: 13, color: 'var(--white)' }}>
+                    <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 13, color: 'var(--white)' }}>
                       Stagione {q.stagione}
                     </div>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 9, padding: '2px 6px', color: STATO_COLOR[q.stato] ?? 'var(--gray)', border: `1px solid ${STATO_COLOR[q.stato] ?? 'var(--border)'}`, textTransform: 'uppercase' }}>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, padding: '2px 6px', color: STATO_COLOR[q.stato] ?? 'var(--gray)', border: `1px solid ${STATO_COLOR[q.stato] ?? 'var(--border)'}`, textTransform: 'none' }}>
                       {q.stato.replace(/_/g, ' ')}
                     </span>
                   </div>
                   {/* Barra progresso */}
-                  <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 2, height: 4, marginBottom: 4 }}>
-                    <div style={{ width: `${perc}%`, height: '100%', background: STATO_COLOR[q.stato] ?? 'var(--accent)', borderRadius: 2, transition: 'width 0.4s' }} />
+                  <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 8, height: 4, marginBottom: 4 }}>
+                    <div style={{ width: `${perc}%`, height: '100%', background: STATO_COLOR[q.stato] ?? 'var(--accent)', borderRadius: 8, transition: 'width 0.4s' }} />
                   </div>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)' }}>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)' }}>
                     € {q.importo_pagato.toFixed(2)} / € {q.importo_totale.toFixed(2)}
                     {q.scadenza && ` · Scade: ${new Date(q.scadenza).toLocaleDateString('it-IT')}`}
                   </div>
@@ -152,12 +152,12 @@ export default function PagamentiGiocatorePage() {
 
               {open && pagQ.length > 0 && (
                 <div style={{ padding: '0 18px 14px', borderTop: '1px solid var(--border)' }}>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8, paddingTop: 12 }}>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', textTransform: 'none', letterSpacing: '0', marginBottom: 8, paddingTop: 12 }}>
                     Pagamenti registrati
                   </div>
                   {pagQ.map(p => (
                     <div key={p.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                      <div style={{ flex: 1, fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--white)' }}>
+                      <div style={{ flex: 1, fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--white)' }}>
                         {new Date(p.data_pagamento).toLocaleDateString('it-IT')} · {METODO_LABEL[p.metodo] ?? p.metodo}
                       </div>
                       <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, color: 'var(--accent)' }}>
@@ -168,7 +168,7 @@ export default function PagamentiGiocatorePage() {
                 </div>
               )}
               {open && pagQ.length === 0 && (
-                <div style={{ padding: '8px 18px 14px', fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)' }}>
+                <div style={{ padding: '8px 18px 14px', fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)' }}>
                   Nessun pagamento registrato
                 </div>
               )}

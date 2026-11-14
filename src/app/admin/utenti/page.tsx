@@ -40,7 +40,7 @@ export default function AdminUtentiPage() {
   return (
     <div>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 600 }}>Gestione Utenti</h1>
+        <h1 style={{ fontSize: 28, fontWeight: 600, letterSpacing: '-0.025em'}}>Gestione Utenti</h1>
         <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 2 }}>{utenti.length} utenti nel sistema</p>
       </div>
 
@@ -70,13 +70,13 @@ export default function AdminUtentiPage() {
                   <tr key={u.id}>
                     <td style={{ fontWeight: 500 }}>{u.cognome} {u.nome}</td>
                     <td style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{u.email}</td>
-                    <td><span className="badge badge-grigio" style={{ fontSize: 11 }}>{ruoloLabel[u.ruolo] ?? u.ruolo}</span></td>
+                    <td><span className="badge badge-grigio" style={{ fontSize: 12 }}>{ruoloLabel[u.ruolo] ?? u.ruolo}</span></td>
                     <td style={{ fontSize: 13, color: 'var(--grigio-3)' }}>{(u.clubs as any)?.nome ?? '—'}</td>
-                    <td style={{ fontSize: 11, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>
+                    <td style={{ fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>
                       {u.ultimo_accesso ? new Date(u.ultimo_accesso).toLocaleDateString('it-IT') : '—'}
                     </td>
                     <td>
-                      <span className={`badge ${u.attivo ? 'badge-verde' : 'badge-rosso'}`} style={{ fontSize: 11 }}>
+                      <span className={`badge ${u.attivo ? 'badge-verde' : 'badge-rosso'}`} style={{ fontSize: 12 }}>
                         {u.attivo ? 'Attivo' : 'Inattivo'}
                       </span>
                     </td>
@@ -84,7 +84,7 @@ export default function AdminUtentiPage() {
                       <button
                         onClick={() => toggleAttivo(u.id, u.attivo)}
                         className={`btn btn-sm ${u.attivo ? 'btn-danger' : 'btn-primary'}`}
-                        style={{ fontSize: 11 }}
+                        style={{ fontSize: 12 }}
                       >
                         {u.attivo ? 'Disattiva' : 'Attiva'}
                       </button>

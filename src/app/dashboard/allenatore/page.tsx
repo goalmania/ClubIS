@@ -127,7 +127,7 @@ export default async function AllenatoreDashboard() {
   return (
     <div>
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Ciao, {utente?.nome ?? ''}</h1>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Ciao, {utente?.nome ?? ''}</h1>
         <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>
           {oggi.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' })}
           {squadre && squadre.length > 0 && ` · ${squadre.map(s => s.nome).join(', ')}`}
@@ -149,15 +149,15 @@ export default async function AllenatoreDashboard() {
       {/* Prossimo allenamento — card prominente */}
       {prossimaSessione?.[0] && (
         <div style={{
-          background: 'var(--verde)', borderRadius: 12, padding: '20px 24px',
+          background: 'var(--verde)', borderRadius: 16, padding: '20px 24px',
           marginBottom: 24, color: 'white',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         }}>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 500, opacity: 0.7, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>
+            <div style={{ fontSize: 12, fontWeight: 500, opacity: 0.7, textTransform: 'none', letterSpacing: '0', marginBottom: 6 }}>
               Prossimo allenamento
             </div>
-            <div style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)', marginBottom: 4 }}>
+            <div style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.01em', color: 'var(--white)', marginBottom: 4 }}>
               {new Date(prossimaSessione[0].data_ora).toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' })}
               {' · '}
               {new Date(prossimaSessione[0].data_ora).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}
@@ -174,7 +174,7 @@ export default async function AllenatoreDashboard() {
             style={{
               background: 'rgba(255,255,255,0.2)',
               color: 'white', border: '1px solid rgba(255,255,255,0.3)',
-              padding: '10px 20px', borderRadius: 8, fontSize: 13,
+              padding: '10px 20px', borderRadius: 12, fontSize: 13,
               fontWeight: 500, textDecoration: 'none', whiteSpace: 'nowrap',
             }}
           >
@@ -289,7 +289,7 @@ export default async function AllenatoreDashboard() {
               ].map(a => (
                 <Link key={a.href} href={a.href} style={{
                   display: 'block', padding: '9px 12px',
-                  border: '1px solid var(--grigio-5)', borderRadius: 8,
+                  border: '1px solid var(--grigio-5)', borderRadius: 12,
                   fontSize: 13, color: 'var(--grigio)', textDecoration: 'none',
                   fontWeight: 500, transition: 'border-color 0.12s',
                 }}>
@@ -302,7 +302,7 @@ export default async function AllenatoreDashboard() {
           {/* Prossimi eventi calendario (scuola calcio) */}
           {isScuolaCalcio && prossimiEventi.length > 0 && (
             <div className="card" style={{ padding: 18 }}>
-              <div style={{ fontSize: 11, fontWeight: 500, color: 'var(--grigio-4)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>
+              <div style={{ fontSize: 12, fontWeight: 500, color: 'var(--grigio-4)', textTransform: 'none', letterSpacing: '0', marginBottom: 10 }}>
                 Prossimi eventi
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -327,7 +327,7 @@ export default async function AllenatoreDashboard() {
           {/* Prossima partita card */}
           {prossimaPartita?.[0] && (
             <div className="card" style={{ padding: 18 }}>
-              <div style={{ fontSize: 11, fontWeight: 500, color: 'var(--grigio-4)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>
+              <div style={{ fontSize: 12, fontWeight: 500, color: 'var(--grigio-4)', textTransform: 'none', letterSpacing: '0', marginBottom: 10 }}>
                 Prossima partita
               </div>
               <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 4 }}>

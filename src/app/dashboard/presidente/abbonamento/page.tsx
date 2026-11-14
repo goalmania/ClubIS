@@ -59,8 +59,8 @@ export default async function AbbonamentoPage() {
     <div>
       <div style={{ marginBottom: 28 }}>
         <h1 style={{
-          fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 900,
-          textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)',
+          fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700,
+          textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)',
         }}>
           Abbonamenti
         </h1>
@@ -79,10 +79,10 @@ export default async function AbbonamentoPage() {
           <img src="/clubis-logo.png" alt="ClubIS" style={{ height: 28 }} />
           <div>
             <div style={{
-              fontFamily: 'var(--font-display)', fontWeight: 900,
-              textTransform: 'uppercase', fontSize: 13, color: 'var(--white)',
+              fontFamily: 'var(--font-display)', fontWeight: 700,
+              textTransform: 'none', fontSize: 13, color: 'var(--white)',
             }}>ClubIS</div>
-            <div style={{ fontSize: 11, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>
+            <div style={{ fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>
               Piattaforma gestione club
             </div>
           </div>
@@ -102,18 +102,18 @@ export default async function AbbonamentoPage() {
         <div style={{ padding: '20px 24px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 20 }}>
             <div>
-              <div style={{ fontSize: 11, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)', marginBottom: 4 }}>PIANO</div>
+              <div style={{ fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)', marginBottom: 4 }}>PIANO</div>
               <div style={{
-                fontFamily: 'var(--font-display)', fontWeight: 900,
+                fontFamily: 'var(--font-display)', fontWeight: 700,
                 fontSize: 18, color: TIER_COLOR[planTier] ?? 'var(--white)',
-                textTransform: 'uppercase',
+                textTransform: 'none',
               }}>
                 {TIER_LABEL[planTier] ?? planTier}{isTrial ? ' (trial)' : ''}
               </div>
             </div>
 
             <div>
-              <div style={{ fontSize: 11, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)', marginBottom: 4 }}>STATO</div>
+              <div style={{ fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)', marginBottom: 4 }}>STATO</div>
               <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--white)' }}>
                 {isTrial && giorniTrialRimanenti !== null && (
                   giorniTrialRimanenti > 0
@@ -126,7 +126,7 @@ export default async function AbbonamentoPage() {
             </div>
 
             <div>
-              <div style={{ fontSize: 11, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)', marginBottom: 4 }}>SCADENZA</div>
+              <div style={{ fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)', marginBottom: 4 }}>SCADENZA</div>
               <div style={{ fontSize: 14, color: 'var(--white)' }}>
                 {isTrial && trialEndsAt
                   ? new Date(trialEndsAt).toLocaleDateString('it-IT')
@@ -142,18 +142,18 @@ export default async function AbbonamentoPage() {
           {isTrial && giorniTrialRimanenti !== null && giorniTrialRimanenti > 0 && (
             <div style={{ marginBottom: 20 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                <span style={{ fontSize: 11, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>
+                <span style={{ fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>
                   Periodo di prova — {giorniTrialRimanenti}/7 giorni rimasti
                 </span>
               </div>
               <div style={{
-                height: 6, background: 'var(--grigio-6)', borderRadius: 3, overflow: 'hidden',
+                height: 6, background: 'var(--grigio-6)', borderRadius: 8, overflow: 'hidden',
               }}>
                 <div style={{
                   height: '100%',
                   width: `${Math.min(100, (giorniTrialRimanenti / 7) * 100)}%`,
                   background: giorniTrialRimanenti <= 2 ? 'var(--ambra)' : 'var(--accent)',
-                  borderRadius: 3,
+                  borderRadius: 8,
                   transition: 'width 0.3s',
                 }} />
               </div>
@@ -204,10 +204,10 @@ export default async function AbbonamentoPage() {
           <span style={{ fontSize: 22 }}>🔭</span>
           <div>
             <div style={{
-              fontFamily: 'var(--font-display)', fontWeight: 900,
-              textTransform: 'uppercase', fontSize: 13, color: 'var(--white)',
+              fontFamily: 'var(--font-display)', fontWeight: 700,
+              textTransform: 'none', fontSize: 13, color: 'var(--white)',
             }}>DM Scout</div>
-            <div style={{ fontSize: 11, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>
+            <div style={{ fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>
               Scouting & database giocatori
             </div>
           </div>
@@ -225,21 +225,21 @@ export default async function AbbonamentoPage() {
         <div style={{ padding: '20px 24px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 20 }}>
             <div>
-              <div style={{ fontSize: 11, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)', marginBottom: 4 }}>STATO</div>
+              <div style={{ fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)', marginBottom: 4 }}>STATO</div>
               <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--white)' }}>
                 {dmAttivo && !dmScaduto ? 'Attivo' : dmScaduto ? 'Scaduto' : 'Non attivo'}
               </div>
             </div>
 
             <div>
-              <div style={{ fontSize: 11, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)', marginBottom: 4 }}>SCADENZA</div>
+              <div style={{ fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)', marginBottom: 4 }}>SCADENZA</div>
               <div style={{ fontSize: 14, color: 'var(--white)' }}>
                 {dmScadenza ? new Date(dmScadenza).toLocaleDateString('it-IT') : '—'}
               </div>
             </div>
 
             <div>
-              <div style={{ fontSize: 11, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)', marginBottom: 4 }}>GIORNI RIMASTI</div>
+              <div style={{ fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)', marginBottom: 4 }}>GIORNI RIMASTI</div>
               <div style={{ fontSize: 14, color: dmGiorniRimanenti !== null && dmGiorniRimanenti <= 7 ? 'var(--ambra)' : 'var(--white)' }}>
                 {dmGiorniRimanenti !== null ? `${dmGiorniRimanenti} giorni` : '—'}
               </div>
@@ -251,7 +251,7 @@ export default async function AbbonamentoPage() {
               padding: '12px 16px',
               background: 'rgba(200,240,0,0.04)',
               border: '1px solid rgba(200,240,0,0.15)',
-              borderRadius: 8,
+              borderRadius: 12,
               marginBottom: 20,
             }}>
               <div style={{ fontSize: 12, color: 'var(--grigio-3)', lineHeight: 1.6 }}>

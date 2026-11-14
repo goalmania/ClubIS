@@ -113,14 +113,14 @@ export default function MessaggiView({ clubId, ruolo }: MessaggiViewProps) {
               }}>
                 {/* Header post */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-                  <div className="avatar" style={{ width: 32, height: 32, fontSize: 11, flexShrink: 0 }}>
+                  <div className="avatar" style={{ width: 32, height: 32, fontSize: 12, flexShrink: 0 }}>
                     {mitt?.nome?.[0]}{mitt?.cognome?.[0]}
                   </div>
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, textTransform: 'uppercase' }}>
+                    <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, textTransform: 'none' }}>
                       {mitt?.nome} {mitt?.cognome}
                     </div>
-                    <div style={{ fontSize: 10, color: 'var(--gray)', fontFamily: 'var(--font-mono)' }}>
+                    <div style={{ fontSize: 12, color: 'var(--gray)', fontFamily: 'var(--font-mono)' }}>
                       {formatData(p.inviato_at)}
                       {p.fissato && <span style={{ color: 'var(--accent)', marginLeft: 8 }}>📌 FISSATO</span>}
                       {p.tipo_comunicazione === 'annuncio' && (
@@ -133,7 +133,7 @@ export default function MessaggiView({ clubId, ruolo }: MessaggiViewProps) {
                     title={p.fissato ? 'Rimuovi pin' : 'Fissa in bacheca'}
                     style={{
                       padding: '4px 8px', background: 'transparent',
-                      border: '1px solid var(--border)', borderRadius: 2,
+                      border: '1px solid var(--border)', borderRadius: 8,
                       color: p.fissato ? 'var(--accent)' : 'var(--gray)',
                       fontSize: 12, cursor: 'pointer', flexShrink: 0,
                     }}
@@ -145,8 +145,8 @@ export default function MessaggiView({ clubId, ruolo }: MessaggiViewProps) {
                 {/* Titolo */}
                 {p.titolo && (
                   <div style={{
-                    fontFamily: 'var(--font-display)', fontWeight: 900,
-                    fontSize: 16, textTransform: 'uppercase', letterSpacing: '-0.01em',
+                    fontFamily: 'var(--font-display)', fontWeight: 700,
+                    fontSize: 16, textTransform: 'none', letterSpacing: '-0.01em',
                     marginBottom: 10, color: 'var(--white)',
                   }}>
                     {p.titolo}
@@ -172,10 +172,10 @@ export default function MessaggiView({ clubId, ruolo }: MessaggiViewProps) {
                           padding: '4px 10px',
                           background: 'var(--gray-light)',
                           border: '1px solid var(--border)',
-                          borderRadius: 2,
-                          fontFamily: 'var(--font-mono)', fontSize: 10,
+                          borderRadius: 8,
+                          fontFamily: 'var(--font-mono)', fontSize: 12,
                           color: 'var(--accent)', textDecoration: 'none',
-                          textTransform: 'uppercase', letterSpacing: '0.05em',
+                          textTransform: 'none', letterSpacing: '0',
                         }}
                       >
                         📎 {a.nome}
@@ -203,19 +203,19 @@ export default function MessaggiView({ clubId, ruolo }: MessaggiViewProps) {
                 return (
                   <div key={m.id} style={{ padding: '14px 20px', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
                     <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-                      <div className="avatar" style={{ width: 30, height: 30, fontSize: 11, flexShrink: 0 }}>
+                      <div className="avatar" style={{ width: 30, height: 30, fontSize: 12, flexShrink: 0 }}>
                         {mitt?.nome?.[0]}{mitt?.cognome?.[0]}
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ display: 'flex', gap: 8, marginBottom: 4, alignItems: 'center', flexWrap: 'wrap' }}>
                           <span style={{
                             fontFamily: 'var(--font-display)', fontWeight: 700,
-                            fontSize: 13, textTransform: 'uppercase',
+                            fontSize: 13, textTransform: 'none',
                           }}>
                             {m.titolo}
                           </span>
                           {m.tipo && (
-                            <span className={`badge ${badgeTipo[m.tipo] ?? 'badge-grigio'}`} style={{ fontSize: 10 }}>
+                            <span className={`badge ${badgeTipo[m.tipo] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>
                               {m.tipo}
                             </span>
                           )}
@@ -226,7 +226,7 @@ export default function MessaggiView({ clubId, ruolo }: MessaggiViewProps) {
                         }}>
                           {m.corpo ?? m.messaggio}
                         </div>
-                        <div style={{ fontSize: 10, color: '#333', marginTop: 4, fontFamily: 'var(--font-mono)' }}>
+                        <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4, fontFamily: 'var(--font-mono)' }}>
                           {mitt?.nome} {mitt?.cognome} · {formatData(m.inviato_at)}
                         </div>
                       </div>

@@ -190,7 +190,7 @@ export default function ScontiPage() {
 
       {/* Sezione 1: Listino */}
       <div className="card" style={{ padding: 24, marginBottom: 24 }}>
-        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', fontSize: 13, letterSpacing: '0.08em', marginBottom: 16 }}>
+        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 13, letterSpacing: '0', marginBottom: 16 }}>
           Listino sconti del club
         </div>
 
@@ -210,7 +210,7 @@ export default function ScontiPage() {
             <thead>
               <tr style={{ borderBottom: '1px solid var(--border)' }}>
                 {['Nome', 'Tipo', 'Valore', 'Stato', 'Azioni'].map(h => (
-                  <th key={h} style={{ padding: '8px 12px', textAlign: 'left', fontFamily: 'var(--font-mono)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--gray)' }}>{h}</th>
+                  <th key={h} style={{ padding: '8px 12px', textAlign: 'left', fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'none', letterSpacing: '0', color: 'var(--gray)' }}>{h}</th>
                 ))}
               </tr>
             </thead>
@@ -218,12 +218,12 @@ export default function ScontiPage() {
               {sconti.map(s => (
                 <tr key={s.id} style={{ borderBottom: '1px solid var(--border)', opacity: s.attivo ? 1 : 0.45 }}>
                   <td style={{ padding: '10px 12px', fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 13, color: 'var(--white)' }}>{s.nome}</td>
-                  <td style={{ padding: '10px 12px', fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)', textTransform: 'uppercase' }}>{s.tipo}</td>
+                  <td style={{ padding: '10px 12px', fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', textTransform: 'none' }}>{s.tipo}</td>
                   <td style={{ padding: '10px 12px', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, color: 'var(--accent)' }}>
                     {s.tipo === 'percentuale' ? `${s.valore}%` : `€${s.valore}`}
                   </td>
                   <td style={{ padding: '10px 12px' }}>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, padding: '2px 8px', borderRadius: 2, background: s.attivo ? 'rgba(200,240,0,0.1)' : 'var(--gray-mid)', color: s.attivo ? 'var(--accent)' : 'var(--gray)', textTransform: 'uppercase' }}>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, padding: '2px 8px', borderRadius: 8, background: s.attivo ? 'rgba(200,240,0,0.1)' : 'var(--gray-mid)', color: s.attivo ? 'var(--accent)' : 'var(--gray)', textTransform: 'none' }}>
                       {s.attivo ? 'Attivo' : 'Disattivo'}
                     </span>
                   </td>
@@ -241,13 +241,13 @@ export default function ScontiPage() {
 
       {/* Sezione 2: Applica sconto */}
       <div className="card" style={{ padding: 24, marginBottom: 24 }}>
-        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', fontSize: 13, letterSpacing: '0.08em', marginBottom: 16 }}>
+        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 13, letterSpacing: '0', marginBottom: 16 }}>
           Applica sconto a una rata
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
           <div>
-            <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--gray)', marginBottom: 6 }}>
+            <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'none', letterSpacing: '0', color: 'var(--gray)', marginBottom: 6 }}>
               Rata
             </label>
             <select className="input" value={rataSel} onChange={e => setRataSel(e.target.value)} style={{ fontSize: 12 }}>
@@ -264,7 +264,7 @@ export default function ScontiPage() {
             </select>
           </div>
           <div>
-            <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--gray)', marginBottom: 6 }}>
+            <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'none', letterSpacing: '0', color: 'var(--gray)', marginBottom: 6 }}>
               Sconto da applicare
             </label>
             <select className="input" value={scontoSel} onChange={e => setScontoSel(e.target.value)} style={{ fontSize: 12 }}>
@@ -279,19 +279,19 @@ export default function ScontiPage() {
         </div>
 
         {calcoloSconto && (
-          <div style={{ background: 'var(--gray-mid)', padding: '16px 20px', borderRadius: 2, marginBottom: 16, borderLeft: '3px solid var(--accent)' }}>
+          <div style={{ background: 'var(--gray-mid)', padding: '16px 20px', borderRadius: 8, marginBottom: 16, borderLeft: '3px solid var(--accent)' }}>
             <div style={{ display: 'flex', gap: 32 }}>
               <div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, textTransform: 'uppercase', color: 'var(--gray)', marginBottom: 4 }}>Importo originale</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'none', color: 'var(--gray)', marginBottom: 4 }}>Importo originale</div>
                 <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 18, color: 'var(--white)' }}>€{calcoloSconto.originale.toFixed(2)}</div>
               </div>
               <div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, textTransform: 'uppercase', color: 'var(--gray)', marginBottom: 4 }}>Sconto</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'none', color: 'var(--gray)', marginBottom: 4 }}>Sconto</div>
                 <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 18, color: '#ef4444' }}>- €{calcoloSconto.sconto.toFixed(2)}</div>
               </div>
               <div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, textTransform: 'uppercase', color: 'var(--gray)', marginBottom: 4 }}>Nuovo importo</div>
-                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 22, color: 'var(--accent)' }}>€{calcoloSconto.finale.toFixed(2)}</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'none', color: 'var(--gray)', marginBottom: 4 }}>Nuovo importo</div>
+                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 22, color: 'var(--accent)' }}>€{calcoloSconto.finale.toFixed(2)}</div>
               </div>
             </div>
           </div>
@@ -310,10 +310,10 @@ export default function ScontiPage() {
       {rateConSconto.length > 0 && (
         <div className="card" style={{ padding: 24 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', fontSize: 13, letterSpacing: '0.08em' }}>
+            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 13, letterSpacing: '0' }}>
               Sconti applicati questa stagione
             </div>
-            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 18, color: 'var(--accent)' }}>
+            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 18, color: 'var(--accent)' }}>
               Totale risparmiato: €{totaleRisparmiato.toFixed(2)}
             </div>
           </div>
@@ -321,7 +321,7 @@ export default function ScontiPage() {
             <thead>
               <tr style={{ borderBottom: '1px solid var(--border)' }}>
                 {['Famiglia / Giocatore', 'Piano', 'Sconto applicato', 'Importo risparmiato'].map(h => (
-                  <th key={h} style={{ padding: '8px 12px', textAlign: 'left', fontFamily: 'var(--font-mono)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--gray)' }}>{h}</th>
+                  <th key={h} style={{ padding: '8px 12px', textAlign: 'left', fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'none', letterSpacing: '0', color: 'var(--gray)' }}>{h}</th>
                 ))}
               </tr>
             </thead>
@@ -333,7 +333,7 @@ export default function ScontiPage() {
                 return (
                   <tr key={r.id} style={{ borderBottom: '1px solid var(--border)' }}>
                     <td style={{ padding: '10px 12px', fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 13, color: 'var(--white)' }}>{chi}</td>
-                    <td style={{ padding: '10px 12px', fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)' }}>{piano?.descrizione}</td>
+                    <td style={{ padding: '10px 12px', fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)' }}>{piano?.descrizione}</td>
                     <td style={{ padding: '10px 12px', fontFamily: 'var(--font-display)', fontSize: 12, color: 'var(--white)' }}>{nomeSconto}</td>
                     <td style={{ padding: '10px 12px', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, color: '#4ade80' }}>€{Number(r.sconto_importo).toFixed(2)}</td>
                   </tr>
@@ -348,13 +348,13 @@ export default function ScontiPage() {
       <Modal open={modalApri} onClose={() => setModalApri(false)} title="Nuovo sconto" width={440}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div>
-            <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--gray)', marginBottom: 6 }}>
+            <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'none', letterSpacing: '0', color: 'var(--gray)', marginBottom: 6 }}>
               Nome sconto *
             </label>
             <input className="input" value={form.nome} onChange={e => setForm(f => ({ ...f, nome: e.target.value }))} placeholder="es. Sconto fratelli" />
           </div>
           <div>
-            <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--gray)', marginBottom: 8 }}>
+            <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'none', letterSpacing: '0', color: 'var(--gray)', marginBottom: 8 }}>
               Tipo *
             </label>
             <div style={{ display: 'flex', gap: 12 }}>
@@ -367,13 +367,13 @@ export default function ScontiPage() {
             </div>
           </div>
           <div>
-            <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--gray)', marginBottom: 6 }}>
+            <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'none', letterSpacing: '0', color: 'var(--gray)', marginBottom: 6 }}>
               Valore *
             </label>
             <input className="input" type="number" min="0" max={form.tipo === 'percentuale' ? 100 : undefined} step="0.01" value={form.valore} onChange={e => setForm(f => ({ ...f, valore: e.target.value }))} placeholder={form.tipo === 'percentuale' ? 'es. 10 (10%)' : 'es. 20 (€20)'} />
           </div>
           <div>
-            <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--gray)', marginBottom: 6 }}>
+            <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'none', letterSpacing: '0', color: 'var(--gray)', marginBottom: 6 }}>
               Note
             </label>
             <textarea className="input" rows={2} value={form.note} onChange={e => setForm(f => ({ ...f, note: e.target.value }))} placeholder="Condizioni di applicazione..." />

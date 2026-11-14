@@ -93,8 +93,8 @@ function ModalConferma({ membro, loading, errore, onConfirm, onClose }: ModalCon
       onClick={e => { if (e.target === e.currentTarget && !loading) onClose() }}
     >
       <div style={{
-        background: '#111', border: '1px solid rgba(239,68,68,0.3)',
-        borderRadius: 4, width: '100%', maxWidth: 480,
+        background: 'var(--surface-2)', border: '1px solid rgba(239,68,68,0.3)',
+        borderRadius: 10, width: '100%', maxWidth: 480,
       }}>
         {/* Header */}
         <div style={{
@@ -102,8 +102,8 @@ function ModalConferma({ membro, loading, errore, onConfirm, onClose }: ModalCon
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
         }}>
           <span style={{
-            fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 15,
-            textTransform: 'uppercase', color: '#ef4444', letterSpacing: '-0.01em',
+            fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15,
+            textTransform: 'none', color: '#ef4444', letterSpacing: '-0.01em',
           }}>
             Elimina Account
           </span>
@@ -121,7 +121,7 @@ function ModalConferma({ membro, loading, errore, onConfirm, onClose }: ModalCon
         <div style={{ padding: '24px 20px' }}>
           <div style={{
             background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)',
-            borderRadius: 3, padding: '14px 16px', marginBottom: 20,
+            borderRadius: 8, padding: '14px 16px', marginBottom: 20,
           }}>
             <div style={{ fontSize: 13, fontWeight: 600, color: '#ef4444', marginBottom: 4 }}>
               Attenzione: azione irreversibile
@@ -141,7 +141,7 @@ function ModalConferma({ membro, loading, errore, onConfirm, onClose }: ModalCon
           {errore && (
             <div style={{
               background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)',
-              borderRadius: 3, padding: '10px 14px', marginBottom: 16,
+              borderRadius: 8, padding: '10px 14px', marginBottom: 16,
               fontSize: 13, color: '#ef4444',
             }}>
               {errore}
@@ -154,7 +154,7 @@ function ModalConferma({ membro, loading, errore, onConfirm, onClose }: ModalCon
               disabled={loading}
               style={{
                 background: 'none', border: '1px solid rgba(255,255,255,0.15)',
-                borderRadius: 3, padding: '8px 18px', fontSize: 13,
+                borderRadius: 8, padding: '8px 18px', fontSize: 13,
                 color: 'var(--gray)', cursor: loading ? 'not-allowed' : 'pointer',
                 opacity: loading ? 0.5 : 1,
               }}
@@ -166,7 +166,7 @@ function ModalConferma({ membro, loading, errore, onConfirm, onClose }: ModalCon
               disabled={loading}
               style={{
                 background: loading ? 'rgba(239,68,68,0.5)' : '#ef4444',
-                border: 'none', borderRadius: 3, padding: '8px 18px',
+                border: 'none', borderRadius: 8, padding: '8px 18px',
                 fontSize: 13, fontWeight: 600, color: '#fff',
                 cursor: loading ? 'not-allowed' : 'pointer',
                 display: 'flex', alignItems: 'center', gap: 6,
@@ -207,7 +207,7 @@ function Toast({ messaggio, onDismiss }: { messaggio: string; onDismiss: () => v
     <div style={{
       position: 'fixed', bottom: 24, right: 24, zIndex: 2000,
       background: '#1a2e1a', border: '1px solid rgba(34,197,94,0.4)',
-      borderRadius: 4, padding: '12px 18px',
+      borderRadius: 10, padding: '12px 18px',
       display: 'flex', alignItems: 'center', gap: 10,
       boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
       animation: 'fadeIn 0.2s ease',
@@ -325,16 +325,16 @@ export default function GestioneAccountPage() {
       {/* Header */}
       <div style={{ marginBottom: 28 }}>
         <div style={{
-          fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '3px',
-          textTransform: 'uppercase', color: 'var(--accent)',
+          fontFamily: 'var(--font-mono)', fontSize: '0.78rem', letterSpacing: '3px',
+          textTransform: 'none', color: 'var(--accent)',
           display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8,
         }}>
           <span style={{ display: 'block', width: 20, height: 1, background: 'var(--accent)' }} />
           Club
         </div>
         <h1 style={{
-          fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 900,
-          textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)',
+          fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700,
+          textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)',
           lineHeight: 1, marginBottom: 4,
         }}>
           Gestione Account
@@ -368,8 +368,8 @@ export default function GestioneAccountPage() {
         <>
           {/* Contatore */}
           <div style={{
-            fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--gray)',
-            marginBottom: 14, letterSpacing: '0.05em',
+            fontSize: 12, fontFamily: 'var(--font-mono)', color: 'var(--gray)',
+            marginBottom: 14, letterSpacing: '0',
           }}>
             {membri.length} account {membri.length === 1 ? 'registrato' : 'registrati'}
             {' '}· {membri.filter(m => m.attivo).length} attivi
@@ -400,7 +400,7 @@ export default function GestioneAccountPage() {
                             background: `${RUOLO_COLOR[m.ruolo] ?? '#64748b'}22`,
                             border: `1px solid ${RUOLO_COLOR[m.ruolo] ?? '#64748b'}44`,
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            fontSize: 11, fontWeight: 700,
+                            fontSize: 12, fontWeight: 700,
                             color: RUOLO_COLOR[m.ruolo] ?? '#64748b',
                             flexShrink: 0,
                           }}>
@@ -411,7 +411,7 @@ export default function GestioneAccountPage() {
                               {m.cognome} {m.nome}
                             </div>
                             {!m.attivo && (
-                              <div style={{ fontSize: 10, color: '#ef4444', fontFamily: 'var(--font-mono)' }}>
+                              <div style={{ fontSize: 12, color: '#ef4444', fontFamily: 'var(--font-mono)' }}>
                                 DISATTIVO
                               </div>
                             )}
@@ -422,8 +422,8 @@ export default function GestioneAccountPage() {
                       {/* Ruolo */}
                       <td>
                         <span style={{
-                          display: 'inline-flex', padding: '2px 8px', borderRadius: 3,
-                          fontSize: 11, fontFamily: 'var(--font-mono)',
+                          display: 'inline-flex', padding: '2px 8px', borderRadius: 8,
+                          fontSize: 12, fontFamily: 'var(--font-mono)',
                           background: `${RUOLO_COLOR[m.ruolo] ?? '#64748b'}18`,
                           color: RUOLO_COLOR[m.ruolo] ?? '#64748b',
                           border: `1px solid ${RUOLO_COLOR[m.ruolo] ?? '#64748b'}33`,
@@ -454,7 +454,7 @@ export default function GestioneAccountPage() {
                           style={{
                             background: 'none',
                             border: '1px solid rgba(239,68,68,0.3)',
-                            borderRadius: 3, padding: '4px 12px',
+                            borderRadius: 8, padding: '4px 12px',
                             fontSize: 12, color: '#ef4444',
                             cursor: 'pointer',
                             transition: 'all 0.15s',
@@ -481,7 +481,7 @@ export default function GestioneAccountPage() {
             marginTop: 16, padding: '10px 14px',
             background: 'rgba(255,255,255,0.03)',
             border: '1px solid rgba(255,255,255,0.06)',
-            borderRadius: 3, fontSize: 12, color: 'var(--gray)',
+            borderRadius: 8, fontSize: 12, color: 'var(--gray)',
           }}>
             ⚠️ L&apos;eliminazione di un account è definitiva e irreversibile. I dati associati al membro
             (presenze, valutazioni, ecc.) rimarranno nel sistema ma l&apos;accesso verrà revocato immediatamente.

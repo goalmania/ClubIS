@@ -138,46 +138,26 @@ export default function AzioniRapide({ ruolo, variante = 'agonistico' }: { ruolo
   }, {})
 
   return (
-    <div style={{
-      background: '#0d0d0d',
-      border: '1px solid var(--border-solid)',
-      borderRadius: 12,
+    <section style={{
+      background: 'var(--surface-2)',
+      borderRadius: 20,
       marginBottom: 24,
-      overflow: 'hidden',
+      padding: '16px 18px 18px',
     }}>
-      {/* Header */}
+      <h2 style={{ fontSize: 17, fontWeight: 600, letterSpacing: '-0.01em', color: 'var(--white)', marginBottom: 12 }}>
+        Azioni rapide
+      </h2>
       <div style={{
-        padding: '10px 18px',
-        borderBottom: '1px solid var(--border-solid)',
-        display: 'flex', alignItems: 'center', gap: 8,
-      }}>
-        <span style={{ fontSize: 14 }}>⚡</span>
-        <span style={{
-          fontFamily: 'var(--font-display)', fontWeight: 700,
-          textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: 12,
-          color: 'var(--white)',
-        }}>
-          Azioni Rapide
-        </span>
-      </div>
-
-      {/* Grid aree */}
-      <div style={{
-        padding: '14px 16px',
-        display: 'flex', flexWrap: 'wrap', gap: 20,
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(190px, 1fr))',
+        gap: '16px 18px',
       }}>
         {Object.entries(perArea).map(([area, azioniArea]) => (
-          <div key={area} style={{ minWidth: 140 }}>
-            {/* Area label */}
-            <div style={{
-              fontFamily: 'var(--font-mono)', fontSize: '0.58rem',
-              letterSpacing: '0.2em', textTransform: 'uppercase',
-              color: '#444', marginBottom: 7,
-            }}>
+          <div key={area} style={{ minWidth: 0 }}>
+            <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--gray)', marginBottom: 6 }}>
               {area}
             </div>
-            {/* Azioni */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               {azioniArea.map(a => (
                 <AzioneLink key={a.href} azione={a} />
               ))}
@@ -185,40 +165,20 @@ export default function AzioniRapide({ ruolo, variante = 'agonistico' }: { ruolo
           </div>
         ))}
       </div>
-    </div>
+    </section>
   )
 }
 
-// Tiny client wrapper per hover effect — isolato così AzioniRapide resta server-compatible
 function AzioneLink({ azione: a }: { azione: AzioneRapida }) {
   return (
-    <Link href={a.href} style={{ textDecoration: 'none' }}>
-      <div
-        style={{
-          display: 'flex', alignItems: 'center', gap: 8,
-          padding: '7px 10px',
-          background: '#111',
-          border: '1px solid var(--border-solid)',
-          borderLeft: `3px solid ${a.colore ?? 'var(--accent)'}`,
-          borderRadius: 10,
-          cursor: 'pointer',
-          fontSize: 11, color: 'var(--white)',
-          fontFamily: 'var(--font-display)', fontWeight: 600,
-          textTransform: 'uppercase', letterSpacing: '0.05em',
-          transition: 'background 0.15s, border-color 0.15s',
-        }}
-        onMouseEnter={e => {
-          e.currentTarget.style.background = 'rgba(200,240,0,0.05)'
-          e.currentTarget.style.borderLeftColor = a.colore ?? 'var(--accent)'
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.background = '#111'
-          e.currentTarget.style.borderLeftColor = a.colore ?? 'var(--accent)'
-        }}
-      >
-        <span style={{ fontSize: 13, flexShrink: 0, lineHeight: 1 }}>{a.icon}</span>
-        <span style={{ lineHeight: 1.2 }}>{a.label}</span>
-      </div>
+    <Link href={a.href} className="quick-action-link" style={{ gap: 10 }}>
+      <span aria-hidden="true" style={{
+        width: 26, height: 26, borderRadius: 8, flexShrink: 0,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontSize: 13, lineHeight: 1,
+        background: `color-mix(in srgb, ${a.colore ?? 'var(--accent)'} 18%, transparent)`,
+      }}>{a.icon}</span>
+      <span style={{ lineHeight: 1.25, minWidth: 0 }}>{a.label}</span>
     </Link>
   )
 }

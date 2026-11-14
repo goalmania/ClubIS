@@ -275,11 +275,11 @@ export default function CostiTrasferteStagioneCard() {
                   const max = Math.max(stimato, reale, 1)
 
                   return (
-                    <div key={t.id} style={{ border: '1px solid var(--border)', borderRadius: 12, padding: 14, background: 'var(--bg-card)', overflow: 'hidden' }}>
+                    <div key={t.id} style={{ border: '1px solid var(--border)', borderRadius: 16, padding: 14, background: 'var(--bg-card)', overflow: 'hidden' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, marginBottom: 10, flexWrap: 'wrap' }}>
                         <div>
                           <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{t.destinazione}</div>
-                          <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>
+                          <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>
                             {new Date(t.data_partenza).toLocaleDateString('it-IT')}
                             {t.data_rientro ? ` → ${new Date(t.data_rientro).toLocaleDateString('it-IT')}` : ''}
                             {t.competizione ? ` · ${t.competizione}` : ''}
@@ -292,7 +292,7 @@ export default function CostiTrasferteStagioneCard() {
 
                       <div style={{ display: 'flex', gap: 10, alignItems: 'stretch' }}>
                         <div style={{ flex: 1 }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: 'var(--text-muted)', marginBottom: 6 }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--text-muted)', marginBottom: 6 }}>
                             <span>Stimato</span>
                             <span>{t.costo_stimato != null ? fmtEuro(stimato) : '—'}</span>
                           </div>
@@ -301,7 +301,7 @@ export default function CostiTrasferteStagioneCard() {
                           </div>
                         </div>
                         <div style={{ flex: 1 }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: 'var(--text-muted)', marginBottom: 6 }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--text-muted)', marginBottom: 6 }}>
                             <span>Reale</span>
                             <span>{t.costo_effettivo != null ? fmtEuro(reale) : '—'}</span>
                           </div>
@@ -311,7 +311,7 @@ export default function CostiTrasferteStagioneCard() {
                         </div>
                       </div>
 
-                      <div style={{ marginTop: 10, fontSize: 11, color: 'var(--text-muted)' }}>
+                      <div style={{ marginTop: 10, fontSize: 12, color: 'var(--text-muted)' }}>
                         Mezzo: {t.mezzo ?? '—'} · Stagione: {t.stagione ?? '—'}
                       </div>
                     </div>

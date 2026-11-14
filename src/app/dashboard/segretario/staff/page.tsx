@@ -202,17 +202,17 @@ export default function StaffAnagraficaPage() {
                             <div className="avatar" style={{ width: 32, height: 32, fontSize: 12 }}>{iniziali}</div>
                             <div>
                               <div style={{ fontSize: 14, fontWeight: 500 }}>{cognome} {nome}</div>
-                              <div style={{ fontSize: 11, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>{c.codice_fiscale}</div>
+                              <div style={{ fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>{c.codice_fiscale}</div>
                             </div>
                           </div>
                         </td>
                         <td>
                           {ruolo ? (
-                            <span className={`badge ${roleBadge[ruolo] ?? 'badge-grigio'}`} style={{ fontSize: 11 }}>
+                            <span className={`badge ${roleBadge[ruolo] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>
                               {roleLabel[ruolo] ?? ruolo}
                             </span>
                           ) : (
-                            <span className="badge badge-grigio" style={{ fontSize: 11 }}>{ruoloEsternoLabel}</span>
+                            <span className="badge badge-grigio" style={{ fontSize: 12 }}>{ruoloEsternoLabel}</span>
                           )}
                         </td>
                         <td style={{ fontSize: 13, color: 'var(--grigio-3)' }}>{contrattoLabel[c.tipo_contratto] ?? c.tipo_contratto}</td>
@@ -227,8 +227,8 @@ export default function StaffAnagraficaPage() {
                         </td>
                         <td>
                           {c.attivo
-                            ? <span className="badge badge-verde" style={{ fontSize: 11 }}>Attivo</span>
-                            : <span className="badge badge-rosso" style={{ fontSize: 11 }}>Cessato</span>}
+                            ? <span className="badge badge-verde" style={{ fontSize: 12 }}>Attivo</span>
+                            : <span className="badge badge-rosso" style={{ fontSize: 12 }}>Cessato</span>}
                         </td>
                         <td>
                           <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
@@ -403,14 +403,14 @@ function FormStaff({ editing, utentiDisponibili, saving, onSave, onCancel }: {
         </div>
         <div style={{ marginBottom: 14 }}>
           <label className="label">Codice fiscale *</label>
-          <input className="input" style={{ textTransform: 'uppercase' }} value={codiceFiscale}
+          <input className="input" style={{ textTransform: 'none' }} value={codiceFiscale}
             onChange={e => setCodiceFiscale(e.target.value.toUpperCase())} maxLength={16} required />
         </div>
       </div>
 
       <div style={{ marginBottom: 14 }}>
         <label className="label">IBAN <span style={{ color: 'var(--grigio-3)', fontWeight: 400 }}>(facoltativo)</span></label>
-        <input className="input" style={{ textTransform: 'uppercase' }} value={iban} onChange={e => setIban(e.target.value.toUpperCase())} />
+        <input className="input" style={{ textTransform: 'none' }} value={iban} onChange={e => setIban(e.target.value.toUpperCase())} />
       </div>
 
       <div style={{ marginBottom: 14 }}>

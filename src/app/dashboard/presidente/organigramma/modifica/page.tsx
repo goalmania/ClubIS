@@ -95,11 +95,11 @@ export default function OrganigrammaModificaPage() {
             gridTemplateColumns: '200px 1fr 120px 80px',
             gap: 16,
             padding: '10px 20px',
-            background: '#0d0d0d',
+            background: 'var(--surface-1)',
             borderBottom: '2px solid var(--border)',
           }}>
             {['MEMBRO STAFF', 'TITOLO ORGANIGRAMMA', 'ORDINE', 'VISIBILE'].map(h => (
-              <div key={h} style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--gray)' }}>
+              <div key={h} style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--gray)' }}>
                 {h}
               </div>
             ))}
@@ -126,14 +126,14 @@ export default function OrganigrammaModificaPage() {
               <div>
                 <div style={{
                   fontFamily: 'var(--font-display)', fontWeight: 700,
-                  fontSize: 13, textTransform: 'uppercase', color: 'var(--white)',
+                  fontSize: 13, textTransform: 'none', color: 'var(--white)',
                 }}>
                   {u.cognome} {u.nome}
                 </div>
                 <div style={{
-                  fontFamily: 'var(--font-mono)', fontSize: 10,
-                  textTransform: 'uppercase', color: 'var(--gray)',
-                  letterSpacing: '0.08em', marginTop: 2,
+                  fontFamily: 'var(--font-mono)', fontSize: 12,
+                  textTransform: 'none', color: 'var(--gray)',
+                  letterSpacing: '0', marginTop: 2,
                 }}>
                   {RUOLO_LABEL[u.ruolo] ?? u.ruolo}
                 </div>
@@ -180,9 +180,9 @@ export default function OrganigrammaModificaPage() {
       <div style={{
         marginTop: 20,
         padding: '12px 16px',
-        background: '#0d0d0d',
+        background: 'var(--surface-1)',
         border: '1px solid var(--border)',
-        borderRadius: 2,
+        borderRadius: 8,
         fontSize: 12,
         color: 'var(--gray)',
         lineHeight: 1.7,

@@ -70,19 +70,19 @@ function GaugeBudget({ speso, totale }: { speso: number; totale: number }) {
           style={{ transition: 'stroke-dasharray 1s ease, stroke 0.5s ease' }}
         />
         <text x={cx} y={cy - 6} textAnchor="middle"
-          style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 900, fill: colore }}>
+          style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, fill: colore }}>
           {perc}%
         </text>
         <text x={cx} y={cy + 14} textAnchor="middle"
-          style={{ fontFamily: 'var(--font-mono)', fontSize: 10, fill: '#666' }}>
+          style={{ fontFamily: 'var(--font-mono)', fontSize: 12, fill: '#666' }}>
           UTILIZZATO
         </text>
       </svg>
       <div style={{ textAlign: 'center' }}>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--grigio-4)' }}>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-4)' }}>
           {fmt(speso)} / {totale > 0 ? fmt(totale) : '— non impostato'}
         </div>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--grigio-4)', marginTop: 2 }}>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-4)', marginTop: 2 }}>
           Residuo: <span style={{ color: totale > 0 && speso > totale ? '#ef4444' : '#c8f000', fontWeight: 700 }}>
             {totale > 0 ? fmt(totale - speso) : '—'}
           </span>
@@ -98,10 +98,10 @@ function Semaforo({ perc }: { perc: number }) {
   return (
     <div style={{
       display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
-      background: 'var(--grigio-6)', padding: '16px 20px', borderRadius: 8,
+      background: 'var(--grigio-6)', padding: '16px 20px', borderRadius: 12,
       border: '1px solid var(--grigio-5)',
     }}>
-      <div style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--grigio-4)', letterSpacing: '0.1em', marginBottom: 8 }}>
+      <div style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: 'var(--grigio-4)', letterSpacing: '0', marginBottom: 8 }}>
         STATO BUDGET
       </div>
       {(['verde','giallo','rosso'] as const).map(s => (
@@ -116,7 +116,7 @@ function Semaforo({ perc }: { perc: number }) {
           transition: 'background 0.5s, box-shadow 0.5s',
         }} />
       ))}
-      <div style={{ marginTop: 8, fontSize: 11, color: 'var(--grigio-3)', fontFamily: 'var(--font-mono)', textAlign: 'center' }}>
+      <div style={{ marginTop: 8, fontSize: 12, color: 'var(--grigio-3)', fontFamily: 'var(--font-mono)', textAlign: 'center' }}>
         {stato === 'verde'  && '< 70% — OK'}
         {stato === 'giallo' && '70–90% — Attenzione'}
         {stato === 'rosso'  && '> 90% — Critico'}
@@ -137,24 +137,24 @@ function BarraMensile({ label, previsto, effettivo, tipo }: {
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-      <div style={{ width: 28, fontSize: 10, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)', textAlign: 'right', flexShrink: 0 }}>
+      <div style={{ width: 28, fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)', textAlign: 'right', flexShrink: 0 }}>
         {label}
       </div>
       <div style={{ flex: 1, position: 'relative', height: 20 }}>
         {/* Previsto */}
         <div style={{
           position: 'absolute', top: 2, left: 0, height: 8,
-          width: `${wPrev}%`, background: colPrev, borderRadius: 2,
+          width: `${wPrev}%`, background: colPrev, borderRadius: 8,
           transition: 'width 0.8s ease',
         }} />
         {/* Effettivo */}
         <div style={{
           position: 'absolute', top: 10, left: 0, height: 8,
-          width: `${wEff}%`, background: colEff, borderRadius: 2,
+          width: `${wEff}%`, background: colEff, borderRadius: 8,
           transition: 'width 0.8s ease',
         }} />
       </div>
-      <div style={{ width: 80, fontSize: 10, fontFamily: 'var(--font-mono)', color: 'var(--grigio-4)', flexShrink: 0, textAlign: 'right' }}>
+      <div style={{ width: 80, fontSize: 12, fontFamily: 'var(--font-mono)', color: 'var(--grigio-4)', flexShrink: 0, textAlign: 'right' }}>
         {effettivo > 0 ? fmt(effettivo) : '—'}
       </div>
     </div>
@@ -268,21 +268,21 @@ function VoceRow({ v, tipo, canEdit, editingId, confirmId, onEdit, onDeleteReq, 
       <td style={{ padding: '10px 14px' }}>
         {canEdit && confirmId !== v.id && (
           <div style={{ display: 'flex', gap: 6 }}>
-            <button onClick={() => onEdit(v.id)} style={{ background: 'transparent', border: '1px solid var(--grigio-5)', borderRadius: 3, padding: '3px 9px', cursor: 'pointer', fontSize: 11, color: 'var(--grigio-3)' }}>
+            <button onClick={() => onEdit(v.id)} style={{ background: 'transparent', border: '1px solid var(--grigio-5)', borderRadius: 8, padding: '3px 9px', cursor: 'pointer', fontSize: 12, color: 'var(--grigio-3)' }}>
               Modifica
             </button>
-            <button onClick={() => onDeleteReq(v.id)} style={{ background: 'transparent', border: '1px solid var(--grigio-5)', borderRadius: 3, padding: '3px 9px', cursor: 'pointer', fontSize: 11, color: 'var(--rosso)' }}>
+            <button onClick={() => onDeleteReq(v.id)} style={{ background: 'transparent', border: '1px solid var(--grigio-5)', borderRadius: 8, padding: '3px 9px', cursor: 'pointer', fontSize: 12, color: 'var(--rosso)' }}>
               Elimina
             </button>
           </div>
         )}
         {canEdit && confirmId === v.id && (
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span style={{ fontSize: 11, color: 'var(--rosso)' }}>Conferma?</span>
-            <button onClick={() => onDeleteOk(v.id)} style={{ background: 'var(--rosso)', border: 'none', borderRadius: 3, padding: '3px 9px', cursor: 'pointer', fontSize: 11, color: '#fff', fontWeight: 700 }}>
+            <span style={{ fontSize: 12, color: 'var(--rosso)' }}>Conferma?</span>
+            <button onClick={() => onDeleteOk(v.id)} style={{ background: 'var(--rosso)', border: 'none', borderRadius: 8, padding: '3px 9px', cursor: 'pointer', fontSize: 12, color: '#fff', fontWeight: 700 }}>
               Sì
             </button>
-            <button onClick={onDeleteCancel} style={{ background: 'transparent', border: '1px solid var(--grigio-5)', borderRadius: 3, padding: '3px 9px', cursor: 'pointer', fontSize: 11, color: 'var(--grigio-3)' }}>
+            <button onClick={onDeleteCancel} style={{ background: 'transparent', border: '1px solid var(--grigio-5)', borderRadius: 8, padding: '3px 9px', cursor: 'pointer', fontSize: 12, color: 'var(--grigio-3)' }}>
               No
             </button>
           </div>
@@ -467,7 +467,7 @@ export default function BudgetStagionalePage() {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>
             Budget Stagionale
           </h1>
           <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>
@@ -481,7 +481,7 @@ export default function BudgetStagionalePage() {
               padding: '6px 14px', fontFamily: 'var(--font-mono)', fontSize: 12, cursor: 'pointer',
               background: stagione === s ? 'var(--accent)' : 'var(--grigio-5)',
               color: stagione === s ? 'var(--black)' : 'var(--grigio-2)',
-              border: 'none', fontWeight: stagione === s ? 700 : 400, letterSpacing: '0.05em', borderRadius: 3,
+              border: 'none', fontWeight: stagione === s ? 700 : 400, letterSpacing: '0', borderRadius: 8,
             }}>
               {s}
             </button>
@@ -542,7 +542,7 @@ export default function BudgetStagionalePage() {
           <button key={t.id} onClick={() => setTab(t.id)} style={{
             padding: '10px 18px', background: 'transparent', cursor: 'pointer',
             fontFamily: 'var(--font-display)', fontSize: 12, fontWeight: 600,
-            textTransform: 'uppercase', letterSpacing: '0.08em', border: 'none',
+            textTransform: 'none', letterSpacing: '0', border: 'none',
             borderBottom: tab === t.id ? '2px solid var(--accent)' : '2px solid transparent',
             color: tab === t.id ? 'var(--accent)' : 'var(--grigio-3)',
             marginBottom: -1, transition: 'color 0.15s',
@@ -558,7 +558,7 @@ export default function BudgetStagionalePage() {
           {/* Gauge + Semaforo */}
           <div style={{ display: 'grid', gridTemplateColumns: '220px 160px 1fr', gap: 20, marginBottom: 24, alignItems: 'start' }}>
             <div className="card" style={{ padding: '20px 16px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-              <div style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--grigio-4)', letterSpacing: '0.1em' }}>BUDGET CONSUMATO</div>
+              <div style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: 'var(--grigio-4)', letterSpacing: '0' }}>BUDGET CONSUMATO</div>
               <GaugeBudget speso={totUscitePrev} totale={budget?.budget_totale_stagione ?? 0} />
             </div>
             <div className="card" style={{ padding: '20px 16px' }}>
@@ -566,7 +566,7 @@ export default function BudgetStagionalePage() {
             </div>
             {/* Riepilogo numeri */}
             <div className="card" style={{ padding: '20px 24px' }}>
-              <div style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--grigio-4)', letterSpacing: '0.1em', marginBottom: 14 }}>RIEPILOGO FINANZIARIO</div>
+              <div style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: 'var(--grigio-4)', letterSpacing: '0', marginBottom: 14 }}>RIEPILOGO FINANZIARIO</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {[
                   { lbl: 'Entrate previste', val: totEntratePrev, colore: 'rgba(200,240,0,0.5)' },
@@ -591,15 +591,15 @@ export default function BudgetStagionalePage() {
 
           {/* Grafico mensile entrate */}
           <div className="card" style={{ padding: '18px 20px', marginBottom: 20 }}>
-            <div style={{ fontSize: 11, fontFamily: 'var(--font-display)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--grigio-3)', marginBottom: 4 }}>
+            <div style={{ fontSize: 12, fontFamily: 'var(--font-display)', textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-3)', marginBottom: 4 }}>
               Entrate mensili — previste vs effettive
             </div>
-            <div style={{ display: 'flex', gap: 12, marginBottom: 12, fontSize: 10, fontFamily: 'var(--font-mono)', color: 'var(--grigio-4)' }}>
+            <div style={{ display: 'flex', gap: 12, marginBottom: 12, fontSize: 12, fontFamily: 'var(--font-mono)', color: 'var(--grigio-4)' }}>
               <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span style={{ width: 12, height: 4, background: 'rgba(200,240,0,0.35)', display: 'inline-block', borderRadius: 2 }} /> Previste
+                <span style={{ width: 12, height: 4, background: 'rgba(200,240,0,0.35)', display: 'inline-block', borderRadius: 8 }} /> Previste
               </span>
               <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span style={{ width: 12, height: 4, background: 'var(--verde)', display: 'inline-block', borderRadius: 2 }} /> Effettive
+                <span style={{ width: 12, height: 4, background: 'var(--verde)', display: 'inline-block', borderRadius: 8 }} /> Effettive
               </span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -616,15 +616,15 @@ export default function BudgetStagionalePage() {
 
           {/* Grafico mensile uscite */}
           <div className="card" style={{ padding: '18px 20px' }}>
-            <div style={{ fontSize: 11, fontFamily: 'var(--font-display)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--grigio-3)', marginBottom: 4 }}>
+            <div style={{ fontSize: 12, fontFamily: 'var(--font-display)', textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-3)', marginBottom: 4 }}>
               Uscite mensili — previste vs effettive
             </div>
-            <div style={{ display: 'flex', gap: 12, marginBottom: 12, fontSize: 10, fontFamily: 'var(--font-mono)', color: 'var(--grigio-4)' }}>
+            <div style={{ display: 'flex', gap: 12, marginBottom: 12, fontSize: 12, fontFamily: 'var(--font-mono)', color: 'var(--grigio-4)' }}>
               <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span style={{ width: 12, height: 4, background: 'rgba(239,68,68,0.3)', display: 'inline-block', borderRadius: 2 }} /> Previste
+                <span style={{ width: 12, height: 4, background: 'rgba(239,68,68,0.3)', display: 'inline-block', borderRadius: 8 }} /> Previste
               </span>
               <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span style={{ width: 12, height: 4, background: 'var(--rosso)', display: 'inline-block', borderRadius: 2 }} /> Effettive
+                <span style={{ width: 12, height: 4, background: 'var(--rosso)', display: 'inline-block', borderRadius: 8 }} /> Effettive
               </span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -646,7 +646,7 @@ export default function BudgetStagionalePage() {
         <div>
           {(addingE || editIdE) && (
             <div className="card" style={{ padding: '20px 24px', marginBottom: 20, borderLeft: '3px solid var(--verde)' }}>
-              <div style={{ fontSize: 12, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--verde)', marginBottom: 14 }}>
+              <div style={{ fontSize: 12, fontFamily: 'var(--font-mono)', textTransform: 'none', letterSpacing: '0', color: 'var(--verde)', marginBottom: 14 }}>
                 {editIdE ? '✏️ Modifica entrata' : '+ Nuova entrata prevista'}
               </div>
               <FormVoce tipo="entrata" initial={editIdE ? entratePrev.find(v => v.id === editIdE) : undefined}
@@ -695,7 +695,7 @@ export default function BudgetStagionalePage() {
             )}
           </div>
           {/* Confronto effettive */}
-          <div style={{ marginTop: 16, padding: '12px 16px', background: 'var(--grigio-6)', borderRadius: 6, display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+          <div style={{ marginTop: 16, padding: '12px 16px', background: 'var(--grigio-6)', borderRadius: 10, display: 'flex', gap: 24, flexWrap: 'wrap' }}>
             <span style={{ fontSize: 12, color: 'var(--grigio-3)' }}>Entrate effettive (prima nota): <strong style={{ color: 'var(--verde)' }}>{fmt(entrateEffettive)}</strong></span>
             <span style={{ fontSize: 12, color: 'var(--grigio-3)' }}>Differenza: <strong style={{ color: entrateEffettive >= totEntratePrev ? 'var(--verde)' : 'var(--ambra)' }}>{fmt(entrateEffettive - totEntratePrev)}</strong></span>
           </div>
@@ -707,7 +707,7 @@ export default function BudgetStagionalePage() {
         <div>
           {(addingU || editIdU) && (
             <div className="card" style={{ padding: '20px 24px', marginBottom: 20, borderLeft: '3px solid var(--rosso)' }}>
-              <div style={{ fontSize: 12, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--rosso)', marginBottom: 14 }}>
+              <div style={{ fontSize: 12, fontFamily: 'var(--font-mono)', textTransform: 'none', letterSpacing: '0', color: 'var(--rosso)', marginBottom: 14 }}>
                 {editIdU ? '✏️ Modifica uscita' : '+ Nuova uscita prevista'}
               </div>
               <FormVoce tipo="uscita" initial={editIdU ? uscitePrev.find(v => v.id === editIdU) : undefined}
@@ -755,7 +755,7 @@ export default function BudgetStagionalePage() {
               </div>
             )}
           </div>
-          <div style={{ marginTop: 16, padding: '12px 16px', background: 'var(--grigio-6)', borderRadius: 6, display: 'flex', gap: 24, flexWrap: 'wrap' }}>
+          <div style={{ marginTop: 16, padding: '12px 16px', background: 'var(--grigio-6)', borderRadius: 10, display: 'flex', gap: 24, flexWrap: 'wrap' }}>
             <span style={{ fontSize: 12, color: 'var(--grigio-3)' }}>Uscite effettive (prima nota): <strong style={{ color: 'var(--rosso)' }}>{fmt(usciteEffettive)}</strong></span>
             <span style={{ fontSize: 12, color: 'var(--grigio-3)' }}>Differenza: <strong style={{ color: usciteEffettive <= totUscitePrev ? 'var(--verde)' : 'var(--rosso)' }}>{fmt(usciteEffettive - totUscitePrev)}</strong></span>
             {budget && <span style={{ fontSize: 12, color: 'var(--grigio-3)' }}>Tetto residuo: <strong style={{ color: totUscitePrev > budget.budget_totale_stagione ? 'var(--rosso)' : 'var(--verde)' }}>{fmt(budget.budget_totale_stagione - totUscitePrev)}</strong></span>}
@@ -766,7 +766,7 @@ export default function BudgetStagionalePage() {
       {/* ── TAB CONFIGURA TETTO ───────────────────────────────────────────────── */}
       {tab === 'configura' && canEdit && (
         <div className="card" style={{ padding: '24px 28px', maxWidth: 560 }}>
-          <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 20, color: 'var(--grigio)', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+          <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 20, color: 'var(--grigio)', fontFamily: 'var(--font-mono)', textTransform: 'none', letterSpacing: '0' }}>
             ⚙ Configura tetto di budget — {stagione}
           </div>
           {budget && !editTetto && (
@@ -781,7 +781,7 @@ export default function BudgetStagionalePage() {
                   <span style={{ fontFamily: 'var(--font-mono)', fontSize: 15, fontWeight: 700, color: 'var(--ambra)' }}>{fmt(budget.budget_mercato)}</span>
                 </div>
                 {budget.note_budget && (
-                  <div style={{ padding: '10px 14px', background: 'var(--grigio-6)', borderRadius: 4, fontSize: 12, color: 'var(--grigio-3)' }}>
+                  <div style={{ padding: '10px 14px', background: 'var(--grigio-6)', borderRadius: 10, fontSize: 12, color: 'var(--grigio-3)' }}>
                     {budget.note_budget}
                   </div>
                 )}
@@ -797,7 +797,7 @@ export default function BudgetStagionalePage() {
                 <label className="label">Budget totale stagione (€) *</label>
                 <input className="input" type="number" min={0} step={1} value={tBudget || ''}
                   onChange={e => setTBudget(parseFloat(e.target.value) || 0)} placeholder="es. 150000" />
-                <div style={{ fontSize: 11, color: 'var(--grigio-4)', marginTop: 4 }}>
+                <div style={{ fontSize: 12, color: 'var(--grigio-4)', marginTop: 4 }}>
                   Tetto massimo complessivo — visibile anche a Segretario e Team Manager
                 </div>
               </div>
@@ -805,7 +805,7 @@ export default function BudgetStagionalePage() {
                 <label className="label">Budget di mercato (€)</label>
                 <input className="input" type="number" min={0} step={1} value={tMercato || ''}
                   onChange={e => setTMercato(parseFloat(e.target.value) || 0)} placeholder="es. 30000" />
-                <div style={{ fontSize: 11, color: 'var(--grigio-4)', marginTop: 4 }}>
+                <div style={{ fontSize: 12, color: 'var(--grigio-4)', marginTop: 4 }}>
                   Quota destinata ad acquisti / cessioni — visibile anche al DS
                 </div>
               </div>
@@ -829,7 +829,7 @@ export default function BudgetStagionalePage() {
       {toast && (
         <div style={{
           position: 'fixed', bottom: 24, right: 24, zIndex: 9999,
-          padding: '12px 20px', borderRadius: 6,
+          padding: '12px 20px', borderRadius: 10,
           background: toast.ok ? 'var(--verde)' : 'var(--rosso)',
           color: '#fff', fontSize: 13, fontWeight: 600,
           boxShadow: '0 4px 20px rgba(0,0,0,0.4)',

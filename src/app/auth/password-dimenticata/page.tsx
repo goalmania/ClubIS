@@ -37,7 +37,7 @@ export default function PasswordDimenticataPage() {
           <img src="/clubis-logo.png" alt="ClubIS" style={{ height: 56, margin: '0 auto', display: 'block' }} />
         </div>
 
-        <div className="card" style={{ padding: '32px 28px', background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2 }}>
+        <div className="card" style={{ padding: '32px 28px', background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8 }}>
           {inviata ? (
             <div style={{ textAlign: 'center' }}>
               <div style={{
@@ -50,7 +50,7 @@ export default function PasswordDimenticataPage() {
                   <polyline points="20 6 9 17 4 12"/>
                 </svg>
               </div>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 17, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--white)', marginBottom: 10 }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 17, textTransform: 'none', letterSpacing: '0', color: 'var(--white)', marginBottom: 10 }}>
                 Email inviata!
               </div>
               <div style={{ fontFamily: 'var(--font-sans)', fontSize: 13, color: 'var(--gray)', marginBottom: 24, lineHeight: 1.6 }}>
@@ -62,7 +62,7 @@ export default function PasswordDimenticataPage() {
             </div>
           ) : (
             <>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 18, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--white)', marginBottom: 6 }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 18, textTransform: 'none', letterSpacing: '0', color: 'var(--white)', marginBottom: 6 }}>
                 Password dimenticata
               </div>
               <div style={{ fontFamily: 'var(--font-sans)', fontSize: 13, color: 'var(--gray)', marginBottom: 28 }}>
@@ -107,7 +107,7 @@ export default function PasswordDimenticataPage() {
         <div style={{ textAlign: 'center', marginTop: 20 }}>
           <Link
             href="/auth/login"
-            style={{ fontSize: 12, color: 'var(--gray)', textDecoration: 'none', fontFamily: 'var(--font-mono)', letterSpacing: '0.04em' }}
+            style={{ fontSize: 12, color: 'var(--gray)', textDecoration: 'none', fontFamily: 'var(--font-mono)', letterSpacing: '0' }}
           >
             ← Torna al login
           </Link>

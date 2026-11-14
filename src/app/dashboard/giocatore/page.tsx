@@ -143,7 +143,7 @@ export default function GiocatoreDashboard() {
   if (stato === 'demo') return (
     <div style={{ padding: 40, textAlign: 'center' }}>
       <div style={{ fontSize: 36, marginBottom: 12 }}>🎽</div>
-      <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16, textTransform: 'uppercase', color: 'var(--white)', marginBottom: 8 }}>
+      <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16, textTransform: 'none', color: 'var(--white)', marginBottom: 8 }}>
         Anteprima area giocatore
       </div>
       <div style={{ fontSize: 13, color: 'var(--gray)', maxWidth: 360, margin: '0 auto' }}>
@@ -162,8 +162,8 @@ export default function GiocatoreDashboard() {
         ].map(item => (
           <Link key={item.href} href={item.href} style={{
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
-            padding: '16px 12px', background: '#111', border: '1px solid var(--border-solid)',
-            borderRadius: 2, color: 'var(--white)', textDecoration: 'none', fontSize: 12, fontWeight: 600,
+            padding: '16px 12px', background: 'var(--surface-2)', border: '1px solid var(--border-solid)',
+            borderRadius: 8, color: 'var(--white)', textDecoration: 'none', fontSize: 12, fontWeight: 600,
           }}>
             <span style={{ fontSize: 22 }}>{item.icon}</span>
             {item.label}
@@ -177,7 +177,7 @@ export default function GiocatoreDashboard() {
   if (stato === 'errore') return (
     <div style={{ padding: 40, textAlign: 'center' }}>
       <div style={{ fontSize: 36, marginBottom: 12 }}>⚠️</div>
-      <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16, textTransform: 'uppercase', color: 'var(--white)', marginBottom: 8 }}>
+      <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16, textTransform: 'none', color: 'var(--white)', marginBottom: 8 }}>
         Sessione scaduta
       </div>
       <div style={{ fontSize: 13, color: 'var(--gray)' }}>
@@ -195,11 +195,11 @@ export default function GiocatoreDashboard() {
       {/* Header atleta */}
       <div style={{
         display: 'flex', alignItems: 'center', gap: 20, marginBottom: 32,
-        padding: '20px 24px', background: '#111',
-        border: '1px solid var(--border-solid)', borderRadius: 2,
+        padding: '20px 24px', background: 'var(--surface-2)',
+        border: '1px solid var(--border-solid)', borderRadius: 8,
       }}>
         <div style={{
-          width: 56, height: 56, borderRadius: 2, background: 'var(--gray-mid)',
+          width: 56, height: 56, borderRadius: 8, background: 'var(--gray-mid)',
           border: '1px solid var(--border-solid)', display: 'flex',
           alignItems: 'center', justifyContent: 'center', fontSize: 22, flexShrink: 0, overflow: 'hidden',
         }}>
@@ -209,24 +209,24 @@ export default function GiocatoreDashboard() {
         </div>
         <div style={{ flex: 1 }}>
           <div style={{
-            fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 22,
-            textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)', marginBottom: 4,
+            fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 22,
+            textTransform: 'none', letterSpacing: '-0.01em', color: 'var(--white)', marginBottom: 4,
           }}>
             {giocatore.cognome} {giocatore.nome}
           </div>
           <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
             {giocatore.ruolo_principale && (
-              <span style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--accent)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+              <span style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: 'var(--accent)', letterSpacing: '0', textTransform: 'none' }}>
                 {giocatore.ruolo_principale.replace(/_/g, ' ')}
               </span>
             )}
             {giocatore.codice_tessera_figc && (
-              <span style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--gray)', letterSpacing: '0.08em' }}>
+              <span style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: 'var(--gray)', letterSpacing: '0' }}>
                 Tessera: {giocatore.codice_tessera_figc}
               </span>
             )}
             {giocatore.data_nascita && (
-              <span style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--gray)' }}>
+              <span style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: 'var(--gray)' }}>
                 Nato il {formatData(giocatore.data_nascita)}
               </span>
             )}
@@ -253,7 +253,7 @@ export default function GiocatoreDashboard() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
 
         {/* Prossime gare */}
-        <div style={{ background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2, overflow: 'hidden' }}>
+        <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8, overflow: 'hidden' }}>
           <div style={cardHeader}>Prossime gare</div>
           {prossimi.length === 0
             ? <div style={emptyRow}>Nessuna gara programmata</div>
@@ -261,11 +261,11 @@ export default function GiocatoreDashboard() {
                 <div key={p.id} style={{ padding: '10px 18px', borderBottom: '1px solid var(--border-solid)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>
                     <div style={{ fontSize: 13, color: 'var(--white)', fontWeight: 600 }}>{p.avversario}</div>
-                    <div style={{ fontSize: 11, color: 'var(--gray)', marginTop: 2, fontFamily: 'var(--font-mono)' }}>
+                    <div style={{ fontSize: 12, color: 'var(--gray)', marginTop: 2, fontFamily: 'var(--font-mono)' }}>
                       {formatData(p.data_ora)} {formatOra(p.data_ora)} · {p.casa_trasferta === 'casa' ? 'Casa' : 'Trasferta'}
                     </div>
                   </div>
-                  <span style={{ fontSize: 10, padding: '2px 8px', background: 'rgba(200,240,0,0.1)', color: 'var(--accent)', fontFamily: 'var(--font-mono)', textTransform: 'uppercase' }}>
+                  <span style={{ fontSize: 12, padding: '2px 8px', background: 'rgba(200,240,0,0.1)', color: 'var(--accent)', fontFamily: 'var(--font-mono)', textTransform: 'none' }}>
                     {p.tipo}
                   </span>
                 </div>
@@ -273,7 +273,7 @@ export default function GiocatoreDashboard() {
         </div>
 
         {/* Quote */}
-        <div style={{ background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2, overflow: 'hidden' }}>
+        <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8, overflow: 'hidden' }}>
           <div style={cardHeader}>Situazione pagamenti</div>
           {quote.length === 0
             ? <div style={emptyRow}>Nessuna quota registrata</div>
@@ -284,12 +284,12 @@ export default function GiocatoreDashboard() {
                   <div key={i} style={{ padding: '12px 18px', borderBottom: '1px solid var(--border-solid)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
                       <span style={{ fontSize: 12, color: 'var(--white)', fontWeight: 600 }}>Stagione {q.stagione}</span>
-                      <span style={{ fontSize: 11, color: colore, fontFamily: 'var(--font-mono)', textTransform: 'uppercase' }}>{q.stato}</span>
+                      <span style={{ fontSize: 12, color: colore, fontFamily: 'var(--font-mono)', textTransform: 'none' }}>{q.stato}</span>
                     </div>
-                    <div style={{ height: 4, background: 'var(--gray-mid)', borderRadius: 2, overflow: 'hidden' }}>
+                    <div style={{ height: 4, background: 'var(--gray-mid)', borderRadius: 8, overflow: 'hidden' }}>
                       <div style={{ height: '100%', width: `${perc}%`, background: colore, transition: 'width 0.3s' }} />
                     </div>
-                    <div style={{ fontSize: 10, color: 'var(--gray)', marginTop: 4, fontFamily: 'var(--font-mono)' }}>
+                    <div style={{ fontSize: 12, color: 'var(--gray)', marginTop: 4, fontFamily: 'var(--font-mono)' }}>
                       {formatEuro(Number(q.importo_pagato))} / {formatEuro(Number(q.importo_totale))}
                     </div>
                   </div>
@@ -300,10 +300,10 @@ export default function GiocatoreDashboard() {
 
       {/* Prossime trasferte */}
       {trasferte.length > 0 && (
-        <div style={{ background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2, overflow: 'hidden', marginBottom: 16 }}>
+        <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8, overflow: 'hidden', marginBottom: 16 }}>
           <div style={{ ...cardHeader, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span>Prossime trasferte</span>
-            <Link href="/dashboard/giocatore/trasferte" style={{ fontSize: 10, color: 'var(--accent)', fontFamily: 'var(--font-mono)', textDecoration: 'none' }}>Vedi tutte →</Link>
+            <Link href="/dashboard/giocatore/trasferte" style={{ fontSize: 12, color: 'var(--accent)', fontFamily: 'var(--font-mono)', textDecoration: 'none' }}>Vedi tutte →</Link>
           </div>
           {trasferte.slice(0, 3).map((t: any) => {
             const dp = new Date(t.data_partenza)
@@ -311,13 +311,13 @@ export default function GiocatoreDashboard() {
               <div key={t.id} style={{ padding: '10px 18px', borderBottom: '1px solid var(--border-solid)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
                   <div style={{ fontSize: 13, color: 'var(--white)', fontWeight: 600 }}>{t.destinazione}</div>
-                  <div style={{ fontSize: 11, color: 'var(--gray)', marginTop: 2, fontFamily: 'var(--font-mono)' }}>
+                  <div style={{ fontSize: 12, color: 'var(--gray)', marginTop: 2, fontFamily: 'var(--font-mono)' }}>
                     {dp.toLocaleDateString('it-IT')}
                     {t.mezzo && ` · ${t.mezzo}`}
                     {t.partite?.avversario && ` · vs ${t.partite.avversario}`}
                   </div>
                 </div>
-                <span style={{ fontSize: 10, padding: '2px 8px', color: 'var(--accent)', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', border: '1px solid rgba(200,240,0,0.3)' }}>
+                <span style={{ fontSize: 12, padding: '2px 8px', color: 'var(--accent)', fontFamily: 'var(--font-mono)', textTransform: 'none', border: '1px solid rgba(200,240,0,0.3)' }}>
                   {t.stato}
                 </span>
               </div>
@@ -328,7 +328,7 @@ export default function GiocatoreDashboard() {
 
       {/* Prossimi eventi calendario (scuola calcio) */}
       {isScuolaCalcio && eventiCalendario.length > 0 && (
-        <div style={{ background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2, overflow: 'hidden', marginBottom: 16 }}>
+        <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8, overflow: 'hidden', marginBottom: 16 }}>
           <div style={cardHeader}>Prossimi eventi</div>
           {eventiCalendario.map((e: any) => (
             <div key={e.id} style={{ padding: '10px 18px', borderBottom: '1px solid var(--border-solid)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -336,7 +336,7 @@ export default function GiocatoreDashboard() {
                 <div style={{ fontSize: 13, color: 'var(--white)', fontWeight: 600 }}>
                   {{ allenamento: 'Allenamento', partita: 'Partita', riunione: 'Riunione', visita_medica: 'Visita medica', trasferta: 'Trasferta' }[e.tipologia as string] ?? e.tipologia}
                 </div>
-                <div style={{ fontSize: 11, color: 'var(--gray)', marginTop: 2, fontFamily: 'var(--font-mono)' }}>
+                <div style={{ fontSize: 12, color: 'var(--gray)', marginTop: 2, fontFamily: 'var(--font-mono)' }}>
                   {formatData(e.data_ora_inizio)} {formatOra(e.data_ora_inizio)}
                   {e.luogo_testo && ` · ${e.luogo_testo}`}
                 </div>
@@ -348,7 +348,7 @@ export default function GiocatoreDashboard() {
 
       {/* Ultime convocazioni */}
       {convocazioni.length > 0 && (
-        <div style={{ background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2, overflow: 'hidden' }}>
+        <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8, overflow: 'hidden' }}>
           <div style={cardHeader}>Ultime convocazioni</div>
           {convocazioni.map((c: any, i: number) => {
             const p       = c.partite
@@ -358,12 +358,12 @@ export default function GiocatoreDashboard() {
                 <div>
                   <div style={{ fontSize: 13, color: 'var(--white)', fontWeight: 600 }}>{p?.avversario ?? '—'}</div>
                   {p?.data_ora && (
-                    <div style={{ fontSize: 11, color: 'var(--gray)', marginTop: 2, fontFamily: 'var(--font-mono)' }}>
+                    <div style={{ fontSize: 12, color: 'var(--gray)', marginTop: 2, fontFamily: 'var(--font-mono)' }}>
                       {formatData(p.data_ora)}
                     </div>
                   )}
                 </div>
-                <span style={{ fontSize: 10, padding: '2px 8px', color: colore, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', border: `1px solid ${colore}`, borderRadius: 2 }}>
+                <span style={{ fontSize: 12, padding: '2px 8px', color: colore, fontFamily: 'var(--font-mono)', textTransform: 'none', border: `1px solid ${colore}`, borderRadius: 8 }}>
                   {c.stato_risposta ?? 'in_attesa'}
                 </span>
               </div>
@@ -379,25 +379,25 @@ export default function GiocatoreDashboard() {
 const cardHeader: React.CSSProperties = {
   padding: '14px 18px', borderBottom: '1px solid var(--border-solid)',
   fontFamily: 'var(--font-display)', fontWeight: 700,
-  textTransform: 'uppercase', fontSize: 13, color: 'var(--white)',
+  textTransform: 'none', fontSize: 13, color: 'var(--white)',
 }
 const emptyRow: React.CSSProperties = {
   padding: '24px 18px', fontSize: 12, color: 'var(--gray)',
 }
 const linkBtn: React.CSSProperties = {
   padding: '6px 12px', background: 'rgba(255,255,255,0.05)',
-  border: '1px solid var(--border-solid)', borderRadius: 2,
-  color: 'var(--white)', textDecoration: 'none', fontSize: 11,
+  border: '1px solid var(--border-solid)', borderRadius: 8,
+  color: 'var(--white)', textDecoration: 'none', fontSize: 12,
   fontWeight: 600, whiteSpace: 'nowrap',
 }
 
 function StatCard({ icona, label, value, sub }: { icona: string; label: string; value: string; sub: string }) {
   return (
-    <div style={{ background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2, padding: '16px 18px' }}>
+    <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8, padding: '16px 18px' }}>
       <div style={{ fontSize: 20, marginBottom: 8 }}>{icona}</div>
-      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--gray)', marginBottom: 4 }}>{label}</div>
-      <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 24, color: 'var(--white)' }}>{value}</div>
-      <div style={{ fontSize: 11, color: 'var(--gray)', marginTop: 4 }}>{sub}</div>
+      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'none', letterSpacing: '0', color: 'var(--gray)', marginBottom: 4 }}>{label}</div>
+      <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 24, color: 'var(--white)' }}>{value}</div>
+      <div style={{ fontSize: 12, color: 'var(--gray)', marginTop: 4 }}>{sub}</div>
     </div>
   )
 }

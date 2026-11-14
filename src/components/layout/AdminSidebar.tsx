@@ -39,7 +39,7 @@ export default function AdminSidebar({ utente }: { utente: { nome: string; cogno
     <aside style={{
       width: 240,
       minHeight: '100vh',
-      background: '#0d0d0d',
+      background: 'var(--surface-1)',
       borderRight: '1px solid var(--border-solid)',
       display: 'flex',
       flexDirection: 'column',
@@ -55,13 +55,13 @@ export default function AdminSidebar({ utente }: { utente: { nome: string; cogno
           <img src="/clubis-logo.png" alt="ClubIS" style={{ height: 28, flexShrink: 0 }} />
           <div>
             <div style={{
-              fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 14,
-              letterSpacing: '0.15em', textTransform: 'uppercase',
+              fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14,
+              letterSpacing: '0', textTransform: 'none',
             }}>
               <span style={{ color: 'var(--gray)' }}> / </span>
               <span style={{ color: 'var(--white)' }}>ADMIN</span>
             </div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Pannello di controllo</div>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', letterSpacing: '0', textTransform: 'none' }}>Pannello di controllo</div>
           </div>
         </div>
       </div>
@@ -78,9 +78,9 @@ export default function AdminSidebar({ utente }: { utente: { nome: string; cogno
               style={{
                 display: 'flex', alignItems: 'center', gap: 10,
                 padding: '8px 10px',
-                borderRadius: 2,
+                borderRadius: 8,
                 fontFamily: 'var(--font-display)',
-                fontSize: '0.78rem', letterSpacing: '0.08em', textTransform: 'uppercase',
+                fontSize: '0.78rem', letterSpacing: '0', textTransform: 'none',
                 textDecoration: 'none',
                 marginBottom: 1,
                 background: attiva ? 'rgba(200,240,0,0.06)' : 'transparent',
@@ -102,9 +102,9 @@ export default function AdminSidebar({ utente }: { utente: { nome: string; cogno
           href="/dashboard/presidente"
           style={{
             display: 'flex', alignItems: 'center', gap: 10,
-            padding: '8px 10px', borderRadius: 2,
+            padding: '8px 10px', borderRadius: 8,
             fontFamily: 'var(--font-display)', fontSize: '0.78rem',
-            letterSpacing: '0.08em', textTransform: 'uppercase',
+            letterSpacing: '0', textTransform: 'none',
             textDecoration: 'none',
             color: 'var(--gray)',
             transition: 'all 0.15s',
@@ -120,14 +120,14 @@ export default function AdminSidebar({ utente }: { utente: { nome: string; cogno
         padding: '12px 12px',
         borderTop: '1px solid var(--border-solid)',
         display: 'flex', alignItems: 'center', gap: 9,
-        background: '#0d0d0d',
+        background: 'var(--surface-1)',
       }}>
         <div style={{
-          width: 32, height: 32, borderRadius: 2,
+          width: 32, height: 32, borderRadius: 8,
           background: 'var(--accent-red-lt)', color: 'var(--accent-red)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontFamily: 'var(--font-display)', fontSize: 11, fontWeight: 700,
-          letterSpacing: '0.05em', textTransform: 'uppercase',
+          fontFamily: 'var(--font-display)', fontSize: 12, fontWeight: 700,
+          letterSpacing: '0', textTransform: 'none',
           flexShrink: 0, border: '1px solid rgba(255,68,68,0.2)',
         }}>
           {iniziali}
@@ -135,19 +135,19 @@ export default function AdminSidebar({ utente }: { utente: { nome: string; cogno
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{
             fontFamily: 'var(--font-display)', fontSize: 12, fontWeight: 600,
-            letterSpacing: '0.05em', textTransform: 'uppercase',
+            letterSpacing: '0', textTransform: 'none',
             color: 'var(--white)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
           }}>
             {utente.nome} {utente.cognome}
           </div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', letterSpacing: '0.08em' }}>Super Admin</div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', letterSpacing: '0' }}>Super Admin</div>
         </div>
         <button
           onClick={handleLogout}
           title="Esci"
           style={{
             background: 'none', border: 'none', cursor: 'pointer',
-            color: 'var(--gray)', padding: 4, borderRadius: 2,
+            color: 'var(--gray)', padding: 4, borderRadius: 8,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             flexShrink: 0,
           }}

@@ -348,7 +348,7 @@ export default function PresidentePagamentiPage() {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Pagamenti</h1>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Pagamenti</h1>
           <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>
             Entrate e uscite societarie
           </p>
@@ -367,7 +367,7 @@ export default function PresidentePagamentiPage() {
       {(kpi?.totRitardo ?? 0) > 0 && (
         <div style={{
           background: 'rgba(248,81,73,0.1)', border: '1px solid var(--accent-red)',
-          borderRadius: 10, padding: '12px 16px', marginBottom: 20,
+          borderRadius: 14, padding: '12px 16px', marginBottom: 20,
           fontSize: 14, color: 'var(--accent-red)', fontWeight: 600,
         }}>
           ⚠️ {fmt(kpi!.totRitardo)} di rate in ritardo
@@ -418,7 +418,7 @@ export default function PresidentePagamentiPage() {
             <thead>
               <tr style={{ background: 'var(--bg-input)' }}>
                 {(['Descrizione', 'Tipo', 'Importo', 'Rate', ''] as const).map(h => (
-                  <th key={h} style={{ padding: '9px 16px', textAlign: h === 'Importo' ? 'right' : 'left', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', borderBottom: '1px solid var(--border)' }}>
+                  <th key={h} style={{ padding: '9px 16px', textAlign: h === 'Importo' ? 'right' : 'left', fontSize: 12, fontWeight: 600, textTransform: 'none', letterSpacing: '0', color: 'var(--text-muted)', borderBottom: '1px solid var(--border)' }}>
                     {h}
                   </th>
                 ))}
@@ -432,7 +432,7 @@ export default function PresidentePagamentiPage() {
                     <td style={{ padding: '11px 16px', fontSize: 13 }}>
                       <div style={{ fontWeight: 600 }}>{p.descrizione}</div>
                       {p.soggetto_nome && (
-                        <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 1 }}>{p.soggetto_nome}</div>
+                        <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 1 }}>{p.soggetto_nome}</div>
                       )}
                     </td>
                     <td style={{ padding: '11px 16px', fontSize: 12 }}>
@@ -450,7 +450,7 @@ export default function PresidentePagamentiPage() {
                       {stati.every((s: string) => s === 'pagata') ? ' ✓' : ''}
                     </td>
                     <td style={{ padding: '11px 16px', textAlign: 'right' }}>
-                      <Link href="/dashboard/segretario/pagamenti" className="btn btn-ghost btn-sm" style={{ fontSize: 11 }}>
+                      <Link href="/dashboard/segretario/pagamenti" className="btn btn-ghost btn-sm" style={{ fontSize: 12 }}>
                         Dettaglio →
                       </Link>
                     </td>
@@ -470,16 +470,16 @@ export default function PresidentePagamentiPage() {
       >
         <div style={{ minHeight: 260 }}>
           {/* Breadcrumb step */}
-          <div style={{ display: 'flex', gap: 8, marginBottom: 20, fontSize: 11, color: 'var(--text-muted)', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: 8, marginBottom: 20, fontSize: 12, color: 'var(--text-muted)', flexWrap: 'wrap' }}>
             {(['tipo', 'categoria', 'soggetto', 'importo'] as Fase[]).map((f, i) => (
               <span key={f} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 {i > 0 && <span>›</span>}
                 <span style={{
-                  padding: '2px 8px', borderRadius: 4,
+                  padding: '2px 8px', borderRadius: 10,
                   background: form.fase === f ? 'var(--accent)' : 'var(--bg-input)',
                   color: form.fase === f ? '#000' : 'var(--text-muted)',
                   fontWeight: form.fase === f ? 700 : 400,
-                  fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em',
+                  fontSize: 12, textTransform: 'none', letterSpacing: '0',
                 }}>
                   {f === 'tipo' ? 'Tipo' : f === 'categoria' ? 'Categoria' : f === 'soggetto' ? 'Soggetto' : 'Importo'}
                 </span>
@@ -497,7 +497,7 @@ export default function PresidentePagamentiPage() {
                   style={{
                     padding: '28px 20px',
                     border: `2px solid ${tipo === 'entrata' ? 'var(--accent-green)' : 'var(--accent-red)'}`,
-                    borderRadius: 12,
+                    borderRadius: 16,
                     background: tipo === 'entrata' ? 'rgba(34,197,94,0.06)' : 'rgba(248,81,73,0.06)',
                     cursor: 'pointer',
                     color: 'var(--text-primary)',
@@ -507,7 +507,7 @@ export default function PresidentePagamentiPage() {
                   <div style={{ fontSize: 28, marginBottom: 8 }}>
                     {tipo === 'entrata' ? '💰' : '💸'}
                   </div>
-                  <div style={{ fontWeight: 700, fontSize: 16, textTransform: 'uppercase', letterSpacing: '0.04em', color: tipo === 'entrata' ? 'var(--accent-green)' : 'var(--accent-red)' }}>
+                  <div style={{ fontWeight: 700, fontSize: 16, textTransform: 'none', letterSpacing: '0', color: tipo === 'entrata' ? 'var(--accent-green)' : 'var(--accent-red)' }}>
                     {tipo === 'entrata' ? 'Entrata' : 'Uscita'}
                   </div>
                   <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>
@@ -536,7 +536,7 @@ export default function PresidentePagamentiPage() {
                         padding: '14px 16px',
                         background: 'var(--bg-input)',
                         border: '1px solid var(--border)',
-                        borderRadius: 8,
+                        borderRadius: 12,
                         cursor: 'pointer',
                         color: 'var(--text-primary)',
                         textAlign: 'left',
@@ -582,7 +582,7 @@ export default function PresidentePagamentiPage() {
                     ))}
                   </select>
                   {!loadingOp && opzioni.length === 0 && (
-                    <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>
+                    <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>
                       {form.categoriaSel.soggetto === 'famiglia'
                         ? 'Nessuna famiglia registrata. Vai ai giocatori per aggiungere i dati famiglia.'
                         : 'Nessun elemento trovato.'}
@@ -625,7 +625,7 @@ export default function PresidentePagamentiPage() {
           {form.fase === 'importo' && form.categoriaSel && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               {/* Riepilogo */}
-              <div style={{ background: 'var(--bg-input)', borderRadius: 8, padding: '10px 14px', fontSize: 13, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+              <div style={{ background: 'var(--bg-input)', borderRadius: 12, padding: '10px 14px', fontSize: 13, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
                 <span>{form.categoriaSel.icon} <strong>{form.categoriaSel.label}</strong></span>
                 <span style={{ color: 'var(--text-muted)' }}>→</span>
                 <span style={{ color: form.tipoOp === 'entrata' ? 'var(--accent-green)' : 'var(--accent-red)' }}>
@@ -677,7 +677,7 @@ export default function PresidentePagamentiPage() {
 
               {/* Preview rate */}
               {form.importoTot && parseFloat(form.importoTot) > 0 && (
-                <div style={{ fontSize: 12, color: 'var(--text-muted)', background: 'var(--bg-input)', borderRadius: 6, padding: '10px 12px' }}>
+                <div style={{ fontSize: 12, color: 'var(--text-muted)', background: 'var(--bg-input)', borderRadius: 10, padding: '10px 12px' }}>
                   {generaRate(parseFloat(form.importoTot), form.nRate, form.primaScadenza).map(r => (
                     <div key={r.numero} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 2 }}>
                       <span>Rata {r.numero} — {new Date(r.scadenza).toLocaleDateString('it-IT')}</span>

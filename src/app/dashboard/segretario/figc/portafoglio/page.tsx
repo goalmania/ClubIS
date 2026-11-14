@@ -120,15 +120,15 @@ export default function PortafoglioFIGCPage() {
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div>
-            <label style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)', display: 'block', marginBottom: 6 }}>IMPORTO RICARICATO (€)</label>
+            <label style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', display: 'block', marginBottom: 6 }}>IMPORTO RICARICATO (€)</label>
             <input type="number" min="0" step="0.01" className="input" style={{ width: '100%' }} placeholder="100.00" value={importo} onChange={e => setImporto(e.target.value)} />
           </div>
           <div>
-            <label style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)', display: 'block', marginBottom: 6 }}>DATA RICARICA</label>
+            <label style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', display: 'block', marginBottom: 6 }}>DATA RICARICA</label>
             <input type="date" className="input" style={{ width: '100%' }} value={data} onChange={e => setData(e.target.value)} />
           </div>
           <div>
-            <label style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)', display: 'block', marginBottom: 6 }}>NOTE (opzionale)</label>
+            <label style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', display: 'block', marginBottom: 6 }}>NOTE (opzionale)</label>
             <input type="text" className="input" style={{ width: '100%' }} placeholder="es. Ricarica per tesseramenti marzo" value={note} onChange={e => setNote(e.target.value)} />
           </div>
           <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', paddingTop: 8 }}>
@@ -153,7 +153,7 @@ export default function PortafoglioFIGCPage() {
       {/* Saldo stimato */}
       <div style={{
         display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 1,
-        background: 'var(--border)', borderRadius: 4, overflow: 'hidden', marginBottom: 24,
+        background: 'var(--border)', borderRadius: 10, overflow: 'hidden', marginBottom: 24,
       }}>
         {[
           ['SALDO STIMATO', saldo !== null ? fmt(saldo) : '—', saldoColor],
@@ -161,8 +161,8 @@ export default function PortafoglioFIGCPage() {
           ['TOTALE RICARICATO', fmt(ricariche.reduce((s, r) => s + r.importo, 0)), 'var(--gray)'],
         ].map(([label, val, color]) => (
           <div key={label} style={{ background: 'var(--gray-light)', padding: '20px 24px', textAlign: 'center' }}>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', marginBottom: 6 }}>{label}</div>
-            <div style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 900, color }}>{val}</div>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', marginBottom: 6 }}>{label}</div>
+            <div style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, color }}>{val}</div>
           </div>
         ))}
       </div>
@@ -174,7 +174,7 @@ export default function PortafoglioFIGCPage() {
             ? '🔴 Saldo critico — ricarica prima del prossimo tesseramento'
             : '⚠ Saldo basso — considera di ricaricare il portafoglio FIGC'}
           <a href="https://tesseramenti.figc.it" target="_blank" rel="noopener noreferrer"
-             style={{ marginLeft: 12, color: 'inherit', fontSize: 11 }}>
+             style={{ marginLeft: 12, color: 'inherit', fontSize: 12 }}>
             Portale FIGC →
           </a>
         </div>
@@ -182,12 +182,12 @@ export default function PortafoglioFIGCPage() {
 
       {/* Costi configurazione */}
       <div className="card" style={{ padding: '20px 24px', marginBottom: 24 }}>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: 14 }}>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', letterSpacing: '0', textTransform: 'none', color: 'var(--gray)', marginBottom: 14 }}>
           Costi stimati per tesseramento
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
           <div>
-            <label style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)', display: 'block', marginBottom: 5 }}>TESSERAMENTO DEFINITIVO (€)</label>
+            <label style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', display: 'block', marginBottom: 5 }}>TESSERAMENTO DEFINITIVO (€)</label>
             <input type="number" min="0" step="0.5" className="input" style={{ width: '100%' }}
               value={costi.costo_definitivo}
               onChange={e => setCosti(c => ({ ...c, costo_definitivo: +e.target.value }))}
@@ -195,7 +195,7 @@ export default function PortafoglioFIGCPage() {
             />
           </div>
           <div>
-            <label style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)', display: 'block', marginBottom: 5 }}>TESSERAMENTO PRESTITO (€)</label>
+            <label style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', display: 'block', marginBottom: 5 }}>TESSERAMENTO PRESTITO (€)</label>
             <input type="number" min="0" step="0.5" className="input" style={{ width: '100%' }}
               value={costi.costo_prestito}
               onChange={e => setCosti(c => ({ ...c, costo_prestito: +e.target.value }))}
@@ -207,7 +207,7 @@ export default function PortafoglioFIGCPage() {
 
       {/* Storico ricariche */}
       <div>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: 12 }}>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', letterSpacing: '0', textTransform: 'none', color: 'var(--gray)', marginBottom: 12 }}>
           Storico ricariche
         </div>
         {ricariche.length === 0 ? (
@@ -223,9 +223,9 @@ export default function PortafoglioFIGCPage() {
               }}>
                 <div>
                   <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--white)' }}>{fmtD(r.data)}</div>
-                  {r.note && <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', marginTop: 2 }}>{r.note}</div>}
+                  {r.note && <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', marginTop: 2 }}>{r.note}</div>}
                 </div>
-                <div style={{ fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 900, color: 'var(--accent)' }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 700, color: 'var(--accent)' }}>
                   +{fmt(r.importo)}
                 </div>
               </div>

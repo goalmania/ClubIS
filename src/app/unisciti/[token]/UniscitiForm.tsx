@@ -109,20 +109,20 @@ export default function UniscitiForm({
           marginBottom: 24,
         }}>
           <div style={{
-            fontFamily: 'var(--font-mono)', fontSize: '0.6rem',
-            letterSpacing: '0.2em', color: 'var(--accent)', textTransform: 'uppercase',
+            fontFamily: 'var(--font-mono)', fontSize: '0.78rem',
+            letterSpacing: '0', color: 'var(--accent)', textTransform: 'none',
             marginBottom: 6,
           }}>
             Invito da
           </div>
           <div style={{
-            fontFamily: 'var(--font-display)', fontWeight: 900,
-            fontSize: 22, textTransform: 'uppercase', color: 'var(--white)',
+            fontFamily: 'var(--font-display)', fontWeight: 700,
+            fontSize: 22, textTransform: 'none', color: 'var(--white)',
           }}>
             {clubNome}
           </div>
           <div style={{
-            fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)',
+            fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)',
             marginTop: 4,
           }}>
             {clubCategoria.toUpperCase()}{clubCitta ? ` · ${clubCitta}` : ''}
@@ -136,14 +136,14 @@ export default function UniscitiForm({
           padding: '28px 24px',
         }}>
           <div style={{
-            fontFamily: 'var(--font-display)', fontWeight: 900,
-            textTransform: 'uppercase', fontSize: 16, color: 'var(--white)',
+            fontFamily: 'var(--font-display)', fontWeight: 700,
+            textTransform: 'none', fontSize: 16, color: 'var(--white)',
             marginBottom: 6,
           }}>
             Registrati come {RUOLI_LABEL[ruolo] ?? ruolo}
           </div>
           <div style={{
-            fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)',
+            fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)',
             marginBottom: 24,
           }}>
             Completa il modulo per accedere alla dashboard ClubIS
@@ -151,8 +151,8 @@ export default function UniscitiForm({
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
             <div>
-              <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 10,
-                letterSpacing: '0.15em', color: 'var(--gray)', textTransform: 'uppercase', marginBottom: 6 }}>
+              <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 12,
+                letterSpacing: '0', color: 'var(--gray)', textTransform: 'none', marginBottom: 6 }}>
                 Nome *
               </label>
               <input
@@ -165,8 +165,8 @@ export default function UniscitiForm({
               />
             </div>
             <div>
-              <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 10,
-                letterSpacing: '0.15em', color: 'var(--gray)', textTransform: 'uppercase', marginBottom: 6 }}>
+              <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 12,
+                letterSpacing: '0', color: 'var(--gray)', textTransform: 'none', marginBottom: 6 }}>
                 Cognome *
               </label>
               <input
@@ -181,8 +181,8 @@ export default function UniscitiForm({
           </div>
 
           <div style={{ marginBottom: 12 }}>
-            <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 10,
-              letterSpacing: '0.15em', color: 'var(--gray)', textTransform: 'uppercase', marginBottom: 6 }}>
+            <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 12,
+              letterSpacing: '0', color: 'var(--gray)', textTransform: 'none', marginBottom: 6 }}>
               Email *
             </label>
             <input
@@ -196,8 +196,8 @@ export default function UniscitiForm({
           </div>
 
           <div style={{ marginBottom: 24 }}>
-            <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 10,
-              letterSpacing: '0.15em', color: 'var(--gray)', textTransform: 'uppercase', marginBottom: 6 }}>
+            <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 12,
+              letterSpacing: '0', color: 'var(--gray)', textTransform: 'none', marginBottom: 6 }}>
               Password *
             </label>
             <input
@@ -234,7 +234,7 @@ export default function UniscitiForm({
 
           <p style={{
             marginTop: 16, textAlign: 'center',
-            fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)',
+            fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)',
           }}>
             Hai già un account?{' '}
             <a href="/auth/login" style={{ color: 'var(--accent)' }}>Accedi</a>

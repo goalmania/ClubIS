@@ -151,7 +151,7 @@ export default function SqualifichePage() {
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Squalifiche</h1>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Squalifiche</h1>
           <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>
             Gestione squalifiche FIGC — giocatori non disponibili per squalifica
           </p>
@@ -199,10 +199,10 @@ export default function SqualifichePage() {
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                         {g?.numero_maglia != null && (
                           <span style={{
-                            width: 22, height: 22, borderRadius: 4,
+                            width: 22, height: 22, borderRadius: 10,
                             background: 'var(--bg-input)',
                             display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                            fontSize: 11, fontWeight: 700, color: 'var(--text-secondary)',
+                            fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)',
                             flexShrink: 0,
                           }}>
                             {g.numero_maglia}
@@ -213,7 +213,7 @@ export default function SqualifichePage() {
                             {g?.cognome} {g?.nome}
                           </div>
                           {s.motivo && (
-                            <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 1 }}>
+                            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 1 }}>
                               {s.motivo}
                             </div>
                           )}
@@ -245,7 +245,7 @@ export default function SqualifichePage() {
                       {(s.partite_restanti ?? 0) > 0 && (
                         <button
                           className="btn btn-ghost btn-sm"
-                          style={{ fontSize: 11 }}
+                          style={{ fontSize: 12 }}
                           onClick={() => segnaRientro(s.id)}
                         >
                           Segna rientro
@@ -314,7 +314,7 @@ export default function SqualifichePage() {
               value={form.giornate}
               onChange={e => setForm(f => ({ ...f, giornate: Math.max(1, parseInt(e.target.value) || 1) }))}
             />
-            <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>
+            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>
               La data fine sarà la {form.giornate}ª partita successiva alla data inizio
             </div>
           </div>
@@ -347,10 +347,10 @@ export default function SqualifichePage() {
 const th: React.CSSProperties = {
   padding: '10px 16px',
   textAlign: 'left',
-  fontSize: 11,
+  fontSize: 12,
   fontWeight: 600,
-  textTransform: 'uppercase',
-  letterSpacing: '0.05em',
+  textTransform: 'none',
+  letterSpacing: '0',
   color: 'var(--text-muted)',
   borderBottom: '1px solid var(--border)',
 }

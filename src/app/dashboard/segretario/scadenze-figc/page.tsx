@@ -169,8 +169,8 @@ export default function ScadenzeFIGCPage() {
   // Input style riutilizzabile
   const inp = {
     width: '100%', padding: '9px 12px',
-    background: '#1a1a1a', border: '1px solid var(--border-solid)',
-    borderRadius: 2, color: 'var(--white)', fontSize: 13,
+    background: 'var(--surface-2)', border: '1px solid var(--border-solid)',
+    borderRadius: 8, color: 'var(--white)', fontSize: 13,
     fontFamily: 'var(--font-sans)', outline: 'none',
   } as const
 
@@ -187,9 +187,9 @@ export default function ScadenzeFIGCPage() {
                 style={{
                   padding: '9px 18px', background: 'transparent',
                   color: 'var(--grigio-3)', border: '1px solid var(--border-solid)',
-                  borderRadius: 2, cursor: 'pointer',
+                  borderRadius: 8, cursor: 'pointer',
                   fontFamily: 'var(--font-display)', fontWeight: 700,
-                  fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em',
+                  fontSize: 12, textTransform: 'none', letterSpacing: '0',
                 }}
               >
                 Carica standard 2026/27
@@ -200,9 +200,9 @@ export default function ScadenzeFIGCPage() {
               onClick={apriNuova}
               style={{
                 padding: '9px 18px', background: 'var(--accent)', color: '#0a0a0a',
-                border: 'none', borderRadius: 2, cursor: 'pointer',
+                border: 'none', borderRadius: 8, cursor: 'pointer',
                 fontFamily: 'var(--font-display)', fontWeight: 700,
-                fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em',
+                fontSize: 12, textTransform: 'none', letterSpacing: '0',
               }}
             >
               + Nuova scadenza
@@ -225,15 +225,15 @@ export default function ScadenzeFIGCPage() {
             display: 'flex', alignItems: 'center', gap: 16,
           }}>
             <div style={{
-              fontFamily: 'var(--font-display)', fontWeight: 900,
+              fontFamily: 'var(--font-display)', fontWeight: 700,
               fontSize: 42, color: col, lineHeight: 1, flexShrink: 0, minWidth: 52, textAlign: 'center',
             }}>
               {giorni >= 0 ? giorni : '!'}
             </div>
             <div>
               <div style={{
-                fontFamily: 'var(--font-mono)', fontSize: '0.58rem',
-                letterSpacing: '0.2em', textTransform: 'uppercase', color: col, marginBottom: 4,
+                fontFamily: 'var(--font-mono)', fontSize: '0.78rem',
+                letterSpacing: '0', textTransform: 'none', color: col, marginBottom: 4,
               }}>
                 {giorni < 0 ? 'SCADENZA SUPERATA'
                   : giorni === 0 ? 'SCADE OGGI'
@@ -241,12 +241,12 @@ export default function ScadenzeFIGCPage() {
                   : `PROSSIMA SCADENZA — ${giorni} GIORNI`}
               </div>
               <div style={{
-                fontFamily: 'var(--font-display)', fontWeight: 900,
-                textTransform: 'uppercase', fontSize: 16, color: 'var(--white)',
+                fontFamily: 'var(--font-display)', fontWeight: 700,
+                textTransform: 'none', fontSize: 16, color: 'var(--white)',
               }}>
                 {tipoMeta?.icona} {prossima.titolo}
               </div>
-              <div style={{ fontSize: 11, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)', marginTop: 3 }}>
+              <div style={{ fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)', marginTop: 3 }}>
                 {new Date(prossima.data_scadenza).toLocaleDateString('it-IT', {
                   weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
                 })}
@@ -268,11 +268,11 @@ export default function ScadenzeFIGCPage() {
           { label: 'SCADUTE',        value: scadute.length,   color: scadute.length  > 0 ? '#ff4444' : '#c8f000' },
           { label: 'COMPLETATE',     value: complete.length,  color: '#c8f000' },
         ].map(k => (
-          <div key={k.label} style={{ background: '#111', padding: '12px 18px' }}>
-            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 28, color: k.color, lineHeight: 1 }}>
+          <div key={k.label} style={{ background: 'var(--surface-2)', padding: '12px 18px' }}>
+            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 28, color: k.color, lineHeight: 1 }}>
               {k.value}
             </div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#444', marginTop: 4 }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', letterSpacing: '0', textTransform: 'none', color: 'var(--text-muted)', marginTop: 4 }}>
               {k.label}
             </div>
           </div>
@@ -295,9 +295,9 @@ export default function ScadenzeFIGCPage() {
               background: filtroStato === f.key ? 'var(--accent)' : 'transparent',
               color: filtroStato === f.key ? '#0a0a0a' : 'var(--grigio-3)',
               border: filtroStato === f.key ? 'none' : '1px solid var(--border-solid)',
-              borderRadius: 2, cursor: 'pointer',
+              borderRadius: 8, cursor: 'pointer',
               fontFamily: 'var(--font-display)', fontWeight: 700,
-              fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em',
+              fontSize: 12, textTransform: 'none', letterSpacing: '0',
             }}
           >
             {f.label}
@@ -313,7 +313,7 @@ export default function ScadenzeFIGCPage() {
       ) : scadenze.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '50px 20px' }}>
           <div style={{ fontSize: 48, marginBottom: 16 }}>📋</div>
-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, textTransform: 'uppercase', fontSize: 18, marginBottom: 10, color: 'var(--white)' }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 18, marginBottom: 10, color: 'var(--white)' }}>
             Nessuna scadenza configurata
           </div>
           <p style={{ fontSize: 13, color: 'var(--grigio-4)', marginBottom: 24, lineHeight: 1.7 }}>
@@ -324,9 +324,9 @@ export default function ScadenzeFIGCPage() {
             onClick={seedDefault}
             style={{
               padding: '11px 24px', background: 'var(--accent)', color: '#0a0a0a',
-              border: 'none', borderRadius: 2, cursor: 'pointer',
+              border: 'none', borderRadius: 8, cursor: 'pointer',
               fontFamily: 'var(--font-display)', fontWeight: 700,
-              fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em',
+              fontSize: 12, textTransform: 'none', letterSpacing: '0',
             }}
           >
             Carica scadenze standard 2026/27 →
@@ -354,10 +354,10 @@ export default function ScadenzeFIGCPage() {
                   {/* Countdown box */}
                   {!isCompletata && (
                     <div style={{ width: 52, textAlign: 'center', flexShrink: 0 }}>
-                      <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 24, color: col, lineHeight: 1 }}>
+                      <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 24, color: col, lineHeight: 1 }}>
                         {giorni >= 0 ? giorni : '!'}
                       </div>
-                      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.1em', color: col }}>
+                      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, textTransform: 'none', letterSpacing: '0', color: col }}>
                         {giorni >= 0 ? 'giorni' : 'scad.'}
                       </div>
                     </div>
@@ -368,25 +368,25 @@ export default function ScadenzeFIGCPage() {
                     <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 4, flexWrap: 'wrap' }}>
                       <span style={{
                         fontFamily: 'var(--font-display)', fontWeight: 700,
-                        textTransform: 'uppercase', fontSize: 13, letterSpacing: '0.04em',
+                        textTransform: 'none', fontSize: 13, letterSpacing: '0',
                         color: 'var(--white)',
                       }}>
                         {tipoMeta?.icona} {s.titolo}
                       </span>
                       <span style={{
-                        fontSize: 9, padding: '2px 6px',
+                        fontSize: 11, padding: '2px 6px',
                         background: `${statoMeta?.colore}22`,
                         border: `1px solid ${statoMeta?.colore}55`,
                         color: statoMeta?.colore,
-                        fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', textTransform: 'uppercase',
+                        fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none',
                       }}>
                         {statoMeta?.label}
                       </span>
                     </div>
-                    <div style={{ fontSize: 11, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)', display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                    <div style={{ fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)', display: 'flex', gap: 12, flexWrap: 'wrap' }}>
                       <span>📅 {new Date(s.data_scadenza).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
                       {s.importo_previsto != null && <span>💰 {formatEuro(Number(s.importo_previsto))}</span>}
-                      {s.note && <span style={{ color: '#555' }}>📝 {s.note.slice(0, 60)}{s.note.length > 60 ? '…' : ''}</span>}
+                      {s.note && <span style={{ color: 'var(--text-muted)' }}>📝 {s.note.slice(0, 60)}{s.note.length > 60 ? '…' : ''}</span>}
                     </div>
                   </div>
 
@@ -398,7 +398,7 @@ export default function ScadenzeFIGCPage() {
                         style={{
                           padding: '6px 10px', background: 'transparent',
                           color: 'var(--grigio-3)', border: '1px solid var(--border-solid)',
-                          borderRadius: 2, cursor: 'pointer', fontSize: 12, textDecoration: 'none',
+                          borderRadius: 8, cursor: 'pointer', fontSize: 12, textDecoration: 'none',
                         }}
                         title="Apri link portale"
                       >
@@ -410,8 +410,8 @@ export default function ScadenzeFIGCPage() {
                       style={{
                         padding: '6px 12px', background: 'transparent',
                         color: 'var(--grigio-3)', border: '1px solid var(--border-solid)',
-                        borderRadius: 2, cursor: 'pointer', fontSize: 11,
-                        fontFamily: 'var(--font-display)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em',
+                        borderRadius: 8, cursor: 'pointer', fontSize: 12,
+                        fontFamily: 'var(--font-display)', fontWeight: 600, textTransform: 'none', letterSpacing: '0',
                       }}
                     >
                       Modifica
@@ -423,8 +423,8 @@ export default function ScadenzeFIGCPage() {
                         background: isCompletata ? 'transparent' : 'var(--accent)',
                         color: isCompletata ? 'var(--grigio-3)' : '#0a0a0a',
                         border: isCompletata ? '1px solid var(--border-solid)' : 'none',
-                        borderRadius: 2, cursor: 'pointer', fontSize: 11,
-                        fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em',
+                        borderRadius: 8, cursor: 'pointer', fontSize: 12,
+                        fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', letterSpacing: '0',
                       }}
                     >
                       {isCompletata ? '↩ Riapri' : '✓ Fatto'}
@@ -434,7 +434,7 @@ export default function ScadenzeFIGCPage() {
                       style={{
                         padding: '6px 10px', background: 'transparent',
                         color: '#ff4444', border: '1px solid rgba(255,68,68,0.3)',
-                        borderRadius: 2, cursor: 'pointer', fontSize: 12,
+                        borderRadius: 8, cursor: 'pointer', fontSize: 12,
                       }}
                       title="Elimina"
                     >
@@ -533,8 +533,8 @@ export default function ScadenzeFIGCPage() {
               style={{
                 padding: '9px 20px', background: 'transparent',
                 color: 'var(--grigio-3)', border: '1px solid var(--border-solid)',
-                borderRadius: 2, cursor: 'pointer',
-                fontFamily: 'var(--font-display)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em',
+                borderRadius: 8, cursor: 'pointer',
+                fontFamily: 'var(--font-display)', fontSize: 12, textTransform: 'none', letterSpacing: '0',
               }}
             >
               Annulla
@@ -544,9 +544,9 @@ export default function ScadenzeFIGCPage() {
               disabled={salvando}
               style={{
                 padding: '9px 22px', background: 'var(--accent)', color: '#0a0a0a',
-                border: 'none', borderRadius: 2, cursor: salvando ? 'not-allowed' : 'pointer',
+                border: 'none', borderRadius: 8, cursor: salvando ? 'not-allowed' : 'pointer',
                 fontFamily: 'var(--font-display)', fontWeight: 700,
-                fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em',
+                fontSize: 12, textTransform: 'none', letterSpacing: '0',
                 opacity: salvando ? 0.6 : 1,
               }}
             >

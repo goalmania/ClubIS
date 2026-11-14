@@ -61,9 +61,9 @@ const inputStyle: React.CSSProperties = {
 const labelStyle: React.CSSProperties = {
   display: 'block',
   fontFamily: 'var(--font-mono)',
-  fontSize: 11,
-  letterSpacing: '0.12em',
-  textTransform: 'uppercase' as const,
+  fontSize: 12,
+  letterSpacing: '0',
+  textTransform: 'none' as const,
   color: 'var(--gray)',
   marginBottom: 6,
 }
@@ -276,14 +276,14 @@ export default function OnboardingPage() {
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   background: done ? 'var(--accent)' : active ? (isPropStep ? 'rgba(200,240,0,0.2)' : 'rgba(200,240,0,0.15)') : 'var(--surface)',
                   border: `1px solid ${done || active ? 'var(--accent)' : 'var(--border)'}`,
-                  fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 12,
+                  fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12,
                   color: done ? '#000' : active ? 'var(--accent)' : 'var(--gray)',
                 }}>
                   {done ? '✓' : n}
                 </div>
                 <div style={{
-                  fontSize: 11, fontFamily: 'var(--font-mono)', letterSpacing: '0.1em',
-                  textTransform: 'uppercase',
+                  fontSize: 12, fontFamily: 'var(--font-mono)', letterSpacing: '0',
+                  textTransform: 'none',
                   color: active ? 'var(--accent)' : done ? 'var(--white)' : 'var(--gray)',
                 }}>
                   {label}
@@ -314,8 +314,8 @@ export default function OnboardingPage() {
         {step === 1 && (
           <div>
             <h2 style={{
-              fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 20,
-              textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--white)',
+              fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 20,
+              textTransform: 'none', letterSpacing: '0', color: 'var(--white)',
               marginBottom: 6,
             }}>
               Crea il tuo club
@@ -336,7 +336,7 @@ export default function OnboardingPage() {
                       background: tipoProdotto === 'club_agonistico' ? 'var(--accent)' : 'transparent',
                       color: tipoProdotto === 'club_agonistico' ? '#000' : 'var(--gray)',
                       border: `1px solid ${tipoProdotto === 'club_agonistico' ? 'var(--accent)' : 'var(--border)'}`,
-                      fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.04em',
+                      fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, textTransform: 'none', letterSpacing: '0',
                     }}
                   >
                     Club agonistico
@@ -349,7 +349,7 @@ export default function OnboardingPage() {
                       background: tipoProdotto === 'scuola_calcio_standalone' ? 'var(--accent)' : 'transparent',
                       color: tipoProdotto === 'scuola_calcio_standalone' ? '#000' : 'var(--gray)',
                       border: `1px solid ${tipoProdotto === 'scuola_calcio_standalone' ? 'var(--accent)' : 'var(--border)'}`,
-                      fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.04em',
+                      fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, textTransform: 'none', letterSpacing: '0',
                     }}
                   >
                     Scuola calcio
@@ -421,8 +421,8 @@ export default function OnboardingPage() {
               style={{
                 marginTop: 36, width: '100%', padding: '14px 24px',
                 background: 'var(--accent)', color: '#000',
-                fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 14,
-                textTransform: 'uppercase', letterSpacing: '0.08em', border: 'none',
+                fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14,
+                textTransform: 'none', letterSpacing: '0', border: 'none',
                 cursor: saving || !clubData.nome.trim() || !clubData.citta.trim() ? 'not-allowed' : 'pointer',
                 opacity: saving || !clubData.nome.trim() || !clubData.citta.trim() ? 0.5 : 1,
               }}
@@ -436,8 +436,8 @@ export default function OnboardingPage() {
         {step === 2 && (
           <div>
             <h2 style={{
-              fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 20,
-              textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--white)',
+              fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 20,
+              textTransform: 'none', letterSpacing: '0', color: 'var(--white)',
               marginBottom: 6,
             }}>
               Configura le tue squadre
@@ -454,7 +454,7 @@ export default function OnboardingPage() {
               display: 'flex', alignItems: 'center', gap: 10,
             }}>
               <div style={{
-                width: 18, height: 18, background: 'var(--accent)', borderRadius: 2,
+                width: 18, height: 18, background: 'var(--accent)', borderRadius: 8,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 flexShrink: 0,
               }}>
@@ -464,7 +464,7 @@ export default function OnboardingPage() {
               </div>
               <div>
                 <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--white)' }}>Prima Squadra</div>
-                <div style={{ fontSize: 11, color: 'var(--gray)' }}>Sempre inclusa</div>
+                <div style={{ fontSize: 12, color: 'var(--gray)' }}>Sempre inclusa</div>
               </div>
             </div>
 
@@ -505,8 +505,8 @@ export default function OnboardingPage() {
               <button onClick={handleStep2} disabled={saving} style={{
                 flex: 1, padding: '13px 20px',
                 background: 'var(--accent)', color: '#000',
-                fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 14,
-                textTransform: 'uppercase', letterSpacing: '0.06em', border: 'none',
+                fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14,
+                textTransform: 'none', letterSpacing: '0', border: 'none',
                 cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.6 : 1,
               }}>
                 {saving ? 'Salvataggio...' : 'Avanti →'}
@@ -519,8 +519,8 @@ export default function OnboardingPage() {
         {step === 3 && (
           <div>
             <h2 style={{
-              fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 20,
-              textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--white)',
+              fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 20,
+              textTransform: 'none', letterSpacing: '0', color: 'var(--white)',
               marginBottom: 6,
             }}>
               Invita il tuo staff
@@ -562,8 +562,8 @@ export default function OnboardingPage() {
               <button onClick={() => handleStep3(false)} disabled={saving} style={{
                 flex: 1, padding: '13px 20px',
                 background: 'var(--accent)', color: '#000',
-                fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 14,
-                textTransform: 'uppercase', letterSpacing: '0.06em', border: 'none',
+                fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14,
+                textTransform: 'none', letterSpacing: '0', border: 'none',
                 cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.6 : 1,
               }}>
                 {saving ? 'Invio...' : 'Avanti →'}
@@ -596,8 +596,8 @@ export default function OnboardingPage() {
             </div>
 
             <h2 style={{
-              fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 22,
-              textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--white)',
+              fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 22,
+              textTransform: 'none', letterSpacing: '0', color: 'var(--white)',
               marginBottom: 12,
             }}>
               Sei pronto!
@@ -612,7 +612,7 @@ export default function OnboardingPage() {
               textAlign: 'left', padding: '20px 24px', marginBottom: 32,
               border: '1px solid var(--border)', background: 'rgba(255,255,255,0.02)',
             }}>
-              <div style={{ fontSize: 12, fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--gray)', marginBottom: 12 }}>
+              <div style={{ fontSize: 12, fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none', color: 'var(--gray)', marginBottom: 12 }}>
                 Riepilogo configurazione
               </div>
               <div style={{ fontSize: 13, color: 'var(--white)', marginBottom: 6 }}>
@@ -640,8 +640,8 @@ export default function OnboardingPage() {
               style={{
                 width: '100%', padding: '16px 24px',
                 background: 'var(--accent)', color: '#000',
-                fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 15,
-                textTransform: 'uppercase', letterSpacing: '0.08em', border: 'none',
+                fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15,
+                textTransform: 'none', letterSpacing: '0', border: 'none',
                 cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.6 : 1,
               }}
             >
@@ -656,17 +656,17 @@ export default function OnboardingPage() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
               <div style={{
                 padding: '4px 12px', background: 'rgba(200,240,0,0.12)',
-                border: '1px solid rgba(200,240,0,0.4)', fontSize: 11,
-                fontFamily: 'var(--font-mono)', letterSpacing: '0.1em',
-                textTransform: 'uppercase', color: 'var(--accent)',
+                border: '1px solid rgba(200,240,0,0.4)', fontSize: 12,
+                fontFamily: 'var(--font-mono)', letterSpacing: '0',
+                textTransform: 'none', color: 'var(--accent)',
               }}>
                 Moduli Pro
               </div>
             </div>
 
             <h2 style={{
-              fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 20,
-              textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--white)',
+              fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 20,
+              textTransform: 'none', letterSpacing: '0', color: 'var(--white)',
               marginBottom: 8,
             }}>
               Sei un club professionistico — hai accesso a funzioni avanzate
@@ -729,8 +729,8 @@ export default function OnboardingPage() {
                 style={{
                   flex: 1, padding: '14px 20px',
                   background: 'var(--accent)', color: '#000',
-                  fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 14,
-                  textTransform: 'uppercase', letterSpacing: '0.06em', border: 'none',
+                  fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14,
+                  textTransform: 'none', letterSpacing: '0', border: 'none',
                   cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.6 : 1,
                 }}
               >

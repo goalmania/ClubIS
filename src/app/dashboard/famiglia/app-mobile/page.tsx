@@ -54,7 +54,7 @@ export default function AppMobilePage() {
                 borderBottom: attivo ? '2px solid var(--accent, #c8f000)' : '2px solid transparent',
                 color: attivo ? 'var(--accent, #c8f000)' : 'var(--grigio-3, #999)',
                 fontFamily: 'var(--font-display)', fontWeight: attivo ? 700 : 500, fontSize: 13,
-                textTransform: 'uppercase', letterSpacing: '0.05em', cursor: 'pointer', marginBottom: -1,
+                textTransform: 'none', letterSpacing: '0', cursor: 'pointer', marginBottom: -1,
               }}
             >
               {t === 'ios' ? '🍎 iPhone / iPad' : '🤖 Android'}
@@ -66,7 +66,7 @@ export default function AppMobilePage() {
       {tab === 'ios' ? <IstruzioniIOS /> : <IstruzioniAndroid />}
 
       <div className="card" style={{ padding: '16px 18px', marginTop: 24 }}>
-        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8, color: 'var(--white)' }}>
+        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, textTransform: 'none', letterSpacing: '0', marginBottom: 8, color: 'var(--white)' }}>
           Perché conviene farlo
         </div>
         <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: 'var(--grigio-3, #999)', lineHeight: 1.9 }}>
@@ -87,7 +87,7 @@ function Passo({ n, children }: { n: number; children: React.ReactNode }) {
         flexShrink: 0, width: 30, height: 30, borderRadius: '50%',
         background: 'var(--accent, #c8f000)', color: '#0d0d0d',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 14,
+        fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14,
       }}>
         {n}
       </div>
@@ -103,7 +103,7 @@ function IstruzioniIOS() {
     <div className="card" style={{ padding: '22px 24px' }}>
       <div style={{
         fontSize: 12, fontFamily: 'var(--font-mono)', color: 'var(--accent, #c8f000)',
-        textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700, marginBottom: 18,
+        textTransform: 'none', letterSpacing: '0', fontWeight: 700, marginBottom: 18,
       }}>
         Solo con Safari — su iPhone Chrome non permette di creare l&apos;icona
       </div>
@@ -132,7 +132,7 @@ function IstruzioniAndroid() {
     <div className="card" style={{ padding: '22px 24px' }}>
       <div style={{
         fontSize: 12, fontFamily: 'var(--font-mono)', color: 'var(--accent, #c8f000)',
-        textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700, marginBottom: 18,
+        textTransform: 'none', letterSpacing: '0', fontWeight: 700, marginBottom: 18,
       }}>
         Con Chrome (o altri browser basati su Chrome, es. Samsung Internet)
       </div>

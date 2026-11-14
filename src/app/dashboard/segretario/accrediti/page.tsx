@@ -12,7 +12,7 @@ export default async function AccreditiPage() {
   return (
     <div>
       <div data-onboarding="section-accrediti" style={{ marginBottom: 24 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>
           Accrediti
         </h1>
         <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>

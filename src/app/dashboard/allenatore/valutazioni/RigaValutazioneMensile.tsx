@@ -56,7 +56,7 @@ export default function RigaValutazioneMensile({
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                       {asse.sottocategorie.map(sc => (
-                        <div key={sc.key} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: 'var(--grigio-3)' }}>
+                        <div key={sc.key} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--grigio-3)' }}>
                           <span>{sc.label}</span>
                           <Stelle n={voti[sc.key] ?? 0} />
                         </div>

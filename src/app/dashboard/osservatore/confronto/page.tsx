@@ -67,7 +67,7 @@ function VotoBox({ v, best }: { v: number | null; best: boolean }) {
   if (!v) return <span style={{ color: 'var(--grigio-4)' }}>—</span>
   return (
     <span style={{
-      display: 'inline-flex', width: 32, height: 32, borderRadius: 7,
+      display: 'inline-flex', width: 32, height: 32, borderRadius: 12,
       alignItems: 'center', justifyContent: 'center',
       fontWeight: 700, fontSize: 14, fontFamily: 'var(--font-mono)',
       background: v >= 7 ? 'var(--verde)' : v >= 5 ? 'var(--ambra)' : 'var(--rosso)',
@@ -164,7 +164,7 @@ export default function ConfrontoPage() {
   return (
     <div style={{ animation: 'fadeIn 0.3s ease' }}>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>
           Confronto giocatori
         </h1>
         <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>
@@ -175,13 +175,13 @@ export default function ConfrontoPage() {
       {/* Pannello selezione */}
       <div className="card" style={{ padding: '16px 20px', marginBottom: 20 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-          <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--grigio-3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--grigio-3)', textTransform: 'none', letterSpacing: '0' }}>
             Giocatori da report ({all.length} disponibili)
           </div>
           {selected.length > 0 && (
             <button
               onClick={() => setSelected([])}
-              style={{ fontSize: 11, color: 'var(--grigio-4)', background: 'none', border: 'none', cursor: 'pointer' }}
+              style={{ fontSize: 12, color: 'var(--grigio-4)', background: 'none', border: 'none', cursor: 'pointer' }}
             >
               Deseleziona tutti
             </button>
@@ -202,7 +202,7 @@ export default function ConfrontoPage() {
               key={e}
               onClick={() => setFiltroEsito(e)}
               style={{
-                padding: '4px 10px', borderRadius: 5, fontSize: 11, cursor: 'pointer',
+                padding: '4px 10px', borderRadius: 10, fontSize: 12, cursor: 'pointer',
                 border: filtroEsito === e ? '1.5px solid var(--verde)' : '1px solid var(--grigio-5)',
                 background: filtroEsito === e ? 'var(--verde-lt)' : 'var(--grigio-6)',
                 color: filtroEsito === e ? 'var(--verde)' : 'var(--grigio-3)',
@@ -238,7 +238,7 @@ export default function ConfrontoPage() {
                   onClick={() => !disabled && toggleSelect(r.id)}
                   title={disabled ? 'Massimo 3 giocatori selezionabili' : undefined}
                   style={{
-                    padding: '7px 13px', borderRadius: 7, fontSize: 12, cursor: disabled ? 'not-allowed' : 'pointer',
+                    padding: '7px 13px', borderRadius: 12, fontSize: 12, cursor: disabled ? 'not-allowed' : 'pointer',
                     border: isSel ? `2px solid ${color}` : '1px solid var(--grigio-5)',
                     background: isSel ? `${color}22` : disabled ? 'var(--grigio-6)' : 'var(--grigio-6)',
                     color: isSel ? color : disabled ? 'var(--grigio-4)' : 'var(--grigio-2)',
@@ -252,7 +252,7 @@ export default function ConfrontoPage() {
                     <span style={{
                       width: 16, height: 16, borderRadius: '50%',
                       background: color, color: 'white',
-                      fontSize: 10, fontWeight: 700,
+                      fontSize: 12, fontWeight: 700,
                       display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
                     }}>
                       {idx + 1}
@@ -261,8 +261,8 @@ export default function ConfrontoPage() {
                   <span>{r.nome_giocatore_ext ?? 'N/D'}</span>
                   {r.voto_globale != null && (
                     <span style={{
-                      fontSize: 11, fontWeight: 700, fontFamily: 'var(--font-mono)',
-                      padding: '1px 5px', borderRadius: 4,
+                      fontSize: 12, fontWeight: 700, fontFamily: 'var(--font-mono)',
+                      padding: '1px 5px', borderRadius: 10,
                       background: r.voto_globale >= 7 ? 'var(--verde-lt)' : r.voto_globale >= 5 ? 'var(--ambra-lt)' : 'var(--rosso-lt)',
                       color: r.voto_globale >= 7 ? 'var(--verde)' : r.voto_globale >= 5 ? 'var(--ambra)' : 'var(--rosso)',
                     }}>
@@ -270,7 +270,7 @@ export default function ConfrontoPage() {
                     </span>
                   )}
                   {r.ruolo_osservato && (
-                    <span style={{ opacity: 0.6, fontSize: 10 }}>
+                    <span style={{ opacity: 0.6, fontSize: 12 }}>
                       {r.ruolo_osservato.replace(/_/g, ' ')}
                     </span>
                   )}
@@ -295,13 +295,13 @@ export default function ConfrontoPage() {
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ background: 'var(--grigio-6)' }}>
-                  <th style={{ padding: '10px 16px', textAlign: 'left', fontSize: 11, fontWeight: 600, color: 'var(--grigio-3)', textTransform: 'uppercase', width: 130 }}>
+                  <th style={{ padding: '10px 16px', textAlign: 'left', fontSize: 12, fontWeight: 600, color: 'var(--grigio-3)', textTransform: 'none', width: 130 }}>
                     Attributo
                   </th>
                   {confrontati.map((r, i) => (
                     <th key={r.id} style={{ padding: '10px 16px', textAlign: 'center', fontSize: 13, fontWeight: 700, color: DATASET_COLORS[i] }}>
                       <div>{r.nome_giocatore_ext ?? `G${i + 1}`}</div>
-                      <div style={{ fontSize: 10, fontWeight: 400, color: 'var(--grigio-3)', marginTop: 2 }}>
+                      <div style={{ fontSize: 12, fontWeight: 400, color: 'var(--grigio-3)', marginTop: 2 }}>
                         {r.club_attuale_ext ?? ''}
                       </div>
                     </th>
@@ -314,7 +314,7 @@ export default function ConfrontoPage() {
                   const bestVal = isNum ? best(confrontati, row.field) : null
                   return (
                     <tr key={row.field as string} style={{ borderTop: '1px solid var(--grigio-6)' }}>
-                      <td style={{ padding: '10px 16px', fontSize: 12, color: 'var(--grigio-3)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.03em' }}>
+                      <td style={{ padding: '10px 16px', fontSize: 12, color: 'var(--grigio-3)', fontWeight: 600, textTransform: 'none', letterSpacing: '0' }}>
                         {row.label}
                       </td>
                       {confrontati.map((r, i) => {
@@ -325,7 +325,7 @@ export default function ConfrontoPage() {
                         if (row.field === 'potenziale') {
                           return (
                             <td key={r.id} style={{ padding: '10px 16px', textAlign: 'center' }}>
-                              <span className={`badge ${potenzialeColore[r.potenziale] ?? 'badge-grigio'}`} style={{ fontSize: 11 }}>
+                              <span className={`badge ${potenzialeColore[r.potenziale] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>
                                 {r.potenziale}
                               </span>
                             </td>
@@ -358,12 +358,12 @@ export default function ConfrontoPage() {
 
                 {/* Riga esito */}
                 <tr style={{ borderTop: '1px solid var(--grigio-6)' }}>
-                  <td style={{ padding: '10px 16px', fontSize: 12, color: 'var(--grigio-3)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.03em' }}>
+                  <td style={{ padding: '10px 16px', fontSize: 12, color: 'var(--grigio-3)', fontWeight: 600, textTransform: 'none', letterSpacing: '0' }}>
                     Esito
                   </td>
                   {confrontati.map(r => (
                     <td key={r.id} style={{ padding: '10px 16px', textAlign: 'center' }}>
-                      <span className={`badge ${ESITO_COLORE[r.esito] ?? 'badge-grigio'}`} style={{ fontSize: 10 }}>
+                      <span className={`badge ${ESITO_COLORE[r.esito] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>
                         {ESITO_LABEL[r.esito] ?? r.esito}
                       </span>
                     </td>
@@ -372,12 +372,12 @@ export default function ConfrontoPage() {
 
                 {/* Riga pipeline */}
                 <tr style={{ borderTop: '1px solid var(--grigio-6)' }}>
-                  <td style={{ padding: '10px 16px', fontSize: 12, color: 'var(--grigio-3)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.03em' }}>
+                  <td style={{ padding: '10px 16px', fontSize: 12, color: 'var(--grigio-3)', fontWeight: 600, textTransform: 'none', letterSpacing: '0' }}>
                     Pipeline
                   </td>
                   {confrontati.map(r => (
                     <td key={r.id} style={{ padding: '10px 16px', textAlign: 'center' }}>
-                      <span className="badge badge-blu" style={{ fontSize: 10 }}>
+                      <span className="badge badge-blu" style={{ fontSize: 12 }}>
                         {PIPELINE_LABEL[r.stato_pipeline ?? 'in_osservazione'] ?? r.stato_pipeline}
                       </span>
                     </td>
@@ -389,7 +389,7 @@ export default function ConfrontoPage() {
 
           {/* Radar */}
           <div className="card" style={{ padding: '16px 20px', display: 'inline-block' }}>
-            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--grigio-3)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>
+            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--grigio-3)', textTransform: 'none', letterSpacing: '0', marginBottom: 12 }}>
               Radar comparativo
             </div>
             <RadarChart labels={RADAR_LABELS} datasets={radarDatasets} size={280} />

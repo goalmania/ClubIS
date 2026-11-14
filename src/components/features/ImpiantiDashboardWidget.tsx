@@ -66,24 +66,24 @@ export default function ImpiantiDashboardWidget({ ruolo }: Props) {
       }}>
         <div style={{
           fontFamily: 'var(--font-display)', fontWeight: 700,
-          textTransform: 'uppercase', fontSize: 12, letterSpacing: '0.08em',
+          textTransform: 'none', fontSize: 12, letterSpacing: '0',
         }}>
           🏟 Stato Impianti
         </div>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
           {ticketAperti > 0 && (
             <span style={{
-              fontSize: 10, padding: '2px 8px',
+              fontSize: 12, padding: '2px 8px',
               background: 'rgba(255,68,68,0.15)', border: '1px solid rgba(255,68,68,0.4)',
               color: '#ff4444', fontFamily: 'var(--font-mono)',
-              letterSpacing: '0.1em', textTransform: 'uppercase',
+              letterSpacing: '0', textTransform: 'none',
             }}>
               {ticketAperti} ticket aperti
             </span>
           )}
           <Link href={detailHref} style={{
-            fontSize: 10, color: 'var(--gray)', fontFamily: 'var(--font-mono)',
-            textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase',
+            fontSize: 12, color: 'var(--gray)', fontFamily: 'var(--font-mono)',
+            textDecoration: 'none', letterSpacing: '0', textTransform: 'none',
           }}>
             DETTAGLIO →
           </Link>
@@ -111,17 +111,17 @@ export default function ImpiantiDashboardWidget({ ruolo }: Props) {
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{
                     fontFamily: 'var(--font-display)', fontWeight: 700,
-                    textTransform: 'uppercase', fontSize: 11,
-                    letterSpacing: '0.04em', marginBottom: 2,
+                    textTransform: 'none', fontSize: 12,
+                    letterSpacing: '0', marginBottom: 2,
                   }}>
                     {meta.label}
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                    <span style={{ color: sem.color, fontSize: 10 }}>●</span>
+                    <span style={{ color: sem.color, fontSize: 12 }}>●</span>
                     <span style={{
-                      fontSize: 10, color: sem.color,
-                      fontFamily: 'var(--font-mono)', textTransform: 'uppercase',
-                      letterSpacing: '0.08em',
+                      fontSize: 12, color: sem.color,
+                      fontFamily: 'var(--font-mono)', textTransform: 'none',
+                      letterSpacing: '0',
                     }}>
                       {STATO_LABEL[stato]}
                     </span>

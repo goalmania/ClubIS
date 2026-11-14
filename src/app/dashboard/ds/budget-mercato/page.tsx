@@ -67,7 +67,7 @@ function BarraBudget({ usato, totale }: { usato: number; totale: number }) {
   const pct = Math.min((usato / totale) * 100, 100)
   const colore = pct < 70 ? 'var(--accent)' : pct < 90 ? 'var(--ambra)' : 'var(--rosso)'
   return (
-    <div style={{ background: 'var(--gray-mid)', borderRadius: 2, height: 6, overflow: 'hidden', marginTop: 8 }}>
+    <div style={{ background: 'var(--gray-mid)', borderRadius: 8, height: 6, overflow: 'hidden', marginTop: 8 }}>
       <div style={{ height: '100%', width: `${pct}%`, background: colore, transition: 'width .4s' }} />
     </div>
   )
@@ -112,11 +112,11 @@ export default function BudgetMercatoDS() {
 
           {/* header */}
           <div style={{ marginBottom: 28 }}>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '3px', textTransform: 'uppercase', color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', letterSpacing: '3px', textTransform: 'none', color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
               <span style={{ display: 'block', width: 20, height: 1, background: 'var(--accent)' }} />
               Budget di Mercato
             </div>
-            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)', lineHeight: 1 }}>
+            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)', lineHeight: 1 }}>
               Mercato
             </h1>
             <p style={{ fontSize: 13, color: 'var(--gray)', marginTop: 4 }}>Budget assegnato dal Presidente per le operazioni di mercato</p>
@@ -133,7 +133,7 @@ export default function BudgetMercatoDS() {
           </div>
 
           {loading ? (
-            <div style={{ color: 'var(--gray)', padding: 48, textAlign: 'center', fontFamily: 'var(--font-mono)', fontSize: '0.68rem', letterSpacing: 2 }}>CARICAMENTO...</div>
+            <div style={{ color: 'var(--gray)', padding: 48, textAlign: 'center', fontFamily: 'var(--font-mono)', fontSize: '0.82rem', letterSpacing: 2 }}>CARICAMENTO...</div>
           ) : (
             <>
               {budgetMercato === 0 && (
@@ -161,12 +161,12 @@ export default function BudgetMercatoDS() {
               {/* barra utilizzo */}
               {budgetMercato > 0 && (
                 <div className="card" style={{ padding: '16px 20px', marginBottom: 20 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#444', marginBottom: 6 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'var(--font-mono)', fontSize: '0.8rem', letterSpacing: '0', textTransform: 'none', color: 'var(--text-muted)', marginBottom: 6 }}>
                     <span>Utilizzo budget mercato</span>
                     <span style={{ color: 'var(--white)' }}>{budgetMercato > 0 ? Math.round(Math.min((totaleAcquisti / budgetMercato) * 100, 100)) : 0}%</span>
                   </div>
                   <BarraBudget usato={totaleAcquisti} totale={budgetMercato} />
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'var(--font-mono)', fontSize: '0.58rem', color: 'var(--gray)', marginTop: 6 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'var(--font-mono)', fontSize: '0.78rem', color: 'var(--gray)', marginTop: 6 }}>
                     <span>{fmt(totaleAcquisti)} spesi</span>
                     <span>{fmt(budgetMercato)} totale</span>
                   </div>
@@ -176,11 +176,11 @@ export default function BudgetMercatoDS() {
               {/* tabella */}
               <div className="card" style={{ overflow: 'hidden' }}>
                 <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border-solid)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.85rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--white)' }}>Tutte le trattative</span>
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: '#444', letterSpacing: 2 }}>{trattative.length} OPERAZIONI</span>
+                  <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '0.85rem', letterSpacing: '0', textTransform: 'none', color: 'var(--white)' }}>Tutte le trattative</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', color: 'var(--text-muted)', letterSpacing: 2 }}>{trattative.length} OPERAZIONI</span>
                 </div>
                 {trattative.length === 0 ? (
-                  <div style={{ padding: 40, textAlign: 'center', color: 'var(--gray)', fontFamily: 'var(--font-mono)', fontSize: '0.68rem', letterSpacing: 2 }}>
+                  <div style={{ padding: 40, textAlign: 'center', color: 'var(--gray)', fontFamily: 'var(--font-mono)', fontSize: '0.82rem', letterSpacing: 2 }}>
                     NESSUNA TRATTATIVA REGISTRATA
                   </div>
                 ) : (
@@ -194,7 +194,7 @@ export default function BudgetMercatoDS() {
                       <tbody>
                         {trattative.map(t => (
                           <tr key={t.id}>
-                            <td style={{ fontWeight: 600, color: 'var(--white)', fontFamily: 'var(--font-display)', letterSpacing: '0.05em' }}>{getNome(t)}</td>
+                            <td style={{ fontWeight: 600, color: 'var(--white)', fontFamily: 'var(--font-display)', letterSpacing: '0' }}>{getNome(t)}</td>
                             <td style={{ color: 'var(--gray)', fontSize: 12 }}>{t.ruolo ?? '—'}</td>
                             <td><span className={`badge ${TIPO_BADGE[getTipo(t)] ?? 'badge-grigio'}`}>{TIPO_LABEL[getTipo(t)] ?? getTipo(t)}</span></td>
                             <td><span className={`badge ${STATO_BADGE[t.stato] ?? 'badge-grigio'}`}>{STATO_LABEL[t.stato] ?? t.stato}</span></td>

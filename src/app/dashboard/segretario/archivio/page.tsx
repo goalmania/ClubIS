@@ -185,7 +185,7 @@ export default function SegretarioArchivioPage() {
         {toasts.map(t => (
           <div key={t.id} style={{
             background: t.ok ? 'var(--success, #22c55e)' : 'var(--error, #ef4444)',
-            color: '#fff', padding: '10px 16px', borderRadius: 8,
+            color: '#fff', padding: '10px 16px', borderRadius: 12,
             fontSize: 13, fontWeight: 500, boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
           }}>{t.msg}</div>
         ))}
@@ -194,7 +194,7 @@ export default function SegretarioArchivioPage() {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24, alignItems: 'flex-start' }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Archivio documenti</h1>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Archivio documenti</h1>
           <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>
             Documenti ufficiali, verbali e archivio fiscale
           </p>
@@ -222,19 +222,19 @@ export default function SegretarioArchivioPage() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           {Object.entries(byCat).map(([cat, docs]) => (
             <div key={cat}>
-              <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'none', letterSpacing: '0', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span>{catIcon[cat] ?? '📁'}</span>
                 <span>{cat} ({docs.length})</span>
               </div>
               <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
                 {docs.map(d => (
                   <div key={d.id} style={{ padding: '12px 18px', borderBottom: '1px solid var(--border-light)', display: 'flex', alignItems: 'center', gap: 14 }}>
-                    <div style={{ width: 36, height: 36, borderRadius: 8, background: 'var(--bg-input)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, flexShrink: 0 }}>
+                    <div style={{ width: 36, height: 36, borderRadius: 12, background: 'var(--bg-input)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, flexShrink: 0 }}>
                       📄
                     </div>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)' }}>{d.titolo}</div>
-                      <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
+                      <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>
                         {new Date(d.data_caricamento).toLocaleDateString('it-IT')}
                         {d.dimensione_kb != null && <> · {fmtKb(d.dimensione_kb)}</>}
                         {d.tag && d.tag.length > 0 && <> · {d.tag.join(', ')}</>}
@@ -266,7 +266,7 @@ export default function SegretarioArchivioPage() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               {/* File picker */}
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6, textTransform: 'none', letterSpacing: '0' }}>
                   File <span style={{ color: 'var(--error, #ef4444)' }}>*</span>
                 </label>
                 <input
@@ -275,14 +275,14 @@ export default function SegretarioArchivioPage() {
                   onChange={onFileChange}
                   style={{ fontSize: 13, color: 'var(--text-primary)', width: '100%' }}
                 />
-                <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>
+                <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>
                   PDF, JPEG, PNG, WebP · max {MAX_MB} MB
                 </div>
               </div>
 
               {/* Title */}
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6, textTransform: 'none', letterSpacing: '0' }}>
                   Titolo <span style={{ color: 'var(--error, #ef4444)' }}>*</span>
                 </label>
                 <input
@@ -295,7 +295,7 @@ export default function SegretarioArchivioPage() {
 
               {/* Category */}
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6, textTransform: 'none', letterSpacing: '0' }}>
                   Categoria
                 </label>
                 <div style={{ display: 'flex', gap: 8 }}>
@@ -329,7 +329,7 @@ export default function SegretarioArchivioPage() {
 
               {/* Tags */}
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 6, textTransform: 'none', letterSpacing: '0' }}>
                   Tag (separati da virgola)
                 </label>
                 <input

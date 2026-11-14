@@ -142,7 +142,7 @@ export default function ConvocazioniPage() {
   return (
     <div>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Convocazioni</h1>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Convocazioni</h1>
         <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>
           Seleziona una partita e gestisci i convocati
         </p>
@@ -264,9 +264,9 @@ export default function ConvocazioniPage() {
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                         <span style={{ fontSize: 14, fontWeight: 500 }}>{g.cognome} {g.nome}</span>
-                        {g.numero_maglia && <span style={{ fontSize: 11, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>#{g.numero_maglia}</span>}
+                        {g.numero_maglia && <span style={{ fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>#{g.numero_maglia}</span>}
                         {g.ruolo_principale && (
-                          <span className="badge badge-grigio" style={{ fontSize: 10 }}>{ruoloShort[g.ruolo_principale] ?? g.ruolo_principale}</span>
+                          <span className="badge badge-grigio" style={{ fontSize: 12 }}>{ruoloShort[g.ruolo_principale] ?? g.ruolo_principale}</span>
                         )}
                       </div>
                     </div>

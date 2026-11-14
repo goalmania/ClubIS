@@ -265,13 +265,13 @@ export default function PrimaNotaPage() {
                     <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{fmtDataTabella(m.data)}</td>
                     <td>
                       <span className={`badge ${m.tipo === 'entrata' ? 'badge-verde' : 'badge-rosso'}`}>{m.tipo}</span>
-                      {isStornato && <span className="badge badge-grigio" style={{ marginLeft: 4, fontSize: 9 }}>STORNATO</span>}
-                      {isStorno && <span className="badge" style={{ marginLeft: 4, fontSize: 9, background: 'var(--accent-orange-lt)', color: 'var(--accent-orange)' }}>STORNO</span>}
+                      {isStornato && <span className="badge badge-grigio" style={{ marginLeft: 4, fontSize: 11 }}>STORNATO</span>}
+                      {isStorno && <span className="badge" style={{ marginLeft: 4, fontSize: 11, background: 'var(--accent-orange-lt)', color: 'var(--accent-orange)' }}>STORNO</span>}
                     </td>
                     <td style={{ fontSize: 12, color: 'var(--grigio-3)', textTransform: 'capitalize' }}>{m.categoria.replace(/_/g, ' ')}</td>
                     <td style={{ fontSize: 13 }}>
                       {m.descrizione}
-                      {m.note && <div style={{ fontSize: 11, color: 'var(--grigio-4)', fontStyle: 'italic' }}>{m.note}</div>}
+                      {m.note && <div style={{ fontSize: 12, color: 'var(--grigio-4)', fontStyle: 'italic' }}>{m.note}</div>}
                     </td>
                     <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontWeight: 600, color: m.tipo === 'entrata' ? 'var(--verde)' : 'var(--rosso)', textDecoration: isStornato ? 'line-through' : undefined }}>
                       {m.tipo === 'entrata' ? '+' : '−'}€{Number(m.importo).toLocaleString('it-IT')}
@@ -280,7 +280,7 @@ export default function PrimaNotaPage() {
                       {!isStornato && !isStorno && (
                         <button
                           onClick={() => apriStorno(m)}
-                          style={{ fontSize: 11, padding: '2px 8px', background: 'transparent', border: '1px solid var(--border-solid)', borderRadius: 2, cursor: 'pointer', color: 'var(--grigio-3)', transition: 'all 0.15s' }}
+                          style={{ fontSize: 12, padding: '2px 8px', background: 'transparent', border: '1px solid var(--border-solid)', borderRadius: 8, cursor: 'pointer', color: 'var(--grigio-3)', transition: 'all 0.15s' }}
                         >
                           Storna
                         </button>
@@ -298,8 +298,8 @@ export default function PrimaNotaPage() {
       <Modal open={!!stornoTarget} onClose={() => setStornoTarget(null)} title="Storno movimento" width={460}>
         {stornoTarget && (
           <div>
-            <div style={{ background: '#0d0d0d', borderRadius: 4, padding: '10px 14px', marginBottom: 16, fontSize: 13 }}>
-              <div style={{ color: 'var(--grigio-3)', fontSize: 11, marginBottom: 4 }}>Movimento originale</div>
+            <div style={{ background: 'var(--surface-1)', borderRadius: 10, padding: '10px 14px', marginBottom: 16, fontSize: 13 }}>
+              <div style={{ color: 'var(--grigio-3)', fontSize: 12, marginBottom: 4 }}>Movimento originale</div>
               <div style={{ fontWeight: 600 }}>{stornoTarget.descrizione}</div>
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: stornoTarget.tipo === 'entrata' ? 'var(--verde)' : 'var(--rosso)' }}>
                 {stornoTarget.tipo === 'entrata' ? '+' : '−'}€{Number(stornoTarget.importo).toLocaleString('it-IT')}
@@ -309,13 +309,13 @@ export default function PrimaNotaPage() {
             <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
               <button
                 onClick={() => { setStornoTipo('totale'); setStornoImporto(String(Number(stornoTarget.importo))) }}
-                style={{ flex: 1, padding: '8px', border: `1px solid ${stornoTipo === 'totale' ? 'var(--accent)' : 'var(--border-solid)'}`, borderRadius: 2, background: stornoTipo === 'totale' ? 'rgba(200,240,0,0.06)' : 'transparent', color: stornoTipo === 'totale' ? 'var(--accent)' : 'var(--grigio-3)', cursor: 'pointer', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' }}
+                style={{ flex: 1, padding: '8px', border: `1px solid ${stornoTipo === 'totale' ? 'var(--accent)' : 'var(--border-solid)'}`, borderRadius: 8, background: stornoTipo === 'totale' ? 'rgba(200,240,0,0.06)' : 'transparent', color: stornoTipo === 'totale' ? 'var(--accent)' : 'var(--grigio-3)', cursor: 'pointer', fontSize: 12, fontWeight: 600, textTransform: 'none', letterSpacing: '0' }}
               >
                 Storno totale
               </button>
               <button
                 onClick={() => { setStornoTipo('parziale'); setStornoImporto('') }}
-                style={{ flex: 1, padding: '8px', border: `1px solid ${stornoTipo === 'parziale' ? 'var(--accent)' : 'var(--border-solid)'}`, borderRadius: 2, background: stornoTipo === 'parziale' ? 'rgba(200,240,0,0.06)' : 'transparent', color: stornoTipo === 'parziale' ? 'var(--accent)' : 'var(--grigio-3)', cursor: 'pointer', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' }}
+                style={{ flex: 1, padding: '8px', border: `1px solid ${stornoTipo === 'parziale' ? 'var(--accent)' : 'var(--border-solid)'}`, borderRadius: 8, background: stornoTipo === 'parziale' ? 'rgba(200,240,0,0.06)' : 'transparent', color: stornoTipo === 'parziale' ? 'var(--accent)' : 'var(--grigio-3)', cursor: 'pointer', fontSize: 12, fontWeight: 600, textTransform: 'none', letterSpacing: '0' }}
               >
                 Storno parziale
               </button>
@@ -339,7 +339,7 @@ export default function PrimaNotaPage() {
                 placeholder="Es: pagamento duplicato, errore di registrazione..." />
             </div>
 
-            <div style={{ background: '#0a0d00', border: '1px solid var(--border-solid)', borderRadius: 4, padding: '10px 14px', marginBottom: 16, fontSize: 12, color: 'var(--grigio-3)' }}>
+            <div style={{ background: '#0a0d00', border: '1px solid var(--border-solid)', borderRadius: 10, padding: '10px 14px', marginBottom: 16, fontSize: 12, color: 'var(--grigio-3)' }}>
               Verrà creato un movimento di{' '}
               <strong style={{ color: stornoTarget.tipo === 'entrata' ? 'var(--rosso)' : 'var(--verde)' }}>
                 {stornoTarget.tipo === 'entrata' ? 'uscita' : 'entrata'}

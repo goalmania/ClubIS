@@ -256,16 +256,16 @@ export default function FamigliaDettaglio() {
       {/* Contatti */}
       <div className="card" style={{ padding: '14px 20px', marginBottom: 24, display: 'flex', gap: 32 }}>
         <div>
-          <div style={{ fontSize: 11, color: 'var(--grigio-4)' }}>Email</div>
+          <div style={{ fontSize: 12, color: 'var(--grigio-4)' }}>Email</div>
           <div style={{ fontSize: 13, fontWeight: 500 }}>{famiglia.email || '—'}</div>
         </div>
         <div>
-          <div style={{ fontSize: 11, color: 'var(--grigio-4)' }}>Telefono</div>
+          <div style={{ fontSize: 12, color: 'var(--grigio-4)' }}>Telefono</div>
           <div style={{ fontSize: 13, fontWeight: 500 }}>{famiglia.telefono || '—'}</div>
         </div>
         {giocatore?.codice_fiscale && (
           <div>
-            <div style={{ fontSize: 11, color: 'var(--grigio-4)' }}>CF Giocatore</div>
+            <div style={{ fontSize: 12, color: 'var(--grigio-4)' }}>CF Giocatore</div>
             <div style={{ fontSize: 13, fontFamily: 'var(--font-mono)' }}>{giocatore.codice_fiscale}</div>
           </div>
         )}
@@ -399,7 +399,7 @@ export default function FamigliaDettaglio() {
       {modalRata && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}
           onClick={() => setModalRata(null)}>
-          <div style={{ background: 'white', borderRadius: 12, padding: '28px 32px', width: 400 }} onClick={e => e.stopPropagation()}>
+          <div style={{ background: 'white', borderRadius: 16, padding: '28px 32px', width: 400 }} onClick={e => e.stopPropagation()}>
             <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 20 }}>
               Segna come pagata — Rata {modalRata.numero_rata}
             </div>
@@ -443,7 +443,7 @@ export default function FamigliaDettaglio() {
       {modalAddRata && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}
           onClick={() => setModalAddRata(null)}>
-          <div style={{ background: 'white', borderRadius: 12, padding: '28px 32px', width: 400 }} onClick={e => e.stopPropagation()}>
+          <div style={{ background: 'white', borderRadius: 16, padding: '28px 32px', width: 400 }} onClick={e => e.stopPropagation()}>
             <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 20 }}>Aggiungi rata</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               <div>

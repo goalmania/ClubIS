@@ -218,7 +218,7 @@ export default function ImportPage() {
             <div style={{ fontSize: 24, marginBottom: 8 }}>{t.icon}</div>
             <div style={{
               fontFamily: 'var(--font-display)', fontWeight: 700,
-              textTransform: 'uppercase', letterSpacing: '0.06em', fontSize: 13,
+              textTransform: 'none', letterSpacing: '0', fontSize: 13,
               color: tipoSel === t.key ? 'var(--accent)' : 'var(--white)',
             }}>
               {t.label}
@@ -233,11 +233,11 @@ export default function ImportPage() {
           <div>
             <div style={{
               fontFamily: 'var(--font-display)', fontWeight: 700,
-              textTransform: 'uppercase', fontSize: 13, marginBottom: 6,
+              textTransform: 'none', fontSize: 13, marginBottom: 6,
             }}>
               Formato colonne richiesto:
             </div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)', lineHeight: 1.8 }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', lineHeight: 1.8 }}>
               {tipo.colonne}
             </div>
             {'note' in tipo && tipo.note && (
@@ -281,11 +281,11 @@ export default function ImportPage() {
           <div style={{ fontSize: 32, marginBottom: 8 }}>📁</div>
           <div style={{
             fontFamily: 'var(--font-display)', fontWeight: 700,
-            textTransform: 'uppercase', fontSize: 13, marginBottom: 4,
+            textTransform: 'none', fontSize: 13, marginBottom: 4,
           }}>
             {file ? file.name : 'Trascina qui il file CSV o Excel'}
           </div>
-          <div style={{ fontSize: 11, color: 'var(--gray)', fontFamily: 'var(--font-mono)' }}>
+          <div style={{ fontSize: 12, color: 'var(--gray)', fontFamily: 'var(--font-mono)' }}>
             oppure clicca per selezionare · CSV, TSV, TXT, XLSX, XLS
           </div>
         </div>
@@ -299,7 +299,7 @@ export default function ImportPage() {
           value={testo}
           onChange={e => { setTesto(e.target.value); analizzaPreview(e.target.value) }}
           placeholder={tipo.template}
-          style={{ fontFamily: 'var(--font-mono)', fontSize: 11 }}
+          style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}
         />
       </div>
 
@@ -312,16 +312,16 @@ export default function ImportPage() {
               { label: 'Valide', n: preview.validi.length, color: 'var(--accent)' },
               { label: 'Con errori', n: preview.errori.length, color: preview.errori.length > 0 ? '#ef4444' : 'var(--gray)' },
             ].map(k => (
-              <div key={k.label} style={{ flex: 1, background: 'var(--gray-mid)', padding: '12px 16px', borderRadius: 2 }}>
-                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 24, color: k.color }}>{k.n}</div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#444' }}>{k.label}</div>
+              <div key={k.label} style={{ flex: 1, background: 'var(--gray-mid)', padding: '12px 16px', borderRadius: 8 }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 24, color: k.color }}>{k.n}</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', letterSpacing: '0', textTransform: 'none', color: 'var(--text-muted)' }}>{k.label}</div>
               </div>
             ))}
           </div>
 
           {preview.errori.length > 0 && (
             <div style={{ marginBottom: 16 }}>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', fontSize: 11, color: '#ef4444', marginBottom: 8 }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 12, color: '#ef4444', marginBottom: 8 }}>
                 Righe con errori (non verranno importate):
               </div>
               {preview.errori.slice(0, 5).map((e, i) => (
@@ -330,7 +330,7 @@ export default function ImportPage() {
                 </div>
               ))}
               {preview.errori.length > 5 && (
-                <div style={{ fontSize: 11, color: 'var(--gray)' }}>...e altri {preview.errori.length - 5} errori</div>
+                <div style={{ fontSize: 12, color: 'var(--gray)' }}>...e altri {preview.errori.length - 5} errori</div>
               )}
             </div>
           )}
@@ -338,40 +338,40 @@ export default function ImportPage() {
           {preview.validi.length > 0 && tipoSel === 'famiglie' && (
             <div style={{ marginBottom: 16, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
               <div>
-                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', fontSize: 11, color: 'var(--accent)', marginBottom: 8 }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 12, color: 'var(--accent)', marginBottom: 8 }}>
                   Tesserati (bambini) che verranno creati:
                 </div>
                 {preview.validi.slice(0, 3).map((r: any, i) => (
-                  <div key={i} style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--gray)', padding: '6px 10px', background: 'var(--gray-mid)', marginBottom: 4, borderLeft: '3px solid var(--accent)' }}>
+                  <div key={i} style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: 'var(--gray)', padding: '6px 10px', background: 'var(--gray-mid)', marginBottom: 4, borderLeft: '3px solid var(--accent)' }}>
                     {r.giocatore_cognome} {r.giocatore_nome}
                     {r.giocatore_data_nascita && ` · ${r.giocatore_data_nascita}`}
                   </div>
                 ))}
-                {preview.validi.length > 3 && <div style={{ fontSize: 11, color: 'var(--grigio-4)' }}>...e altri {preview.validi.length - 3}</div>}
+                {preview.validi.length > 3 && <div style={{ fontSize: 12, color: 'var(--grigio-4)' }}>...e altri {preview.validi.length - 3}</div>}
               </div>
               <div>
-                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', fontSize: 11, color: '#60a5fa', marginBottom: 8 }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 12, color: '#60a5fa', marginBottom: 8 }}>
                   Record famiglia (genitori) che verranno creati:
                 </div>
                 {preview.validi.slice(0, 3).map((r: any, i) => (
-                  <div key={i} style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--gray)', padding: '6px 10px', background: 'var(--gray-mid)', marginBottom: 4, borderLeft: '3px solid #60a5fa' }}>
+                  <div key={i} style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: 'var(--gray)', padding: '6px 10px', background: 'var(--gray-mid)', marginBottom: 4, borderLeft: '3px solid #60a5fa' }}>
                     {r.cognome} {r.nome}
                     {r.relazione && ` · ${r.relazione}`}
                     {r.email && ` · ${r.email}`}
                   </div>
                 ))}
-                {preview.validi.length > 3 && <div style={{ fontSize: 11, color: 'var(--grigio-4)' }}>...e altri {preview.validi.length - 3}</div>}
+                {preview.validi.length > 3 && <div style={{ fontSize: 12, color: 'var(--grigio-4)' }}>...e altri {preview.validi.length - 3}</div>}
               </div>
             </div>
           )}
 
           {preview.validi.length > 0 && tipoSel !== 'famiglie' && (
             <div style={{ marginBottom: 16 }}>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', fontSize: 11, color: 'var(--accent)', marginBottom: 8 }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 12, color: 'var(--accent)', marginBottom: 8 }}>
                 Anteprima prime righe valide:
               </div>
               {preview.validi.slice(0, 3).map((r, i) => (
-                <div key={i} style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--gray)', padding: '6px 10px', background: 'var(--gray-mid)', marginBottom: 4 }}>
+                <div key={i} style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: 'var(--gray)', padding: '6px 10px', background: 'var(--gray-mid)', marginBottom: 4 }}>
                   {Object.entries(r).slice(0, 5).map(([k, v]) => `${k}: ${v}`).join(' · ')}
                   {Object.keys(r).length > 5 && ' ...'}
                 </div>
@@ -495,7 +495,7 @@ export default function ImportPage() {
             <div style={{ marginTop: 12 }}>
               <div style={{
                 fontFamily: 'var(--font-display)', fontWeight: 700,
-                textTransform: 'uppercase', fontSize: 11, color: '#ef4444', marginBottom: 6,
+                textTransform: 'none', fontSize: 12, color: '#ef4444', marginBottom: 6,
               }}>
                 Righe fallite ({risultato.errori.length}):
               </div>

@@ -63,30 +63,30 @@ export default async function PortafoglioFIGC({ clubId }: Props) {
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 16 }}>
         <div>
           <div style={{
-            fontFamily: 'var(--font-mono)', fontSize: '0.65rem',
-            letterSpacing: '0.15em', textTransform: 'uppercase',
+            fontFamily: 'var(--font-mono)', fontSize: '0.8rem',
+            letterSpacing: '0', textTransform: 'none',
             color: 'var(--gray)', marginBottom: 4,
           }}>
             Portafoglio FIGC
           </div>
           <div style={{
-            fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 900,
+            fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700,
             color: saldoColor, letterSpacing: '-0.01em',
           }}>
             {saldoStimato !== null ? fmt(saldoStimato) : '— non configurato'}
           </div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', marginTop: 2 }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', marginTop: 2 }}>
             saldo stimato
           </div>
         </div>
         <a
           href="/dashboard/segretario/figc/portafoglio"
           style={{
-            fontFamily: 'var(--font-mono)', fontSize: 11,
+            fontFamily: 'var(--font-mono)', fontSize: 12,
             color: 'var(--accent)', textDecoration: 'none',
             padding: '6px 12px',
             border: '1px solid rgba(200,240,0,0.2)',
-            borderRadius: 4,
+            borderRadius: 10,
             flexShrink: 0,
           }}
         >
@@ -98,34 +98,34 @@ export default async function PortafoglioFIGC({ clubId }: Props) {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         {ultimaRicarica ? (
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)' }}>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)' }}>
               Ultima ricarica
             </span>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--white)' }}>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--white)' }}>
               {fmt(Number(ultimaRicarica.importo))} il {new Date(ultimaRicarica.data).toLocaleDateString('it-IT')}
             </span>
           </div>
         ) : (
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--ambra)' }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--ambra)' }}>
             ⚠ Nessuna ricarica registrata
           </div>
         )}
 
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)' }}>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)' }}>
             Tesseramenti conteggiati
           </span>
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--white)' }}>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--white)' }}>
             {tesseramentiConteggiati} (—{fmt(costoTesseramenti)})
           </span>
         </div>
 
         {(ricariche?.length ?? 0) > 0 && (
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)' }}>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)' }}>
               Totale ricaricato
             </span>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)' }}>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)' }}>
               {fmt(totalRicaricato)}
             </span>
           </div>
@@ -138,8 +138,8 @@ export default async function PortafoglioFIGC({ clubId }: Props) {
           marginTop: 12, padding: '8px 12px',
           background: saldoStimato < 20 ? 'rgba(255,68,68,0.08)' : 'rgba(255,153,0,0.08)',
           border: `1px solid ${saldoStimato < 20 ? 'rgba(255,68,68,0.2)' : 'rgba(255,153,0,0.2)'}`,
-          borderRadius: 4,
-          fontFamily: 'var(--font-mono)', fontSize: 11,
+          borderRadius: 10,
+          fontFamily: 'var(--font-mono)', fontSize: 12,
           color: saldoStimato < 20 ? 'var(--rosso)' : 'var(--ambra)',
         }}>
           {saldoStimato < 20
@@ -155,7 +155,7 @@ export default async function PortafoglioFIGC({ clubId }: Props) {
           target="_blank"
           rel="noopener noreferrer"
           style={{
-            fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)',
+            fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)',
             textDecoration: 'none',
           }}
         >

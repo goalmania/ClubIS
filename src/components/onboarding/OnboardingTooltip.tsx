@@ -211,7 +211,7 @@ export default function OnboardingTooltip() {
                   flex: 1,
                   background: 'rgba(255,255,255,0.07)',
                   border: '1px solid rgba(255,255,255,0.12)',
-                  borderRadius: 8,
+                  borderRadius: 12,
                   color: 'rgba(255,255,255,0.6)',
                   fontSize: 13,
                   padding: '9px 0',
@@ -226,7 +226,7 @@ export default function OnboardingTooltip() {
                   flex: 1,
                   background: '#c8f000',
                   border: 'none',
-                  borderRadius: 8,
+                  borderRadius: 12,
                   color: '#000',
                   fontWeight: 700,
                   fontSize: 13,
@@ -264,7 +264,7 @@ export default function OnboardingTooltip() {
               }}
             />
           </div>
-          <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', flexShrink: 0 }}>
+          <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)', flexShrink: 0 }}>
             {currentStepIndex + 1} di {totalSteps}
           </span>
         </div>
@@ -305,7 +305,7 @@ function ProblemPhase({
 }) {
   return (
     <>
-      <div style={{ color: '#c8f000', fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 8 }}>
+      <div style={{ color: '#c8f000', fontSize: 12, fontWeight: 700, letterSpacing: '0', textTransform: 'none', marginBottom: 8 }}>
         💡 Lo sapevi?
       </div>
       <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: 13, lineHeight: 1.55, margin: '0 0 10px' }}>
@@ -322,7 +322,7 @@ function ProblemPhase({
             style={{
               background: '#c8f000',
               border: 'none',
-              borderRadius: 8,
+              borderRadius: 12,
               color: '#000',
               fontWeight: 700,
               fontSize: 12,
@@ -341,7 +341,7 @@ function ProblemPhase({
         </div>
         <button
           onClick={onSkipAll}
-          style={{ background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.22)', fontSize: 11, padding: '4px 0', cursor: 'pointer', textDecoration: 'underline' }}
+          style={{ background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.22)', fontSize: 12, padding: '4px 0', cursor: 'pointer', textDecoration: 'underline' }}
         >
           Salta tutto
         </button>
@@ -361,7 +361,7 @@ function GuidePhase({
 }) {
   return (
     <>
-      <div style={{ color: '#c8f000', fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 8 }}>
+      <div style={{ color: '#c8f000', fontSize: 12, fontWeight: 700, letterSpacing: '0', textTransform: 'none', marginBottom: 8 }}>
         👆 Inizia da qui — {step.title}
       </div>
       <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: 13, lineHeight: 1.55, margin: '0 0 16px' }}>
@@ -373,7 +373,7 @@ function GuidePhase({
           style={{
             background: '#c8f000',
             border: 'none',
-            borderRadius: 8,
+            borderRadius: 12,
             color: '#000',
             fontWeight: 700,
             fontSize: 12,
@@ -385,7 +385,7 @@ function GuidePhase({
         </button>
         <button
           onClick={onDone}
-          style={{ background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.25)', fontSize: 11, padding: '4px 0', cursor: 'pointer', textDecoration: 'underline' }}
+          style={{ background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.25)', fontSize: 12, padding: '4px 0', cursor: 'pointer', textDecoration: 'underline' }}
         >
           Fine guida
         </button>

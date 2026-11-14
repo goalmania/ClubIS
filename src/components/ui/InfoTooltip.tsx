@@ -15,7 +15,7 @@ export default function InfoTooltip({ testo }: { testo: string }) {
           border: `1px solid ${visible ? 'var(--accent)' : 'var(--border-solid)'}`,
           cursor: 'pointer',
           color: visible ? 'var(--accent)' : 'var(--gray)',
-          fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700,
+          fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: 700,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           flexShrink: 0, transition: 'background 0.15s, border-color 0.15s, color 0.15s',
           padding: 0,
@@ -37,10 +37,10 @@ export default function InfoTooltip({ testo }: { testo: string }) {
             bottom: 'calc(100% + 10px)',
             left: '50%',
             transform: 'translateX(-50%)',
-            background: '#1a1a1a',
+            background: 'var(--surface-2)',
             border: '1px solid var(--border-solid)',
             padding: '12px 14px',
-            borderRadius: 2,
+            borderRadius: 8,
             zIndex: 101,
             width: 260,
             fontSize: 12,
@@ -56,15 +56,15 @@ export default function InfoTooltip({ testo }: { testo: string }) {
               position: 'absolute', bottom: -5, left: '50%',
               transform: 'translateX(-50%) rotate(45deg)',
               width: 8, height: 8,
-              background: '#1a1a1a',
+              background: 'var(--surface-2)',
               border: '1px solid var(--border-solid)',
               borderTop: 'none', borderLeft: 'none',
             }} />
             {testo}
             <div style={{
-              fontSize: 9, color: 'var(--accent)', marginTop: 8,
-              fontFamily: 'var(--font-mono)', textTransform: 'uppercase',
-              letterSpacing: '0.15em',
+              fontSize: 11, color: 'var(--accent)', marginTop: 8,
+              fontFamily: 'var(--font-mono)', textTransform: 'none',
+              letterSpacing: '0',
             }}>
               Clicca fuori per chiudere
             </div>

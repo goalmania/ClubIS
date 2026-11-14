@@ -203,7 +203,7 @@ export default function ConfigurazioneFinanziariaPage() {
         <div>
           {/* Header */}
           <div style={{ marginBottom: 24 }}>
-            <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 26, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)', marginBottom: 4 }}>
+            <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 28, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)', marginBottom: 4 }}>
               Configurazione Finanziaria
             </h1>
             <p style={{ fontSize: 13, color: 'var(--gray)', fontWeight: 300 }}>
@@ -223,7 +223,7 @@ export default function ConfigurazioneFinanziariaPage() {
                 padding: '9px 20px', background: 'none', border: 'none', cursor: 'pointer',
                 borderBottom: `2px solid ${tab === t.key ? 'var(--accent)' : 'transparent'}`,
                 color: tab === t.key ? 'var(--accent)' : 'var(--gray)', fontSize: 13,
-                fontWeight: tab === t.key ? 700 : 400, textTransform: 'uppercase', letterSpacing: '0.06em',
+                fontWeight: tab === t.key ? 700 : 400, textTransform: 'none', letterSpacing: '0',
                 fontFamily: 'var(--font-mono)', transition: 'color 0.15s',
               }}>
                 {t.label}
@@ -242,20 +242,20 @@ export default function ConfigurazioneFinanziariaPage() {
               {conti.length === 0 && (
                 <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--gray)' }}>
                   <div style={{ fontSize: 36, marginBottom: 12 }}>🏦</div>
-                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, textTransform: 'uppercase', color: 'var(--white)', marginBottom: 6 }}>Nessun conto configurato</div>
+                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, textTransform: 'none', color: 'var(--white)', marginBottom: 6 }}>Nessun conto configurato</div>
                   <div style={{ fontSize: 13 }}>Aggiungi il conto corrente del club.</div>
                 </div>
               )}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {conti.map(c => (
-                  <div key={c.id} style={{ background: '#111', border: `1px solid ${c.predefinito ? 'var(--accent)' : 'var(--border-solid)'}`, borderLeft: `3px solid ${c.predefinito ? 'var(--accent)' : 'var(--border-solid)'}`, borderRadius: 2, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 14 }}>
+                  <div key={c.id} style={{ background: 'var(--surface-2)', border: `1px solid ${c.predefinito ? 'var(--accent)' : 'var(--border-solid)'}`, borderLeft: `3px solid ${c.predefinito ? 'var(--accent)' : 'var(--border-solid)'}`, borderRadius: 8, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 14 }}>
                     <div style={{ fontSize: 24 }}>🏦</div>
                     <div style={{ flex: 1 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                         <span style={{ fontWeight: 600, fontSize: 14, color: 'var(--white)' }}>{c.nome}</span>
-                        {c.predefinito && <span style={{ fontSize: 9, fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--accent)', background: 'rgba(200,240,0,0.1)', padding: '2px 6px', borderRadius: 2 }}>PREDEFINITO</span>}
+                        {c.predefinito && <span style={{ fontSize: 11, fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none', color: 'var(--accent)', background: 'rgba(200,240,0,0.1)', padding: '2px 6px', borderRadius: 8 }}>PREDEFINITO</span>}
                       </div>
-                      <div style={{ fontSize: 11, color: 'var(--gray)', marginTop: 2, display: 'flex', gap: 14, flexWrap: 'wrap' }}>
+                      <div style={{ fontSize: 12, color: 'var(--gray)', marginTop: 2, display: 'flex', gap: 14, flexWrap: 'wrap' }}>
                         {c.banca && <span>{c.banca}</span>}
                         {c.iban && <span style={{ fontFamily: 'var(--font-mono)' }}>{c.iban}</span>}
                         {c.intestatario && <span>{c.intestatario}</span>}
@@ -267,8 +267,8 @@ export default function ConfigurazioneFinanziariaPage() {
                       </div>
                     )}
                     <div style={{ display: 'flex', gap: 6 }}>
-                      <button onClick={() => { const { id, attivo, ...rest } = c; setContoForm(rest); setContoMode('modifica'); setContoId(id); setContoOpen(true) }} style={{ padding: '6px 10px', background: 'transparent', border: '1px solid var(--border-solid)', borderRadius: 2, color: 'var(--gray)', fontSize: 11, cursor: 'pointer' }}>Modifica</button>
-                      <button onClick={() => eliminaConto(c.id)} style={{ padding: '6px 10px', background: 'transparent', border: '1px solid var(--border-solid)', borderRadius: 2, color: 'var(--gray)', fontSize: 11, cursor: 'pointer' }}>✕</button>
+                      <button onClick={() => { const { id, attivo, ...rest } = c; setContoForm(rest); setContoMode('modifica'); setContoId(id); setContoOpen(true) }} style={{ padding: '6px 10px', background: 'transparent', border: '1px solid var(--border-solid)', borderRadius: 8, color: 'var(--gray)', fontSize: 12, cursor: 'pointer' }}>Modifica</button>
+                      <button onClick={() => eliminaConto(c.id)} style={{ padding: '6px 10px', background: 'transparent', border: '1px solid var(--border-solid)', borderRadius: 8, color: 'var(--gray)', fontSize: 12, cursor: 'pointer' }}>✕</button>
                     </div>
                   </div>
                 ))}
@@ -287,26 +287,26 @@ export default function ConfigurazioneFinanziariaPage() {
               {causali.length === 0 && (
                 <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--gray)' }}>
                   <div style={{ fontSize: 36, marginBottom: 12 }}>🏷</div>
-                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, textTransform: 'uppercase', color: 'var(--white)', marginBottom: 6 }}>Nessuna causale</div>
+                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, textTransform: 'none', color: 'var(--white)', marginBottom: 6 }}>Nessuna causale</div>
                   <div style={{ fontSize: 13 }}>Crea le causali da usare nella prima nota.</div>
                 </div>
               )}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {causali.map(c => (
-                  <div key={c.id} style={{ background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700, color: 'var(--accent)', background: 'rgba(200,240,0,0.1)', padding: '3px 8px', borderRadius: 2, flexShrink: 0 }}>{c.codice}</span>
+                  <div key={c.id} style={{ background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: 700, color: 'var(--accent)', background: 'rgba(200,240,0,0.1)', padding: '3px 8px', borderRadius: 8, flexShrink: 0 }}>{c.codice}</span>
                     <div style={{ flex: 1 }}>
                       <span style={{ fontSize: 13, color: 'var(--white)' }}>{c.descrizione}</span>
                       {c.categoria_contabile && (
-                        <span style={{ fontSize: 10, color: 'var(--gray)', marginLeft: 8, fontFamily: 'var(--font-mono)' }}>→ {c.categoria_contabile}</span>
+                        <span style={{ fontSize: 12, color: 'var(--gray)', marginLeft: 8, fontFamily: 'var(--font-mono)' }}>→ {c.categoria_contabile}</span>
                       )}
                     </div>
-                    <span style={{ fontSize: 10, fontFamily: 'var(--font-mono)', letterSpacing: '0.08em', textTransform: 'uppercase', color: c.tipo === 'entrata' ? 'var(--verde)' : c.tipo === 'uscita' ? 'var(--rosso)' : 'var(--gray)', background: c.tipo === 'entrata' ? 'rgba(0,200,100,0.1)' : c.tipo === 'uscita' ? 'rgba(255,60,60,0.1)' : '#1a1a1a', padding: '2px 8px', borderRadius: 2 }}>
+                    <span style={{ fontSize: 12, fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none', color: c.tipo === 'entrata' ? 'var(--verde)' : c.tipo === 'uscita' ? 'var(--rosso)' : 'var(--gray)', background: c.tipo === 'entrata' ? 'rgba(0,200,100,0.1)' : c.tipo === 'uscita' ? 'rgba(255,60,60,0.1)' : '#1a1a1a', padding: '2px 8px', borderRadius: 8 }}>
                       {c.tipo}
                     </span>
                     <div style={{ display: 'flex', gap: 6 }}>
-                      <button onClick={() => { const { id, attivo, ...rest } = c; setCausaleForm(rest); setCausaleMode('modifica'); setCausaleId(id); setCausaleOpen(true) }} style={{ padding: '5px 10px', background: 'transparent', border: '1px solid var(--border-solid)', borderRadius: 2, color: 'var(--gray)', fontSize: 11, cursor: 'pointer' }}>Modifica</button>
-                      <button onClick={() => eliminaCausale(c.id)} style={{ padding: '5px 10px', background: 'transparent', border: '1px solid var(--border-solid)', borderRadius: 2, color: 'var(--gray)', fontSize: 11, cursor: 'pointer' }}>✕</button>
+                      <button onClick={() => { const { id, attivo, ...rest } = c; setCausaleForm(rest); setCausaleMode('modifica'); setCausaleId(id); setCausaleOpen(true) }} style={{ padding: '5px 10px', background: 'transparent', border: '1px solid var(--border-solid)', borderRadius: 8, color: 'var(--gray)', fontSize: 12, cursor: 'pointer' }}>Modifica</button>
+                      <button onClick={() => eliminaCausale(c.id)} style={{ padding: '5px 10px', background: 'transparent', border: '1px solid var(--border-solid)', borderRadius: 8, color: 'var(--gray)', fontSize: 12, cursor: 'pointer' }}>✕</button>
                     </div>
                   </div>
                 ))}
@@ -325,16 +325,16 @@ export default function ConfigurazioneFinanziariaPage() {
                 if (list.length === 0) return null
                 return (
                   <div key={tipo} style={{ marginBottom: 24 }}>
-                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.2em', color: tipo === 'entrata' ? 'var(--verde)' : 'var(--rosso)', marginBottom: 10 }}>
+                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: tipo === 'entrata' ? 'var(--verde)' : 'var(--rosso)', marginBottom: 10 }}>
                       {tipo === 'entrata' ? '▲ Entrate (A)' : '▼ Uscite (B)'}
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                       {list.map(cat => (
-                        <div key={cat.id} style={{ background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2, padding: '10px 14px', display: 'flex', alignItems: 'center', gap: 12 }}>
-                          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700, color: tipo === 'entrata' ? 'var(--verde)' : 'var(--rosso)', width: 40, flexShrink: 0 }}>{cat.codice}</span>
+                        <div key={cat.id} style={{ background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8, padding: '10px 14px', display: 'flex', alignItems: 'center', gap: 12 }}>
+                          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: 700, color: tipo === 'entrata' ? 'var(--verde)' : 'var(--rosso)', width: 40, flexShrink: 0 }}>{cat.codice}</span>
                           <span style={{ fontSize: 13, color: 'var(--white)', flex: 1 }}>{cat.descrizione}</span>
                           {cat.is_sistema && (
-                            <span style={{ fontSize: 9, fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--gray)', background: '#1a1a1a', padding: '2px 6px', borderRadius: 2 }}>SISTEMA</span>
+                            <span style={{ fontSize: 11, fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none', color: 'var(--gray)', background: 'var(--surface-2)', padding: '2px 6px', borderRadius: 8 }}>SISTEMA</span>
                           )}
                         </div>
                       ))}
@@ -352,13 +352,13 @@ export default function ConfigurazioneFinanziariaPage() {
               <div style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap', alignItems: 'center' }}>
                 <div>
                   <label className="label">Anno</label>
-                  <select className="input" value={reportAnno} onChange={e => setReportAnno(e.target.value)} style={{ background: '#1a1a1a', color: 'var(--white)', width: 100 }}>
+                  <select className="input" value={reportAnno} onChange={e => setReportAnno(e.target.value)} style={{ background: 'var(--surface-2)', color: 'var(--white)', width: 100 }}>
                     {anni.map(a => <option key={a} value={a}>{a}</option>)}
                   </select>
                 </div>
                 <div>
                   <label className="label">Tipo</label>
-                  <select className="input" value={reportTipo} onChange={e => setReportTipo(e.target.value as any)} style={{ background: '#1a1a1a', color: 'var(--white)', width: 140 }}>
+                  <select className="input" value={reportTipo} onChange={e => setReportTipo(e.target.value as any)} style={{ background: 'var(--surface-2)', color: 'var(--white)', width: 140 }}>
                     <option value="entrambi">Tutti</option>
                     <option value="entrata">Solo entrate</option>
                     <option value="uscita">Solo uscite</option>
@@ -390,7 +390,7 @@ export default function ConfigurazioneFinanziariaPage() {
                 </div>
                 <div className="stat-card" style={{ border: `1px solid ${saldo >= 0 ? 'var(--verde)' : 'var(--rosso)'}` }}>
                   <div className="stat-label">Saldo {reportAnno}</div>
-                  <div className="stat-value" style={{ color: saldo >= 0 ? 'var(--verde)' : 'var(--rosso)', fontSize: 22, fontWeight: 900 }}>
+                  <div className="stat-value" style={{ color: saldo >= 0 ? 'var(--verde)' : 'var(--rosso)', fontSize: 22, fontWeight: 700 }}>
                     {saldo >= 0 ? '+' : ''}{formatEuro(saldo)}
                   </div>
                 </div>
@@ -401,12 +401,12 @@ export default function ConfigurazioneFinanziariaPage() {
                 {/* Entrate */}
                 {(reportTipo === 'entrambi' || reportTipo === 'entrata') && (
                   <div>
-                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--verde)', marginBottom: 10 }}>▲ Entrate per categoria</div>
+                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--verde)', marginBottom: 10 }}>▲ Entrate per categoria</div>
                     {entratePerCat.length === 0 && <div style={{ fontSize: 12, color: 'var(--gray)' }}>Nessun dato</div>}
                     {entratePerCat.map(({ cat, totale }) => (
                       <div key={cat.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--border-solid)' }}>
                         <div>
-                          <span style={{ fontSize: 11, color: 'var(--verde)', fontFamily: 'var(--font-mono)', marginRight: 8 }}>{cat.codice}</span>
+                          <span style={{ fontSize: 12, color: 'var(--verde)', fontFamily: 'var(--font-mono)', marginRight: 8 }}>{cat.codice}</span>
                           <span style={{ fontSize: 12, color: 'var(--white)' }}>{cat.descrizione}</span>
                         </div>
                         <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--verde)', fontFamily: 'var(--font-mono)' }}>+{formatEuro(totale)}</span>
@@ -418,12 +418,12 @@ export default function ConfigurazioneFinanziariaPage() {
                 {/* Uscite */}
                 {(reportTipo === 'entrambi' || reportTipo === 'uscita') && (
                   <div>
-                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--rosso)', marginBottom: 10 }}>▼ Uscite per categoria</div>
+                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--rosso)', marginBottom: 10 }}>▼ Uscite per categoria</div>
                     {uscitePerCat.length === 0 && <div style={{ fontSize: 12, color: 'var(--gray)' }}>Nessun dato</div>}
                     {uscitePerCat.map(({ cat, totale }) => (
                       <div key={cat.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--border-solid)' }}>
                         <div>
-                          <span style={{ fontSize: 11, color: 'var(--rosso)', fontFamily: 'var(--font-mono)', marginRight: 8 }}>{cat.codice}</span>
+                          <span style={{ fontSize: 12, color: 'var(--rosso)', fontFamily: 'var(--font-mono)', marginRight: 8 }}>{cat.codice}</span>
                           <span style={{ fontSize: 12, color: 'var(--white)' }}>{cat.descrizione}</span>
                         </div>
                         <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--rosso)', fontFamily: 'var(--font-mono)' }}>-{formatEuro(totale)}</span>
@@ -440,7 +440,7 @@ export default function ConfigurazioneFinanziariaPage() {
             <div style={{
               position: 'fixed', bottom: 24, left: '50%', transform: 'translateX(-50%)',
               background: 'var(--rosso)', color: '#fff', padding: '12px 20px',
-              borderRadius: 6, fontSize: 13, fontWeight: 600, zIndex: 2000,
+              borderRadius: 10, fontSize: 13, fontWeight: 600, zIndex: 2000,
               maxWidth: 480, textAlign: 'center', boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
             }}>
               ⚠️ {errore}
@@ -451,9 +451,9 @@ export default function ConfigurazioneFinanziariaPage() {
           {/* ── Modal Conto ── */}
           {contoOpen && (
             <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-              <div style={{ background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2, width: '100%', maxWidth: 480 }}>
+              <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8, width: '100%', maxWidth: 480 }}>
                 <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border-solid)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 15, textTransform: 'uppercase', color: 'var(--white)' }}>
+                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, textTransform: 'none', color: 'var(--white)' }}>
                     {contoMode === 'nuovo' ? 'Nuovo Conto Corrente' : 'Modifica Conto'}
                   </div>
                   <button onClick={() => setContoOpen(false)} style={{ background: 'none', border: 'none', color: 'var(--gray)', fontSize: 22, cursor: 'pointer' }}>×</button>
@@ -494,9 +494,9 @@ export default function ConfigurazioneFinanziariaPage() {
           {/* ── Modal Causale ── */}
           {causaleOpen && (
             <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-              <div style={{ background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2, width: '100%', maxWidth: 420 }}>
+              <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8, width: '100%', maxWidth: 420 }}>
                 <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border-solid)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 15, textTransform: 'uppercase', color: 'var(--white)' }}>
+                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, textTransform: 'none', color: 'var(--white)' }}>
                     {causaleMode === 'nuovo' ? 'Nuova Causale' : 'Modifica Causale'}
                   </div>
                   <button onClick={() => setCausaleOpen(false)} style={{ background: 'none', border: 'none', color: 'var(--gray)', fontSize: 22, cursor: 'pointer' }}>×</button>
@@ -507,7 +507,7 @@ export default function ConfigurazioneFinanziariaPage() {
                       <input className="input" value={causaleForm.codice} onChange={e => setCausaleForm(p => ({ ...p, codice: e.target.value.toUpperCase() }))} placeholder="es. QUOT" maxLength={10} />
                     </F>
                     <F label="Tipo *">
-                      <select className="input" value={causaleForm.tipo} onChange={e => setCausaleForm(p => ({ ...p, tipo: e.target.value as any }))} style={{ background: '#1a1a1a', color: 'var(--white)' }}>
+                      <select className="input" value={causaleForm.tipo} onChange={e => setCausaleForm(p => ({ ...p, tipo: e.target.value as any }))} style={{ background: 'var(--surface-2)', color: 'var(--white)' }}>
                         <option value="entrata">Entrata</option>
                         <option value="uscita">Uscita</option>
                         <option value="entrambi">Entrambi</option>
@@ -518,7 +518,7 @@ export default function ConfigurazioneFinanziariaPage() {
                     <input className="input" value={causaleForm.descrizione} onChange={e => setCausaleForm(p => ({ ...p, descrizione: e.target.value }))} placeholder="es. Quote associative stagionali" />
                   </F>
                   <F label="Categoria contabile">
-                    <select className="input" value={causaleForm.categoria_contabile ?? ''} onChange={e => setCausaleForm(p => ({ ...p, categoria_contabile: e.target.value || null }))} style={{ background: '#1a1a1a', color: 'var(--white)' }}>
+                    <select className="input" value={causaleForm.categoria_contabile ?? ''} onChange={e => setCausaleForm(p => ({ ...p, categoria_contabile: e.target.value || null }))} style={{ background: 'var(--surface-2)', color: 'var(--white)' }}>
                       <option value="">— Nessuna —</option>
                       {categorie.map(c => <option key={c.id} value={c.codice}>{c.codice} – {c.descrizione}</option>)}
                     </select>

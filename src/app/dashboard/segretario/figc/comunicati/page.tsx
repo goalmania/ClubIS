@@ -213,7 +213,7 @@ export default function ComunicatiFIGCPage() {
                     <div style={{
                       width: 28, height: 28, borderRadius: '50%', flexShrink: 0,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700,
+                      fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: 700,
                       background: step >= n ? 'var(--accent)' : 'var(--gray-light)',
                       color: step >= n ? '#0a0a0a' : 'var(--gray)',
                       border: step === n ? '2px solid var(--accent)' : '2px solid transparent',
@@ -221,8 +221,8 @@ export default function ComunicatiFIGCPage() {
                       {step > n ? '✓' : n}
                     </div>
                     <span style={{
-                      fontFamily: 'var(--font-display)', fontSize: '0.72rem',
-                      letterSpacing: '0.08em', textTransform: 'uppercase',
+                      fontFamily: 'var(--font-display)', fontSize: '0.85rem',
+                      letterSpacing: '0', textTransform: 'none',
                       color: step === n ? 'var(--accent)' : 'var(--gray)',
                       fontWeight: step === n ? 700 : 500,
                     }}>
@@ -241,8 +241,8 @@ export default function ComunicatiFIGCPage() {
               <div className="card" style={{ padding: 28 }}>
                 <div style={{ marginBottom: 20 }}>
                   <div style={{
-                    fontFamily: 'var(--font-display)', fontSize: '0.7rem',
-                    letterSpacing: '0.12em', textTransform: 'uppercase',
+                    fontFamily: 'var(--font-display)', fontSize: '0.85rem',
+                    letterSpacing: '0', textTransform: 'none',
                     color: 'var(--gray)', marginBottom: 20,
                   }}>
                     Dati comunicato
@@ -251,7 +251,7 @@ export default function ComunicatiFIGCPage() {
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 160px 160px', gap: 12, marginBottom: 12 }}>
                     {/* Comitato */}
                     <div>
-                      <label style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)', display: 'block', marginBottom: 5 }}>
+                      <label style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', display: 'block', marginBottom: 5 }}>
                         COMITATO
                       </label>
                       <select
@@ -265,7 +265,7 @@ export default function ComunicatiFIGCPage() {
                     </div>
                     {/* Numero */}
                     <div>
-                      <label style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)', display: 'block', marginBottom: 5 }}>
+                      <label style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', display: 'block', marginBottom: 5 }}>
                         N° COMUNICATO
                       </label>
                       <input
@@ -279,7 +279,7 @@ export default function ComunicatiFIGCPage() {
                     </div>
                     {/* Data */}
                     <div>
-                      <label style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)', display: 'block', marginBottom: 5 }}>
+                      <label style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', display: 'block', marginBottom: 5 }}>
                         DATA C.U.
                       </label>
                       <input
@@ -295,7 +295,7 @@ export default function ComunicatiFIGCPage() {
                   {/* Data inizio effetto */}
                   <div style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 12, alignItems: 'flex-start' }}>
                     <div>
-                      <label style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)', display: 'block', marginBottom: 5 }}>
+                      <label style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', display: 'block', marginBottom: 5 }}>
                         DECORRENZA SQUALIFICHE
                       </label>
                       <input
@@ -310,8 +310,8 @@ export default function ComunicatiFIGCPage() {
                       padding: '10px 14px',
                       background: 'rgba(200,240,0,0.04)',
                       border: '1px solid rgba(200,240,0,0.1)',
-                      borderRadius: 4, marginTop: 20,
-                      fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)',
+                      borderRadius: 10, marginTop: 20,
+                      fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)',
                       lineHeight: 1.6,
                     }}>
                       La decorrenza è la data della prima gara in cui si scontano le giornate.
@@ -322,7 +322,7 @@ export default function ComunicatiFIGCPage() {
 
                 {/* Textarea testo */}
                 <div>
-                  <label style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)', display: 'block', marginBottom: 6 }}>
+                  <label style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', display: 'block', marginBottom: 6 }}>
                     TESTO DEL COMUNICATO — incolla il contenuto estratto dal PDF
                   </label>
                   <textarea
@@ -332,13 +332,13 @@ export default function ComunicatiFIGCPage() {
                     style={{
                       width: '100%', minHeight: 260,
                       background: 'var(--gray-light)', border: '1px solid var(--border)',
-                      borderRadius: 4, padding: '12px 14px',
+                      borderRadius: 10, padding: '12px 14px',
                       color: 'var(--white)', fontFamily: 'var(--font-mono)',
                       fontSize: 12, lineHeight: 1.7, resize: 'vertical',
                       boxSizing: 'border-box',
                     }}
                   />
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', marginTop: 4 }}>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', marginTop: 4 }}>
                     {testo.length} caratteri
                   </div>
                 </div>
@@ -362,7 +362,7 @@ export default function ComunicatiFIGCPage() {
                 {/* Riepilogo */}
                 <div style={{
                   display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1,
-                  background: 'var(--border)', borderRadius: 4,
+                  background: 'var(--border)', borderRadius: 10,
                   overflow: 'hidden', marginBottom: 24,
                 }}>
                   {[
@@ -373,8 +373,8 @@ export default function ComunicatiFIGCPage() {
                     <div key={label as string} style={{
                       background: 'var(--gray-light)', padding: '16px 20px', textAlign: 'center',
                     }}>
-                      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', marginBottom: 4 }}>{label}</div>
-                      <div style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 900, color: color as string }}>{val}</div>
+                      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', marginBottom: 4 }}>{label}</div>
+                      <div style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, color: color as string }}>{val}</div>
                     </div>
                   ))}
                 </div>
@@ -402,14 +402,14 @@ export default function ComunicatiFIGCPage() {
                             background: 'var(--gray-light)',
                             border: `1px solid ${matched ? 'rgba(200,240,0,0.15)' : 'rgba(255,68,68,0.25)'}`,
                             borderLeft: `3px solid ${matched ? 'var(--accent)' : 'var(--rosso)'}`,
-                            borderRadius: 4,
+                            borderRadius: 10,
                           }}
                         >
                           {/* Badge tipo + durata */}
                           <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                             <span className={`badge ${cfg.cls}`} style={{ alignSelf: 'flex-start' }}>{cfg.label}</span>
                             {a.provvedimento.durata && (
-                              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)' }}>
+                              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)' }}>
                                 {a.provvedimento.durata}
                               </span>
                             )}
@@ -420,7 +420,7 @@ export default function ComunicatiFIGCPage() {
                             <div style={{ fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 700, color: 'var(--white)' }}>
                               {a.provvedimento.cognome_raw} {a.provvedimento.nome_raw}
                             </div>
-                            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', marginTop: 2 }}>
+                            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', marginTop: 2 }}>
                               {a.provvedimento.societa_raw}
                               {a.score > 0 && (
                                 <span style={{ marginLeft: 8, color: a.score >= 0.72 ? 'var(--accent)' : 'var(--ambra)' }}>
@@ -434,7 +434,7 @@ export default function ComunicatiFIGCPage() {
                           <div>
                             {a.provvedimento.tipo === 'ammenda' ? (
                               <div>
-                                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', marginBottom: 5 }}>
+                                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', marginBottom: 5 }}>
                                   USCITA IN PRIMA NOTA — AMMENDE FIGC
                                 </div>
                                 <select
@@ -453,7 +453,7 @@ export default function ComunicatiFIGCPage() {
                                     </option>
                                   ))}
                                 </select>
-                                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--accent)' }}>
+                                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--accent)' }}>
                                   Importo: {a.provvedimento.durata || '—'} → registrato in contabilità
                                 </div>
                               </div>
@@ -513,8 +513,8 @@ export default function ComunicatiFIGCPage() {
                   ✓
                 </div>
                 <div style={{
-                  fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 900,
-                  color: 'var(--white)', letterSpacing: '0.05em', marginBottom: 8,
+                  fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 700,
+                  color: 'var(--white)', letterSpacing: '0', marginBottom: 8,
                 }}>
                   Provvedimenti applicati
                 </div>
@@ -529,7 +529,7 @@ export default function ComunicatiFIGCPage() {
                   <div className="alert alert-warning" style={{ marginTop: 20, textAlign: 'left' }}>
                     <strong>Attenzione — {erroriApply.length} errore{erroriApply.length > 1 ? 'i' : ''}:</strong>
                     <ul style={{ margin: '8px 0 0', paddingLeft: 20 }}>
-                      {erroriApply.map((e, i) => <li key={i} style={{ fontFamily: 'var(--font-mono)', fontSize: 11 }}>{e}</li>)}
+                      {erroriApply.map((e, i) => <li key={i} style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{e}</li>)}
                     </ul>
                   </div>
                 )}

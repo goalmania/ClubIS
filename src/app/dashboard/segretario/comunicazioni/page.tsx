@@ -91,9 +91,9 @@ export default function ComunicazioniPage() {
             onClick={() => { setForm(FORM_VUOTO); setModalAperto(true) }}
             style={{
               padding: '9px 18px', background: 'var(--accent)', color: '#0a0a0a',
-              border: 'none', borderRadius: 2, cursor: 'pointer',
+              border: 'none', borderRadius: 8, cursor: 'pointer',
               fontFamily: 'var(--font-display)', fontWeight: 700,
-              fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em',
+              fontSize: 12, textTransform: 'none', letterSpacing: '0',
             }}
           >
             + Nuova comunicazione
@@ -145,13 +145,13 @@ export default function ComunicazioniPage() {
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{
                       fontFamily: 'var(--font-display)', fontWeight: 700,
-                      textTransform: 'uppercase', fontSize: 13, letterSpacing: '0.04em',
+                      textTransform: 'none', fontSize: 13, letterSpacing: '0',
                       color: 'var(--white)', marginBottom: 4,
                       overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                     }}>
                       {c.oggetto}
                     </div>
-                    <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', fontSize: 10, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>
+                    <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>
                       <span>{gruppoLabel(c.destinatari_gruppo)}</span>
                       <span>{canaleLabel(c.canale)}</span>
                       <span>📅 {new Date(c.data_invio).toLocaleDateString('it-IT', {
@@ -173,7 +173,7 @@ export default function ComunicazioniPage() {
                   <div style={{
                     padding: '14px 20px 18px',
                     borderTop: '1px solid rgba(255,255,255,0.06)',
-                    background: '#111',
+                    background: 'var(--surface-2)',
                   }}>
                     <div style={{ fontSize: 13, color: 'var(--grigio-2)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>
                       {c.testo}
@@ -249,8 +249,8 @@ export default function ComunicazioniPage() {
               style={{
                 padding: '9px 20px', background: 'transparent',
                 color: 'var(--grigio-3)', border: '1px solid var(--border-solid)',
-                borderRadius: 2, cursor: 'pointer',
-                fontFamily: 'var(--font-display)', fontSize: 11, textTransform: 'uppercase',
+                borderRadius: 8, cursor: 'pointer',
+                fontFamily: 'var(--font-display)', fontSize: 12, textTransform: 'none',
               }}
             >
               Annulla
@@ -260,9 +260,9 @@ export default function ComunicazioniPage() {
               disabled={salvando}
               style={{
                 padding: '9px 22px', background: 'var(--accent)', color: '#0a0a0a',
-                border: 'none', borderRadius: 2, cursor: salvando ? 'not-allowed' : 'pointer',
+                border: 'none', borderRadius: 8, cursor: salvando ? 'not-allowed' : 'pointer',
                 fontFamily: 'var(--font-display)', fontWeight: 700,
-                fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em',
+                fontSize: 12, textTransform: 'none', letterSpacing: '0',
                 opacity: salvando ? 0.6 : 1,
               }}
             >

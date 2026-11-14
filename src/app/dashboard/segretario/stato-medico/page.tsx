@@ -78,7 +78,7 @@ export default async function SegretarioStatoMedicoPage() {
   return (
     <div style={{ animation: 'fadeIn 0.3s ease' }}>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>
           Stato medico giocatori
         </h1>
         <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>
@@ -154,7 +154,7 @@ export default async function SegretarioStatoMedicoPage() {
                     </td>
                     <td>
                       {g.ruolo_principale
-                        ? <span className="badge badge-grigio" style={{ fontSize: 10 }}>{ruoloShort[g.ruolo_principale] ?? g.ruolo_principale}</span>
+                        ? <span className="badge badge-grigio" style={{ fontSize: 12 }}>{ruoloShort[g.ruolo_principale] ?? g.ruolo_principale}</span>
                         : <span style={{ color: 'var(--grigio-4)' }}>—</span>
                       }
                     </td>
@@ -179,7 +179,7 @@ export default async function SegretarioStatoMedicoPage() {
                       )}
                     </td>
                     <td>
-                      <Link href={`/dashboard/segretario/cartelle/${g.id}`} className="btn btn-secondary btn-sm" style={{ fontSize: 11 }}>
+                      <Link href={`/dashboard/segretario/cartelle/${g.id}`} className="btn btn-secondary btn-sm" style={{ fontSize: 12 }}>
                         Cartella
                       </Link>
                     </td>

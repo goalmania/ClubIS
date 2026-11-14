@@ -85,7 +85,7 @@ export default async function AllenatoreRosaPage() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Rosa</h1>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Rosa</h1>
           <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>
             {sq?.map(s => s.nome).join(', ')} · {tesserati?.length ?? 0} giocatori
           </p>
@@ -95,7 +95,7 @@ export default async function AllenatoreRosaPage() {
 
       {Object.entries(ruoloGruppi).filter(([, lista]) => lista.length > 0).map(([gruppo, lista]) => (
         <div key={gruppo} style={{ marginBottom: 28 }}>
-          <div style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--grigio-4)', marginBottom: 12 }}>
+          <div style={{ fontSize: 12, fontWeight: 600, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-4)', marginBottom: 12 }}>
             {gruppo} ({lista.length})
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 12 }}>
@@ -113,7 +113,7 @@ export default async function AllenatoreRosaPage() {
                     )}
                     <div>
                       <div style={{ fontSize: 13, fontWeight: 600 }}>{g.cognome} {g.nome}</div>
-                      <div style={{ fontSize: 11, color: 'var(--grigio-4)' }}>
+                      <div style={{ fontSize: 12, color: 'var(--grigio-4)' }}>
                         {eta} anni · {g.piede} · {g.altezza_cm ? `${g.altezza_cm}cm` : '—'}
                         {g.numero_maglia ? ` · #${g.numero_maglia}` : ''}
                       </div>
@@ -121,7 +121,7 @@ export default async function AllenatoreRosaPage() {
                   </div>
                   {pres && (
                     <div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: 'var(--grigio-4)', marginBottom: 4 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'var(--grigio-4)', marginBottom: 4 }}>
                         <span>Presenze 7gg</span>
                         <span style={{ color: percPres! >= 80 ? 'var(--verde)' : percPres! >= 60 ? 'var(--ambra)' : 'var(--rosso)', fontWeight: 500 }}>
                           {pres.presenti}/{pres.tot}

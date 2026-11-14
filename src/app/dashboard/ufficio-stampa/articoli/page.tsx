@@ -483,15 +483,15 @@ export default function ArticoliPage() {
 
   const inputStyle = {
     width: '100%', padding: '9px 12px',
-    background: '#1a1a1a', border: '1px solid var(--border-solid)',
-    borderRadius: 2, color: 'var(--white)', fontSize: 13,
+    background: 'var(--surface-2)', border: '1px solid var(--border-solid)',
+    borderRadius: 8, color: 'var(--white)', fontSize: 13,
     fontFamily: 'var(--font-sans)', outline: 'none',
   } as const
 
   const labelStyle = {
-    display: 'block', fontFamily: 'var(--font-mono)', fontSize: '0.65rem',
-    fontWeight: 700, textTransform: 'uppercase' as const,
-    letterSpacing: '0.15em', color: 'var(--grigio-3)', marginBottom: 8,
+    display: 'block', fontFamily: 'var(--font-mono)', fontSize: '0.8rem',
+    fontWeight: 700, textTransform: 'none' as const,
+    letterSpacing: '0', color: 'var(--grigio-3)', marginBottom: 8,
   }
 
   return (
@@ -499,8 +499,8 @@ export default function ArticoliPage() {
       {/* Header */}
       <div data-onboarding="btn-nuovo-articolo" style={{ marginBottom: 24 }}>
         <h1 style={{
-          fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900,
-          textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)',
+          fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700,
+          textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)',
         }}>
           Template Articoli
         </h1>
@@ -523,9 +523,9 @@ export default function ArticoliPage() {
               background: modalita === tab.key ? 'var(--accent)' : 'transparent',
               color: modalita === tab.key ? '#0a0a0a' : 'var(--grigio-3)',
               border: modalita === tab.key ? 'none' : '1px solid var(--border-solid)',
-              borderRadius: 2, cursor: 'pointer',
+              borderRadius: 8, cursor: 'pointer',
               fontFamily: 'var(--font-display)', fontWeight: 700,
-              fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em',
+              fontSize: 12, textTransform: 'none', letterSpacing: '0',
             }}
           >
             {tab.label}
@@ -542,8 +542,8 @@ export default function ArticoliPage() {
             {CATEGORIE.map(cat => (
               <div key={cat}>
                 <div style={{
-                  fontFamily: 'var(--font-mono)', fontSize: '0.6rem', fontWeight: 700,
-                  textTransform: 'uppercase', letterSpacing: '0.15em',
+                  fontFamily: 'var(--font-mono)', fontSize: '0.78rem', fontWeight: 700,
+                  textTransform: 'none', letterSpacing: '0',
                   color: 'var(--grigio-4)', marginBottom: 8,
                 }}>
                   {cat}
@@ -559,7 +559,7 @@ export default function ArticoliPage() {
                           padding: '10px 12px', textAlign: 'left',
                           background: isSelected ? 'rgba(200,240,0,0.08)' : '#111',
                           border: isSelected ? '1px solid var(--accent)' : '1px solid var(--border-solid)',
-                          borderRadius: 2, cursor: 'pointer',
+                          borderRadius: 8, cursor: 'pointer',
                         }}
                       >
                         <div style={{
@@ -571,7 +571,7 @@ export default function ArticoliPage() {
                           <span>{t.emoji}</span>
                           <span>{t.titolo}</span>
                         </div>
-                        <div style={{ fontSize: 11, color: 'var(--grigio-4)', lineHeight: 1.4 }}>
+                        <div style={{ fontSize: 12, color: 'var(--grigio-4)', lineHeight: 1.4 }}>
                           {t.descrizione}
                         </div>
                       </button>
@@ -613,8 +613,8 @@ export default function ArticoliPage() {
                         style={{
                           padding: '7px 14px',
                           background: copiato ? 'var(--verde)' : 'var(--accent)',
-                          color: '#0a0a0a', border: 'none', borderRadius: 2, cursor: 'pointer',
-                          fontFamily: 'var(--font-mono)', fontSize: 11, textTransform: 'uppercase', fontWeight: 700,
+                          color: '#0a0a0a', border: 'none', borderRadius: 8, cursor: 'pointer',
+                          fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'none', fontWeight: 700,
                         }}
                       >
                         {copiato ? '✓ Copiato' : 'Copia testo'}
@@ -627,8 +627,8 @@ export default function ArticoliPage() {
                         style={{
                           padding: '7px 14px', background: 'transparent',
                           color: 'var(--grigio-3)', border: '1px solid var(--border-solid)',
-                          borderRadius: 2, cursor: 'pointer',
-                          fontFamily: 'var(--font-mono)', fontSize: 11, textTransform: 'uppercase',
+                          borderRadius: 8, cursor: 'pointer',
+                          fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'none',
                         }}
                       >
                         Scarica .txt
@@ -639,7 +639,7 @@ export default function ArticoliPage() {
                         style={{
                           padding: '7px 10px', background: 'transparent',
                           color: 'var(--grigio-4)', border: '1px solid var(--border-solid)',
-                          borderRadius: 2, cursor: 'pointer', fontSize: 13,
+                          borderRadius: 8, cursor: 'pointer', fontSize: 13,
                         }}
                       >
                         ↺
@@ -653,7 +653,7 @@ export default function ArticoliPage() {
                   padding: '10px 14px',
                   background: 'rgba(200,240,0,0.04)',
                   border: '1px solid rgba(200,240,0,0.15)',
-                  borderRadius: 2, fontSize: 12, color: 'var(--grigio-3)',
+                  borderRadius: 8, fontSize: 12, color: 'var(--grigio-3)',
                 }}>
                   💡 <strong>Come usare il template:</strong> i campi tra parentesi quadre{' '}
                   <code style={{ fontFamily: 'var(--font-mono)', color: 'var(--accent)' }}>[COME QUESTO]</code>{' '}
@@ -689,7 +689,7 @@ export default function ArticoliPage() {
           {/* Selezione partita */}
           <div>
             <div className="card" style={{ padding: 16 }}>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--grigio-3)', marginBottom: 12 }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-3)', marginBottom: 12 }}>
                 Seleziona partita
               </div>
               {partite.length === 0 ? (
@@ -716,21 +716,21 @@ export default function ArticoliPage() {
                           padding: '10px 12px', textAlign: 'left',
                           background: isSelected ? 'rgba(200,240,0,0.08)' : '#111',
                           border: isSelected ? '1px solid var(--accent)' : '1px solid var(--border-solid)',
-                          borderRadius: 2, cursor: 'pointer',
+                          borderRadius: 8, cursor: 'pointer',
                         }}
                       >
                         <div style={{ fontSize: 12, fontWeight: 600, color: isSelected ? 'var(--accent)' : 'var(--white)', marginBottom: 3 }}>
                           {titolo}
                         </div>
                         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--grigio-4)' }}>
+                          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-4)' }}>
                             {formatData(p.data_ora)}
                           </span>
                           <span style={{
-                            fontSize: 9, fontFamily: 'var(--font-mono)',
+                            fontSize: 11, fontFamily: 'var(--font-mono)',
                             color: isGiocata ? 'var(--verde)' : 'var(--ambra)',
                             background: isGiocata ? 'var(--verde-lt)' : 'var(--ambra-lt)',
-                            padding: '2px 6px', borderRadius: 2,
+                            padding: '2px 6px', borderRadius: 8,
                           }}>
                             {isGiocata ? 'Post-gara' : 'Pre-gara'}
                           </span>
@@ -783,8 +783,8 @@ export default function ArticoliPage() {
                         style={{
                           padding: '7px 14px',
                           background: copiato ? 'var(--verde)' : 'var(--accent)',
-                          color: '#0a0a0a', border: 'none', borderRadius: 2, cursor: 'pointer',
-                          fontFamily: 'var(--font-mono)', fontSize: 11, textTransform: 'uppercase', fontWeight: 700,
+                          color: '#0a0a0a', border: 'none', borderRadius: 8, cursor: 'pointer',
+                          fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'none', fontWeight: 700,
                         }}
                       >
                         {copiato ? '✓ Copiato' : 'Copia testo'}
@@ -797,8 +797,8 @@ export default function ArticoliPage() {
                         style={{
                           padding: '7px 14px', background: 'transparent',
                           color: 'var(--grigio-3)', border: '1px solid var(--border-solid)',
-                          borderRadius: 2, cursor: 'pointer',
-                          fontFamily: 'var(--font-mono)', fontSize: 11, textTransform: 'uppercase',
+                          borderRadius: 8, cursor: 'pointer',
+                          fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'none',
                         }}
                       >
                         Scarica .txt
@@ -809,13 +809,13 @@ export default function ArticoliPage() {
 
                 {/* Dati header */}
                 <div className="card" style={{ padding: 16 }}>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#444', marginBottom: 12 }}>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--text-muted)', marginBottom: 12 }}>
                     Dati scheda (auto-generati)
                   </div>
                   <pre style={{
                     fontFamily: 'var(--font-mono)', fontSize: 12, lineHeight: 1.7,
                     color: 'var(--grigio-3)', background: '#0a0a0a',
-                    padding: '14px 16px', borderRadius: 2, overflow: 'auto',
+                    padding: '14px 16px', borderRadius: 8, overflow: 'auto',
                     border: '1px solid var(--border-solid)',
                     whiteSpace: 'pre-wrap', wordBreak: 'break-word',
                   }}>
@@ -849,13 +849,13 @@ export default function ArticoliPage() {
 
                 {/* Preview completa */}
                 <div className="card" style={{ padding: 16 }}>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: '#444', marginBottom: 12 }}>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--text-muted)', marginBottom: 12 }}>
                     Preview documento completo
                   </div>
                   <pre style={{
                     fontFamily: 'var(--font-mono)', fontSize: 12, lineHeight: 1.7,
                     color: 'var(--grigio-3)', background: '#0a0a0a',
-                    padding: '14px 16px', borderRadius: 2, overflow: 'auto',
+                    padding: '14px 16px', borderRadius: 8, overflow: 'auto',
                     border: '1px solid var(--border-solid)',
                     whiteSpace: 'pre-wrap', wordBreak: 'break-word',
                     maxHeight: 400,

@@ -164,12 +164,12 @@ export default function NuovoMessaggioForm({ backUrl }: Props) {
 
       <div style={{ marginBottom: 28 }}>
         <div style={{
-          fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 26,
-          textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--white)',
+          fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 26,
+          textTransform: 'none', letterSpacing: '0', color: 'var(--white)',
         }}>
           Nuovo messaggio
         </div>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)', marginTop: 6 }}>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', marginTop: 6 }}>
           Invia una comunicazione ai membri del club
         </div>
       </div>
@@ -183,7 +183,7 @@ export default function NuovoMessaggioForm({ backUrl }: Props) {
 
           {/* Tipo destinatario */}
           <div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', textTransform: 'none', letterSpacing: '0', marginBottom: 10 }}>
               Destinatari
             </div>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -196,7 +196,7 @@ export default function NuovoMessaggioForm({ backUrl }: Props) {
                   key={d.key} type="button"
                   onClick={() => setDestinatario(d.key)}
                   className={`btn btn-sm ${destinatario === d.key ? 'btn-primary' : 'btn-ghost'}`}
-                  style={{ fontSize: 11 }}
+                  style={{ fontSize: 12 }}
                 >
                   {d.label}
                 </button>
@@ -267,10 +267,10 @@ export default function NuovoMessaggioForm({ backUrl }: Props) {
               style={{ accentColor: 'var(--accent)', width: 15, height: 15 }}
             />
             <div>
-              <div style={{ fontFamily: 'var(--font-display)', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--white)' }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontSize: 12, fontWeight: 600, textTransform: 'none', letterSpacing: '0', color: 'var(--white)' }}>
                 📌 Fissa in bacheca
               </div>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', marginTop: 2 }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', marginTop: 2 }}>
                 Il messaggio sarà visibile come post fissato nella bacheca del club
               </div>
             </div>

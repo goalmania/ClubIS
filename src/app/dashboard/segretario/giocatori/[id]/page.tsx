@@ -368,7 +368,7 @@ export default function GiocatoreDetailPage() {
               <div style={{
                 position: 'absolute', top: 'calc(100% + 6px)', right: 0, zIndex: 40,
                 background: 'var(--bg-card)', border: '1px solid var(--border-solid)',
-                borderRadius: 8, minWidth: 210, overflow: 'hidden', boxShadow: 'var(--shadow)',
+                borderRadius: 12, minWidth: 210, overflow: 'hidden', boxShadow: 'var(--shadow)',
               }}>
                 <button
                   type="button"
@@ -395,15 +395,15 @@ export default function GiocatoreDetailPage() {
       <div className="card" style={{ padding: '20px 24px', marginBottom: 20 }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 18 }}>
           {g.foto_url ? (
-            <img src={g.foto_url} alt="" style={{ width: 68, height: 68, borderRadius: 10, objectFit: 'cover', flexShrink: 0 }} />
+            <img src={g.foto_url} alt="" style={{ width: 68, height: 68, borderRadius: 14, objectFit: 'cover', flexShrink: 0 }} />
           ) : (
-            <div style={{ width: 68, height: 68, borderRadius: 10, background: 'var(--verde-lt)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, fontWeight: 700, color: 'var(--verde)', flexShrink: 0 }}>
+            <div style={{ width: 68, height: 68, borderRadius: 14, background: 'var(--verde-lt)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, fontWeight: 700, color: 'var(--verde)', flexShrink: 0 }}>
               {g.nome?.[0]}{g.cognome?.[0]}
             </div>
           )}
           <div style={{ flex: 1 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6, flexWrap: 'wrap' }}>
-              <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)', margin: 0 }}>
+              <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)', margin: 0 }}>
                 {g.cognome} {g.nome}
               </h1>
               {tesseramento?.numero_maglia && <span style={{ fontSize: 13, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>#{tesseramento.numero_maglia}</span>}
@@ -428,7 +428,7 @@ export default function GiocatoreDetailPage() {
       <div className="card" style={{ overflow: 'hidden' }}>
         {/* Tab header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 18px', borderBottom: '1px solid var(--border-solid)' }}>
-          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--white)' }}>
+          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, textTransform: 'none', letterSpacing: '0', color: 'var(--white)' }}>
             {TABS.find(t => t.key === tab)?.label}
           </span>
           {tab !== 'presenze' && tab !== 'pagamenti' && tab !== 'compenso' && (
@@ -465,7 +465,7 @@ export default function GiocatoreDetailPage() {
                       onChange={e => upd('numero_matricola_figc', e.target.value.replace(/\D/g, '').slice(0, 8) || null)}
                       placeholder="12345678"
                       maxLength={8}
-                      style={{ fontFamily: 'var(--font-mono)', letterSpacing: '0.05em' }}
+                      style={{ fontFamily: 'var(--font-mono)', letterSpacing: '0' }}
                     />
                   </F>
                   <F label="Codice identificativo"><input className="input" value={draft.codice_identificativo ?? ''} onChange={e => upd('codice_identificativo', e.target.value)} /></F>
@@ -546,12 +546,12 @@ export default function GiocatoreDetailPage() {
               )}
               {/* Certificati */}
               <div style={{ padding: '12px 18px', borderTop: '1px solid var(--border-solid)' }}>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--accent)', marginBottom: 10 }}>Certificati medici</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--accent)', marginBottom: 10 }}>Certificati medici</div>
                 {certificati.length === 0 ? (
                   <p style={{ fontSize: 13, color: 'var(--grigio-4)' }}>Nessun certificato registrato</p>
                 ) : (
                   <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-                    <thead><tr style={{ borderBottom: '1px solid var(--border-solid)' }}>{['Tipo', 'Rilascio', 'Scadenza', 'Stato'].map(h => <th key={h} style={{ textAlign: 'left', padding: '6px 10px', fontSize: 11, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--grigio-4)' }}>{h}</th>)}</tr></thead>
+                    <thead><tr style={{ borderBottom: '1px solid var(--border-solid)' }}>{['Tipo', 'Rilascio', 'Scadenza', 'Stato'].map(h => <th key={h} style={{ textAlign: 'left', padding: '6px 10px', fontSize: 12, fontFamily: 'var(--font-mono)', textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-4)' }}>{h}</th>)}</tr></thead>
                     <tbody>
                       {certificati.map(c => {
                         const valido = new Date(c.data_scadenza) >= oggi
@@ -668,9 +668,9 @@ export default function GiocatoreDetailPage() {
                         padding: '12px 14px',
                         background: 'rgba(200,240,0,0.04)',
                         border: '1px solid rgba(200,240,0,0.15)',
-                        borderRadius: 8,
+                        borderRadius: 12,
                       }}>
-                        <div style={{ fontSize: 11, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--grigio-4)', marginBottom: 6 }}>
+                        <div style={{ fontSize: 12, fontFamily: 'var(--font-mono)', textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-4)', marginBottom: 6 }}>
                           Link di registrazione genitore
                         </div>
                         <div style={{ fontSize: 12, color: 'var(--grigio-3)', marginBottom: 10, lineHeight: 1.5 }}>
@@ -681,10 +681,10 @@ export default function GiocatoreDetailPage() {
                         {stato.stato === 'ok' && stato.link ? (
                           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
                             <code style={{
-                              fontFamily: 'var(--font-mono)', fontSize: 11,
-                              color: 'var(--accent)', letterSpacing: '0.02em',
+                              fontFamily: 'var(--font-mono)', fontSize: 12,
+                              color: 'var(--accent)', letterSpacing: '0',
                               background: 'rgba(200,240,0,0.06)',
-                              padding: '4px 10px', borderRadius: 6,
+                              padding: '4px 10px', borderRadius: 10,
                               flexShrink: 1, wordBreak: 'break-all',
                             }}>
                               {stato.link}
@@ -698,7 +698,7 @@ export default function GiocatoreDetailPage() {
                             >
                               Copia link
                             </button>
-                            {stato.msg && <span style={{ fontSize: 11, color: 'var(--accent)' }}>✓ {stato.msg}</span>}
+                            {stato.msg && <span style={{ fontSize: 12, color: 'var(--accent)' }}>✓ {stato.msg}</span>}
                           </div>
                         ) : (
                           <button
@@ -801,7 +801,7 @@ export default function GiocatoreDetailPage() {
                 <p style={{ fontSize: 13, color: 'var(--grigio-4)', padding: '12px 0' }}>Nessun materiale in comodato</p>
               ) : (
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-                  <thead><tr style={{ borderBottom: '1px solid var(--border-solid)' }}>{['Materiale', 'Consegna', 'Restituzione'].map(h => <th key={h} style={{ textAlign: 'left', padding: '6px 10px', fontSize: 11, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--grigio-4)' }}>{h}</th>)}</tr></thead>
+                  <thead><tr style={{ borderBottom: '1px solid var(--border-solid)' }}>{['Materiale', 'Consegna', 'Restituzione'].map(h => <th key={h} style={{ textAlign: 'left', padding: '6px 10px', fontSize: 12, fontFamily: 'var(--font-mono)', textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-4)' }}>{h}</th>)}</tr></thead>
                   <tbody>
                     {matComodato.map((m: any, i: number) => (
                       <tr key={i} style={{ borderBottom: '1px solid var(--border)' }}>
@@ -839,7 +839,7 @@ export default function GiocatoreDetailPage() {
                 <p style={{ fontSize: 13, color: 'var(--grigio-4)' }}>Nessuna presenza registrata</p>
               ) : (
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-                  <thead><tr style={{ borderBottom: '1px solid var(--border-solid)' }}>{['Data', 'Tipo', 'Presenza'].map(h => <th key={h} style={{ textAlign: 'left', padding: '6px 10px', fontSize: 11, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--grigio-4)' }}>{h}</th>)}</tr></thead>
+                  <thead><tr style={{ borderBottom: '1px solid var(--border-solid)' }}>{['Data', 'Tipo', 'Presenza'].map(h => <th key={h} style={{ textAlign: 'left', padding: '6px 10px', fontSize: 12, fontFamily: 'var(--font-mono)', textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-4)' }}>{h}</th>)}</tr></thead>
                   <tbody>
                     {presenze.slice(0, 30).map(p => (
                       <tr key={p.id} style={{ borderBottom: '1px solid var(--border)' }}>
@@ -860,7 +860,7 @@ export default function GiocatoreDetailPage() {
               {abbonamento && abbonamento.stato !== 'cancellato' && (
                 <div style={{
                   display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10,
-                  padding: '12px 16px', marginBottom: 16, borderRadius: 4,
+                  padding: '12px 16px', marginBottom: 16, borderRadius: 10,
                   background: abbonamento.stato === 'attivo' ? 'rgba(0,200,160,0.06)' : 'rgba(245,158,11,0.06)',
                   border: `1px solid ${abbonamento.stato === 'attivo' ? 'rgba(0,200,160,0.25)' : 'rgba(245,158,11,0.3)'}`,
                 }}>
@@ -895,7 +895,7 @@ export default function GiocatoreDetailPage() {
                 const totalePagato = qPag.reduce((s: number, p: any) => s + Number(p.importo), 0)
                 const residuo = Number(q.importo_totale) - totalePagato
                 return (
-                  <div key={q.id} style={{ marginBottom: 16, border: '1px solid var(--border-solid)', borderRadius: 2, overflow: 'hidden' }}>
+                  <div key={q.id} style={{ marginBottom: 16, border: '1px solid var(--border-solid)', borderRadius: 8, overflow: 'hidden' }}>
                     <div style={{ padding: '10px 14px', background: 'var(--gray-light)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <div>
                         <span style={{ fontWeight: 600, fontSize: 14 }}>Stagione {q.stagione}</span>
@@ -909,7 +909,7 @@ export default function GiocatoreDetailPage() {
                     </div>
                     {qPag.length > 0 && (
                       <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-                        <thead><tr>{['Data', 'Importo', 'Metodo', ''].map(h => <th key={h} style={{ textAlign: 'left', padding: '6px 10px', fontSize: 11, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', color: 'var(--grigio-4)', borderBottom: '1px solid var(--border)' }}>{h}</th>)}</tr></thead>
+                        <thead><tr>{['Data', 'Importo', 'Metodo', ''].map(h => <th key={h} style={{ textAlign: 'left', padding: '6px 10px', fontSize: 12, fontFamily: 'var(--font-mono)', textTransform: 'none', color: 'var(--grigio-4)', borderBottom: '1px solid var(--border)' }}>{h}</th>)}</tr></thead>
                         <tbody>
                           {qPag.map(p => {
                             const importo = Number(p.importo)
@@ -948,7 +948,7 @@ export default function GiocatoreDetailPage() {
             <div style={{ padding: 18 }}>
               <div className="card" style={{ padding: '16px 20px', marginBottom: 20, background: 'var(--gray-light)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--accent)' }}>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--accent)' }}>
                     Ingaggio
                   </div>
                   {editContratto ? (
@@ -1015,7 +1015,7 @@ export default function GiocatoreDetailPage() {
                 )}
               </div>
 
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--accent)', marginBottom: 10 }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--accent)', marginBottom: 10 }}>
                 Pagamenti registrati ({pagamentiCompenso.length}) — totale {formatEuro(pagamentiCompenso.reduce((s, p) => s + Number(p.importo), 0))}
               </div>
               {pagamentiCompenso.length === 0 ? (
@@ -1025,7 +1025,7 @@ export default function GiocatoreDetailPage() {
                   <thead>
                     <tr style={{ borderBottom: '1px solid var(--border-solid)' }}>
                       {['Data', 'Descrizione', 'Importo'].map(h => (
-                        <th key={h} style={{ textAlign: 'left', padding: '6px 10px', fontSize: 11, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--grigio-4)' }}>{h}</th>
+                        <th key={h} style={{ textAlign: 'left', padding: '6px 10px', fontSize: 12, fontFamily: 'var(--font-mono)', textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-4)' }}>{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -1134,7 +1134,7 @@ export default function GiocatoreDetailPage() {
                 value={anagDraft.codice_fiscale ?? ''}
                 onChange={e => setAnagDraft((p: any) => ({ ...p, codice_fiscale: e.target.value.toUpperCase() }))}
                 maxLength={16}
-                style={{ fontFamily: 'var(--font-mono)', letterSpacing: '0.05em' }}
+                style={{ fontFamily: 'var(--font-mono)', letterSpacing: '0' }}
               />
             </F>
             <F label="Nazionalità">
@@ -1204,7 +1204,7 @@ function ReadGrid({ rows }: { rows: { label: string; value: string | number }[] 
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
       {rows.map(r => (
         <div key={r.label} style={{ padding: '10px 18px', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-          <div style={{ fontSize: 11, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 3 }}>{r.label}</div>
+          <div style={{ fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)', textTransform: 'none', letterSpacing: '0', marginBottom: 3 }}>{r.label}</div>
           <div style={{ fontSize: 13, color: 'var(--white)' }}>{r.value}</div>
         </div>
       ))}
@@ -1217,7 +1217,7 @@ function F({ label, hint, children, style }: { label: string; hint?: string; chi
     <div style={{ marginBottom: 14, ...style }}>
       <label className="label">{label}</label>
       {children}
-      {hint && <div style={{ fontSize: 11, color: 'var(--grigio-4)', marginTop: 4 }}>{hint}</div>}
+      {hint && <div style={{ fontSize: 12, color: 'var(--grigio-4)', marginTop: 4 }}>{hint}</div>}
     </div>
   )
 }

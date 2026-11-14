@@ -106,12 +106,12 @@ function BudgetBars({ items }: { items: BudgetItem[] }) {
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
               <span style={{
                 fontFamily: 'var(--font-display)', fontWeight: 600,
-                textTransform: 'uppercase', letterSpacing: '0.08em',
-                fontSize: 11, color: 'var(--grigio-2)',
+                textTransform: 'none', letterSpacing: '0',
+                fontSize: 12, color: 'var(--grigio-2)',
               }}>
                 {categoriaLabel[item.categoria] ?? item.categoria}
               </span>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: overBudget ? 'var(--rosso)' : 'var(--grigio-3)' }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: overBudget ? 'var(--rosso)' : 'var(--grigio-3)' }}>
                 {fmt(item.speso_ytd)} / {fmt(item.budget_annuo)}
               </span>
             </div>
@@ -171,20 +171,20 @@ function LineChart({ mesi }: { mesi: MeseData[] }) {
             <circle cx={toX(i)} cy={toY(m.entrate)} r={3} fill="var(--accent)" />
             <circle cx={toX(i)} cy={toY(m.uscite)} r={3} fill="var(--rosso)" />
             <text x={toX(i)} y={H + 20} textAnchor="middle"
-              style={{ fontFamily: 'var(--font-mono)', fontSize: 9, fill: '#555' }}>
+              style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fill: '#555' }}>
               {m.label}
             </text>
           </g>
         ))}
       </svg>
-      <div style={{ display: 'flex', gap: 20, marginTop: 8, fontSize: 11, fontFamily: 'var(--font-display)' }}>
+      <div style={{ display: 'flex', gap: 20, marginTop: 8, fontSize: 12, fontFamily: 'var(--font-display)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <div style={{ width: 16, height: 2, background: 'var(--accent)' }} />
-          <span style={{ color: 'var(--grigio-3)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Entrate</span>
+          <span style={{ color: 'var(--grigio-3)', textTransform: 'none', letterSpacing: '0' }}>Entrate</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <div style={{ width: 16, height: 2, background: 'var(--rosso)' }} />
-          <span style={{ color: 'var(--grigio-3)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Uscite</span>
+          <span style={{ color: 'var(--grigio-3)', textTransform: 'none', letterSpacing: '0' }}>Uscite</span>
         </div>
       </div>
     </div>
@@ -290,7 +290,7 @@ export default function BudgetPage() {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>
             Budget Societario
           </h1>
           <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>
@@ -308,7 +308,7 @@ export default function BudgetPage() {
               border: 'none',
               cursor: 'pointer',
               fontWeight: stagione === s ? 700 : 400,
-              letterSpacing: '0.05em',
+              letterSpacing: '0',
             }}>
               {s}
             </button>
@@ -347,7 +347,7 @@ export default function BudgetPage() {
       {/* Grafici: donut + barre */}
       <div style={{ display: 'grid', gridTemplateColumns: '240px 1fr', gap: 20, marginBottom: 24 }}>
         <div className="card" style={{ padding: '18px 16px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <div style={{ fontSize: 11, fontFamily: 'var(--font-display)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--grigio-3)', marginBottom: 12 }}>
+          <div style={{ fontSize: 12, fontFamily: 'var(--font-display)', textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-3)', marginBottom: 12 }}>
             Distribuzione Uscite
           </div>
           <DonutChart data={donutData} />
@@ -355,7 +355,7 @@ export default function BudgetPage() {
             {donutData.slice(0, 5).map((d, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
                 <div style={{ width: 8, height: 8, background: d.color, flexShrink: 0 }} />
-                <span style={{ fontSize: 10, color: 'var(--grigio-3)', fontFamily: 'var(--font-display)', textTransform: 'uppercase', letterSpacing: '0.06em', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <span style={{ fontSize: 12, color: 'var(--grigio-3)', fontFamily: 'var(--font-display)', textTransform: 'none', letterSpacing: '0', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {d.label}
                 </span>
               </div>
@@ -364,7 +364,7 @@ export default function BudgetPage() {
         </div>
 
         <div className="card" style={{ padding: '18px 20px' }}>
-          <div style={{ fontSize: 11, fontFamily: 'var(--font-display)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--grigio-3)', marginBottom: 16 }}>
+          <div style={{ fontSize: 12, fontFamily: 'var(--font-display)', textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-3)', marginBottom: 16 }}>
             Budget vs Speso per Categoria
           </div>
           <BudgetBars items={uscite} />
@@ -373,7 +373,7 @@ export default function BudgetPage() {
 
       {/* Line chart mensile */}
       <div className="card" style={{ padding: '18px 20px', marginBottom: 24 }}>
-        <div style={{ fontSize: 11, fontFamily: 'var(--font-display)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--grigio-3)', marginBottom: 16 }}>
+        <div style={{ fontSize: 12, fontFamily: 'var(--font-display)', textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-3)', marginBottom: 16 }}>
           Entrate vs Uscite Mensili — {stagione.slice(0, 4)}
         </div>
         <LineChart mesi={mesiData} />
@@ -382,10 +382,10 @@ export default function BudgetPage() {
       {/* Tabella uscite con editing */}
       <div className="card" style={{ padding: 0, overflow: 'hidden', marginBottom: 24 }}>
         <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--grigio-5)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontFamily: 'var(--font-display)', fontSize: 15, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--white)' }}>
+          <span style={{ fontFamily: 'var(--font-display)', fontSize: 15, fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--white)' }}>
             Dettaglio Uscite
           </span>
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--grigio-3)' }}>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-3)' }}>
             Modifica budget → salva con TAB o clic fuori
           </span>
         </div>
@@ -393,7 +393,7 @@ export default function BudgetPage() {
           <thead>
             <tr style={{ borderBottom: '1px solid var(--grigio-5)' }}>
               {['Categoria', 'Budget Annuo', 'Speso YTD', 'Avanzamento', 'Residuo'].map(h => (
-                <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontFamily: 'var(--font-mono)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--grigio-3)', fontWeight: 500 }}>
+                <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-3)', fontWeight: 500 }}>
                   {h}
                 </th>
               ))}
@@ -406,7 +406,7 @@ export default function BudgetPage() {
               const res = item.budget_annuo - item.speso_ytd
               return (
                 <tr key={item.id} style={{ borderBottom: '1px solid var(--grigio-6)' }}>
-                  <td style={{ padding: '12px 16px', fontFamily: 'var(--font-display)', textTransform: 'uppercase', letterSpacing: '0.06em', fontSize: 11, color: 'var(--grigio-2)' }}>
+                  <td style={{ padding: '12px 16px', fontFamily: 'var(--font-display)', textTransform: 'none', letterSpacing: '0', fontSize: 12, color: 'var(--grigio-2)' }}>
                     {categoriaLabel[item.categoria] ?? item.categoria}
                   </td>
                   <td style={{ padding: '10px 16px' }}>
@@ -449,7 +449,7 @@ export default function BudgetPage() {
           </tbody>
           <tfoot>
             <tr style={{ borderTop: '1px solid var(--grigio-5)', background: 'var(--grigio-6)' }}>
-              <td style={{ padding: '11px 16px', fontFamily: 'var(--font-display)', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--grigio-2)' }}>Totale</td>
+              <td style={{ padding: '11px 16px', fontFamily: 'var(--font-display)', fontSize: 12, fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-2)' }}>Totale</td>
               <td style={{ padding: '11px 16px', fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 700, color: 'var(--white)' }}>{fmt(totBudgetUscite)}</td>
               <td style={{ padding: '11px 16px', fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 700, color: 'var(--ambra)' }}>{fmt(totSpesoUscite)}</td>
               <td style={{ padding: '11px 16px' }}>
@@ -469,7 +469,7 @@ export default function BudgetPage() {
       {/* Tabella entrate con editing */}
       <div className="card" style={{ padding: 0, overflow: 'hidden', marginBottom: 40 }}>
         <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--grigio-5)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontFamily: 'var(--font-display)', fontSize: 15, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--verde)' }}>
+          <span style={{ fontFamily: 'var(--font-display)', fontSize: 15, fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--verde)' }}>
             Entrate Previste
           </span>
           <span style={{ fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 700, color: 'var(--verde)' }}>
@@ -480,7 +480,7 @@ export default function BudgetPage() {
           <thead>
             <tr style={{ borderBottom: '1px solid var(--grigio-5)' }}>
               {['Categoria', 'Budget Annuo', 'Incassato YTD', 'Da Incassare'].map(h => (
-                <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontFamily: 'var(--font-mono)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--grigio-3)', fontWeight: 500 }}>
+                <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-3)', fontWeight: 500 }}>
                   {h}
                 </th>
               ))}
@@ -491,7 +491,7 @@ export default function BudgetPage() {
               const res = item.budget_annuo - item.speso_ytd
               return (
                 <tr key={item.id} style={{ borderBottom: '1px solid var(--grigio-6)' }}>
-                  <td style={{ padding: '12px 16px', fontFamily: 'var(--font-display)', textTransform: 'uppercase', letterSpacing: '0.06em', fontSize: 11, color: 'var(--grigio-2)' }}>
+                  <td style={{ padding: '12px 16px', fontFamily: 'var(--font-display)', textTransform: 'none', letterSpacing: '0', fontSize: 12, color: 'var(--grigio-2)' }}>
                     {categoriaLabel[item.categoria] ?? item.categoria}
                   </td>
                   <td style={{ padding: '10px 16px' }}>
@@ -527,7 +527,7 @@ export default function BudgetPage() {
 
       {/* ── Fair Play Finanziario ─────────────────────────────────── */}
       <div style={{ marginBottom: 16 }}>
-        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.02em', color: 'var(--white)', marginBottom: 4 }}>
+        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--white)', marginBottom: 4 }}>
           Fair Play Finanziario
         </h2>
         <p style={{ fontSize: 13, color: 'var(--grigio-3)' }}>
@@ -544,8 +544,8 @@ export default function BudgetPage() {
         fontSize: 12,
         color: statusColor,
         fontFamily: 'var(--font-display)',
-        textTransform: 'uppercase',
-        letterSpacing: '0.08em',
+        textTransform: 'none',
+        letterSpacing: '0',
       }}>
         {statusFPF === 'verde' && '✓ Situazione sostenibile — entrate coprono le uscite con margine positivo'}
         {statusFPF === 'ambra' && '⚠ Situazione in equilibrio — monitorare le uscite straordinarie'}
@@ -577,7 +577,7 @@ export default function BudgetPage() {
         </div>
         <div className="stat-card">
           <div className="stat-label">Status FPF</div>
-          <div style={{ fontSize: 16, fontWeight: 700, color: statusColor, marginTop: 4, fontFamily: 'var(--font-display)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          <div style={{ fontSize: 16, fontWeight: 700, color: statusColor, marginTop: 4, fontFamily: 'var(--font-display)', textTransform: 'none', letterSpacing: '0' }}>
             ● {statusFPF === 'verde' ? 'Verde' : statusFPF === 'ambra' ? 'Ambra' : 'Rosso'}
           </div>
           <div className="stat-sub">{(indiceStab * 100).toFixed(1)}% margine</div>

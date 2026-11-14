@@ -166,7 +166,7 @@ export default function PresenzeSessioneDetail({ sessioneId, readonly = false }:
         </button>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
           <div>
-            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)', marginBottom: 4 }}>
+            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.01em', color: 'var(--white)', marginBottom: 4 }}>
               Presenze — {sessione.tipologia.charAt(0).toUpperCase() + sessione.tipologia.slice(1)}
             </h1>
             <p style={{ fontSize: 14, color: 'var(--grigio-3)' }}>
@@ -236,8 +236,8 @@ export default function PresenzeSessioneDetail({ sessioneId, readonly = false }:
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                     <span style={{ fontSize: 14, fontWeight: 500 }}>{g.cognome} {g.nome}</span>
-                    {g.numero_maglia && <span style={{ fontSize: 11, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>#{g.numero_maglia}</span>}
-                    {g.ruolo && <span className="badge badge-grigio" style={{ fontSize: 10 }}>{ruoloShort[g.ruolo] ?? g.ruolo}</span>}
+                    {g.numero_maglia && <span style={{ fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>#{g.numero_maglia}</span>}
+                    {g.ruolo && <span className="badge badge-grigio" style={{ fontSize: 12 }}>{ruoloShort[g.ruolo] ?? g.ruolo}</span>}
                   </div>
                   {g.stato === 'assente' && g.motivo_assenza && (
                     <div style={{ fontSize: 12, color: 'var(--rosso)', marginTop: 2 }}>
@@ -249,13 +249,13 @@ export default function PresenzeSessioneDetail({ sessioneId, readonly = false }:
                 {!readonly && (
                   <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
                     <button onClick={() => aggiornaPresenza(g.giocatore_id, 'presente')} disabled={isSaving} title="Presente" style={{
-                      width: 40, height: 40, borderRadius: 8, border: 'none', cursor: 'pointer',
+                      width: 40, height: 40, borderRadius: 12, border: 'none', cursor: 'pointer',
                       background: g.stato === 'presente' ? 'var(--verde)' : 'var(--grigio-6)',
                       color: g.stato === 'presente' ? 'white' : 'var(--grigio-4)',
                       fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s',
                     }}>{isSaving ? '…' : '✓'}</button>
                     <button onClick={() => setMotivoOpen(motipoIsOpen ? null : g.giocatore_id)} disabled={isSaving} title="Assente" style={{
-                      width: 40, height: 40, borderRadius: 8, border: 'none', cursor: 'pointer',
+                      width: 40, height: 40, borderRadius: 12, border: 'none', cursor: 'pointer',
                       background: g.stato === 'assente' ? 'var(--rosso)' : 'var(--grigio-6)',
                       color: g.stato === 'assente' ? 'white' : 'var(--grigio-4)',
                       fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s',
@@ -264,7 +264,7 @@ export default function PresenzeSessioneDetail({ sessioneId, readonly = false }:
                 )}
 
                 {readonly && (
-                  <span className={`badge ${g.stato === 'presente' ? 'badge-verde' : g.stato === 'assente' ? 'badge-rosso' : 'badge-grigio'}`} style={{ fontSize: 11 }}>
+                  <span className={`badge ${g.stato === 'presente' ? 'badge-verde' : g.stato === 'assente' ? 'badge-rosso' : 'badge-grigio'}`} style={{ fontSize: 12 }}>
                     {g.stato === 'presente' ? 'Presente' : g.stato === 'assente' ? 'Assente' : '—'}
                   </span>
                 )}
@@ -302,7 +302,7 @@ export default function PresenzeSessioneDetail({ sessioneId, readonly = false }:
       </div>
 
       {!readonly && (
-        <div style={{ position: 'sticky', bottom: 16, background: 'white', border: '1px solid var(--grigio-5)', borderRadius: 12, padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
+        <div style={{ position: 'sticky', bottom: 16, background: 'white', border: '1px solid var(--grigio-5)', borderRadius: 16, padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
           <div style={{ fontSize: 13, color: salvato ? 'var(--verde)' : 'var(--grigio-3)' }}>
             {salvato ? '✓ Salvato automaticamente' : daReg > 0 ? `${daReg} giocatori da registrare` : '✓ Tutti registrati'}
           </div>
@@ -325,7 +325,7 @@ function Counter({ label, value, colore }: { label: string; value: number; color
   return (
     <div>
       <div style={{ fontSize: 20, fontWeight: 600, color: c, lineHeight: 1 }}>{value}</div>
-      <div style={{ fontSize: 11, color: 'var(--grigio-4)', marginTop: 2 }}>{label}</div>
+      <div style={{ fontSize: 12, color: 'var(--grigio-4)', marginTop: 2 }}>{label}</div>
     </div>
   )
 }

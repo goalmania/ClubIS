@@ -13,15 +13,15 @@ import {
 
 const inputStyle = {
   width: '100%', padding: '8px 11px',
-  background: '#1a1a1a', border: '1px solid var(--border-solid)',
-  borderRadius: 2, color: 'var(--white)', fontSize: 13,
+  background: 'var(--surface-2)', border: '1px solid var(--border-solid)',
+  borderRadius: 8, color: 'var(--white)', fontSize: 13,
   fontFamily: 'var(--font-sans)', outline: 'none',
 } as const
 
 const labelStyle: React.CSSProperties = {
   display: 'block', fontFamily: 'var(--font-mono)',
-  fontSize: '0.62rem', fontWeight: 700, textTransform: 'uppercase',
-  letterSpacing: '0.15em', color: 'var(--grigio-3)', marginBottom: 5,
+  fontSize: '0.8rem', fontWeight: 700, textTransform: 'none',
+  letterSpacing: '0', color: 'var(--grigio-3)', marginBottom: 5,
 }
 
 // ── Modal nuovo accredito ────────────────────────────────────────────────────
@@ -83,19 +83,19 @@ function ModalNuovoAccredito({ partitaId, onSalva, onClose }: ModalNuovoProps) {
       padding: 20,
     }}>
       <div style={{
-        background: '#111', border: '1px solid var(--border-solid)',
-        borderRadius: 4, width: '100%', maxWidth: 560,
+        background: 'var(--surface-2)', border: '1px solid var(--border-solid)',
+        borderRadius: 10, width: '100%', maxWidth: 560,
         maxHeight: '90vh', overflowY: 'auto', padding: 28,
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 18, textTransform: 'uppercase', color: 'var(--white)' }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 18, textTransform: 'none', color: 'var(--white)' }}>
             Nuovo accredito
           </div>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--grigio-4)', cursor: 'pointer', fontSize: 20, lineHeight: 1 }}>✕</button>
         </div>
 
         {errore && (
-          <div style={{ padding: '10px 14px', background: 'var(--rosso-lt)', border: '1px solid var(--rosso-bd)', borderRadius: 2, color: 'var(--rosso)', fontSize: 13, marginBottom: 20 }}>
+          <div style={{ padding: '10px 14px', background: 'var(--rosso-lt)', border: '1px solid var(--rosso-bd)', borderRadius: 8, color: 'var(--rosso)', fontSize: 13, marginBottom: 20 }}>
             {errore}
           </div>
         )}
@@ -168,9 +168,9 @@ function ModalNuovoAccredito({ partitaId, onSalva, onClose }: ModalNuovoProps) {
               disabled={saving}
               style={{
                 padding: '9px 22px', background: 'var(--accent)', color: '#0a0a0a',
-                border: 'none', borderRadius: 2, cursor: saving ? 'not-allowed' : 'pointer',
+                border: 'none', borderRadius: 8, cursor: saving ? 'not-allowed' : 'pointer',
                 fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12,
-                textTransform: 'uppercase', letterSpacing: '0.08em',
+                textTransform: 'none', letterSpacing: '0',
                 opacity: saving ? 0.6 : 1,
               }}
             >
@@ -180,9 +180,9 @@ function ModalNuovoAccredito({ partitaId, onSalva, onClose }: ModalNuovoProps) {
               onClick={onClose}
               style={{
                 padding: '9px 18px', background: 'transparent', color: 'var(--grigio-3)',
-                border: '1px solid var(--border-solid)', borderRadius: 2, cursor: 'pointer',
+                border: '1px solid var(--border-solid)', borderRadius: 8, cursor: 'pointer',
                 fontFamily: 'var(--font-display)', fontSize: 12,
-                textTransform: 'uppercase', letterSpacing: '0.08em',
+                textTransform: 'none', letterSpacing: '0',
               }}
             >
               Annulla
@@ -232,11 +232,11 @@ function ModalApprova({ accredito, onSalva, onClose }: ModalApprovaProps) {
       padding: 20,
     }}>
       <div style={{
-        background: '#111', border: '1px solid var(--border-solid)',
-        borderRadius: 4, width: '100%', maxWidth: 440, padding: 28,
+        background: 'var(--surface-2)', border: '1px solid var(--border-solid)',
+        borderRadius: 10, width: '100%', maxWidth: 440, padding: 28,
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 16, textTransform: 'uppercase', color: 'var(--white)' }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16, textTransform: 'none', color: 'var(--white)' }}>
             Gestisci accredito
           </div>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--grigio-4)', cursor: 'pointer', fontSize: 20, lineHeight: 1 }}>✕</button>
@@ -263,10 +263,10 @@ function ModalApprova({ accredito, onSalva, onClose }: ModalApprovaProps) {
                       flex: 1, padding: '8px 12px',
                       background: isSelected ? info.bg : 'transparent',
                       border: `1px solid ${isSelected ? info.colore : 'var(--border-solid)'}`,
-                      borderRadius: 2, cursor: 'pointer',
+                      borderRadius: 8, cursor: 'pointer',
                       color: isSelected ? info.colore : 'var(--grigio-4)',
-                      fontFamily: 'var(--font-mono)', fontSize: 11,
-                      textTransform: 'uppercase', fontWeight: 700,
+                      fontFamily: 'var(--font-mono)', fontSize: 12,
+                      textTransform: 'none', fontWeight: 700,
                     }}
                   >
                     {info.label}
@@ -308,16 +308,16 @@ function ModalApprova({ accredito, onSalva, onClose }: ModalApprovaProps) {
               style={{
                 padding: '9px 22px',
                 background: stato === 'approvato' ? 'var(--verde)' : 'var(--rosso)',
-                color: '#fff', border: 'none', borderRadius: 2,
+                color: '#fff', border: 'none', borderRadius: 8,
                 cursor: saving ? 'not-allowed' : 'pointer',
                 fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12,
-                textTransform: 'uppercase', letterSpacing: '0.08em',
+                textTransform: 'none', letterSpacing: '0',
                 opacity: saving ? 0.6 : 1,
               }}
             >
               {saving ? '…' : stato === 'approvato' ? 'Approva' : 'Rifiuta'}
             </button>
-            <button onClick={onClose} style={{ padding: '9px 18px', background: 'transparent', color: 'var(--grigio-3)', border: '1px solid var(--border-solid)', borderRadius: 2, cursor: 'pointer', fontFamily: 'var(--font-display)', fontSize: 12, textTransform: 'uppercase' }}>Annulla</button>
+            <button onClick={onClose} style={{ padding: '9px 18px', background: 'transparent', color: 'var(--grigio-3)', border: '1px solid var(--border-solid)', borderRadius: 8, cursor: 'pointer', fontFamily: 'var(--font-display)', fontSize: 12, textTransform: 'none' }}>Annulla</button>
           </div>
         </div>
       </div>
@@ -404,7 +404,7 @@ export default function AccreditiPartita({
     <div>
       {/* Toast */}
       {toast && (
-        <div style={{ position: 'fixed', bottom: 24, right: 24, background: 'var(--verde)', color: '#fff', padding: '10px 18px', borderRadius: 4, fontFamily: 'var(--font-mono)', fontSize: 13, zIndex: 1000 }}>
+        <div style={{ position: 'fixed', bottom: 24, right: 24, background: 'var(--verde)', color: '#fff', padding: '10px 18px', borderRadius: 10, fontFamily: 'var(--font-mono)', fontSize: 13, zIndex: 1000 }}>
           {toast}
         </div>
       )}
@@ -434,10 +434,10 @@ export default function AccreditiPartita({
           { label: 'Rifiutati', value: kpi.rifiutati, colore: 'var(--rosso)' },
         ].map(({ label, value, colore }) => (
           <div key={label} className="card" style={{ padding: '14px 18px' }}>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--grigio-3)', marginBottom: 6 }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-3)', marginBottom: 6 }}>
               {label}
             </div>
-            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 28, color: colore }}>
+            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 28, color: colore }}>
               {value}
             </div>
           </div>
@@ -456,8 +456,8 @@ export default function AccreditiPartita({
                 key={s}
                 onClick={() => setFiltroStato(s)}
                 style={{
-                  padding: '5px 11px', borderRadius: 2, cursor: 'pointer',
-                  fontFamily: 'var(--font-mono)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em',
+                  padding: '5px 11px', borderRadius: 8, cursor: 'pointer',
+                  fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'none', letterSpacing: '0',
                   border: `1px solid ${isActive && info ? info.colore : 'var(--border-solid)'}`,
                   background: isActive && info ? info.bg : isActive ? 'var(--accent)' : 'transparent',
                   color: isActive && info ? info.colore : isActive ? '#0a0a0a' : 'var(--grigio-3)',
@@ -473,7 +473,7 @@ export default function AccreditiPartita({
         <select
           value={filtroTipo}
           onChange={e => setFiltroTipo(e.target.value)}
-          style={{ ...inputStyle, width: 'auto', padding: '5px 10px', fontSize: 11 }}
+          style={{ ...inputStyle, width: 'auto', padding: '5px 10px', fontSize: 12 }}
         >
           <option value="tutti">Tutti i tipi</option>
           {(Object.entries(TIPO_ACCREDITO_LABEL) as [TipoAccredito, string][]).map(([k, v]) => (
@@ -491,8 +491,8 @@ export default function AccreditiPartita({
           style={{
             padding: '7px 14px', background: 'transparent',
             color: 'var(--grigio-3)', border: '1px solid var(--border-solid)',
-            borderRadius: 2, cursor: 'pointer',
-            fontFamily: 'var(--font-mono)', fontSize: 11, textTransform: 'uppercase',
+            borderRadius: 8, cursor: 'pointer',
+            fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'none',
           }}
         >
           🖨 Stampa lista
@@ -503,9 +503,9 @@ export default function AccreditiPartita({
             onClick={() => setModalNuovo(true)}
             style={{
               padding: '7px 16px', background: 'var(--accent)', color: '#0a0a0a',
-              border: 'none', borderRadius: 2, cursor: 'pointer',
+              border: 'none', borderRadius: 8, cursor: 'pointer',
               fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12,
-              textTransform: 'uppercase', letterSpacing: '0.08em',
+              textTransform: 'none', letterSpacing: '0',
             }}
           >
             + Nuovo accredito
@@ -529,9 +529,9 @@ export default function AccreditiPartita({
               onClick={() => setModalNuovo(true)}
               style={{
                 marginTop: 16, padding: '8px 18px', background: 'var(--accent)', color: '#0a0a0a',
-                border: 'none', borderRadius: 2, cursor: 'pointer',
+                border: 'none', borderRadius: 8, cursor: 'pointer',
                 fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12,
-                textTransform: 'uppercase', letterSpacing: '0.08em',
+                textTransform: 'none', letterSpacing: '0',
               }}
             >
               + Primo accredito
@@ -562,7 +562,7 @@ export default function AccreditiPartita({
                     <td style={{ fontWeight: 500 }}>
                       {a.cognome} {a.nome}
                       {a.email && (
-                        <div style={{ fontSize: 11, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)', marginTop: 2 }}>{a.email}</div>
+                        <div style={{ fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)', marginTop: 2 }}>{a.email}</div>
                       )}
                     </td>
                     <td style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{tipoLabel}</td>
@@ -572,19 +572,19 @@ export default function AccreditiPartita({
                     <td>
                       <div>
                         <span style={{
-                          fontSize: 10, fontFamily: 'var(--font-mono)',
+                          fontSize: 12, fontFamily: 'var(--font-mono)',
                           color: statoInfo.colore, background: statoInfo.bg,
-                          padding: '2px 8px', borderRadius: 2, fontWeight: 700,
+                          padding: '2px 8px', borderRadius: 8, fontWeight: 700,
                         }}>
                           {statoInfo.label}
                         </span>
                         {a.stato === 'rifiutato' && a.motivo_rifiuto && (
-                          <div style={{ fontSize: 10, color: 'var(--rosso)', marginTop: 2 }}>{a.motivo_rifiuto}</div>
+                          <div style={{ fontSize: 12, color: 'var(--rosso)', marginTop: 2 }}>{a.motivo_rifiuto}</div>
                         )}
                       </div>
                     </td>
                     {mostraFiltroPartita && (
-                      <td style={{ fontSize: 11, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>
+                      <td style={{ fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>
                         {a.partite ? `${a.partite.avversario} · ${a.partite.data_ora.slice(0, 10)}` : '—'}
                       </td>
                     )}
@@ -594,10 +594,10 @@ export default function AccreditiPartita({
                           <button
                             onClick={() => setModalApprova(a)}
                             style={{
-                              padding: '3px 9px', fontSize: 10, fontFamily: 'var(--font-mono)',
+                              padding: '3px 9px', fontSize: 12, fontFamily: 'var(--font-mono)',
                               background: 'var(--accent-lt)', color: 'var(--accent)',
-                              border: '1px solid var(--accent)', borderRadius: 2,
-                              cursor: 'pointer', textTransform: 'uppercase',
+                              border: '1px solid var(--accent)', borderRadius: 8,
+                              cursor: 'pointer', textTransform: 'none',
                             }}
                           >
                             Gestisci
@@ -607,10 +607,10 @@ export default function AccreditiPartita({
                           <button
                             onClick={() => setModalApprova(a)}
                             style={{
-                              padding: '3px 9px', fontSize: 10, fontFamily: 'var(--font-mono)',
+                              padding: '3px 9px', fontSize: 12, fontFamily: 'var(--font-mono)',
                               background: 'transparent', color: 'var(--grigio-4)',
-                              border: '1px solid var(--border-solid)', borderRadius: 2,
-                              cursor: 'pointer', textTransform: 'uppercase',
+                              border: '1px solid var(--border-solid)', borderRadius: 8,
+                              cursor: 'pointer', textTransform: 'none',
                             }}
                           >
                             Modifica
@@ -622,7 +622,7 @@ export default function AccreditiPartita({
                             style={{
                               padding: '3px 7px', background: 'transparent',
                               color: 'var(--grigio-4)', border: '1px solid var(--border-solid)',
-                              borderRadius: 2, cursor: 'pointer', fontSize: 11,
+                              borderRadius: 8, cursor: 'pointer', fontSize: 12,
                             }}
                           >
                             ✕

@@ -315,7 +315,7 @@ export default function QuietanzePage() {
                       {player.giocatore?.cognome ?? '—'} {player.giocatore?.nome ?? ''}
                     </div>
                     {player.giocatore?.codice_fiscale && (
-                      <div style={{ fontSize: 11, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>
+                      <div style={{ fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>
                         {player.giocatore.codice_fiscale}
                       </div>
                     )}
@@ -326,7 +326,7 @@ export default function QuietanzePage() {
                         <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
                           {fmt(Number(player.quota.importo_totale))}
                         </div>
-                        <div style={{ fontSize: 11, color: 'var(--grigio-4)' }}>
+                        <div style={{ fontSize: 12, color: 'var(--grigio-4)' }}>
                           {fmt(Number(player.quota.importo_pagato))} pagati
                         </div>
                       </>

@@ -95,40 +95,40 @@ export default function ConvocazioniPage() {
     return (
       <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 14 }}>
         <div style={{ width: 48, textAlign: 'center', flexShrink: 0 }}>
-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 18, color: 'var(--white)' }}>{data.getDate()}</div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--gray)', textTransform: 'uppercase' }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 18, color: 'var(--white)' }}>{data.getDate()}</div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)', textTransform: 'none' }}>
             {data.toLocaleString('it-IT', { month: 'short' })}
           </div>
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', fontSize: 13, color: 'var(--white)' }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 13, color: 'var(--white)' }}>
             vs {p.avversario}
-            {risultato && <span style={{ marginLeft: 10, color: 'var(--accent)', fontWeight: 900 }}>{risultato}</span>}
+            {risultato && <span style={{ marginLeft: 10, color: 'var(--accent)', fontWeight: 700 }}>{risultato}</span>}
           </div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', marginTop: 2 }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', marginTop: 2 }}>
             {CASA_TRASFERTA_LABEL[p.casa_trasferta]} · {data.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}
             {p.campo && ` · ${p.campo}`}
           </div>
           {c.titolare && (
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--accent)', marginTop: 2 }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--accent)', marginTop: 2 }}>
               ⭐ Titolare {c.minuti_giocati !== null ? `· ${c.minuti_giocati}'` : ''}
             </div>
           )}
         </div>
         <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 4, alignItems: 'flex-end' }}>
           {c.stato_risposta === 'confermato' && (
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--accent)', background: 'rgba(200,240,0,0.08)', padding: '3px 8px', border: '1px solid rgba(200,240,0,0.2)' }}>✓ CONFERMATO</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--accent)', background: 'rgba(200,240,0,0.08)', padding: '3px 8px', border: '1px solid rgba(200,240,0,0.2)' }}>✓ CONFERMATO</span>
           )}
           {c.stato_risposta === 'indisponibile' && (
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--rosso)', background: 'rgba(255,60,60,0.08)', padding: '3px 8px', border: '1px solid rgba(255,60,60,0.2)' }}>✕ NON DISPONIBILE</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--rosso)', background: 'rgba(255,60,60,0.08)', padding: '3px 8px', border: '1px solid rgba(255,60,60,0.2)' }}>✕ NON DISPONIBILE</span>
           )}
           {c.stato_risposta === 'in_attesa' && (
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--ambra)', padding: '3px 8px', border: '1px solid var(--border)' }}>IN ATTESA</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--ambra)', padding: '3px 8px', border: '1px solid var(--border)' }}>IN ATTESA</span>
           )}
           {showActions && c.stato_risposta === 'in_attesa' && (
             <div style={{ display: 'flex', gap: 6 }}>
-              <button className="btn btn-sm btn-primary" style={{ fontSize: 10 }} onClick={() => rispondi(c.id, 'confermato')}>Confermo</button>
-              <button className="btn btn-sm btn-ghost" style={{ fontSize: 10, color: 'var(--rosso)' }} onClick={() => rispondi(c.id, 'indisponibile')}>Non disponibile</button>
+              <button className="btn btn-sm btn-primary" style={{ fontSize: 12 }} onClick={() => rispondi(c.id, 'confermato')}>Confermo</button>
+              <button className="btn btn-sm btn-ghost" style={{ fontSize: 12, color: 'var(--rosso)' }} onClick={() => rispondi(c.id, 'indisponibile')}>Non disponibile</button>
             </div>
           )}
         </div>
@@ -139,17 +139,17 @@ export default function ConvocazioniPage() {
   return (
     <div>
       <div data-onboarding="sezione-convocazioni" style={{ marginBottom: 28 }}>
-        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, textTransform: 'uppercase', fontSize: 26, letterSpacing: '0.04em', color: 'var(--white)' }}>
+        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 26, letterSpacing: '0', color: 'var(--white)' }}>
           Convocazioni
         </div>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)', marginTop: 6 }}>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', marginTop: 6 }}>
           Le tue convocazioni per le partite
         </div>
       </div>
 
       {future.length > 0 && (
         <div style={{ border: '1px solid var(--border)', background: 'var(--bg-card)', marginBottom: 20 }}>
-          <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border)', fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', fontSize: 13, color: 'var(--accent)' }}>
+          <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border)', fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 13, color: 'var(--accent)' }}>
             Prossime partite ({future.length})
           </div>
           {future.map(c => <CardConvocazione key={c.id} c={c} showActions={true} />)}
@@ -158,7 +158,7 @@ export default function ConvocazioniPage() {
 
       {past.length > 0 && (
         <div style={{ border: '1px solid var(--border)', background: 'var(--bg-card)' }}>
-          <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border)', fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', fontSize: 13, color: 'var(--white)' }}>
+          <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border)', fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 13, color: 'var(--white)' }}>
             Storico ({past.length})
           </div>
           {past.map(c => <CardConvocazione key={c.id} c={c} showActions={false} />)}

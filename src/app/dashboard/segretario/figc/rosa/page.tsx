@@ -350,10 +350,10 @@ export default function RosaFIGCPage() {
             <div className="print-only" style={{ display: 'none', padding: '32px 24px' }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 60 }}>
                 <div style={{ borderTop: '1px solid black', paddingTop: 8 }}>
-                  <div style={{ fontSize: 11 }}>Firma Dirigente Responsabile</div>
+                  <div style={{ fontSize: 12 }}>Firma Dirigente Responsabile</div>
                 </div>
                 <div style={{ borderTop: '1px solid black', paddingTop: 8 }}>
-                  <div style={{ fontSize: 11 }}>Timbro societario</div>
+                  <div style={{ fontSize: 12 }}>Timbro societario</div>
                 </div>
               </div>
             </div>
@@ -402,7 +402,7 @@ export default function RosaFIGCPage() {
                   <div style={{
                     width: 24, height: 24, borderRadius: '50%',
                     background: i < 11 ? '#1a56db' : 'var(--grigio-5)',
-                    color: 'white', fontSize: 10, fontWeight: 700,
+                    color: 'white', fontSize: 12, fontWeight: 700,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     flexShrink: 0,
                   }}>
@@ -410,12 +410,12 @@ export default function RosaFIGCPage() {
                   </div>
                   <div>
                     <div style={{ fontSize: 12, fontWeight: 500 }}>{g.cognome} {g.nome}</div>
-                    <div style={{ fontSize: 10, color: 'var(--grigio-4)', textTransform: 'capitalize' }}>
+                    <div style={{ fontSize: 12, color: 'var(--grigio-4)', textTransform: 'capitalize' }}>
                       {g.ruolo_principale?.replace(/_/g, ' ') ?? '—'}
                     </div>
                   </div>
                   {i < 11 && (
-                    <span style={{ marginLeft: 'auto', fontSize: 10, background: '#e8f0fe', color: '#1a56db', padding: '2px 6px', borderRadius: 4, fontWeight: 600 }}>
+                    <span style={{ marginLeft: 'auto', fontSize: 12, background: '#e8f0fe', color: '#1a56db', padding: '2px 6px', borderRadius: 10, fontWeight: 600 }}>
                       Titolare
                     </span>
                   )}

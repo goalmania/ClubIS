@@ -36,7 +36,7 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean
       aria-checked={checked}
       onClick={() => onChange(!checked)}
       style={{
-        width: 36, height: 20, borderRadius: 10, cursor: 'pointer',
+        width: 36, height: 20, borderRadius: 14, cursor: 'pointer',
         background: checked ? 'var(--accent)' : '#2a2a2a',
         border: `1px solid ${checked ? 'var(--accent)' : 'var(--border-solid)'}`,
         position: 'relative', transition: 'background 0.2s, border-color 0.2s',
@@ -146,9 +146,9 @@ export default function ImpostazioniNotifichePage() {
   )
 
   const thStyle: React.CSSProperties = {
-    padding: '10px 14px', fontFamily: 'var(--font-mono)', fontSize: '0.6rem',
-    fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em',
-    color: 'var(--gray)', textAlign: 'center', background: '#0d0d0d',
+    padding: '10px 14px', fontFamily: 'var(--font-mono)', fontSize: '0.78rem',
+    fontWeight: 700, textTransform: 'none', letterSpacing: '0',
+    color: 'var(--gray)', textAlign: 'center', background: 'var(--surface-1)',
     borderBottom: '1px solid var(--border-solid)', whiteSpace: 'nowrap',
   }
 
@@ -157,7 +157,7 @@ export default function ImpostazioniNotifichePage() {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 26, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)', marginBottom: 4 }}>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 28, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)', marginBottom: 4 }}>
             Impostazioni Notifiche
           </h1>
           <p style={{ fontSize: 13, color: 'var(--gray)', fontWeight: 300 }}>
@@ -175,13 +175,13 @@ export default function ImpostazioniNotifichePage() {
       </div>
 
       {/* Attivazione push su questo dispositivo */}
-      <div style={{ background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2, padding: '14px 20px', marginBottom: 20 }}>
+      <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8, padding: '14px 20px', marginBottom: 20 }}>
         <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--white)', marginBottom: 8 }}>Notifiche push su questo dispositivo</div>
         <PushSubscribeButton />
       </div>
 
       {/* Legenda canali + toggle globali */}
-      <div style={{ background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2, padding: '14px 20px', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 24, flexWrap: 'wrap' }}>
+      <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8, padding: '14px 20px', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 24, flexWrap: 'wrap' }}>
         <span style={{ fontSize: 12, color: 'var(--gray)' }}>Attiva/disattiva tutto:</span>
         {(['canale_app', 'canale_email', 'canale_push'] as const).map(canale => {
           const label = canale === 'canale_app' ? '📱 In-app' : canale === 'canale_email' ? '✉ Email' : '🔔 Push'
@@ -200,10 +200,10 @@ export default function ImpostazioniNotifichePage() {
         const tipiArea = TIPI_NOTIFICA.filter(t => t.area === area)
         return (
           <div key={area} style={{ marginBottom: 24 }}>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--accent)', marginBottom: 8 }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--accent)', marginBottom: 8 }}>
               {area}
             </div>
-            <div style={{ background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2, overflow: 'hidden' }}>
+            <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8, overflow: 'hidden' }}>
               {/* Header row */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 100px 100px 100px', borderBottom: '2px solid var(--border-solid)' }}>
                 <div style={{ ...thStyle, textAlign: 'left' }}>Notifica</div>
@@ -243,7 +243,7 @@ export default function ImpostazioniNotifichePage() {
       })}
 
       {/* Note */}
-      <div style={{ fontSize: 12, color: 'var(--gray)', lineHeight: 1.8, background: '#0d0d0d', border: '1px solid var(--border-solid)', borderRadius: 2, padding: '12px 16px' }}>
+      <div style={{ fontSize: 12, color: 'var(--gray)', lineHeight: 1.8, background: 'var(--surface-1)', border: '1px solid var(--border-solid)', borderRadius: 8, padding: '12px 16px' }}>
         <strong style={{ color: 'var(--white)' }}>Note:</strong>
         <ul style={{ margin: '6px 0 0 16px', padding: 0 }}>
           <li><strong style={{ color: 'var(--white)' }}>In-app</strong> — notifiche nel centro notifiche ClubIS (campanella in alto)</li>

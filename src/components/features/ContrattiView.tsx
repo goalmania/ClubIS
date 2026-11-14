@@ -98,8 +98,8 @@ function RepartoBar({ label, valore, max }: { label: string; valore: number; max
   const pct = max > 0 ? (valore / max) * 100 : 0
   return (
     <div style={{ marginBottom: 12 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4, fontSize: 11 }}>
-        <span style={{ fontFamily: 'var(--font-display)', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--grigio-2)', fontWeight: 600 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4, fontSize: 12 }}>
+        <span style={{ fontFamily: 'var(--font-display)', textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-2)', fontWeight: 600 }}>
           {label}
         </span>
         <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--grigio-3)' }}>
@@ -131,7 +131,7 @@ function CostoRiepilogo({ form }: { form: FormState }) {
       padding: '16px 20px',
       marginBottom: 24,
     }}>
-      <div style={{ fontFamily: 'var(--font-display)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--accent)', marginBottom: 12, fontWeight: 700 }}>
+      <div style={{ fontFamily: 'var(--font-display)', fontSize: 12, textTransform: 'none', letterSpacing: '0', color: 'var(--accent)', marginBottom: 12, fontWeight: 700 }}>
         Riepilogo costo stimato
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
@@ -141,7 +141,7 @@ function CostoRiepilogo({ form }: { form: FormState }) {
           { l: 'Con bonus firma', v: formatEuro(totStimato) },
         ].map(r => (
           <div key={r.l}>
-            <div style={{ fontSize: 10, color: 'var(--grigio-4)', fontFamily: 'var(--font-display)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>{r.l}</div>
+            <div style={{ fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-display)', textTransform: 'none', letterSpacing: '0', marginBottom: 3 }}>{r.l}</div>
             <div style={{ fontSize: 16, fontWeight: 700, fontFamily: 'var(--font-mono)', color: 'var(--white)' }}>{r.v}</div>
           </div>
         ))}
@@ -358,7 +358,7 @@ export default function ContrattiView({ clubId, ruolo }: Props) {
       {/* Ingaggi per reparto */}
       {repartoData.length > 0 && (
         <div className="card" style={{ padding: '18px 20px', marginBottom: 24 }}>
-          <div style={{ fontSize: 11, fontFamily: 'var(--font-display)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--grigio-3)', marginBottom: 16 }}>
+          <div style={{ fontSize: 12, fontFamily: 'var(--font-display)', textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-3)', marginBottom: 16 }}>
             Distribuzione ingaggi mensili per reparto
           </div>
           {repartoData.map(r => (
@@ -409,18 +409,18 @@ export default function ContrattiView({ clubId, ruolo }: Props) {
                     <td>
                       <div style={{ fontWeight: 500, fontSize: 13 }}>{nomePersona}</div>
                       {ruoloPersona && (
-                        <span className="badge badge-grigio" style={{ fontSize: 10, marginTop: 2 }}>
+                        <span className="badge badge-grigio" style={{ fontSize: 12, marginTop: 2 }}>
                           {ruoloPersona}
                         </span>
                       )}
                     </td>
                     <td>
-                      <span className="badge badge-grigio" style={{ fontSize: 10 }}>
+                      <span className="badge badge-grigio" style={{ fontSize: 12 }}>
                         {TIPI_CONTRATTO.find(t => t.value === c.tipo)?.label ?? c.tipo ?? '—'}
                       </span>
                     </td>
                     <td>
-                      <span className={`badge badge-${stato === 'attivo' ? 'verde' : stato === 'in_bozza' ? 'ambra' : 'rosso'}`} style={{ fontSize: 10 }}>
+                      <span className={`badge badge-${stato === 'attivo' ? 'verde' : stato === 'in_bozza' ? 'ambra' : 'rosso'}`} style={{ fontSize: 12 }}>
                         {STATI_CONTRATTO.find(s => s.value === stato)?.label ?? stato}
                       </span>
                     </td>
@@ -445,7 +445,7 @@ export default function ContrattiView({ clubId, ruolo }: Props) {
                     <td>
                       <button
                         className="btn btn-secondary btn-sm"
-                        style={{ fontSize: 11 }}
+                        style={{ fontSize: 12 }}
                         onClick={() => openEdit(c)}
                       >
                         Modifica

@@ -142,42 +142,41 @@ export default async function DashboardLayout({ children }: { children: React.Re
       {isTrial && giorniRimanenti !== null && (
         <div className="dashboard-trial-banner" style={{
           background: 'rgba(200,240,0,0.08)',
-          borderBottom: '1px solid rgba(200,240,0,0.2)',
-          padding: '8px 24px',
+          padding: '8px 20px',
           display: 'flex',
           alignItems: 'center',
-          gap: 10,
-          fontFamily: 'var(--font-display)',
-          fontSize: 12,
-          fontWeight: 600,
-          letterSpacing: '0.06em',
-          textTransform: 'uppercase',
+          justifyContent: 'center',
+          gap: 8,
+          fontSize: 13.5,
+          fontWeight: 500,
         }}>
-          <span style={{ color: 'var(--accent)' }}>⚡ Prova gratuita</span>
-          <span style={{ color: 'var(--gray)' }}>
+          <span style={{ width: 7, height: 7, borderRadius: 999, background: 'var(--accent)', flexShrink: 0 }} />
+          <span style={{ color: 'var(--accent)' }}>Prova gratuita</span>
+          <span style={{ color: 'var(--label)' }}>
             {giorniRimanenti > 0
-              ? `— ${giorniRimanenti} ${giorniRimanenti === 1 ? 'giorno rimasto' : 'giorni rimasti'}`
-              : '— scaduta oggi'}
+              ? `· ${giorniRimanenti} ${giorniRimanenti === 1 ? 'giorno rimasto' : 'giorni rimasti'}`
+              : '· scade oggi'}
           </span>
           <a
             href="https://dmfootballservices.it/#prezzi"
             target="_blank"
             rel="noopener noreferrer"
             style={{
-              marginLeft: 'auto',
-              color: 'var(--accent)',
+              marginLeft: 6,
+              color: 'var(--black)',
+              background: 'var(--accent)',
               textDecoration: 'none',
-              fontFamily: 'var(--font-display)',
-              fontSize: 11,
-              fontWeight: 700,
-              letterSpacing: '0.08em',
+              fontSize: 12.5,
+              fontWeight: 600,
+              padding: '3px 10px',
+              borderRadius: 999,
             }}
           >
-            Abbonati ora →
+            Abbonati
           </a>
         </div>
       )}
-      <div style={{ display: 'flex', minHeight: '100vh' }}>
+      <div style={{ display: 'flex', minHeight: '100dvh' }}>
         <Sidebar
           ruolo={effectiveRuolo}
           utente={{
@@ -199,7 +198,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
         />
         <main className="dashboard-main" style={{
           flex: 1,
-          overflowY: 'auto',
+          minWidth: 0,
+          overflowX: 'clip',
           maxWidth: '100%',
           background: 'var(--bg-app)',
           minHeight: '100vh',
@@ -207,13 +207,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
           <div className="dashboard-topbar" style={{
             position: 'sticky',
             top: 0,
-            zIndex: 10,
-            marginBottom: 18,
-            padding: '10px 0',
+            zIndex: 50,
+            margin: '-20px -36px 20px',
+            padding: '12px 36px',
             display: 'flex',
             alignItems: 'center',
-            gap: 16,
-            background: 'var(--black)',
+            gap: 10,
           }}>
             <RicercaGlobale />
             <NotificheDropdown
@@ -232,9 +231,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
             ruolo={effectiveRuolo}
             mostra={!(club?.onboarding_completed ?? false)}
           />
+          <div className="dashboard-content">
           <ClubPlanProvider planTier={effectivePlanTier} categoria={club?.categoria ?? 'eccellenza'} genere={(club as any)?.genere ?? 'maschile'} clubId={effectiveClubId} tipoProdotto={tipoProdotto}>
             {children}
           </ClubPlanProvider>
+          </div>
           <OnboardingSystem role={effectiveRuolo} />
         </main>
       </div>

@@ -253,8 +253,8 @@ export default function RapportoArbitralePage() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
         <div>
           <h1 style={{
-            fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900,
-            textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)',
+            fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700,
+            textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)',
           }}>
             Rapporti Arbitrali
           </h1>
@@ -336,7 +336,7 @@ export default function RapportoArbitralePage() {
                     <td style={{ textAlign: 'center' }}>
                       {r.voto_arbitro !== null ? (
                         <span style={{
-                          display: 'inline-flex', width: 28, height: 28, borderRadius: 6,
+                          display: 'inline-flex', width: 28, height: 28, borderRadius: 10,
                           alignItems: 'center', justifyContent: 'center',
                           fontSize: 12, fontWeight: 700, fontFamily: 'var(--font-mono)',
                           background: r.voto_arbitro >= 7 ? 'var(--verde-lt)' : r.voto_arbitro >= 5 ? 'var(--ambra-lt)' : 'var(--rosso-lt)',
@@ -348,7 +348,7 @@ export default function RapportoArbitralePage() {
                     </td>
                     <td>
                       {r.comportamento ? (
-                        <span className={`badge ${r.comportamento === 'corretto' ? 'badge-verde' : r.comportamento === 'scorretto' ? 'badge-rosso' : 'badge-ambra'}`} style={{ fontSize: 10 }}>
+                        <span className={`badge ${r.comportamento === 'corretto' ? 'badge-verde' : r.comportamento === 'scorretto' ? 'badge-rosso' : 'badge-ambra'}`} style={{ fontSize: 12 }}>
                           {COMPORTAMENTO_LABEL[r.comportamento]}
                         </span>
                       ) : '—'}
@@ -363,7 +363,7 @@ export default function RapportoArbitralePage() {
                       </span>
                     </td>
                     <td>
-                      <span className={`badge ${r.stato === 'completato' ? 'badge-verde' : 'badge-grigio'}`} style={{ fontSize: 10 }}>
+                      <span className={`badge ${r.stato === 'completato' ? 'badge-verde' : 'badge-grigio'}`} style={{ fontSize: 12 }}>
                         {r.stato}
                       </span>
                     </td>
@@ -371,14 +371,14 @@ export default function RapportoArbitralePage() {
                       <div style={{ display: 'flex', gap: 4 }}>
                         <button
                           className="btn btn-ghost btn-sm"
-                          style={{ fontSize: 11 }}
+                          style={{ fontSize: 12 }}
                           onClick={() => apriModifica(r)}
                         >
                           Modifica
                         </button>
                         <button
                           className="btn btn-ghost btn-sm"
-                          style={{ fontSize: 11, color: 'var(--rosso)' }}
+                          style={{ fontSize: 12, color: 'var(--rosso)' }}
                           onClick={() => setDeleteId(r.id)}
                         >
                           Elimina
@@ -402,8 +402,8 @@ export default function RapportoArbitralePage() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
           {/* Sezione partita */}
-          <fieldset style={{ border: '1px solid var(--grigio-5)', borderRadius: 6, padding: '12px 14px' }}>
-            <legend style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--grigio-3)', padding: '0 6px' }}>
+          <fieldset style={{ border: '1px solid var(--grigio-5)', borderRadius: 10, padding: '12px 14px' }}>
+            <legend style={{ fontSize: 12, fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-3)', padding: '0 6px' }}>
               Partita
             </legend>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 10 }}>
@@ -460,8 +460,8 @@ export default function RapportoArbitralePage() {
           </fieldset>
 
           {/* Sezione terna arbitrale */}
-          <fieldset style={{ border: '1px solid var(--grigio-5)', borderRadius: 6, padding: '12px 14px' }}>
-            <legend style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--grigio-3)', padding: '0 6px' }}>
+          <fieldset style={{ border: '1px solid var(--grigio-5)', borderRadius: 10, padding: '12px 14px' }}>
+            <legend style={{ fontSize: 12, fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-3)', padding: '0 6px' }}>
               Terna arbitrale
             </legend>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
@@ -519,8 +519,8 @@ export default function RapportoArbitralePage() {
           </fieldset>
 
           {/* Sezione valutazione */}
-          <fieldset style={{ border: '1px solid var(--grigio-5)', borderRadius: 6, padding: '12px 14px' }}>
-            <legend style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--grigio-3)', padding: '0 6px' }}>
+          <fieldset style={{ border: '1px solid var(--grigio-5)', borderRadius: 10, padding: '12px 14px' }}>
+            <legend style={{ fontSize: 12, fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-3)', padding: '0 6px' }}>
               Valutazione
             </legend>
             <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: 10 }}>
@@ -555,8 +555,8 @@ export default function RapportoArbitralePage() {
           </fieldset>
 
           {/* Sezione provvedimenti */}
-          <fieldset style={{ border: '1px solid var(--grigio-5)', borderRadius: 6, padding: '12px 14px' }}>
-            <legend style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--grigio-3)', padding: '0 6px' }}>
+          <fieldset style={{ border: '1px solid var(--grigio-5)', borderRadius: 10, padding: '12px 14px' }}>
+            <legend style={{ fontSize: 12, fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-3)', padding: '0 6px' }}>
               Provvedimenti
             </legend>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
@@ -604,8 +604,8 @@ export default function RapportoArbitralePage() {
           </fieldset>
 
           {/* Sezione episodi */}
-          <fieldset style={{ border: '1px solid var(--grigio-5)', borderRadius: 6, padding: '12px 14px' }}>
-            <legend style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--grigio-3)', padding: '0 6px' }}>
+          <fieldset style={{ border: '1px solid var(--grigio-5)', borderRadius: 10, padding: '12px 14px' }}>
+            <legend style={{ fontSize: 12, fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-3)', padding: '0 6px' }}>
               Episodi
             </legend>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -678,7 +678,7 @@ export default function RapportoArbitralePage() {
         </p>
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
           <button className="btn btn-ghost btn-sm" onClick={() => setDeleteId(null)}>Annulla</button>
-          <button className="btn btn-sm" style={{ background: 'var(--rosso)', color: 'var(--white)', border: 'none', cursor: 'pointer', padding: '6px 14px', fontFamily: 'var(--font-display)', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }} onClick={handleDelete}>
+          <button className="btn btn-sm" style={{ background: 'var(--rosso)', color: 'var(--white)', border: 'none', cursor: 'pointer', padding: '6px 14px', fontFamily: 'var(--font-display)', fontSize: 12, fontWeight: 700, textTransform: 'none', letterSpacing: '0' }} onClick={handleDelete}>
             Elimina
           </button>
         </div>

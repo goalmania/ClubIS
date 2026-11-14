@@ -140,7 +140,7 @@ export default function FormInfortunio({ open, onClose, clubId, preselectedGioca
               value={giorniStop} onChange={e => setGiorniStop(e.target.value)}
               placeholder="es. 21" />
             {dataRientro && (
-              <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>
+              <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>
                 Rientro previsto: {new Date(dataRientro).toLocaleDateString('it-IT')}
               </div>
             )}
@@ -152,14 +152,14 @@ export default function FormInfortunio({ open, onClose, clubId, preselectedGioca
           <label className="label" style={{ display: 'block', marginBottom: 8 }}>
             Zona colpita *
           </label>
-          <div style={{ display: 'flex', justifyContent: 'center', padding: '12px 0', background: 'var(--bg-input)', borderRadius: 8, border: '1px solid var(--border)' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', padding: '12px 0', background: 'var(--bg-input)', borderRadius: 12, border: '1px solid var(--border)' }}>
             <CorpoUmano selected={zonaSelezionata} onChange={setZonaSelezionata} />
           </div>
         </div>
 
         {/* Sezione clinica */}
         <div style={{ borderTop: '1px solid var(--border)', paddingTop: 16 }}>
-          <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', marginBottom: 12 }}>
+          <div style={{ fontSize: 12, fontWeight: 600, textTransform: 'none', letterSpacing: '0', color: 'var(--text-muted)', marginBottom: 12 }}>
             Dati clinici
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>

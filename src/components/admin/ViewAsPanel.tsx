@@ -81,7 +81,7 @@ export default function ViewAsPanel({
               padding: '12px 10px',
               background: 'var(--bg-input)',
               border: '1px solid var(--border)',
-              borderRadius: 8,
+              borderRadius: 12,
               cursor: loading ? 'not-allowed' : 'pointer',
               color: 'var(--text-primary)',
               display: 'flex',
@@ -100,7 +100,7 @@ export default function ViewAsPanel({
             }}
           >
             <span style={{ fontSize: 22 }}>{r.icon}</span>
-            <span style={{ fontSize: 11, fontWeight: 600 }}>
+            <span style={{ fontSize: 12, fontWeight: 600 }}>
               {loading === r.key ? 'Apertura…' : r.label}
             </span>
           </button>
@@ -113,7 +113,7 @@ export default function ViewAsPanel({
           padding: '8px 12px',
           background: 'var(--accent-red-lt)',
           color: 'var(--accent-red)',
-          borderRadius: 6,
+          borderRadius: 10,
           fontSize: 12,
         }}>
           {error}

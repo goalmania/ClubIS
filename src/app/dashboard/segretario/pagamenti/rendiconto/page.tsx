@@ -294,14 +294,14 @@ export default function RendicontoPage() {
                         </td>
                         <td style={{ minWidth: 140 }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <div style={{ flex: 1, background: 'var(--grigio-5)', borderRadius: 4, height: 6 }}>
+                            <div style={{ flex: 1, background: 'var(--grigio-5)', borderRadius: 10, height: 6 }}>
                               <div style={{
                                 width: `${pct}%`,
                                 background: pct >= 100 ? 'var(--verde)' : '#3b82f6',
-                                height: 6, borderRadius: 4, transition: 'width 0.3s',
+                                height: 6, borderRadius: 10, transition: 'width 0.3s',
                               }} />
                             </div>
-                            <span style={{ fontSize: 11, fontFamily: 'var(--font-mono)', width: 32 }}>{pct}%</span>
+                            <span style={{ fontSize: 12, fontFamily: 'var(--font-mono)', width: 32 }}>{pct}%</span>
                           </div>
                         </td>
                       </tr>

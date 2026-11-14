@@ -72,7 +72,7 @@ export default async function DSDashboard() {
     <ServerFeatureGate feature="dashboard_ds" featureLabel="Dashboard Direttore Sportivo">
     <div>
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Area Direttore Sportivo</h1>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Area Direttore Sportivo</h1>
         <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>
           Controllo rosa, contratti e scouting
         </p>
@@ -183,7 +183,7 @@ export default async function DSDashboard() {
                   gap: 12,
                 }}>
                   <div style={{
-                    width: 36, height: 36, borderRadius: 8,
+                    width: 36, height: 36, borderRadius: 12,
                     background: 'var(--grigio-6)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontSize: 16, fontWeight: 700, color: 'var(--grigio-3)', flexShrink: 0,
@@ -194,15 +194,15 @@ export default async function DSDashboard() {
                     <div style={{ fontSize: 13, fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {r.nome_giocatore_ext ?? 'Giocatore sconosciuto'}
                     </div>
-                    <div style={{ fontSize: 11, color: 'var(--grigio-4)', marginTop: 2 }}>
+                    <div style={{ fontSize: 12, color: 'var(--grigio-4)', marginTop: 2 }}>
                       {r.data_osservazione}
                     </div>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 4, alignItems: 'flex-end' }}>
-                    <span className={`badge ${potenzialeColore[r.potenziale] ?? 'badge-grigio'}`} style={{ fontSize: 10 }}>
+                    <span className={`badge ${potenzialeColore[r.potenziale] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>
                       {r.potenziale}
                     </span>
-                    <span className={`badge ${esitoColore[r.esito] ?? 'badge-grigio'}`} style={{ fontSize: 10 }}>
+                    <span className={`badge ${esitoColore[r.esito] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>
                       {r.esito?.replace('_', ' ')}
                     </span>
                   </div>

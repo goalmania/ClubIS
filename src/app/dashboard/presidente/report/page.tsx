@@ -80,14 +80,14 @@ function ReportContent() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Report mensile</h1>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Report mensile</h1>
           <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>{meseLabel}</p>
         </div>
         <button className="btn btn-primary btn-sm" onClick={() => window.print()} data-onboarding="btn-genera-report">🖨 Stampa</button>
       </div>
       {sezioni.map(sez => (
         <div key={sez} className="card" style={{ padding: 0, overflow: 'hidden', marginBottom: 16 }}>
-          <div style={{ padding: '12px 18px', borderBottom: '1px solid var(--grigio-5)', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--grigio-4)' }}>{sez}</div>
+          <div style={{ padding: '12px 18px', borderBottom: '1px solid var(--grigio-5)', fontSize: 12, fontWeight: 600, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-4)' }}>{sez}</div>
           {rows.filter(r => r.sez === sez).map(r => (
             <div key={r.l} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '13px 18px', borderBottom: '1px solid var(--grigio-6)' }}>
               <span style={{ fontSize: 14, color: 'var(--grigio-2)' }}>{r.l}</span>

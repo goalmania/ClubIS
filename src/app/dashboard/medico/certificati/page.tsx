@@ -235,7 +235,7 @@ export default function MedicoCertificatiPage() {
                         {g?.cognome} {g?.nome}
                       </td>
                       <td>
-                        <span className="badge badge-grigio" style={{ fontSize: 10 }}>
+                        <span className="badge badge-grigio" style={{ fontSize: 12 }}>
                           {c.tipo === 'agonistico' ? 'Agonistico' : 'Non agonistico'}
                         </span>
                       </td>
@@ -251,7 +251,7 @@ export default function MedicoCertificatiPage() {
                       <td>
                         <button
                           className="btn btn-secondary btn-sm"
-                          style={{ fontSize: 11 }}
+                          style={{ fontSize: 12 }}
                           onClick={() => apriModal({
                             giocatoreId: g?.id ?? '',
                             tipo: c.tipo ?? 'agonistico',
@@ -322,7 +322,7 @@ export default function MedicoCertificatiPage() {
               onChange={e => setF('scadenza', e.target.value)}
             />
             {form.rilascio && form.scadenza === addAnno(form.rilascio) && (
-              <div style={{ fontSize: 10, color: 'var(--grigio-4)', marginTop: 4 }}>
+              <div style={{ fontSize: 12, color: 'var(--grigio-4)', marginTop: 4 }}>
                 Auto: rilascio + 1 anno
               </div>
             )}
@@ -383,7 +383,7 @@ export default function MedicoCertificatiPage() {
 }
 
 const lbl: React.CSSProperties = {
-  display: 'block', fontSize: 11, fontFamily: 'var(--font-display)',
-  textTransform: 'uppercase', letterSpacing: '0.08em',
+  display: 'block', fontSize: 12, fontFamily: 'var(--font-display)',
+  textTransform: 'none', letterSpacing: '0',
   color: 'var(--grigio-3)', marginBottom: 6, fontWeight: 600,
 }

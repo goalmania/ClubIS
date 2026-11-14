@@ -338,7 +338,7 @@ export default function ImportCalendarioFIGC() {
             <label className="label">
               Nome club nel CSV
               {clubAutocaricato && (
-                <span style={{ marginLeft: 6, fontSize: 10, color: 'var(--verde)', fontWeight: 500 }}>
+                <span style={{ marginLeft: 6, fontSize: 12, color: 'var(--verde)', fontWeight: 500 }}>
                   ✓ caricato automaticamente
                 </span>
               )}
@@ -350,7 +350,7 @@ export default function ImportCalendarioFIGC() {
               onChange={e => setNomeClub(e.target.value)}
               onBlur={ricaricaConNome}
             />
-            <div style={{ fontSize: 11, color: 'var(--grigio-4)', marginTop: 4 }}>
+            <div style={{ fontSize: 12, color: 'var(--grigio-4)', marginTop: 4 }}>
               Deve corrispondere al nome usato nel CSV FIGC (anche parziale)
             </div>
           </div>
@@ -368,7 +368,7 @@ export default function ImportCalendarioFIGC() {
                 </option>
               ))}
             </select>
-            <div style={{ fontSize: 11, color: 'var(--grigio-4)', marginTop: 4 }}>
+            <div style={{ fontSize: 12, color: 'var(--grigio-4)', marginTop: 4 }}>
               Le partite vengono assegnate a questa squadra
             </div>
           </div>
@@ -391,7 +391,7 @@ export default function ImportCalendarioFIGC() {
         <div
           style={{
             border: `2px dashed ${parsandoPdf ? 'var(--verde)' : 'var(--grigio-5)'}`,
-            borderRadius: 10, padding: '32px 20px', textAlign: 'center',
+            borderRadius: 14, padding: '32px 20px', textAlign: 'center',
             cursor: parsandoPdf ? 'default' : 'pointer', background: 'var(--grigio-6)',
             transition: 'border-color 0.2s',
           }}
@@ -416,7 +416,7 @@ export default function ImportCalendarioFIGC() {
               <div style={{ fontSize: 12, color: 'var(--grigio-4)', marginTop: 4 }}>
                 <strong>PDF</strong> — Eccellenza &nbsp;·&nbsp; <strong>XLSX</strong> — Serie D &nbsp;·&nbsp; <strong>CSV</strong> — colonne: Data, Ora, Squadra_Casa, Squadra_Ospite, Campo, Giornata
               </div>
-              <div style={{ fontSize: 11, color: 'var(--grigio-4)', marginTop: 6 }}>
+              <div style={{ fontSize: 12, color: 'var(--grigio-4)', marginTop: 6 }}>
                 Formati data accettati: <strong>DD/MM/AAAA</strong> (FIGC standard) · AAAA-MM-GG (ISO)
               </div>
             </>
@@ -426,11 +426,11 @@ export default function ImportCalendarioFIGC() {
 
         {/* Testo grezzo PDF — mostrato quando il parser non trova partite */}
         {testoPdfGrezzo && partite.length === 0 && (
-          <div style={{ marginTop: 16, padding: '14px 16px', background: 'var(--grigio-6)', borderRadius: 8, border: '1px solid var(--grigio-5)' }}>
+          <div style={{ marginTop: 16, padding: '14px 16px', background: 'var(--grigio-6)', borderRadius: 12, border: '1px solid var(--grigio-5)' }}>
             <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--grigio-3)', marginBottom: 8 }}>
               Testo estratto dal PDF (prime 2000 caratteri) — invialo al supporto se il parsing non funziona:
             </div>
-            <pre style={{ fontSize: 10, color: 'var(--grigio-3)', whiteSpace: 'pre-wrap', wordBreak: 'break-word', margin: 0, maxHeight: 200, overflow: 'auto' }}>
+            <pre style={{ fontSize: 12, color: 'var(--grigio-3)', whiteSpace: 'pre-wrap', wordBreak: 'break-word', margin: 0, maxHeight: 200, overflow: 'auto' }}>
               {testoPdfGrezzo}
             </pre>
           </div>
@@ -522,7 +522,7 @@ export default function ImportCalendarioFIGC() {
                       {p.errore
                         ? <span className="badge badge-rosso" title={p.errore}>Errore: {p.errore}</span>
                         : p.non_rilevante
-                          ? <span className="badge badge-grigio" style={{ fontSize: 10 }}>Altra squadra</span>
+                          ? <span className="badge badge-grigio" style={{ fontSize: 12 }}>Altra squadra</span>
                           : <span className="badge badge-verde">✓ importabile</span>
                       }
                     </td>

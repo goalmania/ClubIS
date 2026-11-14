@@ -58,7 +58,7 @@ export default async function PresidenteDashboard() {
   return (
     <div style={{ animation: 'fadeIn 0.3s ease' }}>
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Presidenza</h1>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Presidenza</h1>
         <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>
           Riepilogo esecutivo — {oggi.toLocaleDateString('it-IT', { month: 'long', year: 'numeric' })}
         </p>
@@ -131,10 +131,10 @@ export default async function PresidenteDashboard() {
                     display: 'flex', alignItems: 'center', gap: 14,
                   }}>
                     <div style={{
-                      width: 32, height: 32, borderRadius: 8, flexShrink: 0,
+                      width: 32, height: 32, borderRadius: 12, flexShrink: 0,
                       background: vinto ? 'var(--accent-green-lt)' : pareggio ? 'var(--accent-orange-lt)' : 'var(--accent-red-lt)',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: 11, fontWeight: 700,
+                      fontSize: 12, fontWeight: 700,
                       color: vinto ? 'var(--accent-green)' : pareggio ? 'var(--accent-orange)' : 'var(--accent-red)',
                     }}>
                       {vinto ? 'V' : pareggio ? 'P' : 'S'}
@@ -143,7 +143,7 @@ export default async function PresidenteDashboard() {
                       <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)' }}>
                         {p.casa_trasferta === 'casa' ? 'vs' : '@'} {p.avversario}
                       </div>
-                      <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                      <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                         {new Date(p.data_ora).toLocaleDateString('it-IT')}
                       </div>
                     </div>
@@ -182,7 +182,7 @@ export default async function PresidenteDashboard() {
                     }} />
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)' }}>{s.nome}</div>
-                      <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                      <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                         {isScuolaCalcio && categoriaFederaleDaEta(s.categoria_eta)
                           ? CATEGORIE_FEDERALI[categoriaFederaleDaEta(s.categoria_eta)!].label
                           : s.categoria_eta.toUpperCase().replace('_', ' ')}

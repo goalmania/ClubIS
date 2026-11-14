@@ -59,7 +59,7 @@ export default async function PresidenteStaffPage() {
   return (
     <div>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Staff</h1>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Staff</h1>
         <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>
           {staff?.filter(s => s.attivo).length ?? 0} utenti attivi · Costo mensile staff: {fmt(totIngaggio)}
         </p>
@@ -74,13 +74,13 @@ export default async function PresidenteStaffPage() {
                 <div style={{ fontSize: 13, fontWeight: 500 }}>{s.nome} {s.cognome}</div>
                 <div style={{ fontSize: 12, color: 'var(--grigio-4)' }}>{s.email}</div>
               </div>
-              <span className={`badge ${roleBadge[s.ruolo] ?? 'badge-grigio'}`} style={{ fontSize: 11 }}>
+              <span className={`badge ${roleBadge[s.ruolo] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>
                 {roleLabel[s.ruolo] ?? s.ruolo}
               </span>
               {isScuolaCalcio && s.ruolo === 'allenatore' && (
                 <CambiaCategoriaAllenatore allenatoreId={s.id} categoriaAttuale={categoriaPerAllenatore[s.id] ?? null} />
               )}
-              {!s.attivo && <span className="badge badge-rosso" style={{ fontSize: 10 }}>Disattivo</span>}
+              {!s.attivo && <span className="badge badge-rosso" style={{ fontSize: 12 }}>Disattivo</span>}
             </div>
           ))}
         </div>
@@ -102,7 +102,7 @@ export default async function PresidenteStaffPage() {
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   <div style={{ fontSize: 14, fontWeight: 700, fontFamily: 'var(--font-mono)' }}>{fmt(Number(c.compenso_mensile ?? 0))}/mese</div>
-                  <div style={{ fontSize: 11, color: 'var(--grigio-4)' }}>Tot. erogato: {fmt(Number(c.totale_annuo_erogato ?? 0))}</div>
+                  <div style={{ fontSize: 12, color: 'var(--grigio-4)' }}>Tot. erogato: {fmt(Number(c.totale_annuo_erogato ?? 0))}</div>
                 </div>
               </div>
             )

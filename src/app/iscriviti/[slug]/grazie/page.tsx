@@ -88,10 +88,10 @@ const pageStyle: React.CSSProperties = {
   display: 'flex', alignItems: 'center', justifyContent: 'center',
 }
 const cardStyle: React.CSSProperties = {
-  maxWidth: 520, width: '100%', background: '#111',
-  border: '1px solid #222', borderRadius: 6, padding: '24px 28px',
+  maxWidth: 520, width: '100%', background: 'var(--surface-2)',
+  border: '1px solid var(--separator)', borderRadius: 10, padding: '24px 28px',
 }
 const h2Style: React.CSSProperties = {
-  fontFamily: 'Barlow Condensed, sans-serif', fontWeight: 900,
-  fontSize: 24, textTransform: 'uppercase', marginBottom: 12, letterSpacing: '-0.01em',
+  fontFamily: 'var(--font-display)', fontWeight: 700,
+  fontSize: 24, textTransform: 'none', marginBottom: 12, letterSpacing: '-0.01em',
 }

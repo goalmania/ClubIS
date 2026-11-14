@@ -61,7 +61,7 @@ export default async function OsservatoreMappaPage() {
   return (
     <div style={{ animation: 'fadeIn 0.3s ease' }}>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>
           Mappa scouting
         </h1>
         <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>
@@ -120,7 +120,7 @@ export default async function OsservatoreMappaPage() {
                 display: 'flex', gap: 12, alignItems: 'center',
               }}>
                 <div style={{
-                  width: 34, height: 34, borderRadius: 8, flexShrink: 0,
+                  width: 34, height: 34, borderRadius: 12, flexShrink: 0,
                   background: votoColore(r.voto_globale),
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontWeight: 700, fontSize: 13, color: 'white',
@@ -132,12 +132,12 @@ export default async function OsservatoreMappaPage() {
                   <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--white)' }}>
                     {r.nome_giocatore_ext ?? '—'}
                   </div>
-                  <div style={{ fontSize: 11, color: 'var(--grigio-3)' }}>
+                  <div style={{ fontSize: 12, color: 'var(--grigio-3)' }}>
                     {r.club_attuale_ext ?? 'Club n.d.'} · {new Date(r.data_osservazione).toLocaleDateString('it-IT')}
                   </div>
                 </div>
                 <span style={{
-                  fontSize: 10, padding: '2px 7px', borderRadius: 4,
+                  fontSize: 12, padding: '2px 7px', borderRadius: 10,
                   background: 'var(--grigio-6)', color: 'var(--grigio-3)',
                 }}>
                   senza regione

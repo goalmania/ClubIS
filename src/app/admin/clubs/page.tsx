@@ -41,7 +41,7 @@ export default function AdminClubsPage() {
     <div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontSize: 22, fontWeight: 600 }}>Gestione Club</h1>
+          <h1 style={{ fontSize: 28, fontWeight: 600, letterSpacing: '-0.025em'}}>Gestione Club</h1>
           <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 2 }}>{clubs.length} club registrati</p>
         </div>
         <Link href="/admin/clubs/nuovo" className="btn btn-primary btn-sm">+ Nuovo club</Link>
@@ -88,7 +88,7 @@ export default function AdminClubsPage() {
                   <tr key={c.id}>
                     <td style={{ fontWeight: 500 }}>{c.nome}</td>
                     <td style={{ fontSize: 13, color: 'var(--grigio-3)' }}>{c.citta}</td>
-                    <td><span className="badge badge-grigio" style={{ fontSize: 11, textTransform: 'capitalize' }}>{c.categoria.replace(/_/g, ' ')}</span></td>
+                    <td><span className="badge badge-grigio" style={{ fontSize: 12, textTransform: 'capitalize' }}>{c.categoria.replace(/_/g, ' ')}</span></td>
                     <td>
                       <span className={`badge ${c.piano_abbonamento === 'elite' ? 'badge-viola' : c.piano_abbonamento === 'pro' ? 'badge-blu' : 'badge-grigio'}`}>
                         {c.piano_abbonamento}

@@ -260,7 +260,7 @@ export default function CompensiPage() {
                   return (
                     <tr key={c.id}>
                       <td style={{ fontWeight: 600 }}>{nomeCollab}
-                        {c.cf_esterno && <div style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--grigio-3)' }}>{c.cf_esterno}</div>}
+                        {c.cf_esterno && <div style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: 'var(--grigio-3)' }}>{c.cf_esterno}</div>}
                       </td>
                       <td style={{ fontSize: 12, maxWidth: 220, wordBreak: 'break-word' }}>{c.descrizione}</td>
                       <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{c.anno}{c.mese ? `/${String(c.mese).padStart(2,'0')}` : ''}</td>
@@ -276,7 +276,7 @@ export default function CompensiPage() {
                       </td>
                       <td>
                         <a href={`/api/compensi/autocertificazione/${c.id}`} target="_blank" rel="noreferrer"
-                          style={{ fontSize: 11, color: 'var(--accent)', textDecoration: 'none', fontFamily: 'var(--font-mono)' }}>
+                          style={{ fontSize: 12, color: 'var(--accent)', textDecoration: 'none', fontFamily: 'var(--font-mono)' }}>
                           📄 Genera
                         </a>
                       </td>
@@ -292,10 +292,10 @@ export default function CompensiPage() {
       {tab === 'report' && (
         <div className="card" style={{ overflow: 'hidden' }}>
           <div style={{ padding: '12px 18px', borderBottom: '1px solid var(--border-solid)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, textTransform: 'none', letterSpacing: '0' }}>
               Report per collaboratore — {filtroAnno}
             </span>
-            <button className="btn btn-sm" onClick={() => exportCSV(report, filtroAnno)} style={{ fontSize: 11 }}>
+            <button className="btn btn-sm" onClick={() => exportCSV(report, filtroAnno)} style={{ fontSize: 12 }}>
               Export CSV
             </button>
           </div>
@@ -353,7 +353,7 @@ export default function CompensiPage() {
                   <input className="input" value={nomeEsterno} onChange={e => setNomeEsterno(e.target.value)} placeholder="Mario Rossi" />
                 </Field>
                 <Field label="Codice fiscale (esterno)">
-                  <input className="input" style={{ textTransform: 'uppercase' }} value={cfEsterno}
+                  <input className="input" style={{ textTransform: 'none' }} value={cfEsterno}
                     onChange={e => setCfEsterno(e.target.value.toUpperCase())} placeholder="RSSMRA70A01H501Z" maxLength={16} />
                 </Field>
               </div>
@@ -399,8 +399,8 @@ export default function CompensiPage() {
 
           {/* Calcolo live */}
           {calcolo && (
-            <div style={{ background: '#0d1a00', border: '1px solid var(--accent)', borderRadius: 4, padding: '14px 18px', marginBottom: 20, fontSize: 13 }}>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--accent)', marginBottom: 10 }}>
+            <div style={{ background: '#0d1a00', border: '1px solid var(--accent)', borderRadius: 10, padding: '14px 18px', marginBottom: 20, fontSize: 13 }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--accent)', marginBottom: 10 }}>
                 Calcolo fiscale live
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 20px', lineHeight: 1.7 }}>
@@ -463,7 +463,7 @@ function exportCSV(report: any[], anno: string) {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div style={{ marginBottom: 24 }}>
-      <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--accent)', paddingBottom: 8, borderBottom: '1px solid var(--border-solid)', marginBottom: 16 }}>{title}</div>
+      <div style={{ fontSize: '0.8rem', fontFamily: 'var(--font-mono)', fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--accent)', paddingBottom: 8, borderBottom: '1px solid var(--border-solid)', marginBottom: 16 }}>{title}</div>
       {children}
     </div>
   )

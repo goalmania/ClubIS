@@ -51,8 +51,8 @@ export default function RischioCovisocWidget() {
       <div style={{ padding: '16px 20px', background: cfg.bg, border: `1px solid ${cfg.border}`, marginBottom: 20, display: 'flex', gap: 16, alignItems: 'center', cursor: 'pointer', transition: 'opacity 0.2s' }}>
         <div style={{ width: 12, height: 12, borderRadius: '50%', background: cfg.color, flexShrink: 0, boxShadow: `0 0 8px ${cfg.color}` }} />
         <div style={{ flex: 1 }}>
-          <div style={{ fontFamily: 'var(--font-display)', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: cfg.color }}>{cfg.label}</div>
-          <div style={{ fontSize: 11, color: 'var(--grigio-3)', marginTop: 3 }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontSize: 12, fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: cfg.color }}>{cfg.label}</div>
+          <div style={{ fontSize: 12, color: 'var(--grigio-3)', marginTop: 3 }}>
             {livello === 'verde' && prossima
               ? `Prossima: ${prossima.descrizione.substring(0, 50)}…`
               : livello === 'giallo'
@@ -60,7 +60,7 @@ export default function RischioCovisocWidget() {
               : `${scaduteCount} scadenza${scaduteCount !== 1 ? 'e' : ''} scaduta${scaduteCount !== 1 ? 'e' : ''} senza attestazione`}
           </div>
         </div>
-        <div style={{ fontFamily: 'var(--font-display)', fontSize: 10, color: 'var(--grigio-4)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>COVISOC →</div>
+        <div style={{ fontFamily: 'var(--font-display)', fontSize: 12, color: 'var(--grigio-4)', textTransform: 'none', letterSpacing: '0' }}>COVISOC →</div>
       </div>
     </a>
   )

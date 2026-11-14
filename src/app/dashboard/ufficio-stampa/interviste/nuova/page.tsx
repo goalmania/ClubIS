@@ -111,15 +111,15 @@ export default function NuovaIntervistePage() {
 
   const inputStyle = {
     width: '100%', padding: '9px 12px',
-    background: '#1a1a1a', border: '1px solid var(--border-solid)',
-    borderRadius: 2, color: 'var(--white)', fontSize: 13,
+    background: 'var(--surface-2)', border: '1px solid var(--border-solid)',
+    borderRadius: 8, color: 'var(--white)', fontSize: 13,
     fontFamily: 'var(--font-sans)', outline: 'none',
   } as const
 
   const labelStyle = {
-    display: 'block', fontFamily: 'var(--font-mono)', fontSize: '0.65rem',
-    fontWeight: 700, textTransform: 'uppercase' as const,
-    letterSpacing: '0.15em', color: 'var(--grigio-3)', marginBottom: 6,
+    display: 'block', fontFamily: 'var(--font-mono)', fontSize: '0.8rem',
+    fontWeight: 700, textTransform: 'none' as const,
+    letterSpacing: '0', color: 'var(--grigio-3)', marginBottom: 6,
   }
 
   // Raggruppa soggetti per gruppo
@@ -133,8 +133,8 @@ export default function NuovaIntervistePage() {
     <div style={{ maxWidth: 640 }}>
       <div style={{ marginBottom: 28 }}>
         <h1 style={{
-          fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 900,
-          textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)',
+          fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700,
+          textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)',
         }}>
           Nuovo evento media
         </h1>
@@ -147,7 +147,7 @@ export default function NuovaIntervistePage() {
         {errore && (
           <div style={{
             padding: '10px 14px', background: 'var(--rosso-lt)',
-            border: '1px solid var(--rosso-bd)', borderRadius: 2,
+            border: '1px solid var(--rosso-bd)', borderRadius: 8,
             color: 'var(--rosso)', fontSize: 13, marginBottom: 20,
           }}>
             {errore}
@@ -220,18 +220,18 @@ export default function NuovaIntervistePage() {
               </div>
             ) : (
               <div style={{
-                border: '1px solid var(--border-solid)', borderRadius: 2,
-                background: '#1a1a1a', maxHeight: 260, overflowY: 'auto',
+                border: '1px solid var(--border-solid)', borderRadius: 8,
+                background: 'var(--surface-2)', maxHeight: 260, overflowY: 'auto',
               }}>
                 {Object.entries(gruppi).map(([gruppo, membri]) => (
                   <div key={gruppo}>
                     {/* Intestazione gruppo */}
                     <div style={{
                       padding: '7px 12px',
-                      fontFamily: 'var(--font-mono)', fontSize: '0.58rem',
-                      fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em',
+                      fontFamily: 'var(--font-mono)', fontSize: '0.78rem',
+                      fontWeight: 700, textTransform: 'none', letterSpacing: '0',
                       color: 'var(--grigio-4)',
-                      background: '#111',
+                      background: 'var(--surface-2)',
                       borderBottom: '1px solid var(--border-solid)',
                       position: 'sticky', top: 0,
                     }}>
@@ -259,9 +259,9 @@ export default function NuovaIntervistePage() {
                           </span>
                           {s.ruolo && (
                             <span style={{
-                              fontSize: 10, fontFamily: 'var(--font-mono)',
-                              color: 'var(--grigio-4)', textTransform: 'uppercase',
-                              letterSpacing: '0.08em',
+                              fontSize: 12, fontFamily: 'var(--font-mono)',
+                              color: 'var(--grigio-4)', textTransform: 'none',
+                              letterSpacing: '0',
                             }}>
                               {s.ruolo}
                             </span>
@@ -275,7 +275,7 @@ export default function NuovaIntervistePage() {
             )}
 
             {selezionati.length > 0 && (
-              <div style={{ marginTop: 8, fontSize: 11, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>
+              <div style={{ marginTop: 8, fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>
                 Riceveranno una notifica alla conferma dell&apos;evento.
               </div>
             )}
@@ -307,9 +307,9 @@ export default function NuovaIntervistePage() {
               disabled={saving}
               style={{
                 padding: '10px 24px', background: 'var(--accent)', color: '#0a0a0a',
-                border: 'none', borderRadius: 2, cursor: saving ? 'not-allowed' : 'pointer',
+                border: 'none', borderRadius: 8, cursor: saving ? 'not-allowed' : 'pointer',
                 fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12,
-                textTransform: 'uppercase', letterSpacing: '0.08em',
+                textTransform: 'none', letterSpacing: '0',
                 opacity: saving ? 0.6 : 1,
               }}
             >
@@ -319,9 +319,9 @@ export default function NuovaIntervistePage() {
               onClick={() => router.back()}
               style={{
                 padding: '10px 20px', background: 'transparent', color: 'var(--grigio-3)',
-                border: '1px solid var(--border-solid)', borderRadius: 2, cursor: 'pointer',
+                border: '1px solid var(--border-solid)', borderRadius: 8, cursor: 'pointer',
                 fontFamily: 'var(--font-display)', fontSize: 12,
-                textTransform: 'uppercase', letterSpacing: '0.08em',
+                textTransform: 'none', letterSpacing: '0',
               }}
             >
               Annulla

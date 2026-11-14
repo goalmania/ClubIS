@@ -44,7 +44,7 @@ export default function MedicoVisitePage() {
         <div style={{ animation: 'fadeIn 0.3s ease' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
             <div>
-              <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Visite mediche</h1>
+              <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Visite mediche</h1>
               <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>Agenda visite e idoneità agonistica</p>
             </div>
             <button data-onboarding="btn-nuova-visita" className="btn btn-primary btn-sm" onClick={() => setOpenDrawer(true)}>
@@ -63,13 +63,13 @@ export default function MedicoVisitePage() {
                 const g: any = v.giocatori
                 return (
                   <div key={v.id} style={{ padding: '12px 18px', borderBottom: '1px solid var(--border-light)', display: 'flex', gap: 12, alignItems: 'center' }}>
-                    <div style={{ width: 44, textAlign: 'center', padding: '4px 0', borderRadius: 6, background: 'var(--accent-blue-lt)', color: 'var(--accent-blue)', flexShrink: 0 }}>
-                      <div style={{ fontSize: 9, fontWeight: 600, textTransform: 'uppercase' }}>{new Date(v.data).toLocaleDateString('it-IT', { month: 'short' })}</div>
+                    <div style={{ width: 44, textAlign: 'center', padding: '4px 0', borderRadius: 10, background: 'var(--accent-blue-lt)', color: 'var(--accent-blue)', flexShrink: 0 }}>
+                      <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'none' }}>{new Date(v.data).toLocaleDateString('it-IT', { month: 'short' })}</div>
                       <div style={{ fontSize: 14, fontWeight: 700 }}>{new Date(v.data).getDate()}</div>
                     </div>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)' }}>{g?.cognome} {g?.nome}</div>
-                      <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{v.tipo?.replace('_', ' ')}{v.struttura && ` · ${v.struttura}`}</div>
+                      <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{v.tipo?.replace('_', ' ')}{v.struttura && ` · ${v.struttura}`}</div>
                     </div>
                   </div>
                 )
@@ -90,7 +90,7 @@ export default function MedicoVisitePage() {
                       <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)' }}>{g?.cognome} {g?.nome}</span>
                       {v.esito && <span className={`badge ${esitoBadge[v.esito] ?? 'badge-grigio'}`}>{v.esito.replace('_', ' ')}</span>}
                     </div>
-                    <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                    <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                       {v.tipo?.replace('_', ' ')} · {new Date(v.data).toLocaleDateString('it-IT')}
                     </div>
                   </div>

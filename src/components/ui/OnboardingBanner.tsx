@@ -22,8 +22,8 @@ export default function OnboardingBanner({ clubId }: { clubId: string }) {
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <span style={{
-          fontFamily: 'var(--font-mono)', fontSize: '0.6rem',
-          letterSpacing: '0.15em', color: 'var(--accent)', textTransform: 'uppercase',
+          fontFamily: 'var(--font-mono)', fontSize: '0.78rem',
+          letterSpacing: '0', color: 'var(--accent)', textTransform: 'none',
         }}>
           SETUP {percCompl}% completato
         </span>
@@ -34,7 +34,7 @@ export default function OnboardingBanner({ clubId }: { clubId: string }) {
       <button
         className="btn btn-ghost btn-sm"
         onClick={() => setMinimizzato(false)}
-        style={{ fontSize: 11 }}
+        style={{ fontSize: 12 }}
       >
         Continua setup →
       </button>
@@ -56,14 +56,14 @@ export default function OnboardingBanner({ clubId }: { clubId: string }) {
       }}>
         <div>
           <div style={{
-            fontFamily: 'var(--font-display)', fontWeight: 900,
-            textTransform: 'uppercase', fontSize: 14, color: 'var(--accent)',
+            fontFamily: 'var(--font-display)', fontWeight: 700,
+            textTransform: 'none', fontSize: 14, color: 'var(--accent)',
           }}>
             🚀 Configurazione ClubIS — {percCompl}% completato
           </div>
           <div style={{
-            fontSize: 11, color: 'var(--gray)', fontFamily: 'var(--font-mono)',
-            marginTop: 3, letterSpacing: '0.1em',
+            fontSize: 12, color: 'var(--gray)', fontFamily: 'var(--font-mono)',
+            marginTop: 3, letterSpacing: '0',
           }}>
             {stepsCompletati.length}/{STEPS_ONBOARDING.length} PASSI COMPLETATI
           </div>
@@ -71,7 +71,7 @@ export default function OnboardingBanner({ clubId }: { clubId: string }) {
         <button
           className="btn btn-ghost btn-sm"
           onClick={() => setMinimizzato(true)}
-          style={{ fontSize: 11, color: 'var(--gray)' }}
+          style={{ fontSize: 12, color: 'var(--gray)' }}
         >
           Minimizza
         </button>
@@ -112,7 +112,7 @@ export default function OnboardingBanner({ clubId }: { clubId: string }) {
                 border: completato
                   ? 'none'
                   : `1px solid ${isCurrent ? 'var(--accent)' : 'var(--border)'}`,
-                fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 11,
+                fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12,
                 color: completato ? '#000' : isCurrent ? 'var(--accent)' : 'var(--gray)',
               }}>
                 {completato ? '✓' : step.step}
@@ -121,13 +121,13 @@ export default function OnboardingBanner({ clubId }: { clubId: string }) {
               <div style={{ flex: 1 }}>
                 <div style={{
                   fontFamily: 'var(--font-display)', fontWeight: 700,
-                  textTransform: 'uppercase', fontSize: 12, letterSpacing: '0.06em',
+                  textTransform: 'none', fontSize: 12, letterSpacing: '0',
                   color: completato ? 'var(--gray)' : 'var(--white)',
                 }}>
                   {step.icona} {step.titolo}
                 </div>
                 {!completato && (
-                  <div style={{ fontSize: 11, color: 'var(--gray)', marginTop: 2 }}>
+                  <div style={{ fontSize: 12, color: 'var(--gray)', marginTop: 2 }}>
                     {step.descrizione}
                   </div>
                 )}
@@ -139,14 +139,14 @@ export default function OnboardingBanner({ clubId }: { clubId: string }) {
                     href={step.href}
                     onClick={() => completaStep(step.step)}
                     className="btn btn-primary btn-sm"
-                    style={{ fontSize: 11 }}
+                    style={{ fontSize: 12 }}
                   >
                     {step.azione}
                   </Link>
                   <button
                     className="btn btn-ghost btn-sm"
                     onClick={() => completaStep(step.step)}
-                    style={{ fontSize: 10, color: 'var(--gray)' }}
+                    style={{ fontSize: 12, color: 'var(--gray)' }}
                   >
                     Salta
                   </button>

@@ -198,19 +198,19 @@ function SviluppoContent({ g, valutazioni }: { g: any; valutazioni: any[] }) {
       {/* Categoria età */}
       <div style={{
         marginBottom: 24, padding: '18px 22px',
-        background: '#111', border: `2px solid ${categoria.colore}`,
-        borderRadius: 2, display: 'flex', alignItems: 'center', gap: 18,
+        background: 'var(--surface-2)', border: `2px solid ${categoria.colore}`,
+        borderRadius: 8, display: 'flex', alignItems: 'center', gap: 18,
       }}>
         <div style={{
-          width: 56, height: 56, borderRadius: 2, flexShrink: 0,
+          width: 56, height: 56, borderRadius: 8, flexShrink: 0,
           background: `${categoria.colore}20`, border: `1px solid ${categoria.colore}`,
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 20, color: categoria.colore,
+          fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 20, color: categoria.colore,
         }}>
           {eta ?? '?'}
         </div>
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: categoria.colore, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 3 }}>
+          <div style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: categoria.colore, textTransform: 'none', letterSpacing: '0', marginBottom: 3 }}>
             Categoria: {categoria.nome}
           </div>
           <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--white)', marginBottom: 2 }}>
@@ -220,10 +220,10 @@ function SviluppoContent({ g, valutazioni }: { g: any; valutazioni: any[] }) {
         </div>
         {valutazioni.length > 0 && (
           <div style={{ textAlign: 'center', flexShrink: 0 }}>
-            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 32, color: coloreVoto(+punteggio.toFixed(1), 8) }}>
+            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 32, color: coloreVoto(+punteggio.toFixed(1), 8) }}>
               {punteggio.toFixed(1)}
             </div>
-            <div style={{ fontSize: 10, color: 'var(--gray)', fontFamily: 'var(--font-mono)', textTransform: 'uppercase' }}>Score globale</div>
+            <div style={{ fontSize: 12, color: 'var(--gray)', fontFamily: 'var(--font-mono)', textTransform: 'none' }}>Score globale</div>
           </div>
         )}
       </div>
@@ -233,31 +233,31 @@ function SviluppoContent({ g, valutazioni }: { g: any; valutazioni: any[] }) {
         {stats.map(({ area, media, trend, target, perc }) => {
           const colore = coloreVoto(media, target)
           return (
-            <div key={area} style={{ background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2, padding: '16px 18px' }}>
+            <div key={area} style={{ background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8, padding: '16px 18px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <span style={{ fontSize: 16 }}>{AREA_ICON[area]}</span>
-                  <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, textTransform: 'uppercase', color: 'var(--white)' }}>
+                  <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, textTransform: 'none', color: 'var(--white)' }}>
                     {labelArea(area, categoria)}
                   </span>
-                  <span style={{ fontSize: 10, fontFamily: 'var(--font-mono)', color: 'var(--gray)', padding: '1px 5px', border: '1px solid var(--border-solid)', borderRadius: 2 }}>
+                  <span style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: 'var(--gray)', padding: '1px 5px', border: '1px solid var(--border-solid)', borderRadius: 8 }}>
                     {categoria.priorita[area]}%
                   </span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                   {media !== null && (
-                    <span style={{ fontSize: 11, color: T_COLOR[trend], fontFamily: 'var(--font-mono)' }}>{T_ICON[trend]}</span>
+                    <span style={{ fontSize: 12, color: T_COLOR[trend], fontFamily: 'var(--font-mono)' }}>{T_ICON[trend]}</span>
                   )}
-                  <span style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 22, color: colore }}>
+                  <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 22, color: colore }}>
                     {media !== null ? media : '—'}
                   </span>
-                  <span style={{ fontSize: 11, color: 'var(--gray)', fontFamily: 'var(--font-mono)' }}>/{target}</span>
+                  <span style={{ fontSize: 12, color: 'var(--gray)', fontFamily: 'var(--font-mono)' }}>/{target}</span>
                 </div>
               </div>
-              <div style={{ height: 6, background: 'var(--border-solid)', borderRadius: 3, overflow: 'hidden', marginBottom: 6 }}>
-                <div style={{ height: '100%', width: `${perc}%`, background: colore, borderRadius: 3, transition: 'width 0.4s' }} />
+              <div style={{ height: 6, background: 'var(--border-solid)', borderRadius: 8, overflow: 'hidden', marginBottom: 6 }}>
+                <div style={{ height: '100%', width: `${perc}%`, background: colore, borderRadius: 8, transition: 'width 0.4s' }} />
               </div>
-              <div style={{ fontSize: 10, color: 'var(--gray)', fontFamily: 'var(--font-mono)', display: 'flex', justifyContent: 'space-between' }}>
+              <div style={{ fontSize: 12, color: 'var(--gray)', fontFamily: 'var(--font-mono)', display: 'flex', justifyContent: 'space-between' }}>
                 <span>{perc}% dell&apos;obiettivo</span>
                 <span>Target età: {target}/10</span>
               </div>
@@ -267,10 +267,10 @@ function SviluppoContent({ g, valutazioni }: { g: any; valutazioni: any[] }) {
       </div>
 
       {/* Obiettivi per categoria */}
-      <div style={{ background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2, marginBottom: 24, overflow: 'hidden' }}>
+      <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8, marginBottom: 24, overflow: 'hidden' }}>
         <div style={{
           padding: '14px 18px', borderBottom: '1px solid var(--border-solid)',
-          fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', fontSize: 13, color: 'var(--white)',
+          fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 13, color: 'var(--white)',
           display: 'flex', alignItems: 'center', gap: 8,
         }}>
           <span style={{ color: categoria.colore }}>▸</span> Obiettivi per {categoria.nome}
@@ -284,11 +284,11 @@ function SviluppoContent({ g, valutazioni }: { g: any; valutazioni: any[] }) {
                 borderBottom: i < categoria.obiettivi.length - 1 ? '1px solid var(--border-solid)' : 'none',
               }}>
                 <div style={{
-                  width: 20, height: 20, borderRadius: 2, flexShrink: 0, marginTop: 1,
+                  width: 20, height: 20, borderRadius: 8, flexShrink: 0, marginTop: 1,
                   background: raggiunto ? '#00C8A020' : 'var(--border-solid)',
                   border: `1px solid ${raggiunto ? '#00C8A0' : 'var(--border-solid)'}`,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 11, color: raggiunto ? '#00C8A0' : 'var(--gray)',
+                  fontSize: 12, color: raggiunto ? '#00C8A0' : 'var(--gray)',
                 }}>
                   {raggiunto ? '✓' : i + 1}
                 </div>
@@ -303,13 +303,13 @@ function SviluppoContent({ g, valutazioni }: { g: any; valutazioni: any[] }) {
       {valutazioni.length === 0 ? (
         <div style={{
           padding: 40, textAlign: 'center', color: 'var(--gray)', fontSize: 13,
-          background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2,
+          background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8,
         }}>
           Nessuna valutazione condivisa dall&apos;allenatore ancora.
         </div>
       ) : (
-        <div style={{ background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2, overflow: 'hidden' }}>
-          <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border-solid)', fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', fontSize: 13, color: 'var(--white)' }}>
+        <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8, overflow: 'hidden' }}>
+          <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border-solid)', fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 13, color: 'var(--white)' }}>
             Storico valutazioni ({valutazioni.length})
           </div>
           {valutazioni.map((v: any, idx: number) => {
@@ -330,16 +330,16 @@ function SviluppoContent({ g, valutazioni }: { g: any; valutazioni: any[] }) {
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(70px, 1fr))', gap: 8, marginBottom: v.note ? 10 : 0 }}>
                   {AREE.map(area => (
-                    <div key={area} style={{ textAlign: 'center', padding: '8px 4px', background: 'var(--border-solid)', borderRadius: 2 }}>
-                      <div style={{ fontSize: 10, color: 'var(--gray)', fontFamily: 'var(--font-mono)', textTransform: 'uppercase', marginBottom: 2 }}>{labelArea(area, categoria)}</div>
-                      <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 20, color: v[area] != null ? coloreVoto(v[area], categoria.target[area]) : 'var(--gray)' }}>
+                    <div key={area} style={{ textAlign: 'center', padding: '8px 4px', background: 'var(--border-solid)', borderRadius: 8 }}>
+                      <div style={{ fontSize: 12, color: 'var(--gray)', fontFamily: 'var(--font-mono)', textTransform: 'none', marginBottom: 2 }}>{labelArea(area, categoria)}</div>
+                      <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 20, color: v[area] != null ? coloreVoto(v[area], categoria.target[area]) : 'var(--gray)' }}>
                         {v[area] ?? '—'}
                       </div>
                     </div>
                   ))}
                 </div>
                 {v.note && (
-                  <div style={{ fontSize: 12, color: 'var(--gray)', padding: '8px 12px', background: 'var(--border-solid)', borderRadius: 2, lineHeight: 1.6, marginTop: 8 }}>
+                  <div style={{ fontSize: 12, color: 'var(--gray)', padding: '8px 12px', background: 'var(--border-solid)', borderRadius: 8, lineHeight: 1.6, marginTop: 8 }}>
                     💬 {v.note}
                   </div>
                 )}
@@ -368,7 +368,7 @@ export default async function FamigliaSviluppoPage({
       return (
         <div style={{ padding: 40, textAlign: 'center' }}>
           <div style={{ fontSize: 36, marginBottom: 12 }}>⭐</div>
-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, textTransform: 'uppercase', color: 'var(--white)', marginBottom: 8 }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, textTransform: 'none', color: 'var(--white)', marginBottom: 8 }}>
             Nessun giocatore nel club
           </div>
           <div style={{ fontSize: 13, color: 'var(--gray)' }}>
@@ -390,7 +390,7 @@ export default async function FamigliaSviluppoPage({
     return (
       <div>
         <div style={{ marginBottom: 24 }}>
-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 26, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 26, textTransform: 'none', letterSpacing: '-0.01em', color: 'var(--white)' }}>
             Progressi di {g?.nome ?? 'atleta'}
           </div>
           <div style={{ fontSize: 13, color: 'var(--gray)', marginTop: 4 }}>
@@ -425,7 +425,7 @@ export default async function FamigliaSviluppoPage({
   return (
     <div>
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 26, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>
+        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 26, textTransform: 'none', letterSpacing: '-0.01em', color: 'var(--white)' }}>
           Progressi di {g?.nome ?? 'atleta'}
         </div>
         <div style={{ fontSize: 13, color: 'var(--gray)', marginTop: 4 }}>
@@ -444,7 +444,7 @@ export default async function FamigliaSviluppoPage({
                 key={f.id}
                 href={`/dashboard/famiglia/sviluppo?figlio=${f.giocatore_id}`}
                 style={{
-                  padding: '6px 14px', borderRadius: 2, fontSize: 12, fontWeight: 600,
+                  padding: '6px 14px', borderRadius: 8, fontSize: 12, fontWeight: 600,
                   textDecoration: 'none', border: '1px solid var(--border-solid)',
                   background: active ? 'var(--accent)' : 'transparent',
                   color: active ? '#000' : 'var(--white)',

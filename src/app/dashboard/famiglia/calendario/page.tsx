@@ -57,7 +57,7 @@ function VistaBtns({ vista, base }: { vista: string; base: string }) {
           key={v}
           href={`${base}&vista=${v}`}
           style={{
-            padding: '6px 14px', borderRadius: 2, fontSize: 12, fontWeight: 600,
+            padding: '6px 14px', borderRadius: 8, fontSize: 12, fontWeight: 600,
             textDecoration: 'none', border: '1px solid var(--border-solid)',
             background: vista === v ? 'var(--accent)' : 'transparent',
             color: vista === v ? '#000' : 'var(--white)',
@@ -111,7 +111,7 @@ function CalendarioView({
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
         <div>
-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 26, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 26, textTransform: 'none', letterSpacing: '-0.01em', color: 'var(--white)' }}>
             Calendario
           </div>
           <div style={{ fontSize: 13, color: 'var(--gray)', marginTop: 4 }}>
@@ -124,7 +124,7 @@ function CalendarioView({
       {Object.keys(giorni).length === 0 ? (
         <div style={{
           padding: 40, textAlign: 'center', color: 'var(--gray)', fontSize: 13,
-          background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2,
+          background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8,
         }}>
           Nessun evento in programma {vista === 'settimana' ? 'nei prossimi 7 giorni' : 'nel prossimo mese'}.
         </div>
@@ -133,8 +133,8 @@ function CalendarioView({
           {Object.entries(giorni).map(([giorno, eventi]) => (
             <div key={giorno}>
               <div style={{
-                fontSize: 11, fontWeight: 700, color: 'var(--gray)',
-                fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', textTransform: 'uppercase',
+                fontSize: 12, fontWeight: 700, color: 'var(--gray)',
+                fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none',
                 marginBottom: 8, paddingBottom: 6, borderBottom: '1px solid var(--border-solid)',
               }}>
                 {giorno}
@@ -142,13 +142,13 @@ function CalendarioView({
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {eventi.map((e, i) => (
                   <div key={i} style={{
-                    padding: '14px 18px', background: '#111',
-                    border: '1px solid var(--border-solid)', borderRadius: 2,
+                    padding: '14px 18px', background: 'var(--surface-2)',
+                    border: '1px solid var(--border-solid)', borderRadius: 8,
                     borderLeft: `3px solid ${e._tipo === 'partita' ? '#00C8A0' : e._tipo === 'evento_calendario' ? '#8B5CF6' : '#F59E0B'}`,
                     display: 'flex', alignItems: 'center', gap: 16,
                   }}>
                     <div style={{
-                      width: 44, height: 44, borderRadius: 2, flexShrink: 0,
+                      width: 44, height: 44, borderRadius: 8, flexShrink: 0,
                       background: e._tipo === 'partita' ? 'rgba(0,200,160,0.1)' : e._tipo === 'evento_calendario' ? 'rgba(139,92,246,0.1)' : 'rgba(245,158,11,0.1)',
                       display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20,
                     }}>
@@ -168,8 +168,8 @@ function CalendarioView({
                     </div>
                     {e._tipo === 'partita' && (
                       <div style={{
-                        padding: '4px 10px', borderRadius: 2, fontSize: 10, fontWeight: 700,
-                        fontFamily: 'var(--font-mono)', textTransform: 'uppercase',
+                        padding: '4px 10px', borderRadius: 8, fontSize: 12, fontWeight: 700,
+                        fontFamily: 'var(--font-mono)', textTransform: 'none',
                         background: e.casa_trasferta === 'casa' ? 'rgba(0,200,160,0.15)' : 'rgba(156,163,175,0.15)',
                         color: e.casa_trasferta === 'casa' ? '#00C8A0' : 'var(--gray)',
                         border: `1px solid ${e.casa_trasferta === 'casa' ? '#00C8A040' : 'var(--border-solid)'}`,
@@ -210,7 +210,7 @@ export default async function FamigliaCalendarioPage({
       return (
         <div style={{ padding: 40, textAlign: 'center' }}>
           <div style={{ fontSize: 36, marginBottom: 12 }}>📅</div>
-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, textTransform: 'uppercase', color: 'var(--white)', marginBottom: 8 }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, textTransform: 'none', color: 'var(--white)', marginBottom: 8 }}>
             Nessun giocatore nel club
           </div>
           <div style={{ fontSize: 13, color: 'var(--gray)' }}>
@@ -317,7 +317,7 @@ export default async function FamigliaCalendarioPage({
                 key={f.id}
                 href={`/dashboard/famiglia/calendario?figlio=${f.giocatore_id}&vista=${vista}`}
                 style={{
-                  padding: '6px 14px', borderRadius: 2, fontSize: 12, fontWeight: 600,
+                  padding: '6px 14px', borderRadius: 8, fontSize: 12, fontWeight: 600,
                   textDecoration: 'none', border: '1px solid var(--border-solid)',
                   background: active ? 'var(--accent)' : 'transparent',
                   color: active ? '#000' : 'var(--white)',

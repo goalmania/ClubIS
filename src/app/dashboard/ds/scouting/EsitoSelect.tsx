@@ -16,7 +16,7 @@ export default function EsitoSelect({ reportId, esito }: Props) {
   return (
     <select
       defaultValue={esito}
-      style={{ fontSize: 12, border: '1px solid var(--grigio-5)', borderRadius: 6, padding: '3px 6px', background: 'white', cursor: 'pointer' }}
+      style={{ fontSize: 12, border: '1px solid var(--grigio-5)', borderRadius: 10, padding: '3px 6px', background: 'white', cursor: 'pointer' }}
       onChange={handleChange}
     >
       {['in_valutazione', 'ingaggiato', 'rifiutato', 'lista_attesa', 'archiviato'].map(v => (

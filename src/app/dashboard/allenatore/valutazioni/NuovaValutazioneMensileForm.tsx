@@ -15,7 +15,7 @@ function StelleInput({ value, onChange, size = 38, fontSize = 18 }: { value: num
           type="button"
           onClick={() => onChange(n)}
           style={{
-            width: size, height: size, borderRadius: 8, border: 'none', cursor: 'pointer',
+            width: size, height: size, borderRadius: 12, border: 'none', cursor: 'pointer',
             fontSize,
             background: n <= value ? 'var(--accent)' : 'var(--gray-mid)',
             color: n <= value ? 'var(--black)' : 'var(--gray)',
@@ -122,7 +122,7 @@ export default function NuovaValutazioneMensileForm() {
       <BackButton label="Torna alle valutazioni" />
 
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Nuova valutazione mensile</h1>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Nuova valutazione mensile</h1>
         <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>
           Visibile solo alla famiglia del ragazzo. Una sola valutazione per mese.
         </p>
@@ -152,14 +152,14 @@ export default function NuovaValutazioneMensileForm() {
                 const asse = ASSI_VALUTAZIONE[asseKey]
                 const media = mediaAsse(dettaglio[asseKey])
                 return (
-                  <div key={asseKey} style={{ padding: '16px 18px', border: '1px solid var(--border-solid)', borderRadius: 10 }}>
+                  <div key={asseKey} style={{ padding: '16px 18px', border: '1px solid var(--border-solid)', borderRadius: 14 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 }}>
                       <div>
                         <div style={{ fontSize: 15, fontWeight: 700 }}>{asse.label}</div>
                         <div style={{ fontSize: 12, color: 'var(--gray)' }}>{asse.hint}</div>
                       </div>
                       <div style={{ textAlign: 'right', flexShrink: 0, paddingLeft: 12 }}>
-                        <div style={{ fontSize: 10, color: 'var(--gray)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Voto asse</div>
+                        <div style={{ fontSize: 12, color: 'var(--gray)', textTransform: 'none', letterSpacing: '0' }}>Voto asse</div>
                         {media > 0 ? <StelleReadonly n={media} /> : <span style={{ fontSize: 12, color: 'var(--gray)' }}>—</span>}
                       </div>
                     </div>

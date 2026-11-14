@@ -122,7 +122,7 @@ export default function DistintaEditor({
           {comunicatiFigcHref && (
             <a
               href={comunicatiFigcHref}
-              style={{ flexShrink: 0, fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--ambra)', textDecoration: 'underline' }}
+              style={{ flexShrink: 0, fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--ambra)', textDecoration: 'underline' }}
             >
               Apri comunicati →
             </a>
@@ -136,7 +136,7 @@ export default function DistintaEditor({
           <Link href={basePath} style={{ fontSize: 12, color: 'var(--text-muted)', textDecoration: 'none' }}>
             ← Distinte Gara
           </Link>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)', marginTop: 6 }}>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)', marginTop: 6 }}>
             vs {partita.avversario}
           </h1>
           <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 4 }}>
@@ -226,7 +226,7 @@ export default function DistintaEditor({
                     </td>
                     <td style={tdS}>
                       {g.ruolo_principale ? (
-                        <span className="badge badge-blu" style={{ fontSize: 10 }}>
+                        <span className="badge badge-blu" style={{ fontSize: 12 }}>
                           {RUOLO_SHORT[g.ruolo_principale] ?? g.ruolo_principale}
                         </span>
                       ) : '—'}
@@ -262,7 +262,7 @@ export default function DistintaEditor({
                   </td>
                   <td style={tdS}>
                     {motivi.map((m, i) => (
-                      <span key={i} className="badge badge-rosso" style={{ fontSize: 10, marginRight: 4 }}>
+                      <span key={i} className="badge badge-rosso" style={{ fontSize: 12, marginRight: 4 }}>
                         {m}
                       </span>
                     ))}
@@ -306,10 +306,10 @@ export default function DistintaEditor({
 const thS: React.CSSProperties = {
   padding: '8px 14px',
   textAlign: 'left',
-  fontSize: 11,
+  fontSize: 12,
   fontWeight: 600,
-  textTransform: 'uppercase',
-  letterSpacing: '0.05em',
+  textTransform: 'none',
+  letterSpacing: '0',
   color: 'var(--text-muted)',
   borderBottom: '1px solid var(--border)',
 }

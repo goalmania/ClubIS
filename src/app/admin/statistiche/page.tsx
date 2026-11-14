@@ -42,7 +42,7 @@ export default async function AdminStatistichePage() {
   return (
     <div>
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 600 }}>Statistiche Globali</h1>
+        <h1 style={{ fontSize: 28, fontWeight: 600, letterSpacing: '-0.025em'}}>Statistiche Globali</h1>
         <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>Panoramica sull&apos;utilizzo del sistema ClubIS</p>
       </div>
 
@@ -73,10 +73,10 @@ export default async function AdminStatistichePage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             {Array.from(mesi.entries()).map(([mese, count]) => (
               <div key={mese} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <span style={{ fontSize: 11, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)', width: 50 }}>{mese}</span>
-                <div style={{ flex: 1, height: 18, background: 'var(--grigio-6)', borderRadius: 4, overflow: 'hidden' }}>
+                <span style={{ fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)', width: 50 }}>{mese}</span>
+                <div style={{ flex: 1, height: 18, background: 'var(--grigio-6)', borderRadius: 10, overflow: 'hidden' }}>
                   <div style={{
-                    height: '100%', borderRadius: 4,
+                    height: '100%', borderRadius: 10,
                     background: 'var(--verde)',
                     width: `${(count / maxMese) * 100}%`,
                     transition: 'width 0.3s',
@@ -98,9 +98,9 @@ export default async function AdminStatistichePage() {
               return (
                 <div key={ruolo} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <span style={{ fontSize: 12, color: 'var(--grigio-3)', width: 100 }}>{label}</span>
-                  <div style={{ flex: 1, height: 20, background: 'var(--grigio-6)', borderRadius: 4, overflow: 'hidden' }}>
+                  <div style={{ flex: 1, height: 20, background: 'var(--grigio-6)', borderRadius: 10, overflow: 'hidden' }}>
                     <div style={{
-                      height: '100%', borderRadius: 4,
+                      height: '100%', borderRadius: 10,
                       background: 'var(--blu)',
                       width: `${(count / maxRuolo) * 100}%`,
                       minWidth: count > 0 ? 4 : 0,

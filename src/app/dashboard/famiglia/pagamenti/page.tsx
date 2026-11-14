@@ -147,18 +147,18 @@ function ModalPaga({
       position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)',
       zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20,
     }} onClick={e => { if (e.target === e.currentTarget) onClose() }}>
-      <div style={{ background: '#111', border: '1px solid var(--border-solid)', borderRadius: 4, width: '100%', maxWidth: 480 }}>
+      <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 10, width: '100%', maxWidth: 480 }}>
         <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border-solid)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 15, textTransform: 'uppercase', color: 'var(--white)' }}>
+          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, textTransform: 'none', color: 'var(--white)' }}>
             {titolo}
           </span>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--gray)', fontSize: 22, cursor: 'pointer' }}>×</button>
         </div>
         <div style={{ padding: 20 }}>
           {/* Importo */}
-          <div style={{ padding: '12px 14px', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-solid)', borderRadius: 4, marginBottom: 18 }}>
-            <div style={{ fontSize: 10, fontFamily: 'var(--font-mono)', color: 'var(--gray)', textTransform: 'uppercase', marginBottom: 4 }}>Importo</div>
-            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 26, color: '#EF4444' }}>{fmt(importo)}</div>
+          <div style={{ padding: '12px 14px', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-solid)', borderRadius: 10, marginBottom: 18 }}>
+            <div style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: 'var(--gray)', textTransform: 'none', marginBottom: 4 }}>Importo</div>
+            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 26, color: '#EF4444' }}>{fmt(importo)}</div>
           </div>
 
           {/* Metodo */}
@@ -170,8 +170,8 @@ function ModalPaga({
                   padding: '10px 6px', border: `1px solid ${metodo === m ? 'var(--accent)' : 'var(--border-solid)'}`,
                   background: metodo === m ? 'rgba(200,240,0,0.08)' : 'transparent',
                   color: metodo === m ? 'var(--accent)' : 'var(--gray)',
-                  borderRadius: 4, cursor: 'pointer', fontSize: 11,
-                  fontFamily: 'var(--font-mono)', textAlign: 'center', textTransform: 'uppercase',
+                  borderRadius: 10, cursor: 'pointer', fontSize: 12,
+                  fontFamily: 'var(--font-mono)', textAlign: 'center', textTransform: 'none',
                 }}>
                   <div style={{ fontSize: 18, marginBottom: 4 }}>{METODO_ICON[m]}</div>
                   {m}
@@ -182,21 +182,21 @@ function ModalPaga({
 
           {/* IBAN per bonifico */}
           {metodo === 'bonifico' && club?.iban && (
-            <div style={{ padding: '12px 14px', background: 'rgba(200,240,0,0.04)', border: '1px solid rgba(200,240,0,0.2)', borderRadius: 4, marginBottom: 16, fontSize: 12, lineHeight: 1.7 }}>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--accent)', marginBottom: 6 }}>Dati per il bonifico</div>
+            <div style={{ padding: '12px 14px', background: 'rgba(200,240,0,0.04)', border: '1px solid rgba(200,240,0,0.2)', borderRadius: 10, marginBottom: 16, fontSize: 12, lineHeight: 1.7 }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'none', letterSpacing: '0', color: 'var(--accent)', marginBottom: 6 }}>Dati per il bonifico</div>
               {club.intestatario_conto && <div><strong style={{ color: 'var(--gray)' }}>Intestatario:</strong> <span style={{ color: 'var(--white)' }}>{club.intestatario_conto}</span></div>}
               <div><strong style={{ color: 'var(--gray)' }}>IBAN:</strong> <code style={{ color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>{club.iban}</code></div>
               {club.bic && <div><strong style={{ color: 'var(--gray)' }}>BIC:</strong> <span style={{ color: 'var(--white)' }}>{club.bic}</span></div>}
               <div><strong style={{ color: 'var(--gray)' }}>Causale:</strong> <span style={{ color: 'var(--white)' }}>{causale}</span></div>
               <button onClick={() => navigator.clipboard.writeText(club.iban!)} style={{
                 marginTop: 6, padding: '3px 10px', background: 'none',
-                border: '1px solid rgba(200,240,0,0.3)', borderRadius: 3,
-                color: 'var(--accent)', cursor: 'pointer', fontSize: 10, fontFamily: 'var(--font-mono)', textTransform: 'uppercase',
+                border: '1px solid rgba(200,240,0,0.3)', borderRadius: 8,
+                color: 'var(--accent)', cursor: 'pointer', fontSize: 12, fontFamily: 'var(--font-mono)', textTransform: 'none',
               }}>📋 Copia IBAN</button>
             </div>
           )}
           {metodo === 'contanti' && (
-            <div style={{ padding: '12px 14px', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-solid)', borderRadius: 4, marginBottom: 16, fontSize: 13, color: 'var(--gray)' }}>
+            <div style={{ padding: '12px 14px', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-solid)', borderRadius: 10, marginBottom: 16, fontSize: 13, color: 'var(--gray)' }}>
               💵 Recati in segreteria con <strong style={{ color: 'var(--white)' }}>{fmt(importo)}</strong>.
             </div>
           )}
@@ -207,12 +207,12 @@ function ModalPaga({
           </div>
 
           {metodo === 'bonifico' && (
-            <div style={{ fontSize: 11, color: 'var(--gray)', marginBottom: 14, lineHeight: 1.5 }}>
+            <div style={{ fontSize: 12, color: 'var(--gray)', marginBottom: 14, lineHeight: 1.5 }}>
               ℹ️ Dopo aver effettuato il bonifico clicca &quot;Dichiara&quot;. La segreteria confermerà l&apos;accredito.
             </div>
           )}
 
-          {errore && <div style={{ padding: '10px 12px', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 4, fontSize: 12, color: '#EF4444', marginBottom: 14 }}>{errore}</div>}
+          {errore && <div style={{ padding: '10px 12px', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 10, fontSize: 12, color: '#EF4444', marginBottom: 14 }}>{errore}</div>}
 
           <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
             <button className="btn btn-sm" onClick={onClose} disabled={saving}>Annulla</button>
@@ -438,7 +438,7 @@ export default function FamigliaPagamentiPage() {
     <div style={{ maxWidth: 860 }}>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 26, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>
+        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 26, textTransform: 'none', letterSpacing: '-0.01em', color: 'var(--white)' }}>
           Pagamenti{giocatoreNome ? ` — ${giocatoreNome}` : ''}
         </div>
         <div style={{ fontSize: 13, color: 'var(--gray)', marginTop: 4 }}>Quote mensili e piani di pagamento</div>
@@ -453,41 +453,41 @@ export default function FamigliaPagamentiPage() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 10, marginBottom: 28 }}>
 
               {/* Card 1: quota mensile corrente (se esiste) oppure totale piani */}
-              <div style={{ background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2, padding: '14px 16px' }}>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--gray)', marginBottom: 4 }}>
+              <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8, padding: '14px 16px' }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, textTransform: 'none', letterSpacing: '0', color: 'var(--gray)', marginBottom: 4 }}>
                   {quotaMensileCorrente != null ? 'Quota mensile' : 'Totale piani'}
                 </div>
-                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 20, color: 'var(--accent)' }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 20, color: 'var(--accent)' }}>
                   {quotaMensileCorrente != null ? fmt(quotaMensileCorrente) : fmt(totalePiani)}
                 </div>
-                <div style={{ fontSize: 10, color: 'var(--gray)', marginTop: 2 }}>
+                <div style={{ fontSize: 12, color: 'var(--gray)', marginTop: 2 }}>
                   {quotaMensileCorrente != null ? 'importo corrente' : `${piani.length} pian${piani.length === 1 ? 'o' : 'i'}`}
                 </div>
               </div>
 
               {/* Card 2: pagato */}
-              <div style={{ background: '#111', border: '1px solid #00C8A050', borderRadius: 2, padding: '14px 16px' }}>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--gray)', marginBottom: 4 }}>Pagato</div>
-                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 20, color: '#00C8A0' }}>{fmt(pagatoTot)}</div>
-                <div style={{ fontSize: 10, color: 'var(--gray)', marginTop: 2 }}>
+              <div style={{ background: 'var(--surface-2)', border: '1px solid #00C8A050', borderRadius: 8, padding: '14px 16px' }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, textTransform: 'none', letterSpacing: '0', color: 'var(--gray)', marginBottom: 4 }}>Pagato</div>
+                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 20, color: '#00C8A0' }}>{fmt(pagatoTot)}</div>
+                <div style={{ fontSize: 12, color: 'var(--gray)', marginTop: 2 }}>
                   {tutteLeRate.filter(r => r.stato === 'pagata').length + quote.filter(q => q.stato === 'pagata').length} rate saldate
                 </div>
               </div>
 
               {/* Card 3: da pagare */}
-              <div style={{ background: '#111', border: `1px solid ${daPagareTot > 0 ? '#EF444450' : 'var(--border-solid)'}`, borderRadius: 2, padding: '14px 16px' }}>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--gray)', marginBottom: 4 }}>Da pagare</div>
-                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 20, color: daPagareTot > 0 ? '#EF4444' : '#00C8A0' }}>
+              <div style={{ background: 'var(--surface-2)', border: `1px solid ${daPagareTot > 0 ? '#EF444450' : 'var(--border-solid)'}`, borderRadius: 8, padding: '14px 16px' }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, textTransform: 'none', letterSpacing: '0', color: 'var(--gray)', marginBottom: 4 }}>Da pagare</div>
+                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 20, color: daPagareTot > 0 ? '#EF4444' : '#00C8A0' }}>
                   {daPagareTot > 0 ? fmt(daPagareTot) : '✓'}
                 </div>
-                <div style={{ fontSize: 10, color: 'var(--gray)', marginTop: 2 }}>ancora aperte</div>
+                <div style={{ fontSize: 12, color: 'var(--gray)', marginTop: 2 }}>ancora aperte</div>
               </div>
 
               {/* Card 4: in ritardo */}
-              <div style={{ background: '#111', border: `1px solid ${inRitardoTot > 0 ? '#EF444450' : 'var(--border-solid)'}`, borderRadius: 2, padding: '14px 16px' }}>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--gray)', marginBottom: 4 }}>In ritardo</div>
-                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 20, color: inRitardoTot > 0 ? '#EF4444' : 'var(--gray)' }}>{inRitardoTot}</div>
-                <div style={{ fontSize: 10, color: 'var(--gray)', marginTop: 2 }}>oltre scadenza</div>
+              <div style={{ background: 'var(--surface-2)', border: `1px solid ${inRitardoTot > 0 ? '#EF444450' : 'var(--border-solid)'}`, borderRadius: 8, padding: '14px 16px' }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, textTransform: 'none', letterSpacing: '0', color: 'var(--gray)', marginBottom: 4 }}>In ritardo</div>
+                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 20, color: inRitardoTot > 0 ? '#EF4444' : 'var(--gray)' }}>{inRitardoTot}</div>
+                <div style={{ fontSize: 12, color: 'var(--gray)', marginTop: 2 }}>oltre scadenza</div>
               </div>
 
             </div>
@@ -496,7 +496,7 @@ export default function FamigliaPagamentiPage() {
           {/* ── QUOTA ISCRIZIONE (sistema principale) ── */}
           {haIscr && (
             <div style={{ marginBottom: 32 }}>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray)', marginBottom: 12 }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, textTransform: 'none', letterSpacing: '0', color: 'var(--gray)', marginBottom: 12 }}>
                 Quota iscrizione
               </div>
 
@@ -513,12 +513,12 @@ export default function FamigliaPagamentiPage() {
                     <div key={gid} style={{
                       display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10,
                       padding: '10px 14px', marginBottom: 8,
-                      background: 'rgba(200,240,0,0.03)', border: '1px solid rgba(200,240,0,0.15)', borderRadius: 3,
+                      background: 'rgba(200,240,0,0.03)', border: '1px solid rgba(200,240,0,0.15)', borderRadius: 8,
                     }}>
                       <span style={{ fontSize: 12, color: 'var(--gray)' }}>
                         🔁 {nomeFiglio}Vuoi non doverci più pensare ogni mese?
                       </span>
-                      <button className="btn btn-secondary btn-sm" style={{ fontSize: 11, padding: '4px 12px' }}
+                      <button className="btn btn-secondary btn-sm" style={{ fontSize: 12, padding: '4px 12px' }}
                         disabled={abbAzioneId === gid}
                         onClick={() => attivaAbbonamento(gid)}>
                         {abbAzioneId === gid ? 'Un attimo…' : '🔁 Attiva addebito automatico'}
@@ -532,7 +532,7 @@ export default function FamigliaPagamentiPage() {
                     <div key={gid} style={{
                       display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10,
                       padding: '10px 14px', marginBottom: 8,
-                      background: 'rgba(0,200,160,0.05)', border: '1px solid rgba(0,200,160,0.2)', borderRadius: 3,
+                      background: 'rgba(0,200,160,0.05)', border: '1px solid rgba(0,200,160,0.2)', borderRadius: 8,
                     }}>
                       <span style={{ fontSize: 12, color: '#00C8A0' }}>
                         {abb.stato === 'attivo'
@@ -540,7 +540,7 @@ export default function FamigliaPagamentiPage() {
                           : `⏳ ${nomeFiglio}Attivazione addebito automatico in corso…`}
                       </span>
                       {abb.stato === 'attivo' && (
-                        <button style={{ background: 'none', border: 'none', color: 'var(--gray)', fontSize: 10, textDecoration: 'underline', cursor: 'pointer' }}
+                        <button style={{ background: 'none', border: 'none', color: 'var(--gray)', fontSize: 12, textDecoration: 'underline', cursor: 'pointer' }}
                           disabled={abbAzioneId === abb.id}
                           onClick={() => annullaAbbonamento(abb.id)}>
                           {abbAzioneId === abb.id ? 'Un attimo…' : 'Annulla'}
@@ -555,7 +555,7 @@ export default function FamigliaPagamentiPage() {
                   <div key={gid} style={{
                     display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10,
                     padding: '10px 14px', marginBottom: 8,
-                    background: 'rgba(245,158,11,0.05)', border: '1px solid rgba(245,158,11,0.25)', borderRadius: 3,
+                    background: 'rgba(245,158,11,0.05)', border: '1px solid rgba(245,158,11,0.25)', borderRadius: 8,
                   }}>
                     <span style={{ fontSize: 12, color: '#F59E0B' }}>
                       {abb.pausa_da === 'societa'
@@ -563,7 +563,7 @@ export default function FamigliaPagamentiPage() {
                         : `⚠ ${nomeFiglio}Carta rifiutata — l'addebito automatico è in pausa`}
                     </span>
                     {abb.pausa_da !== 'societa' && (
-                      <button style={{ background: 'none', border: 'none', color: 'var(--gray)', fontSize: 10, textDecoration: 'underline', cursor: 'pointer' }}
+                      <button style={{ background: 'none', border: 'none', color: 'var(--gray)', fontSize: 12, textDecoration: 'underline', cursor: 'pointer' }}
                         disabled={abbAzioneId === abb.id}
                         onClick={() => annullaAbbonamento(abb.id)}>
                         {abbAzioneId === abb.id ? 'Un attimo…' : 'Annulla e riprova'}
@@ -584,7 +584,7 @@ export default function FamigliaPagamentiPage() {
                   <div style={{
                     display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10,
                     padding: '10px 14px', marginBottom: 8,
-                    background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border)', borderRadius: 3,
+                    background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border)', borderRadius: 8,
                   }}>
                     <span style={{ fontSize: 12, color: 'var(--gray)' }}>
                       {selPresenti.length > 0
@@ -592,7 +592,7 @@ export default function FamigliaPagamentiPage() {
                         : 'Seleziona più quote per pagarle insieme in un unico pagamento'}
                     </span>
                     {selPresenti.length > 0 && (
-                      <button className="btn btn-primary btn-sm" style={{ fontSize: 11, padding: '4px 12px' }}
+                      <button className="btn btn-primary btn-sm" style={{ fontSize: 12, padding: '4px 12px' }}
                         disabled={pagandoId === '__multi__'}
                         onClick={pagaSelezionateConCarta}>
                         {pagandoId === '__multi__' ? 'Un attimo…' : `💳 Paga selezionate (${selPresenti.length})`}
@@ -617,7 +617,7 @@ export default function FamigliaPagamentiPage() {
                       padding: '12px 16px',
                       background: sc.bg,
                       border: `1px solid ${(inRitardo ? '#EF4444' : sc.colore)}30`,
-                      borderRadius: 3,
+                      borderRadius: 8,
                     }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
                         {mostraCheckbox && (
@@ -629,40 +629,40 @@ export default function FamigliaPagamentiPage() {
                             {q.mese ? MESE_LABEL_ISCR[q.mese] ?? q.mese : `Stagione ${q.stagione}`}
                           </div>
                           {multiFigli && q.giocatore && (
-                            <div style={{ fontSize: 10, color: 'var(--accent)', fontFamily: 'var(--font-mono)', marginTop: 2 }}>
+                            <div style={{ fontSize: 12, color: 'var(--accent)', fontFamily: 'var(--font-mono)', marginTop: 2 }}>
                               {q.giocatore.nome} {q.giocatore.cognome}
                             </div>
                           )}
                           {q.stato === 'parziale' && (
-                            <div style={{ fontSize: 10, color: '#F59E0B', fontFamily: 'var(--font-mono)', marginTop: 2 }}>
+                            <div style={{ fontSize: 12, color: '#F59E0B', fontFamily: 'var(--font-mono)', marginTop: 2 }}>
                               {fmt(Number(q.importo_pagato))} già pagati
                             </div>
                           )}
                           {inRitardo && (
-                            <div style={{ fontSize: 10, color: '#EF4444', fontFamily: 'var(--font-mono)', marginTop: 2 }}>
+                            <div style={{ fontSize: 12, color: '#EF4444', fontFamily: 'var(--font-mono)', marginTop: 2 }}>
                               ⚠ scaduta il {formatData(q.scadenza)}
                             </div>
                           )}
                         </div>
-                        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 18, color: 'var(--white)' }}>
+                        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 18, color: 'var(--white)' }}>
                           {q.stato === 'pagato' ? fmt(Number(q.importo_totale)) : fmt(dovuto)}
                         </div>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                         <span style={{
-                          padding: '3px 9px', borderRadius: 2, fontSize: 10, fontWeight: 700,
-                          fontFamily: 'var(--font-mono)', textTransform: 'uppercase',
+                          padding: '3px 9px', borderRadius: 8, fontSize: 12, fontWeight: 700,
+                          fontFamily: 'var(--font-mono)', textTransform: 'none',
                           background: sc.bg, color: sc.colore, border: `1px solid ${sc.colore}50`,
                         }}>{sc.label}</span>
                         {puoPagare && club?.stripe_connect_charges_enabled && (
-                          <button className="btn btn-primary btn-sm" style={{ fontSize: 11, padding: '4px 12px' }}
+                          <button className="btn btn-primary btn-sm" style={{ fontSize: 12, padding: '4px 12px' }}
                             disabled={pagandoId === q.id}
                             onClick={() => pagaConCarta('iscrizione', q.id)}>
                             {pagandoId === q.id ? 'Un attimo…' : '💳 Paga con carta'}
                           </button>
                         )}
                         {puoPagare && !club?.stripe_connect_charges_enabled && (
-                          <button className="btn btn-secondary btn-sm" style={{ fontSize: 11, padding: '4px 12px' }}
+                          <button className="btn btn-secondary btn-sm" style={{ fontSize: 12, padding: '4px 12px' }}
                             onClick={() => setModal({ tipo: 'iscrizione', quota: q })}>
                             Ho pagato →
                           </button>
@@ -678,7 +678,7 @@ export default function FamigliaPagamentiPage() {
           {/* ── QUOTE MENSILI ── */}
           {quote.length > 0 && (
             <div style={{ marginBottom: 32 }}>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray)', marginBottom: 12 }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, textTransform: 'none', letterSpacing: '0', color: 'var(--gray)', marginBottom: 12 }}>
                 Quote mensili — stagione
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
@@ -692,7 +692,7 @@ export default function FamigliaPagamentiPage() {
                       padding: '12px 16px',
                       background: sc.bg,
                       border: `1px solid ${sc.colore}30`,
-                      borderRadius: 3,
+                      borderRadius: 8,
                     }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
                         <div style={{ minWidth: 110 }}>
@@ -700,46 +700,46 @@ export default function FamigliaPagamentiPage() {
                             {nomeMese(q.mese_competenza)}
                           </div>
                           {multiFigli && q.giocatore && (
-                            <div style={{ fontSize: 10, color: 'var(--accent)', fontFamily: 'var(--font-mono)', marginTop: 2 }}>
+                            <div style={{ fontSize: 12, color: 'var(--accent)', fontFamily: 'var(--font-mono)', marginTop: 2 }}>
                               {q.giocatore.nome} {q.giocatore.cognome}
                             </div>
                           )}
                           {q.stato === 'pagata' && q.data_pagamento && (
-                            <div style={{ fontSize: 10, color: '#00C8A0', fontFamily: 'var(--font-mono)', marginTop: 2 }}>
+                            <div style={{ fontSize: 12, color: '#00C8A0', fontFamily: 'var(--font-mono)', marginTop: 2 }}>
                               ✓ {formatData(q.data_pagamento)} {q.metodo_pagamento ? `· ${q.metodo_pagamento}` : ''}
                             </div>
                           )}
                           {q.stato === 'dichiarata' && (
-                            <div style={{ fontSize: 10, color: '#A78BFA', fontFamily: 'var(--font-mono)', marginTop: 2 }}>
+                            <div style={{ fontSize: 12, color: '#A78BFA', fontFamily: 'var(--font-mono)', marginTop: 2 }}>
                               ⏳ Dichiarato — in attesa conferma
                             </div>
                           )}
                         </div>
-                        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 18, color: 'var(--white)' }}>
+                        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 18, color: 'var(--white)' }}>
                           {fmt(Number(q.importo_mensile))}
                         </div>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                         <span style={{
-                          padding: '3px 9px', borderRadius: 2, fontSize: 10, fontWeight: 700,
-                          fontFamily: 'var(--font-mono)', textTransform: 'uppercase',
+                          padding: '3px 9px', borderRadius: 8, fontSize: 12, fontWeight: 700,
+                          fontFamily: 'var(--font-mono)', textTransform: 'none',
                           background: sc.bg, color: sc.colore, border: `1px solid ${sc.colore}50`,
                         }}>{sc.label}</span>
                         {puoPagare && club?.stripe_connect_charges_enabled && (
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <button className="btn btn-primary btn-sm" style={{ fontSize: 11, padding: '4px 12px' }}
+                            <button className="btn btn-primary btn-sm" style={{ fontSize: 12, padding: '4px 12px' }}
                               disabled={pagandoId === q.id}
                               onClick={() => pagaConCarta('quota', q.id)}>
                               {pagandoId === q.id ? 'Un attimo…' : '💳 Paga con carta'}
                             </button>
-                            <button style={{ background: 'none', border: 'none', color: 'var(--gray)', fontSize: 10, textDecoration: 'underline', cursor: 'pointer' }}
+                            <button style={{ background: 'none', border: 'none', color: 'var(--gray)', fontSize: 12, textDecoration: 'underline', cursor: 'pointer' }}
                               onClick={() => setModal({ tipo: 'mensile', quota: q })}>
                               altri metodi
                             </button>
                           </div>
                         )}
                         {puoPagare && !club?.stripe_connect_charges_enabled && (
-                          <button className="btn btn-primary btn-sm" style={{ fontSize: 11, padding: '4px 12px' }}
+                          <button className="btn btn-primary btn-sm" style={{ fontSize: 12, padding: '4px 12px' }}
                             onClick={() => setModal({ tipo: 'mensile', quota: q })}>
                             Paga →
                           </button>
@@ -751,7 +751,7 @@ export default function FamigliaPagamentiPage() {
               </div>
 
               {/* Totale stagione */}
-              <div style={{ marginTop: 10, padding: '10px 16px', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-solid)', borderRadius: 3, display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+              <div style={{ marginTop: 10, padding: '10px 16px', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-solid)', borderRadius: 8, display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
                 <span style={{ color: 'var(--gray)' }}>Totale stagione ({quote.length} mesi)</span>
                 <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, color: 'var(--white)' }}>{fmt(quote.reduce((s, q) => s + Number(q.importo_mensile), 0))}</span>
               </div>
@@ -761,7 +761,7 @@ export default function FamigliaPagamentiPage() {
           {/* ── PIANI DI PAGAMENTO ── */}
           {haPiani && (
             <div style={{ marginBottom: 24 }}>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--gray)', marginBottom: 12 }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, textTransform: 'none', letterSpacing: '0', color: 'var(--gray)', marginBottom: 12 }}>
                 Piani di pagamento
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -770,23 +770,23 @@ export default function FamigliaPagamentiPage() {
                   const perc = piano.importo_totale > 0 ? Math.min(Math.round((importoPagato / piano.importo_totale) * 100), 100) : 0
 
                   return (
-                    <div key={piano.id} style={{ background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2, overflow: 'hidden' }}>
+                    <div key={piano.id} style={{ background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8, overflow: 'hidden' }}>
                       <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border-solid)' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
                           <div>
-                            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, textTransform: 'uppercase', color: 'var(--white)' }}>{piano.descrizione}</div>
+                            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, textTransform: 'none', color: 'var(--white)' }}>{piano.descrizione}</div>
                             {multiFigli && piano.giocatore && (
-                              <div style={{ fontSize: 10, color: 'var(--accent)', fontFamily: 'var(--font-mono)', marginTop: 2 }}>
+                              <div style={{ fontSize: 12, color: 'var(--accent)', fontFamily: 'var(--font-mono)', marginTop: 2 }}>
                                 {piano.giocatore.nome} {piano.giocatore.cognome}
                               </div>
                             )}
                           </div>
-                          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 18, color: 'var(--white)' }}>{fmt(piano.importo_totale)}</div>
+                          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 18, color: 'var(--white)' }}>{fmt(piano.importo_totale)}</div>
                         </div>
-                        <div style={{ height: 5, background: 'var(--border-solid)', borderRadius: 3, overflow: 'hidden' }}>
-                          <div style={{ height: '100%', width: `${perc}%`, background: perc === 100 ? '#00C8A0' : '#F59E0B', transition: 'width 0.4s', borderRadius: 3 }} />
+                        <div style={{ height: 5, background: 'var(--border-solid)', borderRadius: 8, overflow: 'hidden' }}>
+                          <div style={{ height: '100%', width: `${perc}%`, background: perc === 100 ? '#00C8A0' : '#F59E0B', transition: 'width 0.4s', borderRadius: 8 }} />
                         </div>
-                        <div style={{ fontSize: 10, color: 'var(--gray)', fontFamily: 'var(--font-mono)', marginTop: 3 }}>{perc}% saldato</div>
+                        <div style={{ fontSize: 12, color: 'var(--gray)', fontFamily: 'var(--font-mono)', marginTop: 3 }}>{perc}% saldato</div>
                       </div>
                       <div style={{ padding: '10px 18px', display: 'flex', flexDirection: 'column', gap: 5 }}>
                         {piano.rate.map(rata => {
@@ -801,36 +801,36 @@ export default function FamigliaPagamentiPage() {
                               padding: '8px 12px',
                               background: rata.stato === 'dichiarato' ? 'rgba(167,139,250,0.05)' : 'rgba(255,255,255,0.02)',
                               border: `1px solid ${urg ? '#EF444430' : rata.stato === 'dichiarato' ? 'rgba(167,139,250,0.25)' : 'var(--border-solid)'}`,
-                              borderRadius: 3,
+                              borderRadius: 8,
                             }}>
                               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', minWidth: 40 }}>Rata {rata.numero_rata}</div>
+                                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', minWidth: 40 }}>Rata {rata.numero_rata}</div>
                                 <div>
                                   <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, color: 'var(--white)' }}>{fmt(Number(rata.importo))}</div>
-                                  <div style={{ fontSize: 10, color: urg ? '#EF4444' : 'var(--gray)', fontFamily: 'var(--font-mono)' }}>
+                                  <div style={{ fontSize: 12, color: urg ? '#EF4444' : 'var(--gray)', fontFamily: 'var(--font-mono)' }}>
                                     {urg ? '⚠ ' : ''}Scad. {formatData(rata.scadenza)}
                                     {gg !== null && rata.stato !== 'pagata' && <span> · {gg > 0 ? `fra ${gg}gg` : gg === 0 ? 'oggi' : 'scaduta'}</span>}
                                   </div>
-                                  {rata.stato === 'dichiarato' && <div style={{ fontSize: 10, color: '#A78BFA', fontFamily: 'var(--font-mono)', marginTop: 1 }}>⏳ In attesa conferma</div>}
+                                  {rata.stato === 'dichiarato' && <div style={{ fontSize: 12, color: '#A78BFA', fontFamily: 'var(--font-mono)', marginTop: 1 }}>⏳ In attesa conferma</div>}
                                 </div>
                               </div>
                               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                <span style={{ padding: '3px 8px', borderRadius: 2, fontSize: 10, fontWeight: 700, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', background: sc.bg, color: sc.colore, border: `1px solid ${sc.colore}40` }}>{sc.label}</span>
+                                <span style={{ padding: '3px 8px', borderRadius: 8, fontSize: 12, fontWeight: 700, fontFamily: 'var(--font-mono)', textTransform: 'none', background: sc.bg, color: sc.colore, border: `1px solid ${sc.colore}40` }}>{sc.label}</span>
                                 {puoPagare && club?.stripe_connect_charges_enabled && (
                                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                    <button className="btn btn-primary btn-sm" style={{ fontSize: 11, padding: '4px 12px' }}
+                                    <button className="btn btn-primary btn-sm" style={{ fontSize: 12, padding: '4px 12px' }}
                                       disabled={pagandoId === rata.id}
                                       onClick={() => pagaConCarta('rata', rata.id)}>
                                       {pagandoId === rata.id ? 'Un attimo…' : '💳 Paga con carta'}
                                     </button>
-                                    <button style={{ background: 'none', border: 'none', color: 'var(--gray)', fontSize: 10, textDecoration: 'underline', cursor: 'pointer' }}
+                                    <button style={{ background: 'none', border: 'none', color: 'var(--gray)', fontSize: 12, textDecoration: 'underline', cursor: 'pointer' }}
                                       onClick={() => setModal({ tipo: 'rata', rata, piano })}>
                                       altri metodi
                                     </button>
                                   </div>
                                 )}
                                 {puoPagare && !club?.stripe_connect_charges_enabled && (
-                                  <button className="btn btn-primary btn-sm" style={{ fontSize: 11, padding: '4px 12px' }}
+                                  <button className="btn btn-primary btn-sm" style={{ fontSize: 12, padding: '4px 12px' }}
                                     onClick={() => setModal({ tipo: 'rata', rata, piano })}>
                                     Paga →
                                   </button>
@@ -849,14 +849,14 @@ export default function FamigliaPagamentiPage() {
 
           {/* Nessun dato */}
           {quote.length === 0 && !haPiani && (
-            <div style={{ padding: 40, textAlign: 'center', color: 'var(--gray)', fontSize: 13, background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2 }}>
+            <div style={{ padding: 40, textAlign: 'center', color: 'var(--gray)', fontSize: 13, background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8 }}>
               Nessuna quota o piano di pagamento assegnato. La segreteria creerà le quote per questo giocatore.
             </div>
           )}
 
           {/* Info IBAN */}
           {club?.iban && (
-            <div style={{ marginTop: 12, padding: '14px 18px', display: 'flex', alignItems: 'flex-start', gap: 12, background: 'rgba(200,240,0,0.03)', border: '1px solid rgba(200,240,0,0.15)', borderRadius: 2 }}>
+            <div style={{ marginTop: 12, padding: '14px 18px', display: 'flex', alignItems: 'flex-start', gap: 12, background: 'rgba(200,240,0,0.03)', border: '1px solid rgba(200,240,0,0.15)', borderRadius: 8 }}>
               <span style={{ fontSize: 22 }}>🏦</span>
               <div>
                 <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--white)', marginBottom: 2 }}>Bonifico — {club.nome}</div>
@@ -935,7 +935,7 @@ export default function FamigliaPagamentiPage() {
           position: 'fixed', bottom: 24, right: 24, zIndex: 2000,
           background: toast.tipo === 'ok' ? '#1a2e1a' : '#2e1a1a',
           border: `1px solid ${toast.tipo === 'ok' ? 'rgba(0,200,160,0.4)' : 'rgba(239,68,68,0.4)'}`,
-          borderRadius: 4, padding: '12px 18px', display: 'flex', alignItems: 'center', gap: 10,
+          borderRadius: 10, padding: '12px 18px', display: 'flex', alignItems: 'center', gap: 10,
           boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
         }}>
           <span>{toast.tipo === 'ok' ? '✓' : '⚠'}</span>

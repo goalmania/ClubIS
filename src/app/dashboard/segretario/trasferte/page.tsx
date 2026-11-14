@@ -25,7 +25,7 @@ export default async function SegretarioTrasfertePage() {
     <div style={{ animation: 'fadeIn 0.3s ease' }}>
       <div data-onboarding="btn-nuova-trasferta" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Trasferte</h1>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Trasferte</h1>
           <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>Organizzazione e budget degli spostamenti</p>
         </div>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
@@ -89,7 +89,7 @@ export default async function SegretarioTrasfertePage() {
                   </td>
                   <td style={tdStyle}>
                     <a href={`/api/trasferte/${t.id}/export-pdf`} target="_blank" rel="noreferrer"
-                      style={{ fontSize: 11, color: 'var(--accent)', textDecoration: 'none', fontFamily: 'var(--font-mono)' }}>
+                      style={{ fontSize: 12, color: 'var(--accent)', textDecoration: 'none', fontFamily: 'var(--font-mono)' }}>
                       ↓ PDF
                     </a>
                   </td>
@@ -107,5 +107,5 @@ export default async function SegretarioTrasfertePage() {
   )
 }
 
-const thStyle: React.CSSProperties = { padding: '10px 14px', textAlign: 'left', fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }
+const thStyle: React.CSSProperties = { padding: '10px 14px', textAlign: 'left', fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'none', letterSpacing: '0' }
 const tdStyle: React.CSSProperties = { padding: '12px 14px', fontSize: 13, color: 'var(--text-secondary)' }

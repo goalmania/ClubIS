@@ -34,21 +34,21 @@ export default async function AllenamentiPage() {
     return (
       <div key={s.id} className="card" style={{ padding: '12px 18px', display: 'flex', alignItems: 'center', gap: 16, marginBottom: 8 }}>
         <div style={{
-          width: 48, height: 48, borderRadius: 10, flexShrink: 0, textAlign: 'center',
+          width: 48, height: 48, borderRadius: 14, flexShrink: 0, textAlign: 'center',
           background: s.stato === 'effettuato' ? 'var(--verde-lt)' : s.stato === 'annullato' ? 'var(--rosso-lt)' : 'var(--grigio-6)',
           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
         }}>
           <div style={{ fontSize: 16, fontWeight: 700, color: s.stato === 'effettuato' ? 'var(--verde)' : 'var(--grigio)' }}>
             {data.getDate()}
           </div>
-          <div style={{ fontSize: 10, color: 'var(--grigio-4)', textTransform: 'uppercase' }}>
+          <div style={{ fontSize: 12, color: 'var(--grigio-4)', textTransform: 'none' }}>
             {data.toLocaleDateString('it-IT', { month: 'short' })}
           </div>
         </div>
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 3 }}>
             <span style={{ fontSize: 14, fontWeight: 500, textTransform: 'capitalize' }}>{s.tipologia}</span>
-            <span className="badge badge-grigio" style={{ fontSize: 10 }}>{s.durata_minuti}&apos;</span>
+            <span className="badge badge-grigio" style={{ fontSize: 12 }}>{s.durata_minuti}&apos;</span>
             {s.obiettivo && <span style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{s.obiettivo}</span>}
           </div>
           <div style={{ fontSize: 12, color: 'var(--grigio-4)' }}>
@@ -71,7 +71,7 @@ export default async function AllenamentiPage() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Allenamenti</h1>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Allenamenti</h1>
           <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>Calendario sessioni e presenze</p>
         </div>
         <Link href="/dashboard/allenatore/allenamenti/nuovo" className="btn btn-primary btn-sm">+ Nuovo allenamento</Link>
@@ -79,7 +79,7 @@ export default async function AllenamentiPage() {
 
       {prossime.length > 0 && (
         <div style={{ marginBottom: 28 }}>
-          <div style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--grigio-4)', marginBottom: 12 }}>
+          <div style={{ fontSize: 12, fontWeight: 600, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-4)', marginBottom: 12 }}>
             Prossimi ({prossime.length})
           </div>
           {prossime.map(renderSessione)}
@@ -88,7 +88,7 @@ export default async function AllenamentiPage() {
 
       {passate.length > 0 && (
         <div>
-          <div style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--grigio-4)', marginBottom: 12 }}>
+          <div style={{ fontSize: 12, fontWeight: 600, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-4)', marginBottom: 12 }}>
             Archivio ({passate.length})
           </div>
           {passate.map(renderSessione)}

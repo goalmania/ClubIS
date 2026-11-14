@@ -70,7 +70,7 @@ export default function MedicoPrevenzionePage() {
 
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Prevenzione</h1>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Prevenzione</h1>
           <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>Analisi dati infortuni e protocolli preventivi</p>
         </div>
         <button className="btn btn-primary btn-sm" onClick={() => setModalOpen(true)}>+ Nuovo protocollo</button>
@@ -93,8 +93,8 @@ export default function MedicoPrevenzionePage() {
                 <span style={{ fontSize: 13, color: 'var(--text-secondary)', textTransform: 'capitalize' }}>{z.replace(/_/g, ' ')}</span>
                 <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>{n} casi</span>
               </div>
-              <div style={{ height: 6, background: 'var(--bg-input)', borderRadius: 3, overflow: 'hidden' }}>
-                <div style={{ height: '100%', width: `${(n / maxZ) * 100}%`, background: 'var(--accent-orange)', borderRadius: 3 }} />
+              <div style={{ height: 6, background: 'var(--bg-input)', borderRadius: 8, overflow: 'hidden' }}>
+                <div style={{ height: '100%', width: `${(n / maxZ) * 100}%`, background: 'var(--accent-orange)', borderRadius: 8 }} />
               </div>
             </div>
           ))}
@@ -111,7 +111,7 @@ export default function MedicoPrevenzionePage() {
                 <span className={`badge ${p.attivo ? 'badge-verde' : 'badge-grigio'}`}>{p.attivo ? 'Attivo' : 'Sospeso'}</span>
               </div>
               {p.descrizione && <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 4, lineHeight: 1.5 }}>{p.descrizione}</div>}
-              <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+              <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                 {p.area && <span style={{ textTransform: 'capitalize' }}>Area: {p.area}</span>}
                 {p.frequenza && <> · Frequenza: {p.frequenza}</>}
               </div>

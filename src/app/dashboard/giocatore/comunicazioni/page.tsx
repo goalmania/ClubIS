@@ -62,7 +62,7 @@ export default function ComunicazioniGiocatorePage() {
   return (
     <div style={{ animation: 'fadeIn 0.3s ease' }}>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>
           Comunicazioni
         </h1>
         <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>
@@ -86,12 +86,12 @@ export default function ComunicazioniGiocatorePage() {
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4, flexWrap: 'wrap' }}>
                     <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{m.titolo}</span>
-                    <span className={`badge ${TIPO_BADGE[m.tipo] ?? 'badge-grigio'}`} style={{ fontSize: 10 }}>{m.tipo}</span>
+                    <span className={`badge ${TIPO_BADGE[m.tipo] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>{m.tipo}</span>
                   </div>
                   <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: 4 }}>
                     {m.corpo?.slice(0, 200)}{m.corpo?.length > 200 ? '…' : ''}
                   </div>
-                  <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                  <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                     {mitt?.nome} {mitt?.cognome} ·{' '}
                     {new Date(m.inviato_at).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}
                   </div>

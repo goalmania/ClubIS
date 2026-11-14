@@ -57,7 +57,7 @@ export default async function TeamManagerDashboard() {
   return (
     <div style={{ animation: 'fadeIn 0.3s ease' }}>
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Team Manager</h1>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Team Manager</h1>
         <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>
           Organizzazione squadra, trasferte e logistica
         </p>
@@ -131,9 +131,9 @@ export default async function TeamManagerDashboard() {
               <div key={a.id} style={{ padding: '11px 18px', borderBottom: '1px solid var(--border-light)', display: 'flex', alignItems: 'center', gap: 14 }}>
                 <div style={{
                   width: 40, textAlign: 'center', flexShrink: 0,
-                  padding: '4px 0', borderRadius: 6, background: 'var(--accent-blue-lt)', color: 'var(--accent-blue)',
+                  padding: '4px 0', borderRadius: 10, background: 'var(--accent-blue-lt)', color: 'var(--accent-blue)',
                 }}>
-                  <div style={{ fontSize: 10, fontWeight: 600 }}>
+                  <div style={{ fontSize: 12, fontWeight: 600 }}>
                     {new Date(a.data).toLocaleDateString('it-IT', { weekday: 'short' }).toUpperCase()}
                   </div>
                   <div style={{ fontSize: 14, fontWeight: 700 }}>
@@ -142,7 +142,7 @@ export default async function TeamManagerDashboard() {
                 </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)' }}>{a.luogo ?? 'Campo principale'}</div>
-                  <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{a.ora?.slice(0, 5) ?? '—'}</div>
+                  <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{a.ora?.slice(0, 5) ?? '—'}</div>
                 </div>
               </div>
             ))
@@ -170,7 +170,7 @@ export default async function TeamManagerDashboard() {
                     {t.costo_stimato ? fmtEuro(Number(t.costo_stimato)) : '—'}
                   </span>
                 </div>
-                <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                   {new Date(t.data_partenza).toLocaleDateString('it-IT')} · {t.mezzo ?? 'mezzo da definire'}
                 </div>
               </div>
@@ -196,7 +196,7 @@ export default async function TeamManagerDashboard() {
                 </span>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)' }}>{m.descrizione ?? m.tipo}</div>
-                  <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Qty: {m.quantita ?? 1}</div>
+                  <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Qty: {m.quantita ?? 1}</div>
                 </div>
               </div>
             ))

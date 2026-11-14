@@ -100,7 +100,7 @@ export default function FamigliaSetupPage() {
         <div style={{ textAlign: 'center', marginBottom: 36 }}>
           <div style={{
             display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            width: 52, height: 52, borderRadius: 10,
+            width: 52, height: 52, borderRadius: 14,
             background: 'rgba(200,240,0,0.08)',
             border: '1px solid rgba(200,240,0,0.2)',
             fontSize: 24, marginBottom: 16,
@@ -108,8 +108,8 @@ export default function FamigliaSetupPage() {
             👨‍👩‍👧
           </div>
           <h1 style={{
-            fontFamily: 'var(--font-display)', fontSize: 26, fontWeight: 900,
-            textTransform: 'uppercase', letterSpacing: '-0.01em',
+            fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700,
+            textTransform: 'none', letterSpacing: '-0.025em',
             color: 'var(--white)', marginBottom: 8,
           }}>
             Collega il tuo account
@@ -124,7 +124,7 @@ export default function FamigliaSetupPage() {
         <div style={{
           background: 'var(--grigio-6)',
           border: '1px solid var(--grigio-5)',
-          borderRadius: 12,
+          borderRadius: 16,
           padding: 28,
           marginBottom: 20,
         }}>
@@ -133,7 +133,7 @@ export default function FamigliaSetupPage() {
               <div style={{ fontSize: 36, marginBottom: 12 }}>✅</div>
               <div style={{
                 fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 700,
-                textTransform: 'uppercase', color: 'var(--verde)', marginBottom: 8,
+                textTransform: 'none', color: 'var(--verde)', marginBottom: 8,
               }}>
                 Account collegato!
               </div>
@@ -144,9 +144,9 @@ export default function FamigliaSetupPage() {
           ) : (
             <>
               <label style={{
-                display: 'block', fontSize: 11,
+                display: 'block', fontSize: 12,
                 fontFamily: 'var(--font-display)', fontWeight: 700,
-                textTransform: 'uppercase', letterSpacing: '0.08em',
+                textTransform: 'none', letterSpacing: '0',
                 color: 'var(--grigio-3)', marginBottom: 8,
               }}>
                 Codice invito *
@@ -160,14 +160,14 @@ export default function FamigliaSetupPage() {
                 onKeyDown={e => e.key === 'Enter' && collegaAccount()}
                 autoFocus
               />
-              <p style={{ fontSize: 11, color: 'var(--grigio-4)', marginBottom: 20, lineHeight: 1.5 }}>
+              <p style={{ fontSize: 12, color: 'var(--grigio-4)', marginBottom: 20, lineHeight: 1.5 }}>
                 Il codice è un identificativo univoco (UUID) che trovi nell&apos;email di invito
                 o che puoi richiedere alla segreteria.
               </p>
 
               {errore && (
                 <div style={{
-                  padding: '10px 14px', borderRadius: 8,
+                  padding: '10px 14px', borderRadius: 12,
                   background: 'rgba(255,68,68,0.08)',
                   border: '1px solid rgba(255,68,68,0.3)',
                   fontSize: 13, color: 'var(--rosso)',
@@ -193,13 +193,13 @@ export default function FamigliaSetupPage() {
         <div style={{
           background: 'var(--grigio-6)',
           border: '1px solid var(--grigio-5)',
-          borderRadius: 12,
+          borderRadius: 16,
           padding: 20,
           marginBottom: 24,
         }}>
           <div style={{
             fontSize: 12, fontWeight: 600, color: 'var(--grigio-3)',
-            textTransform: 'uppercase', letterSpacing: '0.06em',
+            textTransform: 'none', letterSpacing: '0',
             marginBottom: 10,
           }}>
             Non hai ricevuto un codice?
@@ -211,7 +211,7 @@ export default function FamigliaSetupPage() {
 
           {invioStato === 'sent' ? (
             <div style={{
-              padding: '10px 14px', borderRadius: 8,
+              padding: '10px 14px', borderRadius: 12,
               background: 'rgba(34,197,94,0.08)',
               border: '1px solid rgba(34,197,94,0.3)',
               fontSize: 13, color: 'var(--verde)',
@@ -222,7 +222,7 @@ export default function FamigliaSetupPage() {
             <>
               {invioStato === 'error' && invioMsg && (
                 <div style={{
-                  padding: '10px 14px', borderRadius: 8,
+                  padding: '10px 14px', borderRadius: 12,
                   background: 'rgba(255,68,68,0.08)',
                   border: '1px solid rgba(255,68,68,0.3)',
                   fontSize: 13, color: 'var(--rosso)',
@@ -257,7 +257,7 @@ export default function FamigliaSetupPage() {
               >
                 {invioLoading ? 'Invio in corso…' : 'Inviami il codice via email'}
               </button>
-              <p style={{ fontSize: 11, color: 'var(--grigio-4)', marginTop: 10, lineHeight: 1.5, marginBottom: 0 }}>
+              <p style={{ fontSize: 12, color: 'var(--grigio-4)', marginTop: 10, lineHeight: 1.5, marginBottom: 0 }}>
                 Se non trovi nessun profilo, contatta la segreteria del club e comunica il tuo indirizzo email.
               </p>
             </>

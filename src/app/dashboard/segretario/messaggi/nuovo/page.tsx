@@ -58,7 +58,7 @@ export default function NuovoMessaggioPage() {
     <div style={{ maxWidth: 660, margin: '0 auto' }}>
       <BackButton label="Torna ai messaggi" />
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Nuova comunicazione</h1>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Nuova comunicazione</h1>
         <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>Invia un messaggio a tutta la società o a squadre specifiche.</p>
       </div>
       <form onSubmit={salva}>

@@ -160,7 +160,7 @@ export default async function DSStatistichePage() {
 
   const SectionTitle = ({ title }: { title: string }) => (
     <div style={{
-      fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em',
+      fontSize: 12, fontWeight: 600, textTransform: 'none', letterSpacing: '0',
       color: 'var(--text-muted)', paddingBottom: 10, borderBottom: '1px solid var(--border)',
       marginBottom: 16,
     }}>{title}</div>
@@ -169,7 +169,7 @@ export default async function DSStatistichePage() {
   return (
     <div data-onboarding="section-statistiche-ds" style={{ animation: 'fadeIn 0.3s ease' }}>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Statistiche DS</h1>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Statistiche DS</h1>
         <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>
           Analisi rosa, mercato e scouting
         </p>
@@ -188,12 +188,12 @@ export default async function DSStatistichePage() {
               <div style={{ width: 120, fontSize: 12, color: 'var(--text-secondary)', textAlign: 'right', flexShrink: 0 }}>
                 {ruoloLabel[r.ruolo] ?? r.ruolo}
               </div>
-              <div style={{ flex: 1, height: 20, background: 'var(--bg-input)', borderRadius: 4, overflow: 'hidden' }}>
+              <div style={{ flex: 1, height: 20, background: 'var(--bg-input)', borderRadius: 10, overflow: 'hidden' }}>
                 <div style={{
                   height: '100%', width: `${(r.n / maxRuolo) * 100}%`,
-                  background: 'var(--accent-blue)', borderRadius: 4, minWidth: 28,
+                  background: 'var(--accent-blue)', borderRadius: 10, minWidth: 28,
                   display: 'flex', alignItems: 'center', paddingLeft: 8,
-                  fontSize: 11, color: 'white', fontWeight: 600,
+                  fontSize: 12, color: 'white', fontWeight: 600,
                 }}>
                   {r.n}
                 </div>
@@ -247,14 +247,14 @@ export default async function DSStatistichePage() {
               const giorni = Math.round((scadenza.getTime() - oggi.getTime()) / 86400000)
               return (
                 <div key={i} style={{
-                  padding: '8px 14px', borderRadius: 8,
+                  padding: '8px 14px', borderRadius: 12,
                   background: giorni < 60 ? 'var(--accent-red-lt)' : 'var(--accent-orange-lt)',
                   border: `1px solid ${giorni < 60 ? 'var(--accent-red)' : 'var(--accent-orange)'}22`,
                 }}>
                   <div style={{ fontSize: 12, fontWeight: 600, color: giorni < 60 ? 'var(--accent-red)' : 'var(--accent-orange)' }}>
                     {giorni}gg
                   </div>
-                  <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                  <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                     {scadenza.toLocaleDateString('it-IT', { day: 'numeric', month: 'short' })}
                   </div>
                 </div>
@@ -279,7 +279,7 @@ export default async function DSStatistichePage() {
             </div>
           ))}
           <div style={{ marginTop: 12, padding: '10px 0', borderTop: '1px solid var(--border)' }}>
-            <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Valore totale concluse</div>
+            <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Valore totale concluse</div>
             <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--accent-green)', marginTop: 2 }}>
               {fmt(valoreTotConcluse)}
             </div>
@@ -312,10 +312,10 @@ export default async function DSStatistichePage() {
             </div>
           ))}
           <div style={{ marginTop: 12 }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', marginBottom: 8 }}>Per esito</div>
+            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', marginBottom: 8 }}>Per esito</div>
             {Object.entries(scoutPerEsito).map(([esito, n]) => (
               <div key={esito} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
-                <span className="badge badge-grigio" style={{ fontSize: 10, textTransform: 'capitalize' }}>{esito}</span>
+                <span className="badge badge-grigio" style={{ fontSize: 12, textTransform: 'capitalize' }}>{esito}</span>
                 <span style={{ fontSize: 12, fontWeight: 600 }}>{n}</span>
               </div>
             ))}
@@ -328,24 +328,24 @@ export default async function DSStatistichePage() {
         <SectionTitle title="Performance Rosa — presenze ultimi 30 giorni" />
         <div style={{ display: 'grid', gridTemplateColumns: '160px 1fr', gap: 24 }}>
           <div>
-            <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Media presenze</div>
+            <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Media presenze</div>
             <div style={{ fontSize: 36, fontWeight: 700, color: mediaPresRosa >= 70 ? 'var(--accent-green)' : mediaPresRosa >= 50 ? 'var(--accent-orange)' : 'var(--accent-red)' }}>
               {mediaPresRosa}%
             </div>
           </div>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', marginBottom: 8 }}>Top 5 presenze</div>
+            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', marginBottom: 8 }}>Top 5 presenze</div>
             {presenze5.length === 0 ? (
               <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>Dati non disponibili</p>
             ) : presenze5.map((p, i) => (
               <div key={p.id} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-                <span style={{ fontSize: 11, color: 'var(--text-muted)', width: 16 }}>{i + 1}.</span>
-                <div style={{ flex: 1, height: 16, background: 'var(--bg-input)', borderRadius: 4, overflow: 'hidden' }}>
+                <span style={{ fontSize: 12, color: 'var(--text-muted)', width: 16 }}>{i + 1}.</span>
+                <div style={{ flex: 1, height: 16, background: 'var(--bg-input)', borderRadius: 10, overflow: 'hidden' }}>
                   <div style={{
                     height: '100%', width: `${p.pct}%`,
                     background: p.pct >= 70 ? 'var(--accent-green)' : 'var(--accent-orange)',
-                    borderRadius: 4, display: 'flex', alignItems: 'center', paddingLeft: 6,
-                    fontSize: 10, color: 'white', fontWeight: 600,
+                    borderRadius: 10, display: 'flex', alignItems: 'center', paddingLeft: 6,
+                    fontSize: 12, color: 'white', fontWeight: 600,
                   }}>
                     {p.pct}%
                   </div>

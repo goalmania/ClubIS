@@ -136,7 +136,7 @@ export default function TuttocampoSync({ clubId, onImporta }: Props) {
         <div>
           <span style={{ fontSize: 14, fontWeight: 600 }}>Integrazione Tuttocampo.it</span>
           {urlSalvato && !wafBlocked && (
-            <span style={{ marginLeft: 8, fontSize: 11, color: 'var(--grigio-4)' }}>
+            <span style={{ marginLeft: 8, fontSize: 12, color: 'var(--grigio-4)' }}>
               Dati aggiornati ogni 5 min
             </span>
           )}
@@ -207,7 +207,7 @@ export default function TuttocampoSync({ clubId, onImporta }: Props) {
 
               {/* Istruzioni step-by-step */}
               <div className="card" style={{ padding: '16px 18px', background: 'var(--grigio-6)', marginBottom: 16 }}>
-                <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--grigio-3)', fontFamily: 'var(--font-display)', marginBottom: 12 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-3)', fontFamily: 'var(--font-display)', marginBottom: 12 }}>
                   Come importare il calendario
                 </div>
                 <ol style={{ fontSize: 13, color: 'var(--grigio-2)', paddingLeft: 18, lineHeight: 2 }}>
@@ -219,7 +219,7 @@ export default function TuttocampoSync({ clubId, onImporta }: Props) {
                         onClick={e => e.preventDefault()}
                         draggable
                         className="btn btn-secondary btn-sm"
-                        style={{ fontSize: 11, cursor: 'grab', userSelect: 'none' }}
+                        style={{ fontSize: 12, cursor: 'grab', userSelect: 'none' }}
                         title="Trascina nella barra dei preferiti"
                       >
                         📋 Copia da Tuttocampo
@@ -232,14 +232,14 @@ export default function TuttocampoSync({ clubId, onImporta }: Props) {
                     </a>
                   </li>
                   <li>Clicca il preferito <strong>"Copia da Tuttocampo"</strong> appena aggiunto</li>
-                  <li>Torna qui e incolla nel riquadro sotto (<kbd style={{ fontSize: 10, padding: '1px 4px', borderRadius: 3, border: '1px solid var(--grigio-4)' }}>Cmd+V</kbd>)</li>
+                  <li>Torna qui e incolla nel riquadro sotto (<kbd style={{ fontSize: 12, padding: '1px 4px', borderRadius: 8, border: '1px solid var(--grigio-4)' }}>Cmd+V</kbd>)</li>
                 </ol>
 
-                <div style={{ marginTop: 4, padding: '8px 12px', background: 'var(--grigio-5)', borderRadius: 6, fontSize: 11, color: 'var(--grigio-3)' }}>
+                <div style={{ marginTop: 4, padding: '8px 12px', background: 'var(--grigio-5)', borderRadius: 10, fontSize: 12, color: 'var(--grigio-3)' }}>
                   <strong style={{ color: 'var(--grigio-2)' }}>Alternativa senza bookmarklet:</strong> sulla pagina Tuttocampo apri la Console (
-                  <kbd style={{ fontSize: 10, padding: '1px 4px', borderRadius: 3, border: '1px solid var(--grigio-4)' }}>F12</kbd>
+                  <kbd style={{ fontSize: 12, padding: '1px 4px', borderRadius: 8, border: '1px solid var(--grigio-4)' }}>F12</kbd>
                   ) e digita:{' '}
-                  <code style={{ fontSize: 11, color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>
+                  <code style={{ fontSize: 12, color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>
                     copy(document.getElementById('team_calendar').outerHTML)
                   </code>
                 </div>
@@ -248,7 +248,7 @@ export default function TuttocampoSync({ clubId, onImporta }: Props) {
               {/* Textarea paste */}
               <textarea
                 className="input"
-                style={{ width: '100%', minHeight: 90, fontFamily: 'var(--font-mono)', fontSize: 11, resize: 'vertical' }}
+                style={{ width: '100%', minHeight: 90, fontFamily: 'var(--font-mono)', fontSize: 12, resize: 'vertical' }}
                 placeholder="Incolla qui l'HTML copiato da Tuttocampo..."
                 value={pasteHtml}
                 onChange={e => setPasteHtml(e.target.value)}
@@ -263,7 +263,7 @@ export default function TuttocampoSync({ clubId, onImporta }: Props) {
                 </button>
                 <button
                   className="btn btn-secondary btn-sm"
-                  style={{ fontSize: 11 }}
+                  style={{ fontSize: 12 }}
                   onClick={() => { setUrlSalvato(false); setWafBlocked(false) }}
                 >
                   Cambia URL
@@ -296,7 +296,7 @@ export default function TuttocampoSync({ clubId, onImporta }: Props) {
                   <tbody>
                     {risultati.map((r, i) => (
                       <tr key={i}>
-                        <td style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--grigio-4)', textAlign: 'center' }}>
+                        <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-4)', textAlign: 'center' }}>
                           {r.giornata ?? '—'}
                         </td>
                         <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12, whiteSpace: 'nowrap' }}>
@@ -320,11 +320,11 @@ export default function TuttocampoSync({ clubId, onImporta }: Props) {
                   </tbody>
                 </table>
               </div>
-              <div style={{ padding: '10px 18px', fontSize: 11, color: 'var(--grigio-4)', borderTop: '1px solid var(--grigio-5)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ padding: '10px 18px', fontSize: 12, color: 'var(--grigio-4)', borderTop: '1px solid var(--grigio-5)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span>Fonte: tuttocampo.it — {risultati.length} partite</span>
                 <button
                   className="btn btn-secondary btn-sm"
-                  style={{ fontSize: 11 }}
+                  style={{ fontSize: 12 }}
                   onClick={() => { setUrlSalvato(false); setRisultati([]) }}
                 >
                   Cambia URL

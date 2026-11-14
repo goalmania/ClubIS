@@ -226,7 +226,7 @@ export default function NotifichePreferencesPage() {
   return (
     <div style={{ animation: 'fadeIn 0.3s ease' }}>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Notifiche</h1>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Notifiche</h1>
         <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>
           Preferenze ClubIS per ruolo · canali e frequenze
         </p>
@@ -239,10 +239,10 @@ export default function NotifichePreferencesPage() {
             return (
               <div
                 key={c.key}
-                style={{ border: '1px solid var(--border)', borderRadius: 12, padding: 16, background: 'var(--bg-input)' }}
+                style={{ border: '1px solid var(--border)', borderRadius: 16, padding: 16, background: 'var(--bg-input)' }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-                  <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--text-primary)' }}>{c.label}</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>{c.label}</div>
                   <span className="badge badge-grigio" style={{ opacity: 0.85 }}>{c.key}</span>
                 </div>
 
@@ -317,7 +317,7 @@ export default function NotifichePreferencesPage() {
         <div style={{ marginTop: 22, paddingTop: 18, borderTop: '1px solid var(--border-light)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 10 }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-              <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--text-primary)' }}>WebPush</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>WebPush</div>
               <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                 {pushSubEndpoint ? `Sottoscrizione attiva` : `Non abilitato`}
               </div>

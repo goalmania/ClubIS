@@ -36,7 +36,7 @@ async function DSDatabaseContent() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Database giocatori</h1>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Database giocatori</h1>
           <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>
             {lista.length} profili unici da {reports?.length ?? 0} osservazioni totali
           </p>
@@ -75,17 +75,17 @@ async function DSDatabaseContent() {
                     <td>
                       {r.voto_globale !== null ? (
                         <span style={{
-                          display: 'inline-flex', width: 28, height: 28, borderRadius: 6,
+                          display: 'inline-flex', width: 28, height: 28, borderRadius: 10,
                           alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 13, fontFamily: 'var(--font-mono)',
                           background: (r.voto_globale ?? 0) >= 7 ? 'var(--verde-lt)' : (r.voto_globale ?? 0) >= 5 ? 'var(--ambra-lt)' : 'var(--rosso-lt)',
                           color: (r.voto_globale ?? 0) >= 7 ? 'var(--verde)' : (r.voto_globale ?? 0) >= 5 ? 'var(--ambra)' : 'var(--rosso)',
                         }}>{r.voto_globale}</span>
                       ) : '—'}
                     </td>
-                    <td><span className={`badge ${potenzialeColore[r.potenziale] ?? 'badge-grigio'}`} style={{ fontSize: 10 }}>{r.potenziale}</span></td>
+                    <td><span className={`badge ${potenzialeColore[r.potenziale] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>{r.potenziale}</span></td>
                     <td style={{ fontSize: 13, color: 'var(--grigio-3)' }}>{nObs} {nObs === 1 ? 'report' : 'report'}</td>
                     <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{new Date(r.data_osservazione).toLocaleDateString('it-IT')}</td>
-                    <td><span className={`badge ${esitoC[r.esito] ?? 'badge-grigio'}`} style={{ fontSize: 10 }}>{r.esito?.replace('_', ' ')}</span></td>
+                    <td><span className={`badge ${esitoC[r.esito] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>{r.esito?.replace('_', ' ')}</span></td>
                   </tr>
                 )
               })}

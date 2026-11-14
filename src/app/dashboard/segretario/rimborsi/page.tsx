@@ -375,7 +375,7 @@ export default function RimborsiPage() {
             <button key={t} onClick={() => setTab(t)} style={{
               padding: '10px 20px', background: 'none', border: 'none', cursor: 'pointer',
               fontFamily: 'var(--font-display)', fontSize: '0.78rem',
-              letterSpacing: '0.08em', textTransform: 'uppercase',
+              letterSpacing: '0', textTransform: 'none',
               color: tab === t ? 'var(--accent)' : 'var(--grigio-3)',
               fontWeight: tab === t ? 700 : 500,
               borderBottom: tab === t ? '2px solid var(--accent)' : '2px solid transparent',
@@ -391,7 +391,7 @@ export default function RimborsiPage() {
             {alertScadenza && (
               <div style={{
                 background: 'rgba(255,180,0,0.1)', border: '1px solid rgba(255,180,0,0.4)',
-                borderRadius: 6, padding: '12px 16px', marginBottom: 20,
+                borderRadius: 10, padding: '12px 16px', marginBottom: 20,
                 display: 'flex', alignItems: 'center', gap: 12,
               }}>
                 <span style={{ fontSize: 18 }}>⚠</span>
@@ -410,7 +410,7 @@ export default function RimborsiPage() {
               <select className="input" style={{ width: 100 }} value={filtroAnno} onChange={e => setFiltroAnno(+e.target.value)}>
                 {annoOptions.map(a => <option key={a} value={a}>{a}</option>)}
               </select>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--grigio-4)', flex: 1 }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-4)', flex: 1 }}>
                 {rimborsi.length} rimborsi — {fmtEur(rimborsi.reduce((s, r) => s + Number(r.importo), 0))} totale
               </span>
               <button className="btn btn-secondary btn-sm" onClick={exportRasd} disabled={rimborsi.length === 0}>
@@ -424,7 +424,7 @@ export default function RimborsiPage() {
             {/* Form add/edit */}
             {showForm && (
               <div className="card" style={{ padding: '20px 24px', marginBottom: 20, borderLeft: '3px solid var(--accent)' }}>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--accent)', marginBottom: 16 }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'none', letterSpacing: '0', color: 'var(--accent)', marginBottom: 16 }}>
                   {editId ? 'Modifica rimborso' : 'Nuovo rimborso'}
                 </div>
                 <form onSubmit={salvaRimborso}>
@@ -445,7 +445,7 @@ export default function RimborsiPage() {
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 12 }}>
                     <div>
                       <label style={lbStyle}>Codice Fiscale *</label>
-                      <input className="input" style={{ ...errBorder(formErr.cf), fontFamily: 'var(--font-mono)', letterSpacing: '0.05em' }}
+                      <input className="input" style={{ ...errBorder(formErr.cf), fontFamily: 'var(--font-mono)', letterSpacing: '0' }}
                         value={form.codice_fiscale} maxLength={16}
                         onChange={e => setForm(f => ({ ...f, codice_fiscale: e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '') }))}
                         placeholder="RSSMRA80A01H501Z" />
@@ -476,7 +476,7 @@ export default function RimborsiPage() {
                       <input className="input" type="date" style={errBorder(formErr.data)} value={form.data_erogazione}
                         onChange={e => setForm(f => ({ ...f, data_erogazione: e.target.value }))} />
                       {form.data_erogazione && (
-                        <small style={{ fontSize: 10, color: 'var(--grigio-4)', display: 'block', marginTop: 3 }}>
+                        <small style={{ fontSize: 12, color: 'var(--grigio-4)', display: 'block', marginTop: 3 }}>
                           Q{calcolaTrimestre(form.data_erogazione)} {new Date(form.data_erogazione).getFullYear()}
                         </small>
                       )}
@@ -535,11 +535,11 @@ export default function RimborsiPage() {
                         <tr key={r.id}>
                           <td style={{ fontWeight: 600 }}>{r.soggetto_cognome} {r.soggetto_nome}</td>
                           <td>
-                            <span title={r.codice_fiscale} style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--grigio-3)' }}>
+                            <span title={r.codice_fiscale} style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-3)' }}>
                               {maskCF(r.codice_fiscale)}
                             </span>
                           </td>
-                          <td><span className="badge badge-grigio" style={{ fontSize: 11 }}>{r.ruolo}</span></td>
+                          <td><span className="badge badge-grigio" style={{ fontSize: 12 }}>{r.ruolo}</span></td>
                           <td style={{ fontSize: 12, color: 'var(--grigio-3)' }}>
                             {r.tipo_rimborso === 'forfetario_volontario' ? 'Forfetario' : 'Documentato'}
                           </td>
@@ -554,7 +554,7 @@ export default function RimborsiPage() {
                           </td>
                           <td>
                             <div style={{ display: 'flex', gap: 6 }}>
-                              <button className="btn btn-ghost btn-sm" style={{ fontSize: 11 }} onClick={() => {
+                              <button className="btn btn-ghost btn-sm" style={{ fontSize: 12 }} onClick={() => {
                                 setEditId(r.id)
                                 setForm({
                                   soggetto_nome:    r.soggetto_nome,
@@ -570,7 +570,7 @@ export default function RimborsiPage() {
                                 setShowForm(true)
                                 window.scrollTo({ top: 0, behavior: 'smooth' })
                               }}>Modifica</button>
-                              <button className="btn btn-ghost btn-sm" style={{ fontSize: 11, color: 'var(--rosso)' }}
+                              <button className="btn btn-ghost btn-sm" style={{ fontSize: 12, color: 'var(--rosso)' }}
                                 onClick={() => eliminaRimborso(r.id)}>Elimina</button>
                             </div>
                           </td>
@@ -583,15 +583,15 @@ export default function RimborsiPage() {
             </div>
 
             {rimborsi.length > 0 && (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1, background: 'var(--border)', borderRadius: 4, overflow: 'hidden', marginTop: 16 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1, background: 'var(--border)', borderRadius: 10, overflow: 'hidden', marginTop: 16 }}>
                 {[
                   ['TOTALE Q' + filtroTrim, fmtEur(rimborsi.reduce((s, r) => s + Number(r.importo), 0))],
                   ['N. SOGGETTI', String(new Set(rimborsi.map(r => r.codice_fiscale)).size)],
                   ['N. RIMBORSI', String(rimborsi.length)],
                 ].map(([label, val]) => (
                   <div key={label} style={{ background: 'var(--gray-light)', padding: '14px 20px', textAlign: 'center' }}>
-                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--grigio-4)', marginBottom: 4 }}>{label}</div>
-                    <div style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 900, color: 'var(--white)' }}>{val}</div>
+                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-4)', marginBottom: 4 }}>{label}</div>
+                    <div style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700, color: 'var(--white)' }}>{val}</div>
                   </div>
                 ))}
               </div>
@@ -610,8 +610,8 @@ export default function RimborsiPage() {
                 const done   = ['select', 'iban', 'preview', 'done'].indexOf(sepaStep) > i
                 return (
                   <div key={step} style={{
-                    padding: '8px 20px', fontFamily: 'var(--font-mono)', fontSize: 11,
-                    textTransform: 'uppercase', letterSpacing: '0.1em',
+                    padding: '8px 20px', fontFamily: 'var(--font-mono)', fontSize: 12,
+                    textTransform: 'none', letterSpacing: '0',
                     color: active ? 'var(--accent)' : done ? 'var(--verde)' : 'var(--grigio-4)',
                     borderBottom: active ? '2px solid var(--accent)' : '2px solid transparent',
                     marginBottom: -1,
@@ -632,7 +632,7 @@ export default function RimborsiPage() {
                   <select className="input" style={{ width: 100 }} value={sepaFiltroA} onChange={e => { setSepaFiltroA(+e.target.value); setSelectedIds(new Set()) }}>
                     {annoOptions.map(a => <option key={a} value={a}>{a}</option>)}
                   </select>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--grigio-3)' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-3)' }}>
                     <input type="checkbox"
                       checked={rimborsiSepa.length > 0 && rimborsiSepa.every(r => selectedIds.has(r.id))}
                       onChange={e => setSelectedIds(e.target.checked ? new Set(rimborsiSepa.map(r => r.id)) : new Set())}
@@ -675,8 +675,8 @@ export default function RimborsiPage() {
                                 />
                               </td>
                               <td style={{ fontWeight: 600 }}>{r.soggetto_cognome} {r.soggetto_nome}</td>
-                              <td><span title={r.codice_fiscale} style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--grigio-3)' }}>{maskCF(r.codice_fiscale)}</span></td>
-                              <td><span className="badge badge-grigio" style={{ fontSize: 11 }}>{r.ruolo}</span></td>
+                              <td><span title={r.codice_fiscale} style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-3)' }}>{maskCF(r.codice_fiscale)}</span></td>
+                              <td><span className="badge badge-grigio" style={{ fontSize: 12 }}>{r.ruolo}</span></td>
                               <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--accent)' }}>{fmtEur(Number(r.importo))}</td>
                               <td style={{ fontSize: 12, color: 'var(--grigio-3)', fontFamily: 'var(--font-mono)' }}>{fmtDate(r.data_erogazione)}</td>
                               <td style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{r.causale ?? '—'}</td>
@@ -688,7 +688,7 @@ export default function RimborsiPage() {
                   </div>
                 )}
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 20px', background: 'var(--gray-light)', border: '1px solid var(--border)', borderRadius: 4 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 20px', background: 'var(--gray-light)', border: '1px solid var(--border)', borderRadius: 10 }}>
                   <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-3)' }}>
                     {selectedIds.size} selezionati — {fmtEur(totaleSepa)}
                   </span>
@@ -703,12 +703,12 @@ export default function RimborsiPage() {
             {sepaStep === 'iban' && (
               <div>
                 <div className="card" style={{ padding: '20px 24px', marginBottom: 20, borderLeft: '3px solid var(--ambra)' }}>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--ambra)', marginBottom: 14 }}>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'none', letterSpacing: '0', color: 'var(--ambra)', marginBottom: 14 }}>
                     ⚠ IBAN mancanti — inserisci i dati bancari per procedere
                   </div>
                   {ibanMancanti.map(({ cf, nome }) => (
-                    <div key={cf} style={{ marginBottom: 16, padding: '14px 16px', border: '1px solid var(--border)', borderRadius: 4 }}>
-                      <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 10 }}>{nome} <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--grigio-4)', fontWeight: 400 }}>({cf})</span></div>
+                    <div key={cf} style={{ marginBottom: 16, padding: '14px 16px', border: '1px solid var(--border)', borderRadius: 10 }}>
+                      <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 10 }}>{nome} <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-4)', fontWeight: 400 }}>({cf})</span></div>
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                         <div>
                           <label style={lbStyle}>IBAN</label>
@@ -718,7 +718,7 @@ export default function RimborsiPage() {
                             onChange={e => setNuoviIban(prev => ({ ...prev, [cf]: { ...prev[cf], iban: e.target.value.toUpperCase() } }))}
                           />
                           {nuoviIban[cf]?.iban && nuoviIban[cf].iban.replace(/\s/g,'').length >= 5 && (
-                            <small style={{ fontSize: 10, color: validaIBAN(nuoviIban[cf].iban) ? 'var(--verde)' : 'var(--rosso)', display: 'block', marginTop: 3 }}>
+                            <small style={{ fontSize: 12, color: validaIBAN(nuoviIban[cf].iban) ? 'var(--verde)' : 'var(--rosso)', display: 'block', marginTop: 3 }}>
                               {validaIBAN(nuoviIban[cf].iban) ? `✓ ${formattaIBAN(nuoviIban[cf].iban)}` : '✗ IBAN non valido (formato: IT60 X054 2811 1010 0000 0123 456)'}
                             </small>
                           )}
@@ -754,7 +754,7 @@ export default function RimborsiPage() {
             {sepaStep === 'preview' && (
               <div>
                 <div className="card" style={{ padding: '20px 24px', marginBottom: 20 }}>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--grigio-4)', marginBottom: 14 }}>Configurazione distinta</div>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-4)', marginBottom: 14 }}>Configurazione distinta</div>
                   <div style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 12 }}>
                     <div>
                       <label style={lbStyle}>Data esecuzione</label>
@@ -797,7 +797,7 @@ export default function RimborsiPage() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <button className="btn btn-secondary" onClick={() => setSepaStep(ibanMancanti.length > 0 ? 'iban' : 'select')}>← Indietro</button>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                    <span style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 900, color: 'var(--accent)' }}>{fmtEur(totaleSepa)}</span>
+                    <span style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 700, color: 'var(--accent)' }}>{fmtEur(totaleSepa)}</span>
                     <button className="btn btn-primary" onClick={generaSepa} disabled={generando}>
                       {generando ? 'Generazione…' : `↓ Scarica XML SEPA (${rimborsiSelezionati.length} bonifici)`}
                     </button>
@@ -809,7 +809,7 @@ export default function RimborsiPage() {
             {/* Step 4: Done */}
             {sepaStep === 'done' && (
               <div className="card" style={{ padding: '28px 32px', borderLeft: '3px solid var(--verde)' }}>
-                <div style={{ fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 900, color: 'var(--verde)', marginBottom: 12 }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 700, color: 'var(--verde)', marginBottom: 12 }}>
                   ✓ File SEPA scaricato
                 </div>
                 <ol style={{ margin: '12px 0 20px', paddingLeft: 22, fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-3)', lineHeight: 2.2 }}>
@@ -865,21 +865,21 @@ export default function RimborsiPage() {
                         const statoLabel = d.stato === 'eseguita' ? 'Eseguita' : d.stato === 'inviata_banca' ? 'Inviata banca' : 'Generata'
                         return (
                           <tr key={d.id}>
-                            <td><span style={{ fontFamily: 'var(--font-mono)', fontSize: 11 }}>{d.message_id}</span></td>
+                            <td><span style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{d.message_id}</span></td>
                             <td style={{ fontSize: 12, color: 'var(--grigio-3)', fontFamily: 'var(--font-mono)' }}>{fmtDate(d.data_generazione)}</td>
                             <td style={{ fontSize: 12, fontFamily: 'var(--font-mono)' }}>{fmtDate(d.data_esecuzione)}</td>
                             <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)' }}>{d.numero_transazioni}</td>
                             <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--accent)' }}>{fmtEur(Number(d.importo_totale))}</td>
-                            <td><span className={`badge ${statoColor}`} style={{ fontSize: 11 }}>{statoLabel}</span></td>
+                            <td><span className={`badge ${statoColor}`} style={{ fontSize: 12 }}>{statoLabel}</span></td>
                             <td>
                               <div style={{ display: 'flex', gap: 6 }}>
                                 {d.stato === 'generata' && (
-                                  <button className="btn btn-ghost btn-sm" style={{ fontSize: 11 }} onClick={() => aggiornaStato(d.id, 'inviata_banca')}>
+                                  <button className="btn btn-ghost btn-sm" style={{ fontSize: 12 }} onClick={() => aggiornaStato(d.id, 'inviata_banca')}>
                                     Segna inviata
                                   </button>
                                 )}
                                 {d.stato === 'inviata_banca' && (
-                                  <button className="btn btn-ghost btn-sm" style={{ fontSize: 11, color: 'var(--verde)' }} onClick={() => aggiornaStato(d.id, 'eseguita')}>
+                                  <button className="btn btn-ghost btn-sm" style={{ fontSize: 12, color: 'var(--verde)' }} onClick={() => aggiornaStato(d.id, 'eseguita')}>
                                     Segna eseguita
                                   </button>
                                 )}
@@ -903,8 +903,8 @@ export default function RimborsiPage() {
 /* ─── Stili inline helpers ──────────────────────────────────── */
 const lbStyle: React.CSSProperties = {
   display: 'block', marginBottom: 5,
-  fontFamily: 'var(--font-mono)', fontSize: 10,
-  textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--grigio-4)',
+  fontFamily: 'var(--font-mono)', fontSize: 12,
+  textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-4)',
 }
-const errStyle: React.CSSProperties = { color: 'var(--rosso)', fontSize: 11, display: 'block', marginTop: 3 }
+const errStyle: React.CSSProperties = { color: 'var(--rosso)', fontSize: 12, display: 'block', marginTop: 3 }
 const errBorder = (e?: string): React.CSSProperties => e ? { borderColor: 'var(--rosso)' } : {}

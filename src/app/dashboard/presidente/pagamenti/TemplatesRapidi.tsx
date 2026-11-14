@@ -81,7 +81,7 @@ export default function TemplatesRapidi({
                 padding: '12px 16px',
                 background: 'var(--bg-input)',
                 border: '1px solid var(--border)',
-                borderRadius: 8,
+                borderRadius: 12,
                 cursor: 'pointer',
                 color: 'var(--text-primary)',
                 fontSize: 13,

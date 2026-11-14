@@ -64,17 +64,17 @@ export default async function VistaDisponibilita({ clubId, ruolo, squadraIds }: 
       {/* ── Header ──────────────────────────────────────────── */}
       <div style={{ marginBottom: 24 }}>
         <div style={{
-          fontFamily: 'var(--font-mono)', fontSize: '0.6rem',
-          letterSpacing: '0.25em', color: 'var(--accent)',
-          textTransform: 'uppercase', marginBottom: 10,
+          fontFamily: 'var(--font-mono)', fontSize: '0.78rem',
+          letterSpacing: '0', color: 'var(--accent)',
+          textTransform: 'none', marginBottom: 10,
           display: 'flex', alignItems: 'center', gap: 14,
         }}>
           DISPONIBILITÀ ROSA
           <div style={{ flex: 1, height: 1, background: 'var(--border)' }} />
         </div>
         <h1 style={{
-          fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 26,
-          textTransform: 'uppercase', letterSpacing: '-0.01em',
+          fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 26,
+          textTransform: 'none', letterSpacing: '-0.01em',
           color: 'var(--white)', marginBottom: 6,
         }}>
           Chi può giocare
@@ -106,7 +106,7 @@ export default async function VistaDisponibilita({ clubId, ruolo, squadraIds }: 
       <div style={{
         display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)',
         gap: 1, background: 'var(--grigio-5)', marginBottom: 24,
-        borderRadius: 8, overflow: 'hidden',
+        borderRadius: 12, overflow: 'hidden',
       }}>
         {([
           { label: 'Disponibili',   n: counts.disponibili,  color: 'var(--accent)' },
@@ -117,14 +117,14 @@ export default async function VistaDisponibilita({ clubId, ruolo, squadraIds }: 
         ] as { label: string; n: number; color: string }[]).map(k => (
           <div key={k.label} style={{ background: 'var(--gray-light)', padding: '16px 18px' }}>
             <div style={{
-              fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 30,
+              fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 30,
               color: k.n > 0 ? k.color : 'var(--grigio-4)', lineHeight: 1,
             }}>
               {k.n}
             </div>
             <div style={{
-              fontFamily: 'var(--font-mono)', fontSize: '0.58rem',
-              letterSpacing: '0.12em', textTransform: 'uppercase',
+              fontFamily: 'var(--font-mono)', fontSize: '0.78rem',
+              letterSpacing: '0', textTransform: 'none',
               color: 'var(--grigio-4)', marginTop: 5,
             }}>
               {k.label}
@@ -146,8 +146,8 @@ export default async function VistaDisponibilita({ clubId, ruolo, squadraIds }: 
             <Link
               href="/dashboard/segretario/certificati"
               style={{
-                fontFamily: 'var(--font-display)', fontSize: 11,
-                textTransform: 'uppercase', letterSpacing: '0.1em',
+                fontFamily: 'var(--font-display)', fontSize: 12,
+                textTransform: 'none', letterSpacing: '0',
                 color: 'inherit', textDecoration: 'none', fontWeight: 700,
                 flexShrink: 0,
               }}
@@ -170,13 +170,13 @@ export default async function VistaDisponibilita({ clubId, ruolo, squadraIds }: 
             gridTemplateColumns: '44px 1fr 140px 1fr',
             padding: '10px 18px',
             borderBottom: '1px solid var(--grigio-5)',
-            background: '#111',
+            background: 'var(--surface-2)',
             gap: 0,
           }}>
             {['#', 'Giocatore', 'Stato', 'Motivazione / Dettaglio'].map(h => (
               <div key={h} style={{
-                fontFamily: 'var(--font-mono)', fontSize: '0.58rem',
-                letterSpacing: '0.14em', textTransform: 'uppercase',
+                fontFamily: 'var(--font-mono)', fontSize: '0.78rem',
+                letterSpacing: '0', textTransform: 'none',
                 color: 'var(--grigio-4)',
               }}>
                 {h}
@@ -213,14 +213,14 @@ export default async function VistaDisponibilita({ clubId, ruolo, squadraIds }: 
                 <div>
                   <div style={{
                     fontFamily: 'var(--font-display)', fontWeight: 700,
-                    fontSize: 14, textTransform: 'uppercase', letterSpacing: '0.03em',
+                    fontSize: 14, textTransform: 'none', letterSpacing: '0',
                     color: 'var(--white)',
                   }}>
                     {g.cognome} {g.nome}
                   </div>
                   {g.ruolo_principale && (
                     <div style={{
-                      fontSize: 10, color: 'var(--grigio-4)',
+                      fontSize: 12, color: 'var(--grigio-4)',
                       fontFamily: 'var(--font-mono)', marginTop: 1,
                     }}>
                       {g.ruolo_principale.replace(/_/g, ' ').toUpperCase()}
@@ -236,8 +236,8 @@ export default async function VistaDisponibilita({ clubId, ruolo, squadraIds }: 
                     background: cfg.bg,
                     border: `1px solid ${cfg.border}`,
                     fontFamily: 'var(--font-display)', fontWeight: 700,
-                    fontSize: '0.62rem', letterSpacing: '0.1em',
-                    textTransform: 'uppercase', color: cfg.color,
+                    fontSize: '0.8rem', letterSpacing: '0',
+                    textTransform: 'none', color: cfg.color,
                   }}>
                     {cfg.icon} {cfg.label}
                   </span>
@@ -252,16 +252,16 @@ export default async function VistaDisponibilita({ clubId, ruolo, squadraIds }: 
                   ))}
                   {g.alert.map((a, i) => (
                     <div key={i} style={{
-                      fontSize: 11, color: 'var(--ambra)',
-                      fontFamily: 'var(--font-mono)', letterSpacing: '0.04em', marginTop: 2,
+                      fontSize: 12, color: 'var(--ambra)',
+                      fontFamily: 'var(--font-mono)', letterSpacing: '0', marginTop: 2,
                     }}>
                       {a}
                     </div>
                   ))}
                   {g.dati.squalifica?.scade_dopo_partita && (
                     <div style={{
-                      fontSize: 10, color: 'var(--accent)', marginTop: 3,
-                      fontFamily: 'var(--font-mono)', letterSpacing: '0.08em',
+                      fontSize: 12, color: 'var(--accent)', marginTop: 3,
+                      fontFamily: 'var(--font-mono)', letterSpacing: '0',
                     }}>
                       ✓ TORNA DISPONIBILE DOPO QUESTA PARTITA
                     </div>
@@ -277,13 +277,13 @@ export default async function VistaDisponibilita({ clubId, ruolo, squadraIds }: 
       <div style={{
         marginTop: 20, padding: '14px 18px',
         background: 'var(--gray-light)', border: '1px solid var(--border)',
-        borderRadius: 8,
+        borderRadius: 12,
         display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center',
       }}>
         <span style={{
-          fontFamily: 'var(--font-mono)', fontSize: '0.58rem',
-          letterSpacing: '0.14em', color: 'var(--grigio-4)',
-          textTransform: 'uppercase', marginRight: 4,
+          fontFamily: 'var(--font-mono)', fontSize: '0.78rem',
+          letterSpacing: '0', color: 'var(--grigio-4)',
+          textTransform: 'none', marginRight: 4,
         }}>
           Azioni rapide →
         </span>

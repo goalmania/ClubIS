@@ -344,7 +344,7 @@ export default function StadioPage() {
     <FeatureGate feature="biglietteria_stadio" featureLabel="Biglietteria e Gestione Stadio">
     <div style={{ animation: 'fadeIn 0.25s ease' }}>
       <div style={{ marginBottom: 22 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Stadio</h1>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Stadio</h1>
         <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>
           Configurazione impianto, biglietteria e dashboard ricavi
         </p>
@@ -494,7 +494,7 @@ export default function StadioPage() {
             marginTop: 12,
             background: 'rgba(248,81,73,0.12)',
             border: '1px solid var(--accent-red)',
-            borderRadius: 8,
+            borderRadius: 12,
             padding: '10px 16px',
             fontSize: 13,
             fontWeight: 600,
@@ -523,7 +523,7 @@ export default function StadioPage() {
             <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 8 }}>Confronto partite (ricavi)</div>
             <div style={{ display: 'flex', alignItems: 'flex-end', gap: 6, height: 180 }}>
               {summaryByMatch.map((r, i) => (
-                <div key={i} title={`${r.partita.avversario}: ${fmtEuro(r.ricavo)}`} style={{ flex: 1, background: 'var(--accent-green)', height: `${(r.ricavo / Math.max(maxRicavo, 1)) * 100}%`, minHeight: 4, borderRadius: 4 }} />
+                <div key={i} title={`${r.partita.avversario}: ${fmtEuro(r.ricavo)}`} style={{ flex: 1, background: 'var(--accent-green)', height: `${(r.ricavo / Math.max(maxRicavo, 1)) * 100}%`, minHeight: 4, borderRadius: 10 }} />
               ))}
             </div>
             <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 8 }}>Media spettatori: {Math.round(mediaSpettatori)}</div>

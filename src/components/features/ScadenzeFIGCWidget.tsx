@@ -55,29 +55,29 @@ export default function ScadenzeFIGCWidget({ compact = false }: Props) {
           <span style={{ fontSize: 16, flexShrink: 0 }}>{tipoMeta?.icona}</span>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{
-              fontSize: 11, fontFamily: 'var(--font-display)',
-              fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em',
+              fontSize: 12, fontFamily: 'var(--font-display)',
+              fontWeight: 700, textTransform: 'none', letterSpacing: '0',
               color: 'var(--white)', marginBottom: 2,
               overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
             }}>
               {prossima.titolo}
             </div>
             <div style={{
-              fontSize: 10, fontFamily: 'var(--font-mono)',
-              color: col, textTransform: 'uppercase', letterSpacing: '0.1em',
+              fontSize: 12, fontFamily: 'var(--font-mono)',
+              color: col, textTransform: 'none', letterSpacing: '0',
             }}>
               {labelCountdown(giorni)}
               {attive.length > 1 && ` · +${attive.length - 1} altre`}
             </div>
           </div>
           <div style={{
-            fontFamily: 'var(--font-display)', fontWeight: 900,
+            fontFamily: 'var(--font-display)', fontWeight: 700,
             fontSize: 20, color: col, flexShrink: 0, textAlign: 'right', lineHeight: 1,
           }}>
             {giorni >= 0 ? giorni : '!'}
             <div style={{
-              fontSize: 9, fontFamily: 'var(--font-mono)',
-              color: col, textTransform: 'uppercase', letterSpacing: '0.1em',
+              fontSize: 11, fontFamily: 'var(--font-mono)',
+              color: col, textTransform: 'none', letterSpacing: '0',
             }}>
               {giorni >= 0 ? 'GG' : 'SCAD'}
             </div>
@@ -96,14 +96,14 @@ export default function ScadenzeFIGCWidget({ compact = false }: Props) {
       }}>
         <div style={{
           fontFamily: 'var(--font-display)', fontWeight: 700,
-          textTransform: 'uppercase', fontSize: 12, letterSpacing: '0.08em',
+          textTransform: 'none', fontSize: 12, letterSpacing: '0',
           color: 'var(--white)',
         }}>
           📋 Scadenziario FIGC
         </div>
         <Link href="/dashboard/segretario/scadenze-figc" style={{
-          fontSize: 10, color: 'var(--grigio-3)', fontFamily: 'var(--font-mono)',
-          textDecoration: 'none', letterSpacing: '0.1em', textTransform: 'uppercase',
+          fontSize: 12, color: 'var(--grigio-3)', fontFamily: 'var(--font-mono)',
+          textDecoration: 'none', letterSpacing: '0', textTransform: 'none',
         }}>
           GESTISCI →
         </Link>
@@ -123,14 +123,14 @@ export default function ScadenzeFIGCWidget({ compact = false }: Props) {
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{
                 fontFamily: 'var(--font-display)', fontWeight: 700,
-                textTransform: 'uppercase', fontSize: 11,
+                textTransform: 'none', fontSize: 12,
                 overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                 color: 'var(--white)',
               }}>
                 {s.titolo}
               </div>
               <div style={{
-                fontSize: 10, color: 'var(--grigio-4)',
+                fontSize: 12, color: 'var(--grigio-4)',
                 fontFamily: 'var(--font-mono)', marginTop: 2,
               }}>
                 {new Date(s.data_scadenza).toLocaleDateString('it-IT', {
@@ -140,7 +140,7 @@ export default function ScadenzeFIGCWidget({ compact = false }: Props) {
               </div>
             </div>
             <div style={{
-              fontFamily: 'var(--font-display)', fontWeight: 900,
+              fontFamily: 'var(--font-display)', fontWeight: 700,
               fontSize: 13, color: col, flexShrink: 0, textAlign: 'right',
               whiteSpace: 'nowrap',
             }}>

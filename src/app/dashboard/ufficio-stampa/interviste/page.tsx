@@ -42,7 +42,7 @@ export default function IntervistePage() {
     <div>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>
             Interviste & TV
           </h1>
           <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>
@@ -53,7 +53,7 @@ export default function IntervistePage() {
           display: 'inline-flex', alignItems: 'center', gap: 6,
           padding: '9px 16px', background: 'var(--accent)', color: '#0a0a0a',
           fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12,
-          textTransform: 'uppercase', letterSpacing: '0.08em', textDecoration: 'none', borderRadius: 2,
+          textTransform: 'none', letterSpacing: '0', textDecoration: 'none', borderRadius: 8,
         }}>
           + Nuova
         </Link>
@@ -71,8 +71,8 @@ export default function IntervistePage() {
           ].filter(g => g.items.length > 0).map(gruppo => (
             <div key={gruppo.titolo}>
               <div style={{
-                fontFamily: 'var(--font-mono)', fontSize: '0.65rem', fontWeight: 700,
-                letterSpacing: '0.2em', textTransform: 'uppercase',
+                fontFamily: 'var(--font-mono)', fontSize: '0.8rem', fontWeight: 700,
+                letterSpacing: '0', textTransform: 'none',
                 color: gruppo.evidenza ? 'var(--ambra)' : '#444',
                 marginBottom: 10,
               }}>
@@ -104,9 +104,9 @@ export default function IntervistePage() {
                           <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{ev.durata_minuti} min</td>
                           <td>
                             <span style={{
-                              fontSize: 10, fontFamily: 'var(--font-mono)',
+                              fontSize: 12, fontFamily: 'var(--font-mono)',
                               color: info.colore, background: `${info.colore}20`,
-                              padding: '3px 8px', borderRadius: 2,
+                              padding: '3px 8px', borderRadius: 8,
                             }}>
                               {info.label}
                             </span>

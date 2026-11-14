@@ -176,7 +176,7 @@ export default function DSMercatoPage() {
     <div style={{ animation: 'fadeIn 0.3s ease' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Mercato</h1>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Mercato</h1>
           <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>Pipeline trattative</p>
         </div>
         <button data-onboarding="btn-nuova-trattativa" className="btn btn-primary btn-sm" onClick={() => setOpenDrawer(true)}>
@@ -228,12 +228,12 @@ export default function DSMercatoPage() {
                   <tr key={t.id}>
                     <td style={{ fontWeight: 600, fontSize: 13 }}>{nomeDisplay(t)}</td>
                     <td>
-                      <span className="badge badge-grigio" style={{ fontSize: 10, textTransform: 'capitalize' }}>
+                      <span className="badge badge-grigio" style={{ fontSize: 12, textTransform: 'capitalize' }}>
                         {TIPI.find(x => x.value === t.tipo)?.label ?? t.tipo}
                       </span>
                     </td>
                     <td>
-                      <span style={{ fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 5, background: si.c + '22', color: si.c }}>
+                      <span style={{ fontSize: 12, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: si.c + '22', color: si.c }}>
                         {si.label}
                       </span>
                     </td>

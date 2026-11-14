@@ -178,7 +178,7 @@ export default function RegistroIvaPage() {
       <div style={{
         background: '#eff6ff',
         border: '1px solid #bfdbfe',
-        borderRadius: 8,
+        borderRadius: 12,
         padding: '12px 18px',
         marginBottom: 20,
         fontSize: 13,
@@ -291,7 +291,7 @@ export default function RegistroIvaPage() {
                   </td>
                   <td style={{ fontSize: 13 }}>
                     <div>{r.natura}</div>
-                    {r.note && <div style={{ fontSize: 11, color: 'var(--grigio-4)' }}>{r.note}</div>}
+                    {r.note && <div style={{ fontSize: 12, color: 'var(--grigio-4)' }}>{r.note}</div>}
                   </td>
                   <td style={{ fontSize: 12, color: 'var(--grigio-4)' }}>{r.controparte ?? '—'}</td>
                   <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontSize: 12 }}>

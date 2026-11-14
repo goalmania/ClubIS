@@ -14,9 +14,9 @@ export function PageHeader({
       <div>
         <h1 style={{
           fontFamily: 'var(--font-display)',
-          fontWeight: 900,
+          fontWeight: 700,
           fontSize: 26,
-          textTransform: 'uppercase',
+          textTransform: 'none',
           letterSpacing: '-0.01em',
           color: 'var(--white)',
         }}>{title}</h1>
@@ -65,8 +65,8 @@ export function FormSection({ title, children }: { title: string; children: Reac
     <div style={{ marginBottom: 32 }}>
       <div style={{
         fontFamily: 'var(--font-mono)',
-        fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase',
-        letterSpacing: '0.2em', color: 'var(--accent)',
+        fontSize: '0.8rem', fontWeight: 700, textTransform: 'none',
+        letterSpacing: '0', color: 'var(--accent)',
         paddingBottom: 10, borderBottom: '1px solid var(--border-solid)', marginBottom: 20,
       }}>
         {title}
@@ -120,7 +120,7 @@ export function RatingInput({
             type="button"
             onClick={() => onChange(n)}
             style={{
-              width: 34, height: 34, borderRadius: 8, border: 'none',
+              width: 34, height: 34, borderRadius: 12, border: 'none',
               cursor: 'pointer',
               fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 700,
               background: value !== null && n <= value
@@ -152,10 +152,10 @@ export function Toast({ msg, tipo = 'success', onClose }: {
     <div style={{
       position: 'fixed', bottom: 24, right: 24, zIndex: 1000,
       background: bg, color,
-      borderRadius: 10,
+      borderRadius: 14,
       padding: '12px 18px',
       fontFamily: 'var(--font-display)', fontSize: '0.8rem', fontWeight: 700,
-      letterSpacing: '0.08em', textTransform: 'uppercase',
+      letterSpacing: '0', textTransform: 'none',
       display: 'flex', alignItems: 'center', gap: 12,
       boxShadow: 'var(--shadow)',
       animation: 'slideIn 0.2s ease',
@@ -178,7 +178,7 @@ export function EmptyState({ icon, title, subtitle, action }: {
       <div style={{ fontSize: 32, marginBottom: 12 }}>{icon}</div>
       <div style={{
         fontFamily: 'var(--font-display)', fontWeight: 700,
-        fontSize: 15, textTransform: 'uppercase', letterSpacing: '0.08em',
+        fontSize: 15, textTransform: 'none', letterSpacing: '0',
         color: 'var(--white)', marginBottom: 6,
       }}>{title}</div>
       {subtitle && <div style={{ fontSize: 13, color: 'var(--gray)', marginBottom: 16 }}>{subtitle}</div>}
@@ -198,7 +198,7 @@ export function BackButton({ label = 'Indietro' }: { label?: string }) {
         background: 'none', border: 'none', cursor: 'pointer',
         color: 'var(--gray)', fontSize: 13,
         fontFamily: 'var(--font-display)', fontWeight: 600,
-        letterSpacing: '0.08em', textTransform: 'uppercase',
+        letterSpacing: '0', textTransform: 'none',
         display: 'flex', alignItems: 'center', gap: 6, marginBottom: 20, padding: 0,
         transition: 'color 0.2s',
       }}
@@ -220,7 +220,7 @@ export function TableHeader({ title, count, href, actions }: {
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <span style={{
           fontFamily: 'var(--font-display)', fontWeight: 700,
-          fontSize: 14, textTransform: 'uppercase', letterSpacing: '0.08em',
+          fontSize: 14, textTransform: 'none', letterSpacing: '0',
           color: 'var(--white)',
         }}>{title}</span>
         {count != null && count > 0 && (
@@ -232,7 +232,7 @@ export function TableHeader({ title, count, href, actions }: {
         {href && (
           <a href={href} style={{
             fontFamily: 'var(--font-display)', fontSize: 12, fontWeight: 700,
-            letterSpacing: '0.08em', textTransform: 'uppercase',
+            letterSpacing: '0', textTransform: 'none',
             color: 'var(--accent)', textDecoration: 'none',
           }}>
             Vedi tutti →
@@ -274,7 +274,7 @@ export function TabBar({ tabs, active, onChange }: {
           style={{
             padding: '10px 16px',
             fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 600,
-            letterSpacing: '0.08em', textTransform: 'uppercase',
+            letterSpacing: '0', textTransform: 'none',
             background: 'none', border: 'none', cursor: 'pointer',
             color: active === t.key ? 'var(--accent)' : 'var(--gray)',
             borderBottom: active === t.key ? '2px solid var(--accent)' : '2px solid transparent',
@@ -284,7 +284,7 @@ export function TabBar({ tabs, active, onChange }: {
           {t.label}
           {t.count != null && (
             <span style={{
-              marginLeft: 6, fontSize: 11, padding: '1px 6px',
+              marginLeft: 6, fontSize: 12, padding: '1px 6px',
               borderRadius: 999, background: 'var(--gray-mid)', color: 'var(--gray)',
               fontFamily: 'var(--font-mono)',
             }}>
@@ -304,7 +304,7 @@ export function ProgressBar({ value, max = 100, color = 'var(--accent)', label }
   const pct = Math.min(100, (value / max) * 100)
   return (
     <div>
-      {label && <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)', marginBottom: 4, letterSpacing: '0.1em', textTransform: 'uppercase' }}>{label}</div>}
+      {label && <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', marginBottom: 4, letterSpacing: '0', textTransform: 'none' }}>{label}</div>}
       <div className="progress">
         <div className="progress-fill" style={{ width: `${pct}%`, background: color }} />
       </div>
@@ -331,7 +331,7 @@ export function Modal({ open, onClose, title, children, width = 520 }: {
         onClick={e => e.stopPropagation()}
         style={{
           width, maxWidth: '90vw', maxHeight: '85vh',
-          background: '#111', borderRadius: 16,
+          background: 'var(--surface-2)', borderRadius: 16,
           border: '1px solid var(--border-solid)',
           boxShadow: 'var(--shadow)',
           overflow: 'auto',
@@ -344,14 +344,14 @@ export function Modal({ open, onClose, title, children, width = 520 }: {
         }}>
           <h3 style={{
             fontFamily: 'var(--font-display)', fontWeight: 700,
-            fontSize: 16, textTransform: 'uppercase', letterSpacing: '0.08em',
+            fontSize: 16, textTransform: 'none', letterSpacing: '0',
             color: 'var(--white)',
           }}>{title}</h3>
           <button
             onClick={onClose}
             style={{
               background: 'none', border: '1px solid var(--border-solid)', cursor: 'pointer',
-              color: 'var(--gray)', fontSize: 16, padding: '2px 8px', borderRadius: 8,
+              color: 'var(--gray)', fontSize: 16, padding: '2px 8px', borderRadius: 12,
               transition: 'all 0.2s',
             }}
           >×</button>
@@ -383,7 +383,7 @@ export function Drawer({ open, onClose, title, children, width = 720 }: {
         onClick={e => e.stopPropagation()}
         style={{
           width, maxWidth: '95vw', height: '100%',
-          background: '#111', borderLeft: '1px solid var(--border-solid)',
+          background: 'var(--surface-2)', borderLeft: '1px solid var(--border-solid)',
           boxShadow: 'var(--shadow)',
           overflow: 'auto',
           animation: 'slideIn 0.2s ease',
@@ -395,14 +395,14 @@ export function Drawer({ open, onClose, title, children, width = 720 }: {
         }}>
           <h3 style={{
             fontFamily: 'var(--font-display)', fontWeight: 700,
-            fontSize: 16, textTransform: 'uppercase', letterSpacing: '0.08em',
+            fontSize: 16, textTransform: 'none', letterSpacing: '0',
             color: 'var(--white)',
           }}>{title}</h3>
           <button
             onClick={onClose}
             style={{
               background: 'none', border: '1px solid var(--border-solid)', cursor: 'pointer',
-              color: 'var(--gray)', fontSize: 16, padding: '2px 8px', borderRadius: 8,
+              color: 'var(--gray)', fontSize: 16, padding: '2px 8px', borderRadius: 12,
               transition: 'all 0.2s',
             }}
           >×</button>

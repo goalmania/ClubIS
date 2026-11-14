@@ -477,7 +477,7 @@ export default function SettoreGiovanilePage() {
                           <td>
                             <span style={{
                               display: 'inline-flex', alignItems: 'center', gap: 4,
-                              padding: '3px 8px', borderRadius: 4, fontSize: 11, fontWeight: 600,
+                              padding: '3px 8px', borderRadius: 10, fontSize: 12, fontWeight: 600,
                               background: `${coloreQuota(q.stato)}22`,
                               color: coloreQuota(q.stato),
                             }}>
@@ -492,7 +492,7 @@ export default function SettoreGiovanilePage() {
                               {q.stato !== 'pagata' && q.stato !== 'esonerata' && (
                                 <button
                                   className="btn btn-primary btn-sm"
-                                  style={{ fontSize: 11 }}
+                                  style={{ fontSize: 12 }}
                                   onClick={() => marcaPagata(q)}
                                 >
                                   ✓ Pagata
@@ -500,7 +500,7 @@ export default function SettoreGiovanilePage() {
                               )}
                               <button
                                 className="btn btn-secondary btn-sm"
-                                style={{ fontSize: 11 }}
+                                style={{ fontSize: 12 }}
                                 onClick={() => { setEditingQuota(q); setModalQuota({ ...q }) }}
                               >
                                 Modifica
@@ -575,7 +575,7 @@ export default function SettoreGiovanilePage() {
                       type="color"
                       value={modalSquadra.colore_badge ?? '#c8f000'}
                       onChange={e => setModalSquadra(p => ({ ...p!, colore_badge: e.target.value }))}
-                      style={{ width: 44, height: 36, padding: 2, borderRadius: 6, border: '1px solid var(--border)', cursor: 'pointer' }}
+                      style={{ width: 44, height: 36, padding: 2, borderRadius: 10, border: '1px solid var(--border)', cursor: 'pointer' }}
                     />
                     <input
                       className="input"
@@ -754,7 +754,7 @@ export default function SettoreGiovanilePage() {
           position: 'fixed', bottom: 24, right: 24,
           background: toast.tipo === 'ok' ? 'var(--accent-green)' : 'var(--accent-red)',
           color: toast.tipo === 'ok' ? '#000' : '#fff',
-          padding: '12px 20px', borderRadius: 8, fontSize: 13, fontWeight: 600,
+          padding: '12px 20px', borderRadius: 12, fontSize: 13, fontWeight: 600,
           zIndex: 9999, boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
         }}>
           {toast.msg}

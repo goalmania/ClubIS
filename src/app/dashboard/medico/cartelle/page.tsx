@@ -58,7 +58,7 @@ export default function MedicoCartellePage() {
     <div data-onboarding="section-cartelle" style={{ animation: 'fadeIn 0.3s ease' }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>
             Cartelle cliniche
           </h1>
           <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>
@@ -107,7 +107,7 @@ export default function MedicoCartellePage() {
                     <td style={td}>
                       <Link href={`/dashboard/medico/cartelle/${g.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                         <span style={{ fontWeight: 600, fontSize: 13 }}>{g.cognome} {g.nome}</span>
-                        <div style={{ fontSize: 11, color: 'var(--grigio-4)', textTransform: 'capitalize', marginTop: 2 }}>
+                        <div style={{ fontSize: 12, color: 'var(--grigio-4)', textTransform: 'capitalize', marginTop: 2 }}>
                           {g.ruolo_principale?.replace(/_/g, ' ') ?? '—'}
                         </div>
                       </Link>
@@ -144,7 +144,7 @@ export default function MedicoCartellePage() {
                       <Link
                         href={`/dashboard/medico/cartelle/${g.id}`}
                         className="btn btn-secondary btn-sm"
-                        style={{ fontSize: 11 }}
+                        style={{ fontSize: 12 }}
                       >
                         Apri cartella
                       </Link>
@@ -162,9 +162,9 @@ export default function MedicoCartellePage() {
 }
 
 const th: React.CSSProperties = {
-  padding: '10px 14px', textAlign: 'left', fontSize: 10,
+  padding: '10px 14px', textAlign: 'left', fontSize: 12,
   fontFamily: 'var(--font-mono)', fontWeight: 600,
-  color: 'var(--grigio-3)', textTransform: 'uppercase', letterSpacing: '0.08em',
+  color: 'var(--grigio-3)', textTransform: 'none', letterSpacing: '0',
 }
 const td: React.CSSProperties = {
   padding: '12px 14px', fontSize: 13, color: 'var(--grigio-2)', verticalAlign: 'middle',

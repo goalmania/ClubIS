@@ -198,7 +198,7 @@ export default function MappaItaliaScout({ giocatori }: Props) {
 
         {/* Legenda */}
         <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 600, marginBottom: 2 }}>LEGENDA VOTO MEDIO</div>
+          <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600, marginBottom: 2 }}>LEGENDA VOTO MEDIO</div>
           {[
             { label: '≥ 8 — Ottimo',  color: COLORI.ottimo },
             { label: '7 — Buono',     color: COLORI.buono },
@@ -207,7 +207,7 @@ export default function MappaItaliaScout({ giocatori }: Props) {
           ].map(item => (
             <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <div style={{ width: 8, height: 8, borderRadius: '50%', background: item.color, flexShrink: 0 }} />
-              <span style={{ fontSize: 10, color: 'var(--text-secondary)' }}>{item.label}</span>
+              <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{item.label}</span>
             </div>
           ))}
         </div>
@@ -227,7 +227,7 @@ export default function MappaItaliaScout({ giocatori }: Props) {
                 <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>
                   📍 {activeData.regione}
                 </div>
-                <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
+                <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>
                   {activeData.giocatori.length} giocatore{activeData.giocatori.length > 1 ? 'i' : ''} ·
                   media <strong style={{ color: getColore(activeData.avgVoto) }}>
                     {activeData.avgVoto.toFixed(1)}
@@ -254,7 +254,7 @@ export default function MappaItaliaScout({ giocatori }: Props) {
                   }}
                 >
                   <div style={{
-                    width: 34, height: 34, borderRadius: 8, flexShrink: 0,
+                    width: 34, height: 34, borderRadius: 12, flexShrink: 0,
                     background: getColore(g.voto_globale ?? 0),
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontWeight: 700, fontSize: 14, color: 'white',
@@ -266,20 +266,20 @@ export default function MappaItaliaScout({ giocatori }: Props) {
                     <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {g.nome_giocatore_ext ?? '—'}
                     </div>
-                    <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 1 }}>
+                    <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 1 }}>
                       {g.club_attuale_ext ?? 'Club n.d.'}
                     </div>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 3, flexShrink: 0 }}>
                     <span style={{
-                      fontSize: 10, padding: '2px 6px', borderRadius: 4,
+                      fontSize: 12, padding: '2px 6px', borderRadius: 10,
                       background: g.potenziale === 'eccezionale' ? '#7c3aed22' : g.potenziale === 'alto' ? '#10b98122' : '#3b82f622',
                       color: g.potenziale === 'eccezionale' ? '#7c3aed' : g.potenziale === 'alto' ? '#10b981' : '#3b82f6',
                       fontWeight: 500,
                     }}>
                       {g.potenziale}
                     </span>
-                    <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>
+                    <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                       {new Date(g.data_osservazione).toLocaleDateString('it-IT')}
                     </span>
                   </div>
@@ -292,7 +292,7 @@ export default function MappaItaliaScout({ giocatori }: Props) {
             {/* Riepilogo per regione */}
             {regioniData.length > 0 ? (
               <>
-                <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                <div style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 600, textTransform: 'none', letterSpacing: '0' }}>
                   Clicca una regione sulla mappa per i dettagli
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -302,7 +302,7 @@ export default function MappaItaliaScout({ giocatori }: Props) {
                       onClick={() => setSelected(r.regione)}
                       style={{
                         display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer',
-                        padding: '8px 12px', borderRadius: 8,
+                        padding: '8px 12px', borderRadius: 12,
                         border: '1px solid var(--border)',
                         background: 'var(--bg-card)',
                         transition: 'border-color 0.15s',
@@ -311,7 +311,7 @@ export default function MappaItaliaScout({ giocatori }: Props) {
                       onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--border)')}
                     >
                       <div style={{
-                        width: 28, height: 28, borderRadius: 6, flexShrink: 0,
+                        width: 28, height: 28, borderRadius: 10, flexShrink: 0,
                         background: getColore(r.avgVoto),
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         fontWeight: 700, fontSize: 13, color: 'white',
@@ -322,7 +322,7 @@ export default function MappaItaliaScout({ giocatori }: Props) {
                         <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)' }}>
                           📍 {r.regione}
                         </div>
-                        <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                        <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                           Media {r.avgVoto.toFixed(1)} · {r.giocatori.filter(g => (g.voto_globale ?? 0) >= 8).length} top
                         </div>
                       </div>
@@ -346,7 +346,7 @@ export default function MappaItaliaScout({ giocatori }: Props) {
                 {esteri.map(g => (
                   <div key={g.id} style={{ display: 'flex', gap: 10, alignItems: 'center', padding: '6px 0', borderBottom: '1px solid var(--border-light)' }}>
                     <div style={{
-                      width: 28, height: 28, borderRadius: 6, flexShrink: 0,
+                      width: 28, height: 28, borderRadius: 10, flexShrink: 0,
                       background: getColore(g.voto_globale ?? 0),
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       fontWeight: 700, fontSize: 12, color: 'white',
@@ -355,7 +355,7 @@ export default function MappaItaliaScout({ giocatori }: Props) {
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-primary)' }}>{g.nome_giocatore_ext}</div>
-                      <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>{g.nazione_provenienza}</div>
+                      <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{g.nazione_provenienza}</div>
                     </div>
                   </div>
                 ))}

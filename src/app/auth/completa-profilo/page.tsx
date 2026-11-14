@@ -96,13 +96,13 @@ export default function CompletaProfiloPage() {
 
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 36 }}>
-          <div style={{ width: 48, height: 48, borderRadius: 2, background: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px' }}>
+          <div style={{ width: 48, height: 48, borderRadius: 8, background: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 14px' }}>
             <svg width="26" height="26" viewBox="0 0 24 24" fill="#0a0a0a"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           </div>
-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 26, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--white)' }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 26, textTransform: 'none', letterSpacing: '0', color: 'var(--white)' }}>
             C<span style={{ color: 'var(--accent)' }}>IS</span>
           </div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', letterSpacing: '0.2em', color: 'var(--gray)', textTransform: 'uppercase', marginTop: 6 }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', letterSpacing: '0', color: 'var(--gray)', textTransform: 'none', marginTop: 6 }}>
             Completa il tuo profilo
           </div>
         </div>
@@ -115,27 +115,27 @@ export default function CompletaProfiloPage() {
             const done   = step > n
             return (
               <div key={s} style={{ display: 'flex', alignItems: 'center' }}>
-                <div style={{ width: 26, height: 26, borderRadius: '50%', background: done || active ? 'var(--accent)' : '#222', border: `2px solid ${done || active ? 'var(--accent)' : '#333'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: done || active ? '#000' : '#555', fontFamily: 'monospace' }}>
+                <div style={{ width: 26, height: 26, borderRadius: '50%', background: done || active ? 'var(--accent)' : '#222', border: `2px solid ${done || active ? 'var(--accent)' : '#333'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: done || active ? '#000' : '#555', fontFamily: 'monospace' }}>
                   {done ? '✓' : n}
                 </div>
-                <span style={{ fontSize: 11, marginLeft: 6, marginRight: 14, color: active ? 'var(--accent)' : done ? 'var(--gray)' : '#444', fontWeight: active ? 700 : 400, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{s}</span>
+                <span style={{ fontSize: 12, marginLeft: 6, marginRight: 14, color: active ? 'var(--accent)' : done ? 'var(--gray)' : '#444', fontWeight: active ? 700 : 400, textTransform: 'none', letterSpacing: '0' }}>{s}</span>
                 {i < 1 && <div style={{ width: 24, height: 1, background: '#333', marginRight: 14 }} />}
               </div>
             )
           })}
         </div>
 
-        <div className="card" style={{ padding: '28px 32px', background: '#111', border: '1px solid var(--border-solid)' }}>
+        <div className="card" style={{ padding: '28px 32px', background: 'var(--surface-2)', border: '1px solid var(--border-solid)' }}>
 
           {/* Step 1 — Dati personali */}
           {step === 1 && (
             <>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', fontSize: 16, letterSpacing: '0.08em', color: 'var(--white)', marginBottom: 20 }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 16, letterSpacing: '0', color: 'var(--white)', marginBottom: 20 }}>
                 I tuoi dati
               </div>
 
               {emailOAuth && (
-                <div style={{ background: 'rgba(200,240,0,0.06)', border: '1px solid rgba(200,240,0,0.2)', borderRadius: 2, padding: '8px 12px', marginBottom: 20, fontSize: 13, color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>
+                <div style={{ background: 'rgba(200,240,0,0.06)', border: '1px solid rgba(200,240,0,0.2)', borderRadius: 8, padding: '8px 12px', marginBottom: 20, fontSize: 13, color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>
                   Account: {emailOAuth}
                 </div>
               )}
@@ -150,7 +150,7 @@ export default function CompletaProfiloPage() {
                 <input className="input" type="tel" value={telefono} onChange={e => setTelefono(e.target.value)} placeholder="+39 333 1234567" />
               </F>
               <F label="Codice club" hint="Fornito dalla segreteria del tuo club (es. CLUB-ABC123). Puoi aggiungerlo anche in seguito.">
-                <input className="input" value={codiceClub} onChange={e => setCodiceClub(e.target.value.toUpperCase())} placeholder="CLUB-ABC123" style={{ textTransform: 'uppercase' }} />
+                <input className="input" value={codiceClub} onChange={e => setCodiceClub(e.target.value.toUpperCase())} placeholder="CLUB-ABC123" style={{ textTransform: 'none' }} />
               </F>
 
               {errore && <p style={{ color: 'var(--rosso)', fontSize: 13, marginBottom: 12 }}>{errore}</p>}
@@ -169,7 +169,7 @@ export default function CompletaProfiloPage() {
           {/* Step 2 — Consensi */}
           {step === 2 && (
             <>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', fontSize: 16, letterSpacing: '0.08em', color: 'var(--white)', marginBottom: 6 }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 16, letterSpacing: '0', color: 'var(--white)', marginBottom: 6 }}>
                 Consensi e dichiarazioni
               </div>
               <div style={{ fontSize: 12, color: 'var(--gray)', marginBottom: 22 }}>
@@ -177,7 +177,7 @@ export default function CompletaProfiloPage() {
               </div>
 
               {consensi.map(c => (
-                <div key={c.key} style={{ marginBottom: 12, padding: '12px 14px', background: 'var(--gray-light)', borderRadius: 2, border: `1px solid ${c.state ? 'rgba(200,240,0,0.3)' : 'var(--border-solid)'}`, transition: 'border-color 0.15s' }}>
+                <div key={c.key} style={{ marginBottom: 12, padding: '12px 14px', background: 'var(--gray-light)', borderRadius: 8, border: `1px solid ${c.state ? 'rgba(200,240,0,0.3)' : 'var(--border-solid)'}`, transition: 'border-color 0.15s' }}>
                   <label style={{ display: 'flex', gap: 12, cursor: 'pointer', alignItems: 'flex-start' }}>
                     <input type="checkbox" checked={c.state} onChange={e => c.set(e.target.checked)} style={{ accentColor: 'var(--accent)', flexShrink: 0, marginTop: 3, width: 15, height: 15 }} />
                     <div>
@@ -186,7 +186,7 @@ export default function CompletaProfiloPage() {
                         {c.obbligatorio && <span style={{ color: 'var(--rosso)', marginLeft: 4 }}>*</span>}
                       </div>
                       {c.link && (
-                        <a href={c.link} target="_blank" rel="noreferrer" style={{ fontSize: 11, color: 'var(--accent)', textDecoration: 'none', fontFamily: 'var(--font-mono)', letterSpacing: '0.1em' }}>
+                        <a href={c.link} target="_blank" rel="noreferrer" style={{ fontSize: 12, color: 'var(--accent)', textDecoration: 'none', fontFamily: 'var(--font-mono)', letterSpacing: '0' }}>
                           LEGGI →
                         </a>
                       )}
@@ -221,7 +221,7 @@ function F({ label, hint, children }: { label: string; hint?: string; children: 
     <div style={{ marginBottom: 16 }}>
       <label className="label">{label}</label>
       {children}
-      {hint && <div style={{ fontSize: 11, color: 'var(--gray)', marginTop: 5, fontFamily: 'var(--font-mono)' }}>{hint}</div>}
+      {hint && <div style={{ fontSize: 12, color: 'var(--gray)', marginTop: 5, fontFamily: 'var(--font-mono)' }}>{hint}</div>}
     </div>
   )
 }

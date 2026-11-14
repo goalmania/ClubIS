@@ -217,11 +217,11 @@ function ComunicatiLegaProContent() {
       {/* Badge lega */}
       <div style={{ marginBottom: 20 }}>
         <span style={{
-          fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700,
-          letterSpacing: '0.1em', textTransform: 'uppercase',
+          fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: 700,
+          letterSpacing: '0', textTransform: 'none',
           background: 'rgba(0,112,243,0.12)', color: '#60a5fa',
           border: '1px solid rgba(0,112,243,0.3)',
-          borderRadius: 4, padding: '4px 10px',
+          borderRadius: 10, padding: '4px 10px',
         }}>
           LEGA PRO — SERIE C
         </span>
@@ -280,9 +280,9 @@ function ComunicatiLegaProContent() {
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
               {comunicati.map(c => (
                 <span key={c.id} style={{
-                  fontSize: 11, background: 'rgba(0,112,243,0.08)',
+                  fontSize: 12, background: 'rgba(0,112,243,0.08)',
                   border: '1px solid rgba(0,112,243,0.2)',
-                  borderRadius: 4, padding: '3px 10px', color: '#60a5fa',
+                  borderRadius: 10, padding: '3px 10px', color: '#60a5fa',
                 }}>
                   Lega Pro {c.numero_comunicato ? `n. ${c.numero_comunicato}` : ''} — {fmt(c.data_comunicato)}
                   <span style={{ marginLeft: 6, color: 'var(--accent)' }}>
@@ -317,7 +317,7 @@ function ComunicatiLegaProContent() {
                 <div key={sq.id} style={{
                   border: `1px solid ${autoMatch ? 'rgba(200,240,0,0.2)' : 'rgba(245,158,11,0.3)'}`,
                   borderLeft: `3px solid ${autoMatch ? 'var(--accent)' : 'var(--ambra)'}`,
-                  borderRadius: 6,
+                  borderRadius: 10,
                   padding: '14px 16px',
                   display: 'grid',
                   gridTemplateColumns: '130px 1fr 220px auto',
@@ -327,12 +327,12 @@ function ComunicatiLegaProContent() {
                   {/* Tipo + durata */}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                     <span className={`badge ${cfg.cls}`} style={{ alignSelf: 'flex-start' }}>{cfg.label}</span>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)' }}>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)' }}>
                       {sq.durata}
                     </span>
                     <span style={{
-                      fontFamily: 'var(--font-mono)', fontSize: 9, fontWeight: 700,
-                      color: '#60a5fa', letterSpacing: '0.08em',
+                      fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700,
+                      color: '#60a5fa', letterSpacing: '0',
                     }}>
                       LEGA PRO
                     </span>
@@ -343,7 +343,7 @@ function ComunicatiLegaProContent() {
                     <div style={{ fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 700 }}>
                       {sq.cognome_raw} {sq.nome_raw}
                     </div>
-                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', marginTop: 2 }}>
+                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', marginTop: 2 }}>
                       {sq.societa_raw}
                       {autoMatch && sq.match_score > 0 && (
                         <span style={{ marginLeft: 8, color: 'var(--accent)' }}>
@@ -351,7 +351,7 @@ function ComunicatiLegaProContent() {
                         </span>
                       )}
                     </div>
-                    <div style={{ fontSize: 10, color: 'var(--gray)', marginTop: 4 }}>
+                    <div style={{ fontSize: 12, color: 'var(--gray)', marginTop: 4 }}>
                       C.U. Lega Pro{c.numero_comunicato ? ` n. ${c.numero_comunicato}` : ''} — {fmt(c.data_comunicato)}
                     </div>
                   </div>
@@ -385,7 +385,7 @@ function ComunicatiLegaProContent() {
                           ))}
                         </select>
                         <div>
-                          <label className="label" style={{ fontSize: 10 }}>Decorrenza</label>
+                          <label className="label" style={{ fontSize: 12 }}>Decorrenza</label>
                           <input
                             className="input"
                             type="date"
@@ -420,12 +420,12 @@ function ComunicatiLegaProContent() {
           <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14 }}>
             Sanzioni confermate ({confermate.length})
           </div>
-          <div style={{ border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden' }}>
+          <div style={{ border: '1px solid var(--border)', borderRadius: 12, overflow: 'hidden' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
                 <tr style={{ background: 'var(--gray-light)', borderBottom: '1px solid var(--border)' }}>
                   {['Giocatore / Società', 'Tipo', 'Durata', 'Comunicato'].map(h => (
-                    <th key={h} style={{ padding: '8px 14px', textAlign: 'left', fontWeight: 600, fontSize: 11, color: 'var(--gray)' }}>{h}</th>
+                    <th key={h} style={{ padding: '8px 14px', textAlign: 'left', fontWeight: 600, fontSize: 12, color: 'var(--gray)' }}>{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -447,7 +447,7 @@ function ComunicatiLegaProContent() {
                         <span className={`badge ${cfg.cls}`}>{cfg.label}</span>
                       </td>
                       <td style={{ padding: '10px 14px', color: 'var(--gray)' }}>{sq.durata}</td>
-                      <td style={{ padding: '10px 14px', fontSize: 11, color: 'var(--gray)' }}>
+                      <td style={{ padding: '10px 14px', fontSize: 12, color: 'var(--gray)' }}>
                         Lega Pro{sq._comunicato.numero_comunicato ? ` n. ${sq._comunicato.numero_comunicato}` : ''}<br />
                         {fmt(sq._comunicato.data_comunicato)}
                       </td>

@@ -213,14 +213,14 @@ export default function ImpiantiPage({ defaultTab = 'dashboard' }: Props) {
               { label: 'MANUTENZIONI LOG',   value: manutenzioni.length,  color: 'var(--gray)' },
             ].map(k => (
               <div key={k.label} style={{ background: 'var(--gray-light)', padding: '14px 18px' }}>
-                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 28, color: k.color, lineHeight: 1 }}>{k.value}</div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: '#444', marginTop: 4 }}>{k.label}</div>
+                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 28, color: k.color, lineHeight: 1 }}>{k.value}</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', letterSpacing: '0', textTransform: 'none', color: 'var(--text-muted)', marginTop: 4 }}>{k.label}</div>
               </div>
             ))}
           </div>
 
           <div style={{ marginBottom: 20 }}>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#444', marginBottom: 10 }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', letterSpacing: '0', textTransform: 'none', color: 'var(--text-muted)', marginBottom: 10 }}>
               STATO AREE
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10 }}>
@@ -242,16 +242,16 @@ export default function ImpiantiPage({ defaultTab = 'dashboard' }: Props) {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
                       <div>
                         <span style={{ fontSize: 20 }}>{meta.icona}</span>
-                        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', fontSize: 12, marginTop: 4 }}>
+                        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 12, marginTop: 4 }}>
                           {meta.label}
                         </div>
                       </div>
-                      <div style={{ fontSize: 11, color: col.c, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700 }}>
+                      <div style={{ fontSize: 12, color: col.c, fontFamily: 'var(--font-mono)', textTransform: 'none', letterSpacing: '0', fontWeight: 700 }}>
                         {col.label}
                       </div>
                     </div>
                     {ticketArea.length > 0 && (
-                      <div style={{ fontSize: 10, color: 'var(--gray)', fontFamily: 'var(--font-mono)' }}>
+                      <div style={{ fontSize: 12, color: 'var(--gray)', fontFamily: 'var(--font-mono)' }}>
                         {ticketArea.length} ticket {ticketArea.length === 1 ? 'aperto' : 'aperti'}
                       </div>
                     )}
@@ -263,7 +263,7 @@ export default function ImpiantiPage({ defaultTab = 'dashboard' }: Props) {
 
           {ticketAperti.filter(t => t.urgenza === 'alta' || t.urgenza === 'bloccante').length > 0 && (
             <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-              <div style={{ padding: '12px 18px', borderBottom: '1px solid var(--border)', fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', fontSize: 12, color: 'var(--accent-red)' }}>
+              <div style={{ padding: '12px 18px', borderBottom: '1px solid var(--border)', fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 12, color: 'var(--accent-red)' }}>
                 🔴 Ticket urgenti aperti
               </div>
               {ticketAperti
@@ -271,10 +271,10 @@ export default function ImpiantiPage({ defaultTab = 'dashboard' }: Props) {
                 .map(t => (
                   <div key={t.id} style={{ padding: '12px 18px', borderBottom: '1px solid rgba(255,255,255,0.04)', cursor: 'pointer' }}
                     onClick={() => setTicketDettaglio(t)}>
-                    <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', fontSize: 12, marginBottom: 4 }}>
+                    <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 12, marginBottom: 4 }}>
                       {AREE_IMPIANTO[t.area as AreaImpianto]?.icona} {t.descrizione_problema.slice(0, 80)}
                     </div>
-                    <div style={{ fontSize: 10, color: 'var(--accent-red)', fontFamily: 'var(--font-mono)', textTransform: 'uppercase' }}>
+                    <div style={{ fontSize: 12, color: 'var(--accent-red)', fontFamily: 'var(--font-mono)', textTransform: 'none' }}>
                       {URGENZA_TICKET[t.urgenza as UrgenzaTicket]?.label}
                       {' · '}{AREE_IMPIANTO[t.area as AreaImpianto]?.label}
                       {' · '}{formatData(t.data_apertura)}
@@ -292,7 +292,7 @@ export default function ImpiantiPage({ defaultTab = 'dashboard' }: Props) {
           {templates.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '40px' }}>
               <div style={{ fontSize: 36, marginBottom: 12 }}>✅</div>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, textTransform: 'uppercase', fontSize: 16, marginBottom: 8 }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 16, marginBottom: 8 }}>
                 Nessuna checklist configurata
               </div>
               <p style={{ fontSize: 13, color: 'var(--gray)', marginBottom: 20 }}>
@@ -309,7 +309,7 @@ export default function ImpiantiPage({ defaultTab = 'dashboard' }: Props) {
                 if (tempArea.length === 0) return null
                 return (
                   <div key={area}>
-                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#444', padding: '8px 0', marginTop: 8 }}>
+                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', letterSpacing: '0', textTransform: 'none', color: 'var(--text-muted)', padding: '8px 0', marginTop: 8 }}>
                       {meta.icona} {meta.label}
                     </div>
                     {tempArea.map(t => {
@@ -318,22 +318,22 @@ export default function ImpiantiPage({ defaultTab = 'dashboard' }: Props) {
                         <div key={t.id} className="card" style={{ padding: '14px 18px', marginBottom: 6 }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <div>
-                              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', fontSize: 12, marginBottom: 4 }}>
+                              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 12, marginBottom: 4 }}>
                                 {t.nome}
                               </div>
-                              <div style={{ fontSize: 11, color: 'var(--gray)', fontFamily: 'var(--font-mono)' }}>
+                              <div style={{ fontSize: 12, color: 'var(--gray)', fontFamily: 'var(--font-mono)' }}>
                                 {FREQUENZA_CHECKLIST[t.frequenza as keyof typeof FREQUENZA_CHECKLIST]?.label}
                                 {' · '}{(t.voci as any[]).length} voci
                                 {ultima && ` · Ultima: ${formatData(ultima.data_esecuzione)} (${ultima.completata_al}%)`}
                               </div>
                             </div>
                             {ultima && (
-                              <div style={{ width: 60, height: 6, background: 'var(--gray-mid)', borderRadius: 3, overflow: 'hidden' }}>
+                              <div style={{ width: 60, height: 6, background: 'var(--gray-mid)', borderRadius: 8, overflow: 'hidden' }}>
                                 <div style={{
                                   height: '100%',
                                   width: `${ultima.completata_al}%`,
                                   background: ultima.completata_al >= 90 ? 'var(--accent)' : ultima.completata_al >= 60 ? 'var(--accent-orange)' : 'var(--accent-red)',
-                                  borderRadius: 3,
+                                  borderRadius: 8,
                                 }} />
                               </div>
                             )}
@@ -380,23 +380,23 @@ export default function ImpiantiPage({ defaultTab = 'dashboard' }: Props) {
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
                         <div style={{ flex: 1 }}>
                           <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 4, flexWrap: 'wrap' }}>
-                            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', fontSize: 12 }}>
+                            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 12 }}>
                               {areaMeta?.icona} {t.descrizione_problema.slice(0, 80)}{t.descrizione_problema.length > 80 && '...'}
                             </span>
-                            <span style={{ fontSize: 9, padding: '2px 6px', background: `${urgMeta?.colore}22`, border: `1px solid ${urgMeta?.colore}55`, color: urgMeta?.colore, fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                            <span style={{ fontSize: 11, padding: '2px 6px', background: `${urgMeta?.colore}22`, border: `1px solid ${urgMeta?.colore}55`, color: urgMeta?.colore, fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none' }}>
                               {urgMeta?.label}
                             </span>
-                            <span style={{ fontSize: 9, padding: '2px 6px', background: `${statMeta?.colore}22`, border: `1px solid ${statMeta?.colore}55`, color: statMeta?.colore, fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                            <span style={{ fontSize: 11, padding: '2px 6px', background: `${statMeta?.colore}22`, border: `1px solid ${statMeta?.colore}55`, color: statMeta?.colore, fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none' }}>
                               {statMeta?.label}
                             </span>
                           </div>
-                          <div style={{ fontSize: 10, color: 'var(--gray)', fontFamily: 'var(--font-mono)' }}>
+                          <div style={{ fontSize: 12, color: 'var(--gray)', fontFamily: 'var(--font-mono)' }}>
                             {areaMeta?.label}
                             {' · '}{formatData(t.data_apertura)}
                             {seg && ` · Segnalato da: ${seg.nome} ${seg.cognome}`}
                           </div>
                         </div>
-                        <span style={{ fontSize: 11, color: 'var(--gray)', fontFamily: 'var(--font-mono)', flexShrink: 0 }}>→</span>
+                        <span style={{ fontSize: 12, color: 'var(--gray)', fontFamily: 'var(--font-mono)', flexShrink: 0 }}>→</span>
                       </div>
                     </div>
                   )
@@ -430,17 +430,17 @@ export default function ImpiantiPage({ defaultTab = 'dashboard' }: Props) {
                   <div key={m.id} style={{ padding: '14px 20px', borderBottom: i < manutenzioni.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
                       <div style={{ flex: 1 }}>
-                        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', fontSize: 12, marginBottom: 4 }}>
+                        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 12, marginBottom: 4 }}>
                           {areaMeta?.icona} {m.tipo_intervento}
                         </div>
-                        <div style={{ fontSize: 11, color: 'var(--gray)', fontFamily: 'var(--font-mono)', display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                        <div style={{ fontSize: 12, color: 'var(--gray)', fontFamily: 'var(--font-mono)', display: 'flex', gap: 12, flexWrap: 'wrap' }}>
                           <span>{areaMeta?.label}</span>
                           <span>📅 {formatData(m.data_intervento)}</span>
                           {m.fornitore && <span>🏢 {m.fornitore}</span>}
                           {m.costo_consuntivo && <span>💰 {formatEuro(Number(m.costo_consuntivo))}</span>}
                         </div>
                         {scadenzaProx && (
-                          <div style={{ fontSize: 10, marginTop: 5, color: scadenzaAlert ? 'var(--accent-orange)' : 'var(--gray)', fontFamily: 'var(--font-mono)' }}>
+                          <div style={{ fontSize: 12, marginTop: 5, color: scadenzaAlert ? 'var(--accent-orange)' : 'var(--gray)', fontFamily: 'var(--font-mono)' }}>
                             {scadenzaAlert ? '⚠️ ' : '📅 '}
                             Prossima scadenza: {formatData(scadenzaProx)}
                             {giorniAllaScad !== null && ` (${giorniAllaScad} giorni)`}
@@ -495,11 +495,11 @@ export default function ImpiantiPage({ defaultTab = 'dashboard' }: Props) {
       {ticketDettaglio && (
         <Modal open title="Gestisci ticket" onClose={() => setTicketDettaglio(null)} width={500}>
           <div style={{ padding: '14px 16px', background: 'var(--gray-mid)', border: '1px solid var(--border)', marginBottom: 16 }}>
-            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', fontSize: 13, marginBottom: 6 }}>
+            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 13, marginBottom: 6 }}>
               {AREE_IMPIANTO[ticketDettaglio.area as AreaImpianto]?.icona}{' '}
               {ticketDettaglio.descrizione_problema}
             </div>
-            <div style={{ fontSize: 11, color: 'var(--gray)', fontFamily: 'var(--font-mono)' }}>
+            <div style={{ fontSize: 12, color: 'var(--gray)', fontFamily: 'var(--font-mono)' }}>
               Urgenza: {URGENZA_TICKET[ticketDettaglio.urgenza as UrgenzaTicket]?.label}
               {' · '}{formatData(ticketDettaglio.data_apertura)}
             </div>

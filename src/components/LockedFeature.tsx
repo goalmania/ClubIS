@@ -41,8 +41,8 @@ export default function LockedFeature({ requiredPlan, children }: LockedFeatureP
               <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
             </svg>
             <span style={{
-              fontFamily: 'var(--font-mono)', fontSize: 10,
-              color: 'var(--accent)', letterSpacing: '0.12em', textTransform: 'uppercase',
+              fontFamily: 'var(--font-mono)', fontSize: 12,
+              color: 'var(--accent)', letterSpacing: '0', textTransform: 'none',
             }}>
               Piano {requiredPlan}
             </span>

@@ -230,13 +230,13 @@ function WizardStep({
         {icona}
       </div>
       <div style={{ flex: 1 }}>
-        <div style={{ fontSize: 11, color: 'var(--gray)', marginBottom: 2, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+        <div style={{ fontSize: 12, color: 'var(--gray)', marginBottom: 2, textTransform: 'none', letterSpacing: '0' }}>
           Passo {numero} di {totale}
         </div>
         <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 5 }}>{titolo}</div>
         <div style={{ fontSize: 14, color: 'var(--gray)', lineHeight: 1.6 }}>{descrizione}</div>
         {nota && (
-          <div style={{ fontSize: 13, color: 'var(--accent-orange)', lineHeight: 1.5, marginTop: 8, background: 'var(--accent-orange-lt)', padding: '8px 10px', borderRadius: 4 }}>
+          <div style={{ fontSize: 13, color: 'var(--accent-orange)', lineHeight: 1.5, marginTop: 8, background: 'var(--accent-orange-lt)', padding: '8px 10px', borderRadius: 10 }}>
             ℹ️ {nota}
           </div>
         )}

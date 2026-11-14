@@ -214,7 +214,7 @@ export default function NotificheDropdown({ userId, clubId, initialCount }: Prop
             padding:        '6px 12px',
             background:     open ? 'rgba(200,240,0,0.12)' : 'rgba(200,240,0,0.06)',
             border:         '1px solid rgba(200,240,0,0.2)',
-            borderRadius:   4,
+            borderRadius:   10,
             cursor:         'pointer',
             color:          'var(--white)',
             transition:     'background 0.15s',
@@ -226,18 +226,18 @@ export default function NotificheDropdown({ userId, clubId, initialCount }: Prop
             <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
             <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
           </svg>
-          <span style={{ fontFamily: 'var(--font-display)', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          <span style={{ fontFamily: 'var(--font-display)', fontSize: 12, fontWeight: 700, textTransform: 'none', letterSpacing: '0' }}>
             Notifiche
           </span>
           {nonLette > 0 && (
             <span style={{
               background:    '#ef4444',
               color:         '#fff',
-              fontSize:      10,
+              fontSize:      12,
               fontWeight:    700,
               fontFamily:    'var(--font-mono)',
               padding:       '1px 6px',
-              borderRadius:  10,
+              borderRadius:  14,
               minWidth:      18,
               textAlign:     'center',
               lineHeight:    '16px',
@@ -255,9 +255,9 @@ export default function NotificheDropdown({ userId, clubId, initialCount }: Prop
             right:       0,
             width:       380,
             maxHeight:   520,
-            background:  '#111',
+            background:  'var(--surface-2)',
             border:      '1px solid rgba(255,255,255,0.1)',
-            borderRadius: 8,
+            borderRadius: 12,
             boxShadow:   '0 8px 40px rgba(0,0,0,0.6)',
             zIndex:      1000,
             display:     'flex',
@@ -279,21 +279,21 @@ export default function NotificheDropdown({ userId, clubId, initialCount }: Prop
                   {nonLette > 0 && (
                     <span style={{
                       marginLeft: 8, background: '#ef4444', color: '#fff',
-                      fontSize: 10, fontWeight: 700, padding: '1px 6px', borderRadius: 10,
+                      fontSize: 12, fontWeight: 700, padding: '1px 6px', borderRadius: 14,
                     }}>
                       {nonLette} nuove
                     </span>
                   )}
                 </div>
-                <div style={{ fontSize: 11, color: '#888', marginTop: 2 }}>Aggiornate in tempo reale</div>
+                <div style={{ fontSize: 12, color: '#888', marginTop: 2 }}>Aggiornate in tempo reale</div>
               </div>
               <div style={{ display: 'flex', gap: 8 }}>
                 {nonLette > 0 && (
                   <button
                     onClick={segnaLettaTutte}
                     style={{
-                      fontSize: 11, color: '#c8f000', background: 'none',
-                      border: '1px solid rgba(200,240,0,0.3)', borderRadius: 4,
+                      fontSize: 12, color: '#c8f000', background: 'none',
+                      border: '1px solid rgba(200,240,0,0.3)', borderRadius: 10,
                       padding: '4px 10px', cursor: 'pointer', fontWeight: 600,
                     }}
                   >
@@ -302,7 +302,7 @@ export default function NotificheDropdown({ userId, clubId, initialCount }: Prop
                 )}
                 <button
                   onClick={() => setOpen(false)}
-                  style={{ background: 'none', border: 'none', color: '#666', cursor: 'pointer', fontSize: 18, lineHeight: 1 }}
+                  style={{ background: 'none', border: 'none', color: 'var(--gray)', cursor: 'pointer', fontSize: 18, lineHeight: 1 }}
                 >
                   ✕
                 </button>
@@ -312,13 +312,13 @@ export default function NotificheDropdown({ userId, clubId, initialCount }: Prop
             {/* Lista */}
             <div style={{ overflowY: 'auto', flex: 1 }}>
               {loading ? (
-                <div style={{ padding: '40px 20px', textAlign: 'center', color: '#666', fontSize: 13 }}>
+                <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--gray)', fontSize: 13 }}>
                   Caricamento…
                 </div>
               ) : notifiche.length === 0 ? (
                 <div style={{ padding: '48px 20px', textAlign: 'center' }}>
                   <div style={{ fontSize: 32, marginBottom: 12 }}>🔔</div>
-                  <div style={{ fontSize: 13, color: '#666' }}>Nessuna notifica</div>
+                  <div style={{ fontSize: 13, color: 'var(--gray)' }}>Nessuna notifica</div>
                 </div>
               ) : (
                 notifiche.map(n => (
@@ -363,12 +363,12 @@ export default function NotificheDropdown({ userId, clubId, initialCount }: Prop
                         </div>
                         {n.ruolo_destinatario && RUOLO_LABEL[n.ruolo_destinatario] && (
                           <span style={{
-                            fontSize: 9, padding: '1px 5px',
+                            fontSize: 11, padding: '1px 5px',
                             background: 'rgba(200,240,0,0.1)',
                             border: '1px solid rgba(200,240,0,0.25)',
-                            color: '#c8f000', borderRadius: 3,
-                            fontFamily: 'var(--font-mono)', letterSpacing: '0.06em',
-                            textTransform: 'uppercase', flexShrink: 0,
+                            color: '#c8f000', borderRadius: 8,
+                            fontFamily: 'var(--font-mono)', letterSpacing: '0',
+                            textTransform: 'none', flexShrink: 0,
                           }}>
                             {RUOLO_LABEL[n.ruolo_destinatario]}
                           </span>
@@ -385,7 +385,7 @@ export default function NotificheDropdown({ userId, clubId, initialCount }: Prop
                       }}>
                         {n.messaggio}
                       </div>
-                      <div style={{ fontSize: 11, color: '#555', marginTop: 4 }}>
+                      <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>
                         {tempoFa(n.creata_at)}
                         {urlSicura(n.azione_url) && (
                           <span style={{ marginLeft: 6, color: '#c8f000', opacity: 0.7 }}>→ Vai</span>
@@ -397,7 +397,7 @@ export default function NotificheDropdown({ userId, clubId, initialCount }: Prop
                     <button
                       onClick={(e) => eliminaNotifica(n.id, e)}
                       style={{
-                        background: 'none', border: 'none', color: '#444',
+                        background: 'none', border: 'none', color: 'var(--text-muted)',
                         cursor: 'pointer', fontSize: 14, flexShrink: 0,
                         padding: '0 2px',
                         opacity: 0,
@@ -427,8 +427,8 @@ export default function NotificheDropdown({ userId, clubId, initialCount }: Prop
                 <button
                   onClick={eliminaLette}
                   style={{
-                    background: 'none', border: 'none', color: '#666',
-                    fontSize: 11, cursor: 'pointer',
+                    background: 'none', border: 'none', color: 'var(--gray)',
+                    fontSize: 12, cursor: 'pointer',
                   }}
                 >
                   Elimina lette
@@ -464,10 +464,10 @@ export default function NotificheDropdown({ userId, clubId, initialCount }: Prop
             key={t.id}
             onClick={() => cliccaToast(t)}
             style={{
-              background:   '#1a1a1a',
+              background:   'var(--surface-2)',
               border:       '1px solid rgba(200,240,0,0.3)',
               borderLeft:   '3px solid #c8f000',
-              borderRadius: 8,
+              borderRadius: 12,
               padding:      '14px 16px',
               width:        340,
               cursor:       urlSicura(t.azione_url) ? 'pointer' : 'default',
@@ -494,14 +494,14 @@ export default function NotificheDropdown({ userId, clubId, initialCount }: Prop
                 {t.messaggio}
               </div>
               {urlSicura(t.azione_url) && (
-                <div style={{ fontSize: 11, color: '#c8f000', marginTop: 5, fontWeight: 600 }}>
+                <div style={{ fontSize: 12, color: '#c8f000', marginTop: 5, fontWeight: 600 }}>
                   Tocca per vedere →
                 </div>
               )}
             </div>
             <button
               onClick={(e) => { e.stopPropagation(); dismissToast(t.id) }}
-              style={{ background: 'none', border: 'none', color: '#555', cursor: 'pointer', fontSize: 16, flexShrink: 0 }}
+              style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: 16, flexShrink: 0 }}
             >
               ✕
             </button>

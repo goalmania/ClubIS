@@ -55,7 +55,7 @@ export default async function DSRosaPage() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Gestione rosa</h1>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Gestione rosa</h1>
           <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>{tesserati?.length ?? 0} giocatori tesserati</p>
         </div>
         <Link data-onboarding="btn-aggiungi-giocatore-ds" href="/dashboard/segretario/giocatori/nuovo" className="btn btn-primary btn-sm">+ Aggiungi giocatore</Link>
@@ -71,7 +71,7 @@ export default async function DSRosaPage() {
           { l: 'Contratti in scad.', v: contrattiInScadenza, c: contrattiInScadenza > 0 ? 'var(--ambra)' : undefined },
         ].map(s => (
           <div key={s.l} className="stat-card" style={{ padding: '12px 14px' }}>
-            <div className="stat-label" style={{ fontSize: 11 }}>{s.l}</div>
+            <div className="stat-label" style={{ fontSize: 12 }}>{s.l}</div>
             <div className="stat-value" style={{ fontSize: 20, color: s.c }}>{s.v}</div>
           </div>
         ))}
@@ -100,23 +100,23 @@ export default async function DSRosaPage() {
                     </td>
                     <td>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <div className="avatar" style={{ width: 28, height: 28, fontSize: 11 }}>{g.nome[0]}{g.cognome[0]}</div>
+                        <div className="avatar" style={{ width: 28, height: 28, fontSize: 12 }}>{g.nome[0]}{g.cognome[0]}</div>
                         <span style={{ fontSize: 13, fontWeight: 500 }}>{g.cognome} {g.nome}</span>
                       </div>
                     </td>
                     <td style={{ fontSize: 13, color: 'var(--grigio-3)' }}>{eta}</td>
-                    <td><span className="badge badge-grigio" style={{ fontSize: 10 }}>{g.ruolo_principale ? ruoloShort[g.ruolo_principale] : '—'}</span></td>
+                    <td><span className="badge badge-grigio" style={{ fontSize: 12 }}>{g.ruolo_principale ? ruoloShort[g.ruolo_principale] : '—'}</span></td>
                     <td style={{ fontSize: 12, color: 'var(--grigio-3)', textTransform: 'capitalize' }}>{g.piede}</td>
-                    <td><span className={`badge ${nazBadge[g.nazionalita_tipo] ?? 'badge-grigio'}`} style={{ fontSize: 10 }}>{g.nazionalita_tipo?.slice(0, 3).toUpperCase()}</span></td>
+                    <td><span className={`badge ${nazBadge[g.nazionalita_tipo] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>{g.nazionalita_tipo?.slice(0, 3).toUpperCase()}</span></td>
                     <td style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{(t.squadre as any)?.nome ?? '—'}</td>
                     <td>
                       {contr ? (
-                        <span className={`badge ${contrScadente ? 'badge-ambra' : 'badge-grigio'}`} style={{ fontSize: 10 }}>
+                        <span className={`badge ${contrScadente ? 'badge-ambra' : 'badge-grigio'}`} style={{ fontSize: 12 }}>
                           {formatData(contr.data_scadenza, { month: '2-digit', year: '2-digit' })}
                         </span>
                       ) : <span style={{ fontSize: 12, color: 'var(--grigio-4)' }}>—</span>}
                     </td>
-                    <td><span className="badge badge-grigio" style={{ fontSize: 10 }}>{t.tipo}</span></td>
+                    <td><span className="badge badge-grigio" style={{ fontSize: 12 }}>{t.tipo}</span></td>
                     <td>
                       <Link href={`/dashboard/segretario/giocatori/${g.id}`} className="btn btn-ghost btn-sm" style={{ fontSize: 12 }}>
                         Profilo →

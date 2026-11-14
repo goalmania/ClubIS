@@ -45,7 +45,7 @@ export default async function MedicoDashboard() {
     <ServerFeatureGate feature="dashboard_medico_completa" featureLabel="Dashboard Medico Completa">
     <div style={{ animation: 'fadeIn 0.3s ease' }}>
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Area Medica</h1>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Area Medica</h1>
         <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>
           Salute, infortuni e idoneità sanitaria
         </p>
@@ -110,7 +110,7 @@ export default async function MedicoDashboard() {
                     <span className={`badge ${gravitaColore[i.gravita] ?? 'badge-grigio'}`}>{i.gravita}</span>
                   </div>
                   <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{i.tipo}</div>
-                  <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
+                  <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>
                     Dal {new Date(i.data_infortunio).toLocaleDateString('it-IT')}
                     {i.data_rientro_prevista && <> · rientro previsto {new Date(i.data_rientro_prevista).toLocaleDateString('it-IT')}</>}
                   </div>
@@ -135,15 +135,15 @@ export default async function MedicoDashboard() {
               const g: any = v.giocatori
               return (
                 <div key={v.id} style={{ padding: '12px 18px', borderBottom: '1px solid var(--border-light)', display: 'flex', gap: 14, alignItems: 'center' }}>
-                  <div style={{ width: 44, textAlign: 'center', padding: '4px 0', borderRadius: 6, background: 'var(--accent-blue-lt)', color: 'var(--accent-blue)' }}>
-                    <div style={{ fontSize: 9, fontWeight: 600, textTransform: 'uppercase' }}>
+                  <div style={{ width: 44, textAlign: 'center', padding: '4px 0', borderRadius: 10, background: 'var(--accent-blue-lt)', color: 'var(--accent-blue)' }}>
+                    <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'none' }}>
                       {new Date(v.data).toLocaleDateString('it-IT', { month: 'short' })}
                     </div>
                     <div style={{ fontSize: 14, fontWeight: 700 }}>{new Date(v.data).getDate()}</div>
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)' }}>{g?.cognome} {g?.nome}</div>
-                    <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{v.tipo}</div>
+                    <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{v.tipo}</div>
                   </div>
                 </div>
               )
@@ -168,7 +168,7 @@ export default async function MedicoDashboard() {
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)' }}>{g?.cognome} {g?.nome} — {i.tipo}</div>
                 </div>
-                <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                   {new Date(i.data_infortunio).toLocaleDateString('it-IT')}
                 </span>
               </div>

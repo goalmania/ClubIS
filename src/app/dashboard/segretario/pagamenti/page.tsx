@@ -348,7 +348,7 @@ export default function PagamentiDashboard() {
       {!bannerDismissed && (
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          background: '#fffbeb', border: '1px solid #fcd34d', borderRadius: 10,
+          background: '#fffbeb', border: '1px solid #fcd34d', borderRadius: 14,
           padding: '12px 18px', marginBottom: 20, gap: 12,
         }}>
           <span style={{ fontSize: 13, color: '#92400e' }}>
@@ -425,7 +425,7 @@ export default function PagamentiDashboard() {
                         {fmt(Number(corrente?.importo_totale ?? 0))}
                       </div>
                       {corrente && corrente.stato !== 'pagato' && Number(corrente.importo_pagato) > 0 && (
-                        <div style={{ fontSize: 11, color: 'var(--grigio-4)' }}>
+                        <div style={{ fontSize: 12, color: 'var(--grigio-4)' }}>
                           Pagato {fmt(Number(corrente.importo_pagato))}
                         </div>
                       )}
@@ -478,7 +478,7 @@ export default function PagamentiDashboard() {
                         {famiglia?.cognome ?? '—'} {famiglia?.nome ?? ''}
                       </div>
                       {famiglia?.email && (
-                        <div style={{ fontSize: 11, color: 'var(--grigio-4)' }}>{famiglia.email}</div>
+                        <div style={{ fontSize: 12, color: 'var(--grigio-4)' }}>{famiglia.email}</div>
                       )}
                     </td>
                     <td style={{ fontSize: 13 }}>
@@ -489,7 +489,7 @@ export default function PagamentiDashboard() {
                         {fmt(Number(corrente?.importo ?? 0))}
                       </div>
                       {corrente && (
-                        <div style={{ fontSize: 11, color: 'var(--grigio-4)' }}>Rata {corrente.numero_rata}</div>
+                        <div style={{ fontSize: 12, color: 'var(--grigio-4)' }}>Rata {corrente.numero_rata}</div>
                       )}
                     </td>
                     <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>

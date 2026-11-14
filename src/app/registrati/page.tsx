@@ -31,7 +31,7 @@ const input: React.CSSProperties = {
   padding: '12px 14px',
   background: 'transparent',
   border: '1px solid var(--border-solid)',
-  borderRadius: 8,
+  borderRadius: 12,
   color: 'var(--white)',
   fontSize: 14,
   outline: 'none',
@@ -124,19 +124,19 @@ function RegistratiForm() {
         maxWidth: 480,
         border: '1px solid var(--border-solid)',
         background: 'var(--gray-light)',
-        borderRadius: 12,
+        borderRadius: 16,
         padding: '40px 36px',
       }}>
         {/* Toggle tipo organizzazione */}
-        <div style={{ display: 'flex', gap: 8, marginBottom: 20, background: 'var(--black)', padding: 4, borderRadius: 10, border: '1px solid var(--border-solid)' }}>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 20, background: 'var(--black)', padding: 4, borderRadius: 14, border: '1px solid var(--border-solid)' }}>
           <button
             type="button"
             onClick={() => scegliTipo('agonistico')}
             style={{
-              flex: 1, padding: '10px 12px', borderRadius: 8, border: 'none', cursor: 'pointer',
+              flex: 1, padding: '10px 12px', borderRadius: 12, border: 'none', cursor: 'pointer',
               background: !isScuolaCalcio ? 'var(--accent)' : 'transparent',
               color: !isScuolaCalcio ? '#000' : 'var(--gray)',
-              fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.04em',
+              fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, textTransform: 'none', letterSpacing: '0',
             }}
           >
             Club agonistico
@@ -145,10 +145,10 @@ function RegistratiForm() {
             type="button"
             onClick={() => scegliTipo('scuola_calcio')}
             style={{
-              flex: 1, padding: '10px 12px', borderRadius: 8, border: 'none', cursor: 'pointer',
+              flex: 1, padding: '10px 12px', borderRadius: 12, border: 'none', cursor: 'pointer',
               background: isScuolaCalcio ? 'var(--accent)' : 'transparent',
               color: isScuolaCalcio ? '#000' : 'var(--gray)',
-              fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.04em',
+              fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, textTransform: 'none', letterSpacing: '0',
             }}
           >
             Scuola calcio
@@ -167,17 +167,17 @@ function RegistratiForm() {
           marginBottom: 24,
         }}>
           <div style={{ width: 8, height: 8, borderRadius: '50%', background: pianoDati.colore }} />
-          <span style={{ fontSize: 12, fontFamily: 'var(--font-display)', fontWeight: 700, color: pianoDati.colore, letterSpacing: '0.06em' }}>
+          <span style={{ fontSize: 12, fontFamily: 'var(--font-display)', fontWeight: 700, color: pianoDati.colore, letterSpacing: '0' }}>
             PIANO {pianoDati.nome.toUpperCase()} — {pianoDati.prezzo}
           </span>
         </div>
 
         <h1 style={{
           fontFamily: 'var(--font-display)',
-          fontSize: 20,
-          fontWeight: 900,
-          textTransform: 'uppercase',
-          letterSpacing: '0.04em',
+          fontSize: 28,
+          fontWeight: 700,
+          textTransform: 'none',
+          letterSpacing: '-0.025em',
           color: 'var(--white)',
           marginBottom: 6,
         }}>
@@ -235,7 +235,7 @@ function RegistratiForm() {
               padding: '12px 14px',
               background: 'rgba(255,68,68,0.08)',
               border: '1px solid rgba(255,68,68,0.25)',
-              borderRadius: 8,
+              borderRadius: 12,
               fontSize: 13,
               color: '#ff6b6b',
             }}>
@@ -252,12 +252,12 @@ function RegistratiForm() {
               background: loading ? 'var(--gray-mid)' : 'var(--accent)',
               color: '#000',
               fontFamily: 'var(--font-display)',
-              fontWeight: 900,
+              fontWeight: 700,
               fontSize: 14,
-              textTransform: 'uppercase',
-              letterSpacing: '0.08em',
+              textTransform: 'none',
+              letterSpacing: '0',
               border: 'none',
-              borderRadius: 10,
+              borderRadius: 14,
               cursor: loading ? 'not-allowed' : 'pointer',
               width: '100%',
             }}
@@ -272,7 +272,7 @@ function RegistratiForm() {
         </p>
       </div>
 
-      <p style={{ marginTop: 20, fontSize: 11, color: 'var(--text-muted)', textAlign: 'center', maxWidth: 380 }}>
+      <p style={{ marginTop: 20, fontSize: 12, color: 'var(--text-muted)', textAlign: 'center', maxWidth: 380 }}>
         Registrandoti accetti i{' '}
         <a href="https://dmfootballservices.it/termini" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--gray)' }}>Termini di servizio</a>
         {' '}e la{' '}

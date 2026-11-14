@@ -33,14 +33,14 @@ export default function DMScoutWidget({ attivo, scadenza, clubId }: Props) {
             <span style={{ fontSize: 20 }}>🔭</span>
             <div>
               <div style={{
-                fontFamily: 'var(--font-display)', fontWeight: 900,
-                textTransform: 'uppercase', fontSize: 13, color: 'var(--white)',
+                fontFamily: 'var(--font-display)', fontWeight: 700,
+                textTransform: 'none', fontSize: 13, color: 'var(--white)',
               }}>
                 DM Scout
               </div>
               <div style={{
-                fontFamily: 'var(--font-mono)', fontSize: 10,
-                color: 'var(--gray)', letterSpacing: '0.1em',
+                fontFamily: 'var(--font-mono)', fontSize: 12,
+                color: 'var(--gray)', letterSpacing: '0',
               }}>
                 {scaduto ? 'Abbonamento scaduto' : 'Non attivo'}
               </div>
@@ -51,7 +51,7 @@ export default function DMScoutWidget({ attivo, scadenza, clubId }: Props) {
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-primary btn-sm"
-            style={{ fontSize: 11 }}
+            style={{ fontSize: 12 }}
           >
             {scaduto ? 'Rinnova DMScout →' : 'Attiva DMScout →'}
           </a>
@@ -63,7 +63,7 @@ export default function DMScoutWidget({ attivo, scadenza, clubId }: Props) {
           background: 'rgba(200,240,0,0.02)',
         }}>
           <div style={{
-            fontFamily: 'var(--font-mono)', fontSize: 11,
+            fontFamily: 'var(--font-mono)', fontSize: 12,
             color: 'var(--gray)', lineHeight: 1.6,
           }}>
             Con <strong style={{ color: 'var(--accent)' }}>DM Scout</strong> hai accesso a:
@@ -96,14 +96,14 @@ export default function DMScoutWidget({ attivo, scadenza, clubId }: Props) {
           <span style={{ fontSize: 20 }}>🔭</span>
           <div>
             <div style={{
-              fontFamily: 'var(--font-display)', fontWeight: 900,
-              textTransform: 'uppercase', fontSize: 13, color: 'var(--accent)',
+              fontFamily: 'var(--font-display)', fontWeight: 700,
+              textTransform: 'none', fontSize: 13, color: 'var(--accent)',
             }}>
               DM Scout · Attivo
             </div>
             <div style={{
-              fontFamily: 'var(--font-mono)', fontSize: 10,
-              color: 'var(--gray)', letterSpacing: '0.1em',
+              fontFamily: 'var(--font-mono)', fontSize: 12,
+              color: 'var(--gray)', letterSpacing: '0',
             }}>
               {giorniRimasti !== null
                 ? `Abbonamento in scadenza tra ${giorniRimasti} giorni`
@@ -147,8 +147,8 @@ export default function DMScoutWidget({ attivo, scadenza, clubId }: Props) {
               <span style={{ fontSize: 16 }}>{item.icona}</span>
               <span style={{
                 fontFamily: 'var(--font-display)', fontWeight: 700,
-                textTransform: 'uppercase', fontSize: 11,
-                color: 'var(--white)', letterSpacing: '0.06em',
+                textTransform: 'none', fontSize: 12,
+                color: 'var(--white)', letterSpacing: '0',
               }}>
                 {item.label}
               </span>
@@ -164,7 +164,7 @@ export default function DMScoutWidget({ attivo, scadenza, clubId }: Props) {
           background: 'rgba(245,158,11,0.06)',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         }}>
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--ambra)' }}>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--ambra)' }}>
             ⚠ Abbonamento in scadenza tra {giorniRimasti} giorni
           </span>
           <a
@@ -172,7 +172,7 @@ export default function DMScoutWidget({ attivo, scadenza, clubId }: Props) {
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-sm"
-            style={{ fontSize: 11, borderColor: 'var(--ambra)', color: 'var(--ambra)' }}
+            style={{ fontSize: 12, borderColor: 'var(--ambra)', color: 'var(--ambra)' }}
           >
             Rinnova →
           </a>

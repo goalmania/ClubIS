@@ -35,7 +35,7 @@ export default async function DSScadenzePage() {
   return (
     <div data-onboarding="section-scadenze-ds">
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Scadenze</h1>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Scadenze</h1>
         <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>{totale} scadenze nei prossimi 90 giorni</p>
       </div>
       {totale === 0 ? (
@@ -61,7 +61,7 @@ export default async function DSScadenzePage() {
                           <td style={{ fontWeight: 500, fontSize: 13 }}>{g?.cognome} {g?.nome}</td>
                           <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{formatData(c.data_scadenza)}</td>
                           <td><GgBadge data={c.data_scadenza} /></td>
-                          <td>{c.opzione_rinnovo ? <span className="badge badge-verde" style={{ fontSize: 10 }}>✓ Sì</span> : <span className="badge badge-grigio" style={{ fontSize: 10 }}>No</span>}</td>
+                          <td>{c.opzione_rinnovo ? <span className="badge badge-verde" style={{ fontSize: 12 }}>✓ Sì</span> : <span className="badge badge-grigio" style={{ fontSize: 12 }}>No</span>}</td>
                         </tr>
                       )
                     })}
@@ -85,7 +85,7 @@ export default async function DSScadenzePage() {
                       return (
                         <tr key={c.id}>
                           <td style={{ fontWeight: 500, fontSize: 13 }}>{g?.cognome} {g?.nome}</td>
-                          <td><span className="badge badge-grigio" style={{ fontSize: 10 }}>{c.tipo}</span></td>
+                          <td><span className="badge badge-grigio" style={{ fontSize: 12 }}>{c.tipo}</span></td>
                           <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{formatData(c.data_scadenza)}</td>
                           <td><GgBadge data={c.data_scadenza} /></td>
                         </tr>
@@ -111,7 +111,7 @@ export default async function DSScadenzePage() {
                       return (
                         <tr key={t.id}>
                           <td style={{ fontWeight: 500, fontSize: 13 }}>{g?.cognome} {g?.nome}</td>
-                          <td><span className="badge badge-grigio" style={{ fontSize: 10 }}>{t.tipo}</span></td>
+                          <td><span className="badge badge-grigio" style={{ fontSize: 12 }}>{t.tipo}</span></td>
                           <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{formatData(t.data_fine!)}</td>
                           <td><GgBadge data={t.data_fine!} /></td>
                         </tr>

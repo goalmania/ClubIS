@@ -25,7 +25,7 @@ function MessaggiView({
   return (
     <div>
       <div style={{ marginBottom: 24 }}>
-        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 26, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>
+        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 26, textTransform: 'none', letterSpacing: '-0.01em', color: 'var(--white)' }}>
           Comunicazioni
         </div>
         <div style={{ fontSize: 13, color: 'var(--gray)', marginTop: 4 }}>
@@ -44,7 +44,7 @@ function MessaggiView({
                 key={f.id}
                 href={`/dashboard/famiglia/messaggi?figlio=${f.giocatore_id}`}
                 style={{
-                  padding: '6px 14px', borderRadius: 2, fontSize: 12, fontWeight: 600,
+                  padding: '6px 14px', borderRadius: 8, fontSize: 12, fontWeight: 600,
                   textDecoration: 'none', border: '1px solid var(--border-solid)',
                   background: active ? 'var(--accent)' : 'transparent',
                   color: active ? '#000' : 'var(--white)',
@@ -60,12 +60,12 @@ function MessaggiView({
       {msgs.length === 0 ? (
         <div style={{
           padding: 40, textAlign: 'center', color: 'var(--gray)', fontSize: 13,
-          background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2,
+          background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8,
         }}>
           Nessun messaggio dal club ancora.
         </div>
       ) : (
-        <div style={{ background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2, overflow: 'hidden' }}>
+        <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8, overflow: 'hidden' }}>
           {msgs.map((m: any, i: number) => {
             const mitt = m.utenti as any
             const tc   = TIPO_CONFIG[m.tipo] ?? { label: m.tipo, colore: 'var(--gray)' }
@@ -78,8 +78,8 @@ function MessaggiView({
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
                     <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--white)' }}>{m.titolo}</span>
                     <span style={{
-                      fontSize: 10, padding: '2px 6px', borderRadius: 2, fontWeight: 600,
-                      fontFamily: 'var(--font-mono)', textTransform: 'uppercase',
+                      fontSize: 12, padding: '2px 6px', borderRadius: 8, fontWeight: 600,
+                      fontFamily: 'var(--font-mono)', textTransform: 'none',
                       color: tc.colore, border: `1px solid ${tc.colore}40`, background: `${tc.colore}15`,
                     }}>
                       {tc.label}
@@ -90,7 +90,7 @@ function MessaggiView({
                       {m.corpo}
                     </div>
                   )}
-                  <div style={{ fontSize: 11, color: 'var(--gray)', fontFamily: 'var(--font-mono)' }}>
+                  <div style={{ fontSize: 12, color: 'var(--gray)', fontFamily: 'var(--font-mono)' }}>
                     {mitt?.nome} {mitt?.cognome}
                     {m.inviato_at && ` · ${new Date(m.inviato_at).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}`}
                   </div>

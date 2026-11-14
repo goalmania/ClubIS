@@ -51,7 +51,7 @@ function PrintInfortuni({ form, giocatore, club }: { form: FormInfortuni; giocat
   return (
     <div style={{ fontFamily: 'serif', fontSize: 13, color: '#000', padding: '20px 0' }}>
       <div style={{ textAlign: 'center', marginBottom: 20 }}>
-        <div style={{ fontWeight: 700, fontSize: 16, textTransform: 'uppercase' }}>Referto Infortuni</div>
+        <div style={{ fontWeight: 700, fontSize: 16, textTransform: 'none' }}>Referto Infortuni</div>
         <div style={{ fontSize: 12 }}>Federazione Italiana Giuoco Calcio</div>
         <div style={{ borderBottom: '2px solid black', marginTop: 12 }} />
       </div>
@@ -79,9 +79,9 @@ function PrintInfortuni({ form, giocatore, club }: { form: FormInfortuni; giocat
         </div>
       )}
       <div style={{ marginTop: 48, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 32 }}>
-        <div style={{ borderTop: '1px solid black', paddingTop: 8 }}><div style={{ fontSize: 10 }}>Firma medico sociale</div></div>
-        <div style={{ borderTop: '1px solid black', paddingTop: 8 }}><div style={{ fontSize: 10 }}>Firma dirigente</div></div>
-        <div style={{ borderTop: '1px solid black', paddingTop: 8 }}><div style={{ fontSize: 10 }}>Timbro societario</div></div>
+        <div style={{ borderTop: '1px solid black', paddingTop: 8 }}><div style={{ fontSize: 12 }}>Firma medico sociale</div></div>
+        <div style={{ borderTop: '1px solid black', paddingTop: 8 }}><div style={{ fontSize: 12 }}>Firma dirigente</div></div>
+        <div style={{ borderTop: '1px solid black', paddingTop: 8 }}><div style={{ fontSize: 12 }}>Timbro societario</div></div>
       </div>
     </div>
   )
@@ -91,7 +91,7 @@ function PrintSvincolo({ form, giocatore, club }: { form: FormSvincolo; giocator
   return (
     <div style={{ fontFamily: 'serif', fontSize: 13, color: '#000', padding: '20px 0' }}>
       <div style={{ textAlign: 'center', marginBottom: 20 }}>
-        <div style={{ fontWeight: 700, fontSize: 16, textTransform: 'uppercase' }}>Richiesta di Svincolo</div>
+        <div style={{ fontWeight: 700, fontSize: 16, textTransform: 'none' }}>Richiesta di Svincolo</div>
         <div style={{ fontSize: 12 }}>Federazione Italiana Giuoco Calcio</div>
         <div style={{ borderBottom: '2px solid black', marginTop: 12 }} />
       </div>
@@ -109,9 +109,9 @@ function PrintSvincolo({ form, giocatore, club }: { form: FormSvincolo; giocator
         <div style={{ border: '1px solid #ccc', padding: 8, minHeight: 60, marginTop: 4 }}>{form.motivazione || '—'}</div>
       </div>
       <div style={{ marginTop: 48, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 32 }}>
-        <div style={{ borderTop: '1px solid black', paddingTop: 8 }}><div style={{ fontSize: 10 }}>Firma dirigente cedente</div></div>
-        <div style={{ borderTop: '1px solid black', paddingTop: 8 }}><div style={{ fontSize: 10 }}>Firma dirigente acquirente</div></div>
-        <div style={{ borderTop: '1px solid black', paddingTop: 8 }}><div style={{ fontSize: 10 }}>Timbro FIGC</div></div>
+        <div style={{ borderTop: '1px solid black', paddingTop: 8 }}><div style={{ fontSize: 12 }}>Firma dirigente cedente</div></div>
+        <div style={{ borderTop: '1px solid black', paddingTop: 8 }}><div style={{ fontSize: 12 }}>Firma dirigente acquirente</div></div>
+        <div style={{ borderTop: '1px solid black', paddingTop: 8 }}><div style={{ fontSize: 12 }}>Timbro FIGC</div></div>
       </div>
     </div>
   )
@@ -126,7 +126,7 @@ function ModalePreview({ onClose, children }: { onClose: () => void; children: R
       zIndex: 1000, padding: '20px',
     }} onClick={onClose}>
       <div style={{
-        background: 'white', borderRadius: 12, padding: '24px 32px',
+        background: 'white', borderRadius: 16, padding: '24px 32px',
         maxWidth: 680, width: '100%', maxHeight: '90vh', overflowY: 'auto',
       }} onClick={e => e.stopPropagation()}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
@@ -434,7 +434,7 @@ export default function ModuliFIGCPage() {
             </p>
 
             {affiliazioneRegistrata ? (
-              <div style={{ padding: '14px 16px', background: '#f0fdf4', border: '1px solid #86efac', borderRadius: 8, fontSize: 13, color: '#15803d', marginBottom: 16 }}>
+              <div style={{ padding: '14px 16px', background: '#f0fdf4', border: '1px solid #86efac', borderRadius: 12, fontSize: 13, color: '#15803d', marginBottom: 16 }}>
                 Quota affiliazione FIGC già registrata per l'anno {new Date().getFullYear()}.
               </div>
             ) : (
@@ -450,7 +450,7 @@ export default function ModuliFIGCPage() {
                     onChange={e => setImportoAffiliazione(e.target.value)}
                     placeholder="850"
                   />
-                  <div style={{ fontSize: 11, color: 'var(--grigio-4)', marginTop: 4 }}>Importo configurabile — valore di default per dilettanti</div>
+                  <div style={{ fontSize: 12, color: 'var(--grigio-4)', marginTop: 4 }}>Importo configurabile — valore di default per dilettanti</div>
                 </div>
                 <div>
                   <label className="label">Data</label>
@@ -464,7 +464,7 @@ export default function ModuliFIGCPage() {
 
             {giorni30Sept !== null && (
               <div style={{
-                marginTop: 20, padding: '12px 14px', borderRadius: 8, fontSize: 12,
+                marginTop: 20, padding: '12px 14px', borderRadius: 12, fontSize: 12,
                 background: giorni30Sept <= 30 ? '#fef3c7' : '#f9fafb',
                 border: `1px solid ${giorni30Sept <= 30 ? '#fcd34d' : 'var(--grigio-5)'}`,
                 color: giorni30Sept <= 30 ? '#92400e' : 'var(--grigio-3)',
@@ -551,14 +551,14 @@ function StoriaModuli({ log, tipoLabel, showTipo }: { log: LogEntry[]; tipoLabel
             }}>
               <div>
                 {showTipo && (
-                  <div style={{ fontSize: 11, color: 'var(--grigio-4)', marginBottom: 2 }}>
+                  <div style={{ fontSize: 12, color: 'var(--grigio-4)', marginBottom: 2 }}>
                     {tipoLabel2[entry.tipo_modulo] ?? entry.tipo_modulo}
                   </div>
                 )}
                 <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--grigio)' }}>
                   {entry.dati?.tipo_infortunio ?? entry.dati?.club_acquirente ?? entry.dati?.partita ?? '—'}
                 </div>
-                <div style={{ fontSize: 11, color: 'var(--grigio-4)', marginTop: 2 }}>
+                <div style={{ fontSize: 12, color: 'var(--grigio-4)', marginTop: 2 }}>
                   {new Date(entry.created_at).toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                 </div>
               </div>

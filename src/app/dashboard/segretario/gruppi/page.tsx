@@ -304,7 +304,7 @@ export default function GruppiPage() {
               <thead>
                 <tr>
                   {['Atleta', 'Ruolo', 'Maglia', 'Ruolo nel gruppo', 'Ingresso', ''].map(h => (
-                    <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontSize: 11, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--grigio-4)', borderBottom: '1px solid var(--border-solid)' }}>{h}</th>
+                    <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontSize: 12, fontFamily: 'var(--font-mono)', textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-4)', borderBottom: '1px solid var(--border-solid)' }}>{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -331,7 +331,7 @@ export default function GruppiPage() {
                       </td>
                       <td style={{ padding: '10px 14px' }}>
                         <button onClick={() => rimuoviMembro(m.id)}
-                          style={{ fontSize: 11, padding: '2px 8px', background: 'transparent', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 2, cursor: 'pointer', color: 'var(--rosso)' }}>
+                          style={{ fontSize: 12, padding: '2px 8px', background: 'transparent', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, cursor: 'pointer', color: 'var(--rosso)' }}>
                           Rimuovi
                         </button>
                       </td>
@@ -349,7 +349,7 @@ export default function GruppiPage() {
             <input className="input" placeholder="Cerca..." value={cercaAdd}
               onChange={e => setCercaAdd(e.target.value)}
               style={{ marginBottom: 10 }} />
-            <div style={{ maxHeight: 280, overflow: 'auto', border: '1px solid var(--border-solid)', borderRadius: 4, marginBottom: 12 }}>
+            <div style={{ maxHeight: 280, overflow: 'auto', border: '1px solid var(--border-solid)', borderRadius: 10, marginBottom: 12 }}>
               {listaAdd.length === 0 ? (
                 <div style={{ padding: 20, textAlign: 'center', fontSize: 13, color: 'var(--grigio-4)' }}>
                   {cercaAdd ? 'Nessun risultato' : 'Tutti già nel gruppo'}
@@ -360,7 +360,7 @@ export default function GruppiPage() {
                     onChange={e => setSelIds(prev => e.target.checked ? [...prev, p.id] : prev.filter(x => x !== p.id))}
                     style={{ accentColor: 'var(--accent)' }} />
                   <span style={{ fontSize: 13, flex: 1 }}>{p.cognome} {p.nome}</span>
-                  <span style={{ fontSize: 11, color: 'var(--grigio-4)' }}>
+                  <span style={{ fontSize: 12, color: 'var(--grigio-4)' }}>
                     {(p as any).ruolo_principale ?? (p as any).ruolo ?? ''}
                   </span>
                 </label>
@@ -416,7 +416,7 @@ export default function GruppiPage() {
       ) : gruppi.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--grigio-4)' }}>
           <div style={{ fontSize: 40, marginBottom: 16 }}>🏟️</div>
-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--white)', marginBottom: 8 }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, textTransform: 'none', letterSpacing: '0', color: 'var(--white)', marginBottom: 8 }}>
             Nessun gruppo
           </div>
           <div style={{ fontSize: 13, marginBottom: 20 }}>
@@ -439,16 +439,16 @@ export default function GruppiPage() {
                 <div style={{ height: 4, background: g.colore }} />
                 <div style={{ padding: '16px 18px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
-                    <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--white)' }}>
+                    <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, textTransform: 'none', letterSpacing: '0', color: 'var(--white)' }}>
                       {g.nome}
                     </div>
-                    <span className="badge badge-grigio" style={{ fontSize: 10 }}>{g.tipo}</span>
+                    <span className="badge badge-grigio" style={{ fontSize: 12 }}>{g.tipo}</span>
                   </div>
-                  <div style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--grigio-4)', marginBottom: 4 }}>
+                  <div style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: 'var(--grigio-4)', marginBottom: 4 }}>
                     Stagione {g.stagione}
                   </div>
                   {cat && cat.etaMin >= 0 && (
-                    <div style={{ fontSize: 10, color: g.colore, fontFamily: 'var(--font-mono)', marginBottom: 6, opacity: 0.85 }}>
+                    <div style={{ fontSize: 12, color: g.colore, fontFamily: 'var(--font-mono)', marginBottom: 6, opacity: 0.85 }}>
                       nati {cat.etaMax === -1 ? `≤ ${refAnn - cat.etaMin}` : `${refAnn - cat.etaMax}–${refAnn - cat.etaMin}`}
                     </div>
                   )}
@@ -456,17 +456,17 @@ export default function GruppiPage() {
                     <p style={{ fontSize: 12, color: 'var(--grigio-3)', marginBottom: 12, lineHeight: 1.5 }}>{g.descrizione}</p>
                   )}
                   <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 8 }}>
-                    <button className="btn btn-primary btn-sm" style={{ fontSize: 11 }}
+                    <button className="btn btn-primary btn-sm" style={{ fontSize: 12 }}
                       onClick={() => { setGruppoSel(g); loadMembri(g.id) }}>
                       Vedi →
                     </button>
-                    <button className="btn btn-secondary btn-sm" style={{ fontSize: 11 }} onClick={() => apriEdit(g)}>
+                    <button className="btn btn-secondary btn-sm" style={{ fontSize: 12 }} onClick={() => apriEdit(g)}>
                       ✎ Modifica
                     </button>
-                    <button className="btn btn-sm" style={{ fontSize: 11 }} onClick={() => toggleAttivo(g)}>
+                    <button className="btn btn-sm" style={{ fontSize: 12 }} onClick={() => toggleAttivo(g)}>
                       {g.attivo ? 'Disattiva' : 'Attiva'}
                     </button>
-                    <button className="btn btn-sm" style={{ fontSize: 11, color: 'var(--rosso)', borderColor: 'rgba(239,68,68,0.3)' }}
+                    <button className="btn btn-sm" style={{ fontSize: 12, color: 'var(--rosso)', borderColor: 'rgba(239,68,68,0.3)' }}
                       onClick={() => eliminaGruppo(g)}>
                       🗑
                     </button>
@@ -490,7 +490,7 @@ export default function GruppiPage() {
               </div>
               <input className="input" placeholder="Cerca..." value={cercaEdit}
                 onChange={e => setCercaEdit(e.target.value)} style={{ marginBottom: 10 }} />
-              <div style={{ maxHeight: 320, overflowY: 'auto', border: '1px solid var(--border-solid)', borderRadius: 4, marginBottom: 14 }}>
+              <div style={{ maxHeight: 320, overflowY: 'auto', border: '1px solid var(--border-solid)', borderRadius: 10, marginBottom: 14 }}>
                 {(modalEdit?.tipo === 'staff' ? staff : giocatori)
                   .filter(p => cercaEdit === '' || `${p.cognome} ${p.nome}`.toLowerCase().includes(cercaEdit.toLowerCase()))
                   .map(p => {
@@ -506,12 +506,12 @@ export default function GruppiPage() {
                           <span style={{ fontSize: 13, fontWeight: checked ? 600 : 400, color: checked ? 'var(--white)' : 'var(--grigio-2)' }}>
                             {p.cognome} {p.nome}
                           </span>
-                          <span style={{ marginLeft: 8, fontSize: 11, color: 'var(--grigio-4)' }}>
+                          <span style={{ marginLeft: 8, fontSize: 12, color: 'var(--grigio-4)' }}>
                             {(p as any).ruolo_principale ?? (p as any).ruolo ?? ''}
                           </span>
                         </div>
                         {eta !== null && (
-                          <span style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: 'var(--grigio-4)' }}>
+                          <span style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: 'var(--grigio-4)' }}>
                             {eta}a
                           </span>
                         )}

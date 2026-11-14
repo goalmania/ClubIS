@@ -92,8 +92,8 @@ export default async function OrganigrammaPage() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 32 }}>
         <div>
           <h1 style={{
-            fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 26,
-            textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)', marginBottom: 4,
+            fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 28,
+            textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)', marginBottom: 4,
           }}>Organigramma</h1>
           <p style={{ fontSize: 13, color: 'var(--gray)', fontWeight: 300 }}>
             Struttura organizzativa — {club?.nome}
@@ -191,8 +191,8 @@ function BoxPresidente({ nodo, membri }: { nodo: NodoOrg; membri: Membro[] }) {
     }} className="org-box-presidente">
       <div style={{ fontSize: 22, marginBottom: 6 }}>{nodo.icon}</div>
       <div style={{
-        fontFamily: 'var(--font-mono)', fontSize: '0.58rem', fontWeight: 700,
-        textTransform: 'uppercase', letterSpacing: '0.2em',
+        fontFamily: 'var(--font-mono)', fontSize: '0.78rem', fontWeight: 700,
+        textTransform: 'none', letterSpacing: '0',
         color: 'var(--accent)', marginBottom: 10,
       }}>{nodo.label}</div>
       {membri.length > 0
@@ -205,10 +205,10 @@ function BoxPresidente({ nodo, membri }: { nodo: NodoOrg; membri: Membro[] }) {
 function BoxL2({ nodo, membri }: { nodo: NodoOrg; membri: Membro[] }) {
   return (
     <div style={{
-      background: '#111',
+      background: 'var(--surface-2)',
       border: '1px solid var(--border-solid)',
       borderTop: '2px solid rgba(0,200,160,0.5)',
-      borderRadius: 12,
+      borderRadius: 16,
       padding: '14px 18px',
       width: 190,
       textAlign: 'center',
@@ -216,7 +216,7 @@ function BoxL2({ nodo, membri }: { nodo: NodoOrg; membri: Membro[] }) {
       <div style={{ fontSize: 18, marginBottom: 5 }}>{nodo.icon}</div>
       <div style={{
         fontFamily: 'var(--font-mono)', fontSize: '0.56rem', fontWeight: 700,
-        textTransform: 'uppercase', letterSpacing: '0.18em',
+        textTransform: 'none', letterSpacing: '0',
         color: 'var(--accent2)', marginBottom: 10,
       }}>{nodo.label}</div>
       {membri.length > 0
@@ -232,7 +232,7 @@ function BoxL3({ nodo, membri }: { nodo: NodoOrg; membri: Membro[] }) {
     <div style={{
       background: 'var(--gray-light)',
       border: '1px solid var(--border)',
-      borderRadius: 10,
+      borderRadius: 14,
       padding: '11px 10px',
       width: L3_W,
       textAlign: 'center',
@@ -241,7 +241,7 @@ function BoxL3({ nodo, membri }: { nodo: NodoOrg; membri: Membro[] }) {
       <div style={{ fontSize: 14, marginBottom: 4 }}>{nodo.icon}</div>
       <div style={{
         fontFamily: 'var(--font-mono)', fontSize: '0.52rem', fontWeight: 700,
-        textTransform: 'uppercase', letterSpacing: '0.12em',
+        textTransform: 'none', letterSpacing: '0',
         color: 'var(--gray)', marginBottom: 7,
         lineHeight: 1.3,
       }}>{nodo.label}</div>
@@ -256,7 +256,7 @@ function BoxL3({ nodo, membri }: { nodo: NodoOrg; membri: Membro[] }) {
               fontSize: 13, color: 'var(--white)',
             }}>{n} {nodo.labelPlural ?? nodo.label}</div>
             {n <= 3 && membri.map(m => (
-              <div key={m.id} style={{ fontSize: 10, color: 'var(--gray)', fontWeight: 300, marginTop: 2 }}>
+              <div key={m.id} style={{ fontSize: 12, color: 'var(--gray)', fontWeight: 300, marginTop: 2 }}>
                 {m.cognome} {m.nome}
               </div>
             ))}
@@ -334,15 +334,15 @@ function MembroInfo({
       )}
       <div style={{
         fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: fs,
-        textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)',
+        textTransform: 'none', letterSpacing: '-0.01em', color: 'var(--white)',
         overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
       }}>
         {m.cognome} {m.nome}
       </div>
       {m.titolo_organigramma && (
         <div style={{
-          fontSize: 9, color: 'var(--gray)', fontFamily: 'var(--font-mono)',
-          letterSpacing: '0.06em', textTransform: 'uppercase', marginTop: 1,
+          fontSize: 11, color: 'var(--gray)', fontFamily: 'var(--font-mono)',
+          letterSpacing: '0', textTransform: 'none', marginTop: 1,
         }}>{m.titolo_organigramma}</div>
       )}
     </div>
@@ -352,7 +352,7 @@ function MembroInfo({
 function EmptySlot({ small = false }: { small?: boolean }) {
   return (
     <div style={{
-      fontSize: small ? 9 : 11, color: '#444',
+      fontSize: small ? 9 : 11, color: 'var(--text-muted)',
       fontFamily: 'var(--font-sans)', fontStyle: 'italic',
       padding: small ? '1px 0' : '3px 0',
     }}>

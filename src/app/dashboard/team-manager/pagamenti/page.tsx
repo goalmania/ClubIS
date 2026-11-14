@@ -161,7 +161,7 @@ export default function TeamManagerPagamentiPage() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>
             Pagamenti & Finanze
           </h1>
           <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>
@@ -241,13 +241,13 @@ export default function TeamManagerPagamentiPage() {
                     <td style={{ fontSize: 13, fontWeight: 500 }}>
                       {m.descrizione ?? '—'}
                       {m.sorgente && m.sorgente !== 'manuale' && (
-                        <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 1 }}>
+                        <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 1 }}>
                           via {m.sorgente.replace(/_/g, ' ')}
                         </div>
                       )}
                     </td>
                     <td>
-                      <span className="badge badge-grigio" style={{ fontSize: 10, textTransform: 'capitalize' }}>
+                      <span className="badge badge-grigio" style={{ fontSize: 12, textTransform: 'capitalize' }}>
                         {(m.categoria ?? '').replace(/_/g, ' ')}
                       </span>
                     </td>
@@ -305,7 +305,7 @@ export default function TeamManagerPagamentiPage() {
                         {r.stato !== 'pagata' && (
                           <button
                             className="btn btn-secondary btn-sm"
-                            style={{ fontSize: 11 }}
+                            style={{ fontSize: 12 }}
                             onClick={() => segnaPagato(r.id)}
                           >
                             Segna pagata
@@ -341,13 +341,13 @@ export default function TeamManagerPagamentiPage() {
                   style={{
                     padding: '13px 16px', display: 'flex', alignItems: 'center', gap: 14,
                     cursor: 'pointer', border: '1px solid var(--border)',
-                    background: 'var(--bg-card)', textAlign: 'left', width: '100%', borderRadius: 8,
+                    background: 'var(--bg-card)', textAlign: 'left', width: '100%', borderRadius: 12,
                   }}
                 >
                   <span style={{ fontSize: 22 }}>{t.icon}</span>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 13, fontWeight: 600 }}>{t.nome}</div>
-                    <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'capitalize' }}>
+                    <div style={{ fontSize: 12, color: 'var(--text-muted)', textTransform: 'capitalize' }}>
                       {t.categoria.replace(/_/g, ' ')}
                     </div>
                   </div>
@@ -360,17 +360,17 @@ export default function TeamManagerPagamentiPage() {
           </div>
         ) : (
           <form onSubmit={creaMovimento}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20, padding: '12px 16px', background: 'var(--bg-input)', borderRadius: 8 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20, padding: '12px 16px', background: 'var(--bg-input)', borderRadius: 12 }}>
               <span style={{ fontSize: 24 }}>{templateSel.icon}</span>
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: 14, fontWeight: 600 }}>{templateSel.nome}</div>
-                <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{templateSel.categoria.replace(/_/g, ' ')}</div>
+                <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{templateSel.categoria.replace(/_/g, ' ')}</div>
               </div>
               <span className={`badge ${templateSel.tipo === 'entrata' ? 'badge-verde' : 'badge-rosso'}`}>
                 {templateSel.tipo === 'entrata' ? '↑ Entrata' : '↓ Uscita'}
               </span>
               <button type="button" onClick={() => setTemplateSel(null)}
-                style={{ fontSize: 11, color: 'var(--accent-blue)', background: 'none', border: 'none', cursor: 'pointer' }}>
+                style={{ fontSize: 12, color: 'var(--accent-blue)', background: 'none', border: 'none', cursor: 'pointer' }}>
                 Cambia →
               </button>
             </div>

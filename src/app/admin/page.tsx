@@ -26,7 +26,7 @@ export default async function AdminDashboard() {
   return (
     <div>
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 600, color: 'var(--text-primary)' }}>Pannello Admin</h1>
+        <h1 style={{ fontSize: 28, fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.025em'}}>Pannello Admin</h1>
         <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>
           Gestione globale ClubIS — The Intelligence System
         </p>
@@ -57,7 +57,7 @@ export default async function AdminDashboard() {
             <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>
               Club registrati — Accesso dashboard
             </span>
-            <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
+            <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>
               Clicca "Visualizza come" per entrare nella dashboard di un club con qualsiasi ruolo
             </div>
           </div>

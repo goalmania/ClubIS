@@ -95,8 +95,8 @@ function LoginContent() {
         </div>
 
         {/* Card login */}
-        <div className="card" style={{ padding: '32px 28px', background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2 }}>
-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 18, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--white)', marginBottom: 6 }}>Accedi</div>
+        <div className="card" style={{ padding: '32px 28px', background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8 }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 18, textTransform: 'none', letterSpacing: '0', color: 'var(--white)', marginBottom: 6 }}>Accedi</div>
           <div style={{ fontFamily: 'var(--font-sans)', fontSize: 13, color: 'var(--gray)', marginBottom: 28 }}>
             Inserisci le credenziali del tuo account
           </div>
@@ -113,7 +113,7 @@ function LoginContent() {
             <div style={{ marginBottom: 16, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <a
                 href="/auth/password-dimenticata"
-                style={{ fontSize: 11, color: 'var(--gray)', textDecoration: 'none', fontFamily: 'var(--font-mono)', letterSpacing: '0.04em' }}
+                style={{ fontSize: 12, color: 'var(--gray)', textDecoration: 'none', fontFamily: 'var(--font-mono)', letterSpacing: '0' }}
               >
                 Password dimenticata?
               </a>
@@ -130,7 +130,7 @@ function LoginContent() {
                 htmlFor="ricordami"
                 style={{
                   fontFamily: 'var(--font-mono)', fontSize: 12,
-                  color: 'var(--gray)', cursor: 'pointer', letterSpacing: '0.05em',
+                  color: 'var(--gray)', cursor: 'pointer', letterSpacing: '0',
                 }}
               >
                 Ricordami
@@ -168,7 +168,7 @@ export default function LoginPage() {
 const socialBtnStyle: React.CSSProperties = {
   width: '100%', padding: '11px 20px', marginBottom: 10,
   background: 'var(--gray-light)', border: '1px solid var(--border-solid)',
-  borderRadius: 2, cursor: 'pointer', color: 'var(--white)',
+  borderRadius: 8, cursor: 'pointer', color: 'var(--white)',
   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
   fontFamily: 'var(--font-sans)', fontSize: 14, fontWeight: 500,
   transition: 'border-color 0.2s',

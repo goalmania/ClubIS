@@ -104,9 +104,9 @@ function PrioritaBadge({ p }: { p: Priorita }) {
   return (
     <span style={{
       display: 'inline-flex', alignItems: 'center',
-      padding: '2px 8px', borderRadius: 3,
-      fontSize: 10, fontFamily: 'var(--font-mono)', fontWeight: 700,
-      letterSpacing: '0.08em', textTransform: 'uppercase',
+      padding: '2px 8px', borderRadius: 8,
+      fontSize: 12, fontFamily: 'var(--font-mono)', fontWeight: 700,
+      letterSpacing: '0', textTransform: 'none',
       background: c.bg, color: c.color, border: `1px solid ${c.border}`,
     }}>
       {c.label}
@@ -118,8 +118,8 @@ function ContestoBadge({ v }: { v: Contesto }) {
   const label = CONTESTI.find(c => c.value === v)?.label ?? v
   return (
     <span style={{
-      display: 'inline-flex', padding: '2px 8px', borderRadius: 3,
-      fontSize: 10, fontFamily: 'var(--font-mono)',
+      display: 'inline-flex', padding: '2px 8px', borderRadius: 8,
+      fontSize: 12, fontFamily: 'var(--font-mono)',
       background: 'rgba(200,240,0,0.08)', color: 'var(--accent)',
       border: '1px solid rgba(200,240,0,0.2)',
     }}>
@@ -156,7 +156,7 @@ function ConsiglioCard({ item, readonly, membriMap, onEdit, onDelete, deletingId
             {membroSpecifico && (
               <span style={{
                 display: 'inline-flex', alignItems: 'center', gap: 4,
-                padding: '2px 8px', borderRadius: 3, fontSize: 10,
+                padding: '2px 8px', borderRadius: 8, fontSize: 12,
                 fontFamily: 'var(--font-mono)',
                 background: 'rgba(139,92,246,0.12)', color: '#a78bfa',
                 border: '1px solid rgba(139,92,246,0.3)',
@@ -175,7 +175,7 @@ function ConsiglioCard({ item, readonly, membriMap, onEdit, onDelete, deletingId
             onClick={() => setExpanded(v => !v)}
             style={{
               background: 'none', border: '1px solid rgba(255,255,255,0.12)',
-              borderRadius: 3, padding: '4px 10px', fontSize: 11,
+              borderRadius: 8, padding: '4px 10px', fontSize: 12,
               color: 'var(--gray)', cursor: 'pointer', fontFamily: 'var(--font-mono)',
             }}
           >
@@ -187,7 +187,7 @@ function ConsiglioCard({ item, readonly, membriMap, onEdit, onDelete, deletingId
               <button
                 onClick={() => onEdit?.(item)}
                 className="btn btn-secondary btn-sm"
-                style={{ fontSize: 11 }}
+                style={{ fontSize: 12 }}
               >
                 Modifica
               </button>
@@ -197,8 +197,8 @@ function ConsiglioCard({ item, readonly, membriMap, onEdit, onDelete, deletingId
                     onClick={() => { setConfirmDel(false); onDelete?.(item.id) }}
                     disabled={deletingId === item.id}
                     style={{
-                      background: '#ef4444', border: 'none', borderRadius: 3,
-                      padding: '4px 10px', fontSize: 11, color: '#fff', cursor: 'pointer',
+                      background: '#ef4444', border: 'none', borderRadius: 8,
+                      padding: '4px 10px', fontSize: 12, color: '#fff', cursor: 'pointer',
                     }}
                   >
                     {deletingId === item.id ? '…' : 'Sì, elimina'}
@@ -207,7 +207,7 @@ function ConsiglioCard({ item, readonly, membriMap, onEdit, onDelete, deletingId
                     onClick={() => setConfirmDel(false)}
                     style={{
                       background: 'none', border: '1px solid rgba(255,255,255,0.15)',
-                      borderRadius: 3, padding: '4px 8px', fontSize: 11,
+                      borderRadius: 8, padding: '4px 8px', fontSize: 12,
                       color: 'var(--gray)', cursor: 'pointer',
                     }}
                   >
@@ -219,7 +219,7 @@ function ConsiglioCard({ item, readonly, membriMap, onEdit, onDelete, deletingId
                   onClick={() => setConfirmDel(true)}
                   style={{
                     background: 'none', border: '1px solid rgba(239,68,68,0.3)',
-                    borderRadius: 3, padding: '4px 10px', fontSize: 11,
+                    borderRadius: 8, padding: '4px 10px', fontSize: 12,
                     color: '#ef4444', cursor: 'pointer',
                   }}
                 >
@@ -239,8 +239,8 @@ function ConsiglioCard({ item, readonly, membriMap, onEdit, onDelete, deletingId
           borderRadius: '0 3px 3px 0',
         }}>
           <div style={{
-            fontSize: 10, fontFamily: 'var(--font-mono)', letterSpacing: '0.1em',
-            textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 6,
+            fontSize: 12, fontFamily: 'var(--font-mono)', letterSpacing: '0',
+            textTransform: 'none', color: 'var(--accent)', marginBottom: 6,
           }}>
             💬 Consiglio per rispondere
           </div>
@@ -296,8 +296,8 @@ function ConsiglioFormModal({ initial, saving, error, membriPerRuolo, onSave, on
       onClick={e => { if (e.target === e.currentTarget) onClose() }}
     >
       <div style={{
-        background: '#111', border: '1px solid var(--border-solid)',
-        borderRadius: 3, width: '100%', maxWidth: 560, flexShrink: 0,
+        background: 'var(--surface-2)', border: '1px solid var(--border-solid)',
+        borderRadius: 8, width: '100%', maxWidth: 560, flexShrink: 0,
       }}>
         {/* Intestazione */}
         <div style={{
@@ -305,8 +305,8 @@ function ConsiglioFormModal({ initial, saving, error, membriPerRuolo, onSave, on
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
         }}>
           <span style={{
-            fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 16,
-            textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)',
+            fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16,
+            textTransform: 'none', letterSpacing: '-0.01em', color: 'var(--white)',
           }}>
             {initial ? 'Modifica consiglio' : 'Nuovo consiglio'}
           </span>
@@ -329,7 +329,7 @@ function ConsiglioFormModal({ initial, saving, error, membriPerRuolo, onSave, on
                 className="input"
                 value={form.destinatario_ruolo}
                 onChange={e => handleRuoloChange(e.target.value as DestinatarioRuolo)}
-                style={{ background: '#1a1a1a', color: 'var(--white)' }}
+                style={{ background: 'var(--surface-2)', color: 'var(--white)' }}
               >
                 {RUOLI_DEST.map(r => (
                   <option key={r.value} value={r.value}>{r.emoji} {r.label}</option>
@@ -342,7 +342,7 @@ function ConsiglioFormModal({ initial, saving, error, membriPerRuolo, onSave, on
                 className="input"
                 value={form.contesto}
                 onChange={e => setForm(p => ({ ...p, contesto: e.target.value as Contesto }))}
-                style={{ background: '#1a1a1a', color: 'var(--white)' }}
+                style={{ background: 'var(--surface-2)', color: 'var(--white)' }}
               >
                 {CONTESTI.map(c => (
                   <option key={c.value} value={c.value}>{c.label}</option>
@@ -355,7 +355,7 @@ function ConsiglioFormModal({ initial, saving, error, membriPerRuolo, onSave, on
           <div>
             <label className="label">
               Persona specifica
-              <span style={{ color: 'var(--gray)', fontWeight: 400, fontSize: 11, marginLeft: 6 }}>
+              <span style={{ color: 'var(--gray)', fontWeight: 400, fontSize: 12, marginLeft: 6 }}>
                 (opzionale — lascia vuoto per indirizzarlo a tutti i {RUOLI_DEST.find(r => r.value === form.destinatario_ruolo)?.label ?? ''})
               </span>
             </label>
@@ -363,7 +363,7 @@ function ConsiglioFormModal({ initial, saving, error, membriPerRuolo, onSave, on
               className="input"
               value={form.destinatario_specifico_id ?? ''}
               onChange={e => setForm(p => ({ ...p, destinatario_specifico_id: e.target.value || null }))}
-              style={{ background: '#1a1a1a', color: 'var(--white)' }}
+              style={{ background: 'var(--surface-2)', color: 'var(--white)' }}
             >
               <option value="">— Tutti i {RUOLI_DEST.find(r => r.value === form.destinatario_ruolo)?.label ?? ''} —</option>
               {membriRuoloCorrente.map(m => (
@@ -373,7 +373,7 @@ function ConsiglioFormModal({ initial, saving, error, membriPerRuolo, onSave, on
               ))}
             </select>
             {membriRuoloCorrente.length === 0 && (
-              <div style={{ fontSize: 11, color: 'var(--gray)', marginTop: 4, fontFamily: 'var(--font-mono)' }}>
+              <div style={{ fontSize: 12, color: 'var(--gray)', marginTop: 4, fontFamily: 'var(--font-mono)' }}>
                 Nessun membro con questo ruolo trovato nel club.
               </div>
             )}
@@ -386,7 +386,7 @@ function ConsiglioFormModal({ initial, saving, error, membriPerRuolo, onSave, on
               className="input"
               value={form.priorita}
               onChange={e => setForm(p => ({ ...p, priorita: Number(e.target.value) as Priorita }))}
-              style={{ background: '#1a1a1a', color: 'var(--white)' }}
+              style={{ background: 'var(--surface-2)', color: 'var(--white)' }}
             >
               <option value={1}>🔴 Alta — domanda probabile e delicata</option>
               <option value={2}>🟡 Media</option>
@@ -411,7 +411,7 @@ function ConsiglioFormModal({ initial, saving, error, membriPerRuolo, onSave, on
           <div>
             <label className="label">
               💬 Consiglio per la risposta *
-              <span style={{ color: 'var(--gray)', fontWeight: 400, fontSize: 11, marginLeft: 6 }}>
+              <span style={{ color: 'var(--gray)', fontWeight: 400, fontSize: 12, marginLeft: 6 }}>
                 (visibile al destinatario)
               </span>
             </label>
@@ -652,16 +652,16 @@ export default function ConsigliIntervistePage() {
       <div style={{ padding: '28px 32px', maxWidth: 800, animation: 'fadeIn .3s ease' }}>
         <div style={{ marginBottom: 28 }}>
           <div style={{
-            fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '3px',
-            textTransform: 'uppercase', color: 'var(--accent)',
+            fontFamily: 'var(--font-mono)', fontSize: '0.78rem', letterSpacing: '3px',
+            textTransform: 'none', color: 'var(--accent)',
             display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8,
           }}>
             <span style={{ display: 'block', width: 20, height: 1, background: 'var(--accent)' }} />
             Ufficio Stampa
           </div>
           <h1 style={{
-            fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 900,
-            textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)',
+            fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700,
+            textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)',
             lineHeight: 1, marginBottom: 4,
           }}>
             Consigli per le tue interviste
@@ -690,7 +690,7 @@ export default function ConsigliIntervistePage() {
               <button
                 onClick={() => setTabContesto('tutti')}
                 style={{
-                  padding: '6px 14px', borderRadius: 3, fontSize: 12,
+                  padding: '6px 14px', borderRadius: 8, fontSize: 12,
                   fontFamily: 'var(--font-mono)', cursor: 'pointer', border: 'none',
                   background: tabContesto === 'tutti' ? 'var(--accent)' : 'rgba(255,255,255,0.06)',
                   color:      tabContesto === 'tutti' ? '#000' : 'var(--gray)',
@@ -708,7 +708,7 @@ export default function ConsigliIntervistePage() {
                     key={c}
                     onClick={() => setTabContesto(c)}
                     style={{
-                      padding: '6px 14px', borderRadius: 3, fontSize: 12,
+                      padding: '6px 14px', borderRadius: 8, fontSize: 12,
                       fontFamily: 'var(--font-mono)', cursor: 'pointer', border: 'none',
                       background: active ? 'var(--accent)' : 'rgba(255,255,255,0.06)',
                       color:      active ? '#000' : 'var(--gray)',
@@ -757,16 +757,16 @@ export default function ConsigliIntervistePage() {
       }}>
         <div>
           <div style={{
-            fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '3px',
-            textTransform: 'uppercase', color: 'var(--accent)',
+            fontFamily: 'var(--font-mono)', fontSize: '0.78rem', letterSpacing: '3px',
+            textTransform: 'none', color: 'var(--accent)',
             display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8,
           }}>
             <span style={{ display: 'block', width: 20, height: 1, background: 'var(--accent)' }} />
             Ufficio Stampa
           </div>
           <h1 style={{
-            fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 900,
-            textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)',
+            fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700,
+            textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)',
             lineHeight: 1, marginBottom: 4,
           }}>
             Consigli Interviste
@@ -810,10 +810,10 @@ export default function ConsigliIntervistePage() {
               {r.emoji} {r.label}
               {count > 0 && (
                 <span style={{
-                  marginLeft: 6, fontSize: 10, fontFamily: 'var(--font-mono)',
+                  marginLeft: 6, fontSize: 12, fontFamily: 'var(--font-mono)',
                   background: active ? 'var(--accent)' : 'rgba(255,255,255,0.1)',
                   color:      active ? '#000' : 'var(--gray)',
-                  padding: '1px 5px', borderRadius: 2, fontWeight: 700,
+                  padding: '1px 5px', borderRadius: 8, fontWeight: 700,
                 }}>
                   {count}
                 </span>
@@ -840,7 +840,7 @@ export default function ConsigliIntervistePage() {
         </div>
       ) : (
         <>
-          <div style={{ fontSize: 11, color: 'var(--gray)', fontFamily: 'var(--font-mono)', marginBottom: 12 }}>
+          <div style={{ fontSize: 12, color: 'var(--gray)', fontFamily: 'var(--font-mono)', marginBottom: 12 }}>
             {consigliPerTabAttiva.length} consiglio{consigliPerTabAttiva.length !== 1 ? 'i' : ''} per{' '}
             {RUOLI_DEST.find(r => r.value === tabAttiva)?.label}
           </div>

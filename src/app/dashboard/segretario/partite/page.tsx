@@ -102,7 +102,7 @@ function FormaBadge({ esito }: { esito: string }) {
   }
   const s = cfg[esito] ?? { bg: 'var(--grigio-5)', c: 'var(--grigio-3)' }
   return (
-    <span style={{ display: 'inline-flex', width: 22, height: 22, borderRadius: 4, alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, background: s.bg, color: s.c }}>
+    <span style={{ display: 'inline-flex', width: 22, height: 22, borderRadius: 10, alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, background: s.bg, color: s.c }}>
       {esito}
     </span>
   )
@@ -111,10 +111,10 @@ function FormaBadge({ esito }: { esito: string }) {
 function PercBar({ perc, colore }: { perc: number; colore: string }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-      <div style={{ flex: 1, height: 6, background: 'var(--grigio-5)', borderRadius: 3 }}>
-        <div style={{ width: `${perc}%`, height: '100%', background: colore, borderRadius: 3, transition: 'width 0.4s' }} />
+      <div style={{ flex: 1, height: 6, background: 'var(--grigio-5)', borderRadius: 8 }}>
+        <div style={{ width: `${perc}%`, height: '100%', background: colore, borderRadius: 8, transition: 'width 0.4s' }} />
       </div>
-      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--grigio-3)', width: 32, textAlign: 'right' }}>{perc}%</span>
+      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-3)', width: 32, textAlign: 'right' }}>{perc}%</span>
     </div>
   )
 }
@@ -122,10 +122,10 @@ function PercBar({ perc, colore }: { perc: number; colore: string }) {
 function GruppoHeader({ label, count }: { label: string; count: number }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-      <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--grigio-3)', fontFamily: 'var(--font-display)' }}>
+      <span style={{ fontSize: 12, fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-3)', fontFamily: 'var(--font-display)' }}>
         {label}
       </span>
-      <span style={{ fontSize: 10, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>({count})</span>
+      <span style={{ fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>({count})</span>
       <div style={{ flex: 1, height: 1, background: 'var(--grigio-5)' }} />
     </div>
   )
@@ -248,11 +248,11 @@ export default function SegretarioPartitePage() {
           </span>
         </td>
         <td style={{ fontWeight: 500, fontSize: 13 }}>
-          {p.casa_trasferta === 'trasferta' && <span style={{ fontSize: 10, color: 'var(--grigio-4)', marginRight: 4 }}>@</span>}
+          {p.casa_trasferta === 'trasferta' && <span style={{ fontSize: 12, color: 'var(--grigio-4)', marginRight: 4 }}>@</span>}
           {p.avversario}
         </td>
-        <td style={{ fontSize: 11, color: 'var(--grigio-4)' }}>{(p.squadre as any)?.nome}</td>
-        <td><span className="badge badge-grigio" style={{ fontSize: 10 }}>{p.tipo}</span></td>
+        <td style={{ fontSize: 12, color: 'var(--grigio-4)' }}>{(p.squadre as any)?.nome}</td>
+        <td><span className="badge badge-grigio" style={{ fontSize: 12 }}>{p.tipo}</span></td>
         <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-4)' }}>
           {p.giornata ? `G${p.giornata}` : '—'}
         </td>
@@ -282,7 +282,7 @@ export default function SegretarioPartitePage() {
             <select
               value={editVal.stato}
               onChange={e => setEditVal(v => ({ ...v, stato: e.target.value as StatoPartita }))}
-              style={{ fontSize: 11, padding: '2px 4px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-4)', color: 'var(--white)' }}
+              style={{ fontSize: 12, padding: '2px 4px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-4)', color: 'var(--white)' }}
             >
               <option value="programmata">Programmata</option>
               <option value="giocata">Giocata</option>
@@ -290,7 +290,7 @@ export default function SegretarioPartitePage() {
               <option value="annullata">Annullata</option>
             </select>
           ) : (
-            <span className={`badge ${p.stato === 'giocata' ? 'badge-verde' : p.stato === 'annullata' ? 'badge-rosso' : p.stato === 'rinviata' ? 'badge-ambra' : 'badge-grigio'}`} style={{ fontSize: 10 }}>
+            <span className={`badge ${p.stato === 'giocata' ? 'badge-verde' : p.stato === 'annullata' ? 'badge-rosso' : p.stato === 'rinviata' ? 'badge-ambra' : 'badge-grigio'}`} style={{ fontSize: 12 }}>
               {p.stato}
             </span>
           )}
@@ -298,15 +298,15 @@ export default function SegretarioPartitePage() {
         <td>
           {editId === p.id ? (
             <div style={{ display: 'flex', gap: 4 }}>
-              <button className="btn btn-primary btn-sm" style={{ fontSize: 11, padding: '3px 8px' }} onClick={salvaEdit} disabled={salvando}>
+              <button className="btn btn-primary btn-sm" style={{ fontSize: 12, padding: '3px 8px' }} onClick={salvaEdit} disabled={salvando}>
                 {salvando ? '…' : '✓'}
               </button>
-              <button className="btn btn-secondary btn-sm" style={{ fontSize: 11, padding: '3px 8px' }} onClick={() => setEditId(null)}>
+              <button className="btn btn-secondary btn-sm" style={{ fontSize: 12, padding: '3px 8px' }} onClick={() => setEditId(null)}>
                 ✕
               </button>
             </div>
           ) : (
-            <button className="btn btn-ghost btn-sm" style={{ fontSize: 11 }} onClick={() => avviaEdit(p)}>
+            <button className="btn btn-ghost btn-sm" style={{ fontSize: 12 }} onClick={() => avviaEdit(p)}>
               Modifica
             </button>
           )}
@@ -322,7 +322,7 @@ export default function SegretarioPartitePage() {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>
             Partite
           </h1>
           <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>
@@ -333,8 +333,8 @@ export default function SegretarioPartitePage() {
           {(['calendario', 'statistiche'] as Tab[]).map(t => (
             <button key={t} onClick={() => setTab(t)} style={{
               padding: '8px 16px',
-              fontFamily: 'var(--font-display)', fontSize: 11,
-              textTransform: 'uppercase', letterSpacing: '0.08em',
+              fontFamily: 'var(--font-display)', fontSize: 12,
+              textTransform: 'none', letterSpacing: '0',
               fontWeight: tab === t ? 700 : 500,
               background: tab === t ? 'var(--accent)' : 'transparent',
               color: tab === t ? 'var(--black)' : 'var(--grigio-3)',
@@ -349,8 +349,8 @@ export default function SegretarioPartitePage() {
             data-onboarding="btn-importa-calendario"
             style={{
               padding: '8px 16px',
-              fontFamily: 'var(--font-display)', fontSize: 11,
-              textTransform: 'uppercase', letterSpacing: '0.08em',
+              fontFamily: 'var(--font-display)', fontSize: 12,
+              textTransform: 'none', letterSpacing: '0',
               fontWeight: 500,
               background: 'transparent',
               color: 'var(--grigio-3)',
@@ -380,13 +380,13 @@ export default function SegretarioPartitePage() {
                 <div key={gruppo.label} style={{ marginBottom: 16 }}>
                   {hasBothGroups
                     ? <GruppoHeader label={gruppo.label} count={gruppo.list.length} />
-                    : <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--grigio-4)', marginBottom: 10 }}>
+                    : <div style={{ fontSize: 12, fontWeight: 600, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-4)', marginBottom: 10 }}>
                         Prossime ({prossime.length})
                       </div>
                   }
                   {gruppo.list.slice(0, 3).map(p => (
                     <div key={p.id} className="card" style={{ padding: '12px 18px', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 14 }}>
-                      <div style={{ width: 3, height: 40, borderRadius: 2, background: 'var(--verde)', flexShrink: 0 }} />
+                      <div style={{ width: 3, height: 40, borderRadius: 8, background: 'var(--verde)', flexShrink: 0 }} />
                       <div style={{ flex: 1 }}>
                         <div style={{ fontSize: 14, fontWeight: 600 }}>
                           {p.casa_trasferta === 'trasferta' ? '@ ' : 'vs '}{p.avversario}
@@ -397,7 +397,7 @@ export default function SegretarioPartitePage() {
                           {p.campo && ` · ${p.campo}`}
                         </div>
                       </div>
-                      <span className="badge badge-grigio" style={{ fontSize: 10 }}>{(p.squadre as any)?.nome}</span>
+                      <span className="badge badge-grigio" style={{ fontSize: 12 }}>{(p.squadre as any)?.nome}</span>
                       <Link href={`/dashboard/segretario/distinte?partita=${p.id}`} className="btn btn-secondary btn-sm">Distinta</Link>
                     </div>
                   ))}
@@ -467,13 +467,13 @@ export default function SegretarioPartitePage() {
                     const s = calcolaStats(sq.lista)
                     if (s.totale === 0) return (
                       <div key={sq.id} className="card" style={{ padding: '20px 24px', marginBottom: 20 }}>
-                        <div style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--grigio-4)', marginBottom: 8 }}>{sq.nome}</div>
+                        <div style={{ fontSize: 12, fontWeight: 600, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-4)', marginBottom: 8 }}>{sq.nome}</div>
                         <div style={{ color: 'var(--grigio-4)', fontSize: 13 }}>Nessuna partita giocata</div>
                       </div>
                     )
                     return (
                       <div key={sq.id} style={{ marginBottom: 28 }}>
-                        <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--grigio-4)', fontFamily: 'var(--font-display)', marginBottom: 12 }}>
+                        <div style={{ fontSize: 12, fontWeight: 600, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-4)', fontFamily: 'var(--font-display)', marginBottom: 12 }}>
                           {sq.nome}
                         </div>
 
@@ -487,7 +487,7 @@ export default function SegretarioPartitePage() {
                             { l: 'Clean Sheet', v: s.cleanSheet, c: s.cleanSheet > 0 ? 'var(--verde)' : undefined },
                           ].map(stat => (
                             <div key={stat.l} className="stat-card" style={{ padding: '10px 12px' }}>
-                              <div className="stat-label" style={{ fontSize: 10 }}>{stat.l}</div>
+                              <div className="stat-label" style={{ fontSize: 12 }}>{stat.l}</div>
                               <div className="stat-value" style={{ fontSize: 20, color: (stat as any).c }}>{stat.v}</div>
                             </div>
                           ))}
@@ -496,7 +496,7 @@ export default function SegretarioPartitePage() {
                         {/* Casa vs Trasferta */}
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
                           <div className="card" style={{ padding: '16px 20px' }}>
-                            <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--grigio-4)', marginBottom: 12 }}>
+                            <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-4)', marginBottom: 12 }}>
                               Casa · {s.casa.tot} partite
                             </div>
                             {[
@@ -514,7 +514,7 @@ export default function SegretarioPartitePage() {
                             ))}
                           </div>
                           <div className="card" style={{ padding: '16px 20px' }}>
-                            <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--grigio-4)', marginBottom: 12 }}>
+                            <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-4)', marginBottom: 12 }}>
                               Trasferta · {s.trasferta.tot} partite
                             </div>
                             {[
@@ -536,7 +536,7 @@ export default function SegretarioPartitePage() {
                         {/* Forma recente */}
                         {s.forma.length > 0 && (
                           <div className="card" style={{ padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 14 }}>
-                            <span style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--grigio-4)', fontWeight: 600 }}>
+                            <span style={{ fontSize: 12, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-4)', fontWeight: 600 }}>
                               Forma recente
                             </span>
                             <div style={{ display: 'flex', gap: 4 }}>

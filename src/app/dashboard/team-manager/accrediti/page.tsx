@@ -11,8 +11,8 @@ export default async function TeamManagerAccreditiPage() {
     <div data-onboarding="section-accrediti-tm">
       <div style={{ marginBottom: 24 }}>
         <h1 style={{
-          fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900,
-          textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)',
+          fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700,
+          textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)',
         }}>
           Accrediti
         </h1>

@@ -105,10 +105,10 @@ export default function AllenamentiPage() {
   return (
     <div>
       <div style={{ marginBottom: 28 }}>
-        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, textTransform: 'uppercase', fontSize: 26, letterSpacing: '0.04em', color: 'var(--white)' }}>
+        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 26, letterSpacing: '0', color: 'var(--white)' }}>
           Allenamenti
         </div>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)', marginTop: 6 }}>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', marginTop: 6 }}>
           Ultime 8 settimane
         </div>
       </div>
@@ -121,15 +121,15 @@ export default function AllenamentiPage() {
           { label: '% Presenze', val: `${percPresenza}%`, color: 'var(--white)' },
         ].map(s => (
           <div key={s.label} style={{ border: '1px solid var(--border)', background: 'var(--bg-card)', padding: '16px 20px' }}>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 6 }}>{s.label}</div>
-            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 28, color: s.color }}>{s.val}</div>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', textTransform: 'none', letterSpacing: '0', marginBottom: 6 }}>{s.label}</div>
+            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 28, color: s.color }}>{s.val}</div>
           </div>
         ))}
       </div>
 
       {/* Lista sessioni */}
       <div style={{ border: '1px solid var(--border)', background: 'var(--bg-card)' }}>
-        <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border)', fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', fontSize: 13, color: 'var(--white)' }}>
+        <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border)', fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 13, color: 'var(--white)' }}>
           Storico sessioni ({sessioni.length})
         </div>
         {sessioni.length === 0 && (
@@ -143,35 +143,35 @@ export default function AllenamentiPage() {
           return (
             <div key={s.id} style={{ padding: '12px 18px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 14 }}>
               <div style={{ width: 48, textAlign: 'center', flexShrink: 0 }}>
-                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 18, color: 'var(--white)' }}>{data.getDate()}</div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--gray)', textTransform: 'uppercase' }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 18, color: 'var(--white)' }}>{data.getDate()}</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)', textTransform: 'none' }}>
                   {data.toLocaleString('it-IT', { month: 'short' })}
                 </div>
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', fontSize: 12, color: 'var(--white)' }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 12, color: 'var(--white)' }}>
                   {TIPO_LABEL[s.tipologia] ?? s.tipologia}
                   {s.campo && <span style={{ fontWeight: 400, color: 'var(--gray)', marginLeft: 8 }}>· {s.campo}</span>}
                 </div>
                 {s.obiettivo && (
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', marginTop: 2 }}>{s.obiettivo}</div>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', marginTop: 2 }}>{s.obiettivo}</div>
                 )}
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', marginTop: 2 }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', marginTop: 2 }}>
                   {data.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })} · {s.durata_minuti} min
                 </div>
               </div>
               <div style={{ flexShrink: 0 }}>
                 {statoPres === true && (
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--accent)', background: 'rgba(200,240,0,0.08)', padding: '3px 8px', border: '1px solid rgba(200,240,0,0.2)' }}>✓ PRESENTE</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--accent)', background: 'rgba(200,240,0,0.08)', padding: '3px 8px', border: '1px solid rgba(200,240,0,0.2)' }}>✓ PRESENTE</span>
                 )}
                 {statoPres === false && (
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--rosso)', background: 'rgba(255,60,60,0.08)', padding: '3px 8px', border: '1px solid rgba(255,60,60,0.2)' }}>✕ ASSENTE</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--rosso)', background: 'rgba(255,60,60,0.08)', padding: '3px 8px', border: '1px solid rgba(255,60,60,0.2)' }}>✕ ASSENTE</span>
                 )}
                 {statoPres === null && s.stato === 'programmato' && (
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', padding: '3px 8px', border: '1px solid var(--border)' }}>PROGRAMMATO</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', padding: '3px 8px', border: '1px solid var(--border)' }}>PROGRAMMATO</span>
                 )}
                 {s.stato === 'annullato' && (
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--ambra)', padding: '3px 8px', border: '1px solid var(--border)' }}>ANNULLATO</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--ambra)', padding: '3px 8px', border: '1px solid var(--border)' }}>ANNULLATO</span>
                 )}
               </div>
             </div>

@@ -43,8 +43,8 @@ export default function UpgradeModal({ requiredPlan, onClose }: UpgradeModalProp
             </svg>
           </div>
           <div style={{
-            fontFamily: 'var(--font-display)', fontWeight: 900,
-            textTransform: 'uppercase', fontSize: 15, letterSpacing: '0.04em',
+            fontFamily: 'var(--font-display)', fontWeight: 700,
+            textTransform: 'none', fontSize: 15, letterSpacing: '0',
             color: 'var(--white)',
           }}>
             Funzione bloccata

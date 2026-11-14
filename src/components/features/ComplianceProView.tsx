@@ -73,7 +73,7 @@ function RischioIndicatore({ livello }: { livello: RischioLivello }) {
     <div style={{ padding: '20px 24px', background: cfg.bg, border: `1px solid ${cfg.border}`, marginBottom: 24, display: 'flex', alignItems: 'center', gap: 20 }}>
       <div style={{ width: 14, height: 14, borderRadius: '50%', background: cfg.color, flexShrink: 0, boxShadow: `0 0 10px ${cfg.color}` }} />
       <div>
-        <div style={{ fontFamily: 'var(--font-display)', fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: cfg.color }}>{cfg.label}</div>
+        <div style={{ fontFamily: 'var(--font-display)', fontSize: 12, fontWeight: 700, letterSpacing: '0', textTransform: 'none', color: cfg.color }}>{cfg.label}</div>
         <div style={{ fontSize: 12, color: 'var(--grigio-3)', marginTop: 2 }}>{cfg.sub}</div>
       </div>
     </div>
@@ -94,14 +94,14 @@ function Countdown({ scadenze }: { scadenze: Scadenza[] }) {
     <div style={{ padding: '20px 24px', background: 'var(--grigio-7)', border: '1px solid var(--grigio-5)', marginBottom: 24, display: 'flex', gap: 24, alignItems: 'center' }}>
       <div style={{ textAlign: 'center', minWidth: 70 }}>
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: 36, fontWeight: 700, color, lineHeight: 1 }}>{giorni}</div>
-        <div style={{ fontFamily: 'var(--font-display)', fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--grigio-3)', marginTop: 4 }}>giorni</div>
+        <div style={{ fontFamily: 'var(--font-display)', fontSize: 11, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-3)', marginTop: 4 }}>giorni</div>
       </div>
       <div style={{ borderLeft: '1px solid var(--grigio-5)', paddingLeft: 24 }}>
-        <div style={{ fontFamily: 'var(--font-display)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--grigio-3)', marginBottom: 4 }}>Prossima scadenza critica</div>
+        <div style={{ fontFamily: 'var(--font-display)', fontSize: 12, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-3)', marginBottom: 4 }}>Prossima scadenza critica</div>
         <div style={{ fontWeight: 600, color: 'var(--white)', fontSize: 14 }}>{prossima.descrizione}</div>
         <div style={{ fontSize: 12, color: 'var(--grigio-3)', marginTop: 4 }}>
           {fmtData(prossima.data_scadenza)} &nbsp;·&nbsp;
-          <span style={{ color: CATEGORIE_COLOR[prossima.categoria_scadenza] ?? 'var(--grigio-2)', fontFamily: 'var(--font-display)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+          <span style={{ color: CATEGORIE_COLOR[prossima.categoria_scadenza] ?? 'var(--grigio-2)', fontFamily: 'var(--font-display)', fontSize: 12, textTransform: 'none', letterSpacing: '0' }}>
             {prossima.categoria_scadenza}
           </span>
         </div>
@@ -161,8 +161,8 @@ function ScadenzaCard({
         <StatoIcona scadenza={s} />
         <div>
           <div style={{ fontWeight: 600, color: 'var(--white)', fontSize: 13 }}>{s.descrizione}</div>
-          <div style={{ fontSize: 11, color: 'var(--grigio-3)', marginTop: 2 }}>
-            <span style={{ color: CATEGORIE_COLOR[s.categoria_scadenza] ?? 'var(--grigio-3)', fontFamily: 'var(--font-display)', textTransform: 'uppercase', letterSpacing: '0.06em', fontSize: 10, marginRight: 8 }}>
+          <div style={{ fontSize: 12, color: 'var(--grigio-3)', marginTop: 2 }}>
+            <span style={{ color: CATEGORIE_COLOR[s.categoria_scadenza] ?? 'var(--grigio-3)', fontFamily: 'var(--font-display)', textTransform: 'none', letterSpacing: '0', fontSize: 12, marginRight: 8 }}>
               {s.categoria_scadenza}
             </span>
             {s.importo_coinvolto ? fmtEuro(s.importo_coinvolto) + ' ·' : ''} {fmtData(s.data_scadenza)}
@@ -173,10 +173,10 @@ function ScadenzaCard({
         </div>
         <div>
           {s.attestazione_caricata && (
-            <span style={{ fontSize: 10, fontFamily: 'var(--font-display)', color: '#4cff88', background: 'rgba(76,255,136,0.1)', padding: '2px 6px' }}>ATT. ✓</span>
+            <span style={{ fontSize: 12, fontFamily: 'var(--font-display)', color: '#4cff88', background: 'rgba(76,255,136,0.1)', padding: '2px 6px' }}>ATT. ✓</span>
           )}
         </div>
-        <div style={{ fontFamily: 'var(--font-display)', fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--grigio-3)', textAlign: 'right' }}>
+        <div style={{ fontFamily: 'var(--font-display)', fontSize: 11, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-3)', textAlign: 'right' }}>
           {open ? '▲ chiudi' : '▼ dettagli'}
         </div>
       </div>
@@ -186,7 +186,7 @@ function ScadenzaCard({
         <div style={{ padding: '0 16px 16px 56px', display: 'flex', flexDirection: 'column', gap: 12 }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             <div>
-              <label style={{ display: 'block', fontSize: 10, fontFamily: 'var(--font-display)', textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--grigio-3)', marginBottom: 4 }}>Note</label>
+              <label style={{ display: 'block', fontSize: 12, fontFamily: 'var(--font-display)', textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-3)', marginBottom: 4 }}>Note</label>
               <textarea
                 value={nota}
                 onChange={e => setNota(e.target.value)}
@@ -195,7 +195,7 @@ function ScadenzaCard({
               />
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: 10, fontFamily: 'var(--font-display)', textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--grigio-3)', marginBottom: 4 }}>Importo coinvolto (€)</label>
+              <label style={{ display: 'block', fontSize: 12, fontFamily: 'var(--font-display)', textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-3)', marginBottom: 4 }}>Importo coinvolto (€)</label>
               <input
                 type="number"
                 value={importo}
@@ -216,7 +216,7 @@ function ScadenzaCard({
             {s.stato !== 'completata' && (
               <button
                 onClick={() => onComplete(s.id, nota)}
-                style={{ padding: '6px 16px', background: 'rgba(76,255,136,0.1)', border: '1px solid rgba(76,255,136,0.3)', color: '#4cff88', cursor: 'pointer', fontSize: 12, fontFamily: 'var(--font-display)', textTransform: 'uppercase', letterSpacing: '0.06em' }}
+                style={{ padding: '6px 16px', background: 'rgba(76,255,136,0.1)', border: '1px solid rgba(76,255,136,0.3)', color: '#4cff88', cursor: 'pointer', fontSize: 12, fontFamily: 'var(--font-display)', textTransform: 'none', letterSpacing: '0' }}
               >
                 ✓ Segna come completata
               </button>
@@ -342,7 +342,7 @@ export default function ComplianceProView() {
 
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 22, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.01em', color: 'var(--white)' }}>
           Compliance COVISOC
         </h1>
         <p style={{ fontSize: 13, color: 'var(--grigio-3)', marginTop: 4 }}>
@@ -365,7 +365,7 @@ export default function ComplianceProView() {
           { label: 'Scadute', v: scadute, color: '#ff4444' },
         ].map(({ label, v, color }) => (
           <div key={label} style={{ padding: '14px 18px', background: 'var(--grigio-7)', border: '1px solid var(--grigio-5)' }}>
-            <div style={{ fontFamily: 'var(--font-display)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--grigio-3)', marginBottom: 6 }}>{label}</div>
+            <div style={{ fontFamily: 'var(--font-display)', fontSize: 12, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-3)', marginBottom: 6 }}>{label}</div>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 24, fontWeight: 700, color }}>{v}</div>
           </div>
         ))}
@@ -396,7 +396,7 @@ export default function ComplianceProView() {
           <button
             onClick={seed}
             disabled={seeding}
-            style={{ padding: '7px 16px', background: 'rgba(200,240,0,0.08)', border: '1px solid rgba(200,240,0,0.2)', color: 'var(--accent)', cursor: seeding ? 'not-allowed' : 'pointer', fontSize: 12, fontFamily: 'var(--font-display)', textTransform: 'uppercase', letterSpacing: '0.06em', opacity: seeding ? 0.6 : 1 }}
+            style={{ padding: '7px 16px', background: 'rgba(200,240,0,0.08)', border: '1px solid rgba(200,240,0,0.2)', color: 'var(--accent)', cursor: seeding ? 'not-allowed' : 'pointer', fontSize: 12, fontFamily: 'var(--font-display)', textTransform: 'none', letterSpacing: '0', opacity: seeding ? 0.6 : 1 }}
           >
             {seeding ? 'Caricamento…' : `⟳ Carica standard ${stagione}`}
           </button>

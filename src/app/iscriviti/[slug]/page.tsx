@@ -33,8 +33,8 @@ const centeredStyle: React.CSSProperties = {
   padding: 24,
 }
 const headingStyle: React.CSSProperties = {
-  fontFamily: 'Barlow Condensed, sans-serif', fontWeight: 900,
-  fontSize: 28, textTransform: 'uppercase', marginBottom: 8, letterSpacing: '-0.01em',
+  fontFamily: 'var(--font-display)', fontWeight: 700,
+  fontSize: 28, textTransform: 'none', marginBottom: 8, letterSpacing: '-0.01em',
 }
 const subStyle: React.CSSProperties = { color: '#888', fontSize: 14, marginBottom: 6 }
 

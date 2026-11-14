@@ -63,21 +63,21 @@ export default function LocandineListPage() {
   return (
     <div>
       {toast && (
-        <div style={{ position: 'fixed', bottom: 24, right: 24, background: 'var(--verde)', color: '#fff', padding: '10px 18px', borderRadius: 4, fontFamily: 'var(--font-mono)', fontSize: 13, zIndex: 1000 }}>
+        <div style={{ position: 'fixed', bottom: 24, right: 24, background: 'var(--verde)', color: '#fff', padding: '10px 18px', borderRadius: 10, fontFamily: 'var(--font-mono)', fontSize: 13, zIndex: 1000 }}>
           {toast}
         </div>
       )}
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Brief Locandine</h1>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Brief Locandine</h1>
           <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>Form strutturati per chi realizza la grafica esternamente</p>
         </div>
         <Link data-onboarding="btn-nuova-locandina" href="/dashboard/ufficio-stampa/locandine/nuova" style={{
           display: 'inline-flex', alignItems: 'center', gap: 6,
           padding: '9px 16px', background: 'var(--accent)', color: '#0a0a0a',
           fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12,
-          textTransform: 'uppercase', letterSpacing: '0.08em', textDecoration: 'none', borderRadius: 2,
+          textTransform: 'none', letterSpacing: '0', textDecoration: 'none', borderRadius: 8,
         }}>
           + Nuovo brief
         </Link>
@@ -90,8 +90,8 @@ export default function LocandineListPage() {
             key={s}
             onClick={() => setFiltro(s)}
             style={{
-              padding: '5px 12px', borderRadius: 2, border: '1px solid var(--border-solid)',
-              fontFamily: 'var(--font-mono)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.1em',
+              padding: '5px 12px', borderRadius: 8, border: '1px solid var(--border-solid)',
+              fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'none', letterSpacing: '0',
               cursor: 'pointer',
               background: filtro === s ? 'var(--accent)' : 'transparent',
               color: filtro === s ? '#0a0a0a' : 'var(--grigio-3)',
@@ -133,7 +133,7 @@ export default function LocandineListPage() {
                     <td style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{b.competizione ?? '—'}</td>
                     <td style={{ fontSize: 12, color: 'var(--grigio-4)' }}>{b.campo_impianto ?? '—'}</td>
                     <td>
-                      <span style={{ fontSize: 10, fontFamily: 'var(--font-mono)', color: info.colore, background: `${info.colore}20`, padding: '3px 8px', borderRadius: 2 }}>
+                      <span style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: info.colore, background: `${info.colore}20`, padding: '3px 8px', borderRadius: 8 }}>
                         {info.label}
                       </span>
                     </td>
@@ -144,10 +144,10 @@ export default function LocandineListPage() {
                             onClick={() => avanzaStato(b.id, b.stato)}
                             disabled={aggiornando === b.id}
                             style={{
-                              padding: '4px 10px', fontSize: 10, fontFamily: 'var(--font-mono)',
+                              padding: '4px 10px', fontSize: 12, fontFamily: 'var(--font-mono)',
                               background: 'var(--accent-lt)', color: 'var(--accent)',
-                              border: '1px solid var(--accent)', borderRadius: 2,
-                              cursor: 'pointer', textTransform: 'uppercase',
+                              border: '1px solid var(--accent)', borderRadius: 8,
+                              cursor: 'pointer', textTransform: 'none',
                             }}
                           >
                             {prossimo}
@@ -157,7 +157,7 @@ export default function LocandineListPage() {
                           onClick={() => elimina(b.id)}
                           style={{
                             padding: '4px 8px', background: 'transparent', color: 'var(--grigio-4)',
-                            border: '1px solid var(--border-solid)', borderRadius: 2, cursor: 'pointer', fontSize: 11,
+                            border: '1px solid var(--border-solid)', borderRadius: 8, cursor: 'pointer', fontSize: 12,
                           }}
                         >
                           ✕

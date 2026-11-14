@@ -62,7 +62,7 @@ export default async function SegretarioDashboard() {
     <div>
       {/* Header */}
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>
           Panoramica segreteria
         </h1>
         <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>
@@ -126,7 +126,7 @@ export default async function SegretarioDashboard() {
                         <tr key={c.id}>
                           <td>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                              <div className="avatar" style={{ width: 28, height: 28, fontSize: 11 }}>G</div>
+                              <div className="avatar" style={{ width: 28, height: 28, fontSize: 12 }}>G</div>
                               <span style={{ fontSize: 13, fontWeight: 500 }}>Giocatore #{c.giocatore_id.slice(-4)}</span>
                             </div>
                           </td>
@@ -240,7 +240,7 @@ export default async function SegretarioDashboard() {
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                       <span className="badge badge-grigio">{m.tipo}</span>
-                      <span style={{ fontSize: 11, color: 'var(--grigio-4)' }}>
+                      <span style={{ fontSize: 12, color: 'var(--grigio-4)' }}>
                         {new Date(m.inviato_at).toLocaleDateString('it-IT')}
                       </span>
                     </div>

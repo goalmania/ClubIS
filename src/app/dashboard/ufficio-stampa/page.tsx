@@ -79,7 +79,7 @@ export default async function UfficioStampaDashboard() {
     <ServerFeatureGate feature="dashboard_addetto_stampa" featureLabel="Dashboard Addetto Stampa">
     <div>
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>
           Ufficio Stampa
         </h1>
         <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>
@@ -133,7 +133,7 @@ export default async function UfficioStampaDashboard() {
                       <div style={{ fontFamily: 'var(--font-mono)', fontSize: 18, fontWeight: 700, color: 'var(--accent)', lineHeight: 1 }}>
                         {new Date(ev.data_ora).getDate()}
                       </div>
-                      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--grigio-4)', textTransform: 'uppercase' }}>
+                      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-4)', textTransform: 'none' }}>
                         {new Date(ev.data_ora).toLocaleDateString('it-IT', { month: 'short' })}
                       </div>
                     </div>
@@ -141,11 +141,11 @@ export default async function UfficioStampaDashboard() {
                       <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--white)', marginBottom: 2 }}>
                         {TIPO_EVENTO_LABEL[ev.tipo] ?? ev.tipo}
                       </div>
-                      <div style={{ fontSize: 11, color: 'var(--grigio-4)' }}>
+                      <div style={{ fontSize: 12, color: 'var(--grigio-4)' }}>
                         {formatOra(ev.data_ora)}{ev.emittente_testata ? ` · ${ev.emittente_testata}` : ''}{ev.luogo ? ` · ${ev.luogo}` : ''}
                       </div>
                     </div>
-                    <span style={{ fontSize: 10, fontFamily: 'var(--font-mono)', color: info.colore, background: `${info.colore}18`, padding: '3px 8px', borderRadius: 2, whiteSpace: 'nowrap' }}>
+                    <span style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: info.colore, background: `${info.colore}18`, padding: '3px 8px', borderRadius: 8, whiteSpace: 'nowrap' }}>
                       {info.label}
                     </span>
                   </div>
@@ -184,7 +184,7 @@ export default async function UfficioStampaDashboard() {
                         <td style={{ fontWeight: 500, fontSize: 13 }}>{b.titolo_evento}</td>
                         <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{formatData(b.data_evento)}</td>
                         <td>
-                          <span style={{ fontSize: 10, fontFamily: 'var(--font-mono)', color: info.colore, background: `${info.colore}18`, padding: '3px 8px', borderRadius: 2 }}>
+                          <span style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: info.colore, background: `${info.colore}18`, padding: '3px 8px', borderRadius: 8 }}>
                             {info.label}
                           </span>
                         </td>
@@ -231,7 +231,7 @@ export default async function UfficioStampaDashboard() {
                     <td>
                       <Link
                         href={`/dashboard/ufficio-stampa/articoli?partita_id=${p.id}`}
-                        style={{ fontSize: 11, color: 'var(--accent)', textDecoration: 'none', fontWeight: 600 }}
+                        style={{ fontSize: 12, color: 'var(--accent)', textDecoration: 'none', fontWeight: 600 }}
                       >
                         Genera →
                       </Link>

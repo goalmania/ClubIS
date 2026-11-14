@@ -227,7 +227,7 @@ function CampoExtraInput({
         value={(valore as string) ?? ''}
         onChange={e => onChange(e.target.value)}
         placeholder={campo.placeholder}
-        style={{ resize: 'vertical', minHeight: 72, background: '#1a1a1a', color: 'var(--white)' }}
+        style={{ resize: 'vertical', minHeight: 72, background: 'var(--surface-2)', color: 'var(--white)' }}
       />
     )
   }
@@ -242,7 +242,7 @@ function CampoExtraInput({
         else onChange(raw)
       }}
       placeholder={campo.placeholder}
-      style={{ background: '#1a1a1a', color: 'var(--white)' }}
+      style={{ background: 'var(--surface-2)', color: 'var(--white)' }}
     />
   )
 }
@@ -397,8 +397,8 @@ export default function DocumentiPage() {
           <div style={{ width: 248, flexShrink: 0, borderRight: '1px solid var(--border-solid)', marginRight: 24 }}>
             <div style={{ position: 'sticky', top: 0 }}>
               <div style={{
-                fontFamily: 'var(--font-mono)', fontSize: '0.58rem',
-                letterSpacing: '0.2em', textTransform: 'uppercase', color: '#444',
+                fontFamily: 'var(--font-mono)', fontSize: '0.78rem',
+                letterSpacing: '0', textTransform: 'none', color: 'var(--text-muted)',
                 padding: '0 0 10px 0', marginBottom: 6,
               }}>
                 CATEGORIE
@@ -417,22 +417,22 @@ export default function DocumentiPage() {
                     style={{
                       display: 'flex', alignItems: 'center', gap: 8,
                       width: '100%', padding: '8px 10px', cursor: 'pointer',
-                      border: 'none', borderRadius: 2, marginBottom: 2, textAlign: 'left',
+                      border: 'none', borderRadius: 8, marginBottom: 2, textAlign: 'left',
                       background:   isActive ? 'rgba(200,240,0,0.07)' : 'transparent',
                       borderLeft:   isActive ? '2px solid var(--accent)' : '2px solid transparent',
                     }}
                   >
                     <span style={{ fontSize: 14, flexShrink: 0 }}>{item.icona}</span>
                     <span style={{
-                      fontSize: 11, flex: 1,
+                      fontSize: 12, flex: 1,
                       fontFamily: 'var(--font-display)', fontWeight: isActive ? 700 : 400,
-                      textTransform: 'uppercase', letterSpacing: '0.04em',
+                      textTransform: 'none', letterSpacing: '0',
                       color: isActive ? 'var(--accent)' : 'var(--gray)',
                     }}>
                       {item.label}
                     </span>
                     {typeof count === 'number' && count > 0 && (
-                      <span style={{ fontSize: 10, color: 'var(--gray)', fontFamily: 'var(--font-mono)' }}>
+                      <span style={{ fontSize: 12, color: 'var(--gray)', fontFamily: 'var(--font-mono)' }}>
                         {count}
                       </span>
                     )}
@@ -448,8 +448,8 @@ export default function DocumentiPage() {
             {/* Header */}
             <div style={{ marginBottom: 20 }}>
               <h1 style={{
-                fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 24,
-                textTransform: 'uppercase', letterSpacing: '-0.01em',
+                fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 28,
+                textTransform: 'none', letterSpacing: '-0.025em',
                 color: 'var(--white)', marginBottom: 4,
               }}>
                 {titoloCorrente}
@@ -496,7 +496,7 @@ export default function DocumentiPage() {
                 <div style={{ fontSize: 36, marginBottom: 12 }}>📄</div>
                 <div style={{
                   fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14,
-                  textTransform: 'uppercase', color: 'var(--white)', marginBottom: 6,
+                  textTransform: 'none', color: 'var(--white)', marginBottom: 6,
                 }}>
                   Nessun documento
                 </div>
@@ -517,15 +517,15 @@ export default function DocumentiPage() {
                     <div
                       key={doc.id}
                       style={{
-                        background: '#111', border: '1px solid var(--border-solid)',
-                        borderRadius: 2, padding: '14px 18px',
+                        background: 'var(--surface-2)', border: '1px solid var(--border-solid)',
+                        borderRadius: 8, padding: '14px 18px',
                         display: 'flex', gap: 14, alignItems: 'flex-start',
                       }}
                     >
                       {/* Icona */}
                       <div style={{
-                        width: 34, height: 34, borderRadius: 2, flexShrink: 0,
-                        background: '#1a1a1a', border: '1px solid var(--border-solid)',
+                        width: 34, height: 34, borderRadius: 8, flexShrink: 0,
+                        background: 'var(--surface-2)', border: '1px solid var(--border-solid)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         fontSize: 16,
                       }}>
@@ -537,34 +537,34 @@ export default function DocumentiPage() {
                         <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 4, flexWrap: 'wrap' }}>
                           <span style={{
                             fontFamily: 'var(--font-display)', fontWeight: 700,
-                            textTransform: 'uppercase', letterSpacing: '0.04em',
+                            textTransform: 'none', letterSpacing: '0',
                             fontSize: 13, color: 'var(--white)',
                           }}>
                             {doc.label}
                           </span>
                           {doc.is_verificato && (
                             <span style={{
-                              fontSize: 9, padding: '2px 6px',
+                              fontSize: 11, padding: '2px 6px',
                               background: 'rgba(0,200,160,0.1)', border: '1px solid rgba(0,200,160,0.3)',
                               color: '#00c8a0',
-                              fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', textTransform: 'uppercase',
+                              fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none',
                             }}>
                               ✓ VERIFICATO
                             </span>
                           )}
                           {doc.ha_varianti && (
                             <span style={{
-                              fontSize: 9, padding: '2px 6px',
+                              fontSize: 11, padding: '2px 6px',
                               background: 'rgba(200,240,0,0.08)', border: '1px solid rgba(200,240,0,0.2)',
                               color: 'var(--accent)',
-                              fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', textTransform: 'uppercase',
+                              fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none',
                             }}>
                               {doc.documenti_varianti?.length ?? 0} VARIANTI
                             </span>
                           )}
                         </div>
                         {doc.descrizione && (
-                          <div style={{ fontSize: 11, color: 'var(--gray)', lineHeight: 1.5 }}>
+                          <div style={{ fontSize: 12, color: 'var(--gray)', lineHeight: 1.5 }}>
                             {doc.descrizione}
                           </div>
                         )}
@@ -588,9 +588,9 @@ export default function DocumentiPage() {
                           style={{
                             padding: '7px 16px',
                             background: 'var(--accent)', color: '#000', border: 'none',
-                            borderRadius: 2, cursor: 'pointer',
-                            fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700,
-                            letterSpacing: '0.08em', textTransform: 'uppercase',
+                            borderRadius: 8, cursor: 'pointer',
+                            fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: 700,
+                            letterSpacing: '0', textTransform: 'none',
                           }}
                         >
                           Genera →
@@ -612,8 +612,8 @@ export default function DocumentiPage() {
               padding: '40px 16px', overflowY: 'auto',
             }}>
               <div style={{
-                background: '#111', border: '1px solid var(--border-solid)',
-                borderRadius: 2, width: '100%', maxWidth: 580, position: 'relative',
+                background: 'var(--surface-2)', border: '1px solid var(--border-solid)',
+                borderRadius: 8, width: '100%', maxWidth: 580, position: 'relative',
               }}>
                 {/* Header modal */}
                 <div style={{
@@ -622,12 +622,12 @@ export default function DocumentiPage() {
                 }}>
                   <div>
                     <div style={{
-                      fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 14,
-                      textTransform: 'uppercase', color: 'var(--white)',
+                      fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14,
+                      textTransform: 'none', color: 'var(--white)',
                     }}>
                       {modalDoc.label}
                     </div>
-                    <div style={{ fontSize: 11, color: 'var(--gray)', marginTop: 2 }}>
+                    <div style={{ fontSize: 12, color: 'var(--gray)', marginTop: 2 }}>
                       Compila i campi e genera il documento
                     </div>
                   </div>
@@ -650,14 +650,14 @@ export default function DocumentiPage() {
                         className="input"
                         value={varianteId}
                         onChange={e => { setVarianteId(e.target.value); setCampiExtra({}) }}
-                        style={{ background: '#1a1a1a', color: 'var(--white)' }}
+                        style={{ background: 'var(--surface-2)', color: 'var(--white)' }}
                       >
                         {modalDoc.documenti_varianti!.map(v => (
                           <option key={v.id} value={v.id}>{v.label}</option>
                         ))}
                       </select>
                       {varianteCorrente?.descrizione && (
-                        <div style={{ fontSize: 11, color: 'var(--gray)', marginTop: 5 }}>
+                        <div style={{ fontSize: 12, color: 'var(--gray)', marginTop: 5 }}>
                           {varianteCorrente.descrizione}
                         </div>
                       )}
@@ -671,14 +671,14 @@ export default function DocumentiPage() {
                       className="input"
                       value={giocatoreId}
                       onChange={e => setGiocatoreId(e.target.value)}
-                      style={{ background: '#1a1a1a', color: 'var(--white)' }}
+                      style={{ background: 'var(--surface-2)', color: 'var(--white)' }}
                     >
                       <option value="">— Seleziona tesserato (opzionale) —</option>
                       {giocatori.map(g => (
                         <option key={g.id} value={g.id}>{g.cognome} {g.nome}</option>
                       ))}
                     </select>
-                    <div style={{ fontSize: 10, color: 'var(--gray)', marginTop: 4 }}>
+                    <div style={{ fontSize: 12, color: 'var(--gray)', marginTop: 4 }}>
                       I dati del tesserato vengono pre-compilati automaticamente
                     </div>
                   </div>
@@ -712,9 +712,9 @@ export default function DocumentiPage() {
 
                   {/* Info */}
                   <div style={{
-                    padding: '10px 12px', background: '#0d0d0d',
-                    border: '1px solid var(--border-solid)', borderRadius: 2,
-                    fontSize: 11, color: 'var(--gray)', lineHeight: 1.6,
+                    padding: '10px 12px', background: 'var(--surface-1)',
+                    border: '1px solid var(--border-solid)', borderRadius: 8,
+                    fontSize: 12, color: 'var(--gray)', lineHeight: 1.6,
                   }}>
                     ℹ️ I dati del club vengono pre-compilati automaticamente.
                     Il documento si aprirà in una nuova finestra — usa il pulsante "Stampa / Salva PDF".
@@ -731,9 +731,9 @@ export default function DocumentiPage() {
                     style={{
                       flex: 1, padding: '9px 0',
                       background: 'transparent', border: '1px solid var(--border-solid)',
-                      borderRadius: 2, color: 'var(--gray)', cursor: 'pointer',
-                      fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700,
-                      letterSpacing: '0.08em', textTransform: 'uppercase',
+                      borderRadius: 8, color: 'var(--gray)', cursor: 'pointer',
+                      fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: 700,
+                      letterSpacing: '0', textTransform: 'none',
                     }}
                   >
                     Annulla
@@ -744,10 +744,10 @@ export default function DocumentiPage() {
                     style={{
                       flex: 2, padding: '9px 0',
                       background: generando ? '#444' : 'var(--accent)',
-                      color: '#000', border: 'none', borderRadius: 2,
+                      color: '#000', border: 'none', borderRadius: 8,
                       cursor: generando ? 'not-allowed' : 'pointer',
-                      fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700,
-                      letterSpacing: '0.08em', textTransform: 'uppercase',
+                      fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: 700,
+                      letterSpacing: '0', textTransform: 'none',
                     }}
                   >
                     {generando ? 'Generazione...' : 'Genera documento →'}
@@ -763,7 +763,7 @@ export default function DocumentiPage() {
               position: 'fixed', bottom: 24, right: 24, zIndex: 2000,
               background: toast.ok ? '#1a2a00' : '#2a0a0a',
               border: `1px solid ${toast.ok ? 'var(--accent)' : '#ff4444'}`,
-              borderRadius: 2, padding: '12px 18px',
+              borderRadius: 8, padding: '12px 18px',
               fontFamily: 'var(--font-mono)', fontSize: 12,
               color: toast.ok ? 'var(--accent)' : '#ff6666',
               maxWidth: 380, lineHeight: 1.5,

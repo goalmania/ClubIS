@@ -84,7 +84,7 @@ export default function RinnovoAutomaticoControls({
 
   const boxStyle: React.CSSProperties = {
     padding: '14px 16px',
-    borderRadius: 8,
+    borderRadius: 12,
     border: '1px solid var(--border-solid)',
     background: 'var(--gray-light)',
   }
@@ -92,8 +92,8 @@ export default function RinnovoAutomaticoControls({
   return (
     <div style={boxStyle}>
       <div style={{
-        fontSize: 11, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)',
-        textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8,
+        fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)',
+        textTransform: 'none', letterSpacing: '0', marginBottom: 8,
       }}>
         Rinnovo automatico
       </div>

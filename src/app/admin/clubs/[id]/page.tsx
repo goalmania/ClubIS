@@ -125,7 +125,7 @@ export default function AdminClubDetailPage() {
                 onChange={e => setClub({ ...club, promozione_serie_c_stagione: e.target.value })}
                 style={{ maxWidth: 260 }}
               />
-              <div style={{ fontSize: 11, color: 'var(--grigio-4)', marginTop: 4 }}>
+              <div style={{ fontSize: 12, color: 'var(--grigio-4)', marginTop: 4 }}>
                 Usato dal modulo Compliance COVISOC per calcolare la fideiussione corretta (350.000€ già affiliati, 700.000€ neopromossi — Manuale Licenze Nazionali).
               </div>
             </FormField>
@@ -162,8 +162,8 @@ export default function AdminClubDetailPage() {
                           ))}
                         </select>
                       </td>
-                      <td><span className={`badge ${u.attivo ? 'badge-verde' : 'badge-rosso'}`} style={{ fontSize: 11 }}>{u.attivo ? 'Attivo' : 'Inattivo'}</span></td>
-                      <td style={{ fontSize: 11, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>
+                      <td><span className={`badge ${u.attivo ? 'badge-verde' : 'badge-rosso'}`} style={{ fontSize: 12 }}>{u.attivo ? 'Attivo' : 'Inattivo'}</span></td>
+                      <td style={{ fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>
                         {u.ultimo_accesso ? new Date(u.ultimo_accesso).toLocaleDateString('it-IT') : '—'}
                       </td>
                     </tr>

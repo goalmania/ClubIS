@@ -76,7 +76,7 @@ export default function FinestaMercatoProBanner() {
       <div style={{ padding: '14px 20px', background: bg, border: `1px solid ${border}`, marginBottom: 20, display: 'flex', alignItems: 'center', gap: 16 }}>
         <div style={{ width: 10, height: 10, borderRadius: '50%', background: color, flexShrink: 0, boxShadow: `0 0 8px ${color}` }} />
         <div style={{ flex: 1 }}>
-          <span style={{ fontFamily: 'var(--font-display)', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color }}>
+          <span style={{ fontFamily: 'var(--font-display)', fontSize: 12, fontWeight: 700, textTransform: 'none', letterSpacing: '0', color }}>
             Finestra {info.nome} APERTA
           </span>
           <span style={{ fontSize: 12, color: 'var(--grigio-3)', marginLeft: 12 }}>
@@ -94,7 +94,7 @@ export default function FinestaMercatoProBanner() {
     <div style={{ padding: '14px 20px', background: 'rgba(150,150,150,0.05)', border: '1px solid var(--grigio-5)', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 16 }}>
       <div style={{ width: 10, height: 10, borderRadius: '50%', background: 'var(--grigio-4)', flexShrink: 0 }} />
       <div style={{ flex: 1 }}>
-        <span style={{ fontFamily: 'var(--font-display)', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--grigio-3)' }}>
+        <span style={{ fontFamily: 'var(--font-display)', fontSize: 12, fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-3)' }}>
           Finestra di mercato CHIUSA
         </span>
         <span style={{ fontSize: 12, color: 'var(--grigio-4)', marginLeft: 12 }}>

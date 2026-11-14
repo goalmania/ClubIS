@@ -31,8 +31,8 @@ export default function UpgradeBanner({ feature, requiredPlan }: UpgradeBannerPr
 
       <div style={{ flex: 1 }}>
         <div style={{
-          fontFamily: 'var(--font-display)', fontWeight: 900,
-          textTransform: 'uppercase', fontSize: 13, letterSpacing: '0.04em',
+          fontFamily: 'var(--font-display)', fontWeight: 700,
+          textTransform: 'none', fontSize: 13, letterSpacing: '0',
           color: 'var(--white)', marginBottom: 4,
         }}>
           {feature}

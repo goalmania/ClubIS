@@ -121,36 +121,36 @@ export default function TrasferteGiocatorePage() {
     return (
       <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'flex-start', gap: 14 }}>
         <div style={{ width: 48, textAlign: 'center', flexShrink: 0 }}>
-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 18, color: 'var(--white)' }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 18, color: 'var(--white)' }}>
             {dp.getDate()}
           </div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--gray)', textTransform: 'uppercase' }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)', textTransform: 'none' }}>
             {dp.toLocaleString('it-IT', { month: 'short' })}
           </div>
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', fontSize: 13, color: 'var(--white)', marginBottom: 2 }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 13, color: 'var(--white)', marginBottom: 2 }}>
             {t.destinazione}
           </div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', marginBottom: 4 }}>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', marginBottom: 4 }}>
             {dp.toLocaleDateString('it-IT')}
             {dr && ` → ${dr.toLocaleDateString('it-IT')}`}
             {t.mezzo && ` · ${MEZZO_LABEL[t.mezzo] ?? t.mezzo}`}
           </div>
           {t.partita && (
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--accent)' }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--accent)' }}>
               vs {t.partita.avversario} · {new Date(t.partita.data_ora).toLocaleDateString('it-IT')}
             </div>
           )}
           {costi?.alloggio?.hotel && (
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', marginTop: 2 }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', marginTop: 2 }}>
               Hotel: {costi.alloggio.hotel}
             </div>
           )}
         </div>
         <span style={{
-          flexShrink: 0, fontFamily: 'var(--font-mono)', fontSize: 9, padding: '3px 8px',
-          textTransform: 'uppercase', border: `1px solid ${STATO_COLOR[t.stato] ?? 'var(--border)'}`,
+          flexShrink: 0, fontFamily: 'var(--font-mono)', fontSize: 11, padding: '3px 8px',
+          textTransform: 'none', border: `1px solid ${STATO_COLOR[t.stato] ?? 'var(--border)'}`,
           color: STATO_COLOR[t.stato] ?? 'var(--gray)',
         }}>
           {t.stato}
@@ -162,10 +162,10 @@ export default function TrasferteGiocatorePage() {
   return (
     <div>
       <div style={{ marginBottom: 28 }}>
-        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, textTransform: 'uppercase', fontSize: 26, letterSpacing: '0.04em', color: 'var(--white)' }}>
+        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 26, letterSpacing: '0', color: 'var(--white)' }}>
           Le mie trasferte
         </div>
-        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)', marginTop: 6 }}>
+        <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', marginTop: 6 }}>
           Trasferte a cui sei stato assegnato dal team manager
         </div>
       </div>
@@ -178,7 +178,7 @@ export default function TrasferteGiocatorePage() {
 
       {future.length > 0 && (
         <div style={{ border: '1px solid var(--border)', background: 'var(--bg-card)', marginBottom: 20 }}>
-          <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border)', fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', fontSize: 13, color: 'var(--accent)' }}>
+          <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border)', fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 13, color: 'var(--accent)' }}>
             Prossime trasferte ({future.length})
           </div>
           {future.map(t => <CardTrasferta key={t.id} t={t} />)}
@@ -187,7 +187,7 @@ export default function TrasferteGiocatorePage() {
 
       {past.length > 0 && (
         <div style={{ border: '1px solid var(--border)', background: 'var(--bg-card)' }}>
-          <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border)', fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', fontSize: 13, color: 'var(--white)' }}>
+          <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border)', fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 13, color: 'var(--white)' }}>
             Storico ({past.length})
           </div>
           {past.map(t => <CardTrasferta key={t.id} t={t} />)}

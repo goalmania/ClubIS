@@ -115,7 +115,7 @@ export default function ProgrammazionePage() {
     <div style={{ animation: 'fadeIn 0.3s ease' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Programmazione</h1>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Programmazione</h1>
           <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>
             Microciclo 2 settimane — pianificazione allenamenti
           </p>
@@ -136,13 +136,13 @@ export default function ProgrammazionePage() {
             <div key={dStr} style={{
               background: 'var(--bg-card)',
               border: isOggi ? '2px solid var(--accent-blue)' : '1px solid var(--border)',
-              borderRadius: 8, overflow: 'hidden', minHeight: 120,
+              borderRadius: 12, overflow: 'hidden', minHeight: 120,
             }}>
               <div style={{
                 padding: '8px 10px', borderBottom: '1px solid var(--border-light)',
-                fontSize: 11, fontWeight: 600,
+                fontSize: 12, fontWeight: 600,
                 color: isOggi ? 'var(--accent-blue)' : 'var(--text-muted)',
-                textTransform: 'uppercase', letterSpacing: '0.05em',
+                textTransform: 'none', letterSpacing: '0',
               }}>
                 {d.toLocaleDateString('it-IT', { weekday: 'short' })} {d.getDate()}
               </div>
@@ -150,7 +150,7 @@ export default function ProgrammazionePage() {
                 {pars.map(p => (
                   <div key={p.id} style={{
                     padding: '5px 8px', background: 'var(--accent-green-lt)',
-                    color: 'var(--accent-green)', borderRadius: 4, fontSize: 10, fontWeight: 600,
+                    color: 'var(--accent-green)', borderRadius: 10, fontSize: 12, fontWeight: 600,
                   }}>
                     🏆 {p.casa_trasferta === 'casa' ? 'vs' : '@'} {p.avversario}
                   </div>
@@ -160,7 +160,7 @@ export default function ProgrammazionePage() {
                   return (
                     <div key={a.id} style={{
                       padding: '5px 8px', borderLeft: `3px solid ${col}`,
-                      background: 'var(--bg-input)', borderRadius: 4, fontSize: 10,
+                      background: 'var(--bg-input)', borderRadius: 10, fontSize: 12,
                     }}>
                       <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
                         {a.ora?.slice(0, 5) ?? '—'} {a.tipo}
@@ -184,7 +184,7 @@ export default function ProgrammazionePage() {
       <div className="card" style={{ padding: 14, display: 'flex', gap: 16, flexWrap: 'wrap', fontSize: 12, marginBottom: 20 }}>
         {Object.entries(TIPO_COL).map(([t, col]) => (
           <div key={t} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <div style={{ width: 12, height: 12, borderRadius: 3, background: col }} />
+            <div style={{ width: 12, height: 12, borderRadius: 8, background: col }} />
             <span style={{ color: 'var(--text-secondary)', textTransform: 'capitalize' }}>{t.replace('_', ' ')}</span>
           </div>
         ))}

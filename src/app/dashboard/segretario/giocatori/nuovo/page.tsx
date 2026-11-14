@@ -173,7 +173,7 @@ export default function NuovoGiocatorePage() {
       <BackButton label="Torna ai giocatori" />
 
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Aggiungi giocatore</h1>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Aggiungi giocatore</h1>
         <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>
           Compila l&apos;anagrafica e il tesseramento. I campi con * sono obbligatori.
         </p>
@@ -200,7 +200,7 @@ export default function NuovoGiocatorePage() {
                   onChange={e => setMatricolaFigc(e.target.value.replace(/\D/g, '').slice(0, 8))}
                   placeholder="12345678"
                   maxLength={8}
-                  style={{ fontFamily: 'var(--font-mono)', letterSpacing: '0.05em' }}
+                  style={{ fontFamily: 'var(--font-mono)', letterSpacing: '0' }}
                 />
               </FormField>
               <div />
@@ -231,7 +231,7 @@ export default function NuovoGiocatorePage() {
                   onChange={e => setCodiceFiscale(e.target.value.toUpperCase())}
                   placeholder="RSSMRA90A01H501Z"
                   maxLength={16}
-                  style={{ fontFamily: 'var(--font-mono)', letterSpacing: '0.05em' }}
+                  style={{ fontFamily: 'var(--font-mono)', letterSpacing: '0' }}
                 />
               </FormField>
               <FormField label="Nazionalità">

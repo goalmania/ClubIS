@@ -110,7 +110,7 @@ function F({ label, hint, children, full }: { label: string; hint?: string; chil
     <div style={{ marginBottom: 16, gridColumn: full ? '1 / -1' : undefined }}>
       <label className="label">{label}</label>
       {children}
-      {hint && <div style={{ fontSize: 11, color: 'var(--gray)', marginTop: 4, fontFamily: 'var(--font-mono)' }}>{hint}</div>}
+      {hint && <div style={{ fontSize: 12, color: 'var(--gray)', marginTop: 4, fontFamily: 'var(--font-mono)' }}>{hint}</div>}
     </div>
   )
 }
@@ -259,14 +259,14 @@ export default function InfoClubPage() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           {(editing ? form.logo_url : club?.logo_url) ? (
-            <img src={(editing ? form.logo_url : club?.logo_url) ?? ''} alt="" style={{ width: 52, height: 52, borderRadius: 4, objectFit: 'contain', background: '#1a1a1a' }} />
+            <img src={(editing ? form.logo_url : club?.logo_url) ?? ''} alt="" style={{ width: 52, height: 52, borderRadius: 10, objectFit: 'contain', background: '#1a1a1a' }} />
           ) : (
-            <div style={{ width: 52, height: 52, borderRadius: 4, background: 'rgba(200,240,0,0.15)', border: '2px solid var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 18, color: 'var(--accent)' }}>
+            <div style={{ width: 52, height: 52, borderRadius: 10, background: 'rgba(200,240,0,0.15)', border: '2px solid var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 18, color: 'var(--accent)' }}>
               {club?.nome?.[0] ?? '?'}
             </div>
           )}
           <div>
-            <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 26, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)', marginBottom: 2 }}>
+            <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 28, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)', marginBottom: 2 }}>
               {club?.nome ?? 'Info Club'}
             </h1>
             <p style={{ fontSize: 12, color: 'var(--gray)' }}>
@@ -293,7 +293,7 @@ export default function InfoClubPage() {
         )}
       </div>
 
-      {errore && <div style={{ background: 'rgba(255,60,60,0.1)', border: '1px solid var(--rosso)', borderRadius: 2, padding: '10px 14px', fontSize: 13, color: 'var(--rosso)', marginBottom: 16 }}>{errore}</div>}
+      {errore && <div style={{ background: 'rgba(255,60,60,0.1)', border: '1px solid var(--rosso)', borderRadius: 8, padding: '10px 14px', fontSize: 13, color: 'var(--rosso)', marginBottom: 16 }}>{errore}</div>}
 
       {/* Tabs */}
       <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid var(--border-solid)', marginBottom: 24, overflowX: 'auto' }}>
@@ -302,7 +302,7 @@ export default function InfoClubPage() {
             padding: '9px 16px', background: 'none', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap',
             borderBottom: `2px solid ${tab === t.key ? 'var(--accent)' : 'transparent'}`,
             color: tab === t.key ? 'var(--accent)' : 'var(--gray)', fontSize: 12,
-            fontWeight: tab === t.key ? 700 : 400, textTransform: 'uppercase', letterSpacing: '0.06em',
+            fontWeight: tab === t.key ? 700 : 400, textTransform: 'none', letterSpacing: '0',
             fontFamily: 'var(--font-mono)', transition: 'color 0.15s',
           }}>
             {t.label}
@@ -319,14 +319,14 @@ export default function InfoClubPage() {
                 {form.logo_url ? (
                   <img
                     src={form.logo_url} alt="Logo club"
-                    style={{ width: 80, height: 80, borderRadius: 4, objectFit: 'contain', background: '#1a1a1a', border: '1px solid var(--border-solid)' }}
+                    style={{ width: 80, height: 80, borderRadius: 10, objectFit: 'contain', background: '#1a1a1a', border: '1px solid var(--border-solid)' }}
                     onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
                   />
                 ) : (
-                  <div style={{ width: 80, height: 80, borderRadius: 4, background: '#1a1a1a', border: '2px dashed var(--border-solid)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--gray)', fontSize: 24 }}>🏟</div>
+                  <div style={{ width: 80, height: 80, borderRadius: 10, background: '#1a1a1a', border: '2px dashed var(--border-solid)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--gray)', fontSize: 24 }}>🏟</div>
                 )}
                 <input ref={logoInput} type="file" accept="image/*" onChange={handleLogoUpload} style={{ display: 'none' }} />
-                <button onClick={() => logoInput.current?.click()} style={{ marginTop: 6, padding: '4px 10px', background: 'transparent', border: '1px solid var(--border-solid)', borderRadius: 2, color: 'var(--gray)', fontSize: 10, cursor: 'pointer', width: 80, textAlign: 'center' }}>Cambia logo</button>
+                <button onClick={() => logoInput.current?.click()} style={{ marginTop: 6, padding: '4px 10px', background: 'transparent', border: '1px solid var(--border-solid)', borderRadius: 8, color: 'var(--gray)', fontSize: 12, cursor: 'pointer', width: 80, textAlign: 'center' }}>Cambia logo</button>
               </div>
               <div style={{ flex: 1 }}>
                 <Grid>
@@ -356,13 +356,13 @@ export default function InfoClubPage() {
               </F>
               <F label="Colore primario (hex)">
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <input type="color" value={form.colore_primario ?? '#1a1a2e'} onChange={e => setForm(p => ({ ...p, colore_primario: e.target.value }))} style={{ width: 44, height: 38, padding: 2, borderRadius: 6, border: '1px solid var(--grigio-5)', cursor: 'pointer' }} />
+                  <input type="color" value={form.colore_primario ?? '#1a1a2e'} onChange={e => setForm(p => ({ ...p, colore_primario: e.target.value }))} style={{ width: 44, height: 38, padding: 2, borderRadius: 10, border: '1px solid var(--grigio-5)', cursor: 'pointer' }} />
                   <input className="input" value={form.colore_primario ?? ''} onChange={e => setForm(p => ({ ...p, colore_primario: e.target.value || null }))} placeholder="#1a1a2e" style={{ flex: 1, fontFamily: 'var(--font-mono)', fontSize: 13 }} />
                 </div>
               </F>
               <F label="Colore secondario (hex)">
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <input type="color" value={form.colore_secondario ?? '#ffffff'} onChange={e => setForm(p => ({ ...p, colore_secondario: e.target.value }))} style={{ width: 44, height: 38, padding: 2, borderRadius: 6, border: '1px solid var(--grigio-5)', cursor: 'pointer' }} />
+                  <input type="color" value={form.colore_secondario ?? '#ffffff'} onChange={e => setForm(p => ({ ...p, colore_secondario: e.target.value }))} style={{ width: 44, height: 38, padding: 2, borderRadius: 10, border: '1px solid var(--grigio-5)', cursor: 'pointer' }} />
                   <input className="input" value={form.colore_secondario ?? ''} onChange={e => setForm(p => ({ ...p, colore_secondario: e.target.value || null }))} placeholder="#ffffff" style={{ flex: 1, fontFamily: 'var(--font-mono)', fontSize: 13 }} />
                 </div>
               </F>
@@ -384,7 +384,7 @@ export default function InfoClubPage() {
           <div>
             {club?.logo_url && (
               <div style={{ marginBottom: 20 }}>
-                <img src={club.logo_url} alt="" style={{ width: 80, height: 80, objectFit: 'contain', background: '#1a1a1a', borderRadius: 4, border: '1px solid var(--border-solid)' }} />
+                <img src={club.logo_url} alt="" style={{ width: 80, height: 80, objectFit: 'contain', background: '#1a1a1a', borderRadius: 10, border: '1px solid var(--border-solid)' }} />
               </div>
             )}
             <ReadRow label="Nome"            value={club?.nome} />
@@ -397,8 +397,8 @@ export default function InfoClubPage() {
             <ReadRow label="Telefono"        value={club?.telefono} />
             <ReadRow label="Sito web"        value={club?.sito_web} />
             {club?.note_interne && (
-              <div style={{ marginTop: 12, background: '#1a1a1a', borderRadius: 2, padding: '10px 14px' }}>
-                <div style={{ fontSize: 11, color: 'var(--gray)', marginBottom: 4 }}>Note interne</div>
+              <div style={{ marginTop: 12, background: '#1a1a1a', borderRadius: 8, padding: '10px 14px' }}>
+                <div style={{ fontSize: 12, color: 'var(--gray)', marginBottom: 4 }}>Note interne</div>
                 <div style={{ fontSize: 12, color: 'var(--white)', lineHeight: 1.6 }}>{club.note_interne}</div>
               </div>
             )}
@@ -449,7 +449,7 @@ export default function InfoClubPage() {
                 <a
                   href={`https://maps.google.com/?q=${encodeURIComponent([club?.via, club?.citta, club?.provincia].filter(Boolean).join(', '))}`}
                   target="_blank" rel="noreferrer"
-                  style={{ fontSize: 12, color: 'var(--accent)', textDecoration: 'none', fontFamily: 'var(--font-mono)', letterSpacing: '0.08em' }}
+                  style={{ fontSize: 12, color: 'var(--accent)', textDecoration: 'none', fontFamily: 'var(--font-mono)', letterSpacing: '0' }}
                 >
                   📍 Apri in Google Maps →
                 </a>
@@ -505,7 +505,7 @@ export default function InfoClubPage() {
               {form.firma_presidente_url ? (
                 /* ── Preview firma esistente ── */
                 <div>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', textTransform: 'none', letterSpacing: '0', marginBottom: 8 }}>
                     Firma attuale
                   </div>
                   <div style={{ background: '#ffffff', padding: '16px 24px', border: '1px solid var(--border)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: 220, marginBottom: 12 }}>
@@ -546,10 +546,10 @@ export default function InfoClubPage() {
                     }}
                   >
                     <div style={{ fontSize: 28, marginBottom: 8 }}>✍️</div>
-                    <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', fontSize: 12, color: 'var(--white)', marginBottom: 4 }}>
+                    <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 12, color: 'var(--white)', marginBottom: 4 }}>
                       Trascina qui la firma
                     </div>
-                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)' }}>
+                    <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)' }}>
                       oppure clicca per scegliere il file · PNG, JPG, SVG, WEBP · Max 2 MB
                     </div>
                   </div>
@@ -557,7 +557,7 @@ export default function InfoClubPage() {
               )}
 
               {/* Tip PNG trasparente */}
-              <div style={{ padding: '10px 14px', background: 'rgba(200,240,0,0.05)', border: '1px solid rgba(200,240,0,0.15)', fontSize: 11, color: 'var(--gray)', lineHeight: 1.7, marginTop: 8 }}>
+              <div style={{ padding: '10px 14px', background: 'rgba(200,240,0,0.05)', border: '1px solid rgba(200,240,0,0.15)', fontSize: 12, color: 'var(--gray)', lineHeight: 1.7, marginTop: 8 }}>
                 <strong style={{ color: 'var(--accent)' }}>💡 Come creare una firma PNG con sfondo trasparente:</strong>
                 <br />1. Firma su un foglio bianco con penna nera
                 <br />2. Fotografa o scansiona ad alta risoluzione
@@ -572,7 +572,7 @@ export default function InfoClubPage() {
             <ReadRow label="Codice Fiscale"         value={club?.legale_rappresentante_cf} />
             <ReadRow label="Ruolo / Carica"         value={club?.legale_rappresentante_ruolo} />
             <div style={{ marginTop: 16 }}>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--gray)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 8 }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', textTransform: 'none', letterSpacing: '0', marginBottom: 8 }}>
                 Firma Presidente
               </div>
               {club?.firma_presidente_url ? (
@@ -585,7 +585,7 @@ export default function InfoClubPage() {
                   />
                 </div>
               ) : (
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--gray)', fontStyle: 'italic' }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', fontStyle: 'italic' }}>
                   Firma non ancora caricata. Clicca Modifica per aggiungerla.
                 </div>
               )}
@@ -641,7 +641,7 @@ export default function InfoClubPage() {
         {/* ── TAB SPONSOR ── */}
         {tab === 'sponsor' && (editing ? (
           <div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--accent)', marginBottom: 14 }}>Sponsor principale</div>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--accent)', marginBottom: 14 }}>Sponsor principale</div>
             <Grid>
               <F label="Nome sponsor principale">
                 <input className="input" value={form.sponsor_principale ?? ''} onChange={e => setForm(p => ({ ...p, sponsor_principale: e.target.value || null }))} />
@@ -652,7 +652,7 @@ export default function InfoClubPage() {
             </Grid>
             <F label="Logo sponsor principale" hint="PNG o JPG">
               {form.sponsor_logo_url && (
-                <div style={{ marginBottom: 8, background: '#fff', padding: 8, borderRadius: 2, display: 'inline-block' }}>
+                <div style={{ marginBottom: 8, background: '#fff', padding: 8, borderRadius: 8, display: 'inline-block' }}>
                   <img src={form.sponsor_logo_url} alt="" style={{ maxHeight: 60, maxWidth: 200, objectFit: 'contain' }} />
                 </div>
               )}
@@ -664,7 +664,7 @@ export default function InfoClubPage() {
               </div>
             </F>
             <div style={{ marginTop: 12 }}>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--gray)', marginBottom: 10 }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--gray)', marginBottom: 10 }}>
                 Sponsor secondari
               </div>
               {(form.sponsor_secondari ?? []).map((sp, i) => (
@@ -682,12 +682,12 @@ export default function InfoClubPage() {
                   <button onClick={() => {
                     const arr = (form.sponsor_secondari ?? []).filter((_, j) => j !== i)
                     setForm(p => ({ ...p, sponsor_secondari: arr }))
-                  }} style={{ padding: '6px 10px', background: 'transparent', border: '1px solid var(--border-solid)', borderRadius: 2, color: 'var(--gray)', fontSize: 12, cursor: 'pointer', flexShrink: 0 }}>✕</button>
+                  }} style={{ padding: '6px 10px', background: 'transparent', border: '1px solid var(--border-solid)', borderRadius: 8, color: 'var(--gray)', fontSize: 12, cursor: 'pointer', flexShrink: 0 }}>✕</button>
                 </div>
               ))}
               <button
                 onClick={() => setForm(p => ({ ...p, sponsor_secondari: [...(p.sponsor_secondari ?? []), { nome: '', sito: '' }] }))}
-                style={{ padding: '6px 14px', background: 'transparent', border: '1px solid var(--border-solid)', borderRadius: 2, color: 'var(--gray)', fontSize: 11, fontFamily: 'var(--font-mono)', cursor: 'pointer', marginTop: 4 }}
+                style={{ padding: '6px 14px', background: 'transparent', border: '1px solid var(--border-solid)', borderRadius: 8, color: 'var(--gray)', fontSize: 12, fontFamily: 'var(--font-mono)', cursor: 'pointer', marginTop: 4 }}
               >
                 + Aggiungi sponsor
               </button>
@@ -701,17 +701,17 @@ export default function InfoClubPage() {
               </div>
             )}
             {club?.sponsor_principale && (
-              <div style={{ background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2, padding: '16px 20px', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 16 }}>
+              <div style={{ background: '#111', border: '1px solid var(--border-solid)', borderRadius: 8, padding: '16px 20px', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 16 }}>
                 {club.sponsor_logo_url && (
-                  <div style={{ background: '#fff', padding: 6, borderRadius: 2 }}>
+                  <div style={{ background: '#fff', padding: 6, borderRadius: 8 }}>
                     <img src={club.sponsor_logo_url} alt="" style={{ maxHeight: 50, maxWidth: 160, objectFit: 'contain' }} />
                   </div>
                 )}
                 <div>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.1em', color: 'var(--accent)', textTransform: 'uppercase', marginBottom: 4 }}>Sponsor principale</div>
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, letterSpacing: '0', color: 'var(--accent)', textTransform: 'none', marginBottom: 4 }}>Sponsor principale</div>
                   <div style={{ fontWeight: 600, fontSize: 15, color: 'var(--white)' }}>{club.sponsor_principale}</div>
                   {club.sponsor_sito && (
-                    <a href={club.sponsor_sito} target="_blank" rel="noreferrer" style={{ fontSize: 11, color: 'var(--accent)', textDecoration: 'none', fontFamily: 'var(--font-mono)' }}>
+                    <a href={club.sponsor_sito} target="_blank" rel="noreferrer" style={{ fontSize: 12, color: 'var(--accent)', textDecoration: 'none', fontFamily: 'var(--font-mono)' }}>
                       {club.sponsor_sito} →
                     </a>
                   )}
@@ -720,12 +720,12 @@ export default function InfoClubPage() {
             )}
             {(club?.sponsor_secondari ?? []).length > 0 && (
               <div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--gray)', marginBottom: 10 }}>Sponsor secondari</div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--gray)', marginBottom: 10 }}>Sponsor secondari</div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   {(club?.sponsor_secondari ?? []).map((sp, i) => (
-                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2 }}>
+                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', background: '#111', border: '1px solid var(--border-solid)', borderRadius: 8 }}>
                       <span style={{ fontSize: 13, color: 'var(--white)' }}>{sp.nome}</span>
-                      {sp.sito && <a href={sp.sito} target="_blank" rel="noreferrer" style={{ fontSize: 11, color: 'var(--accent)', textDecoration: 'none' }}>{sp.sito} →</a>}
+                      {sp.sito && <a href={sp.sito} target="_blank" rel="noreferrer" style={{ fontSize: 12, color: 'var(--accent)', textDecoration: 'none' }}>{sp.sito} →</a>}
                     </div>
                   ))}
                 </div>
@@ -737,9 +737,9 @@ export default function InfoClubPage() {
         {/* ── TAB PIANO CLUBIS ── */}
         {tab === 'piano' && (
           <div>
-            <div style={{ background: '#111', border: `2px solid ${PIANO_COLOR[club?.piano_abbonamento ?? ''] ?? 'var(--border-solid)'}`, borderRadius: 2, padding: '20px 24px', marginBottom: 20 }}>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--gray)', marginBottom: 8 }}>Piano attivo</div>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 28, textTransform: 'uppercase', color: PIANO_COLOR[club?.piano_abbonamento ?? ''] ?? 'var(--white)' }}>
+            <div style={{ background: '#111', border: `2px solid ${PIANO_COLOR[club?.piano_abbonamento ?? ''] ?? 'var(--border-solid)'}`, borderRadius: 8, padding: '20px 24px', marginBottom: 20 }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--gray)', marginBottom: 8 }}>Piano attivo</div>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 28, textTransform: 'none', color: PIANO_COLOR[club?.piano_abbonamento ?? ''] ?? 'var(--white)' }}>
                 {PIANO_LABEL[club?.piano_abbonamento ?? ''] ?? club?.piano_abbonamento ?? '—'}
               </div>
               {club?.abbonamento_scadenza && (

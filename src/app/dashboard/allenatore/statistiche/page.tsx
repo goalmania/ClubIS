@@ -69,7 +69,7 @@ export default async function AllenatoreStatistichePage() {
   return (
     <div>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>
           Statistiche stagione
         </h1>
         <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>
@@ -110,7 +110,7 @@ export default async function AllenatoreStatistichePage() {
                   <tr key={item.g.id}>
                     <td style={{ fontWeight: 500, fontSize: 13 }}>{item.g.cognome} {item.g.nome}</td>
                     <td>
-                      <span className="badge badge-grigio" style={{ fontSize: 10 }}>
+                      <span className="badge badge-grigio" style={{ fontSize: 12 }}>
                         {item.g.ruolo_principale ? (ruoloShort[item.g.ruolo_principale] ?? item.g.ruolo_principale) : '—'}
                       </span>
                     </td>

@@ -39,10 +39,10 @@ function perc(n: number, tot: number) { return tot === 0 ? 0 : Math.round(n / to
 function PercBar({ p, c }: { p: number; c: string }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-      <div style={{ flex: 1, height: 5, background: 'var(--grigio-5)', borderRadius: 3 }}>
-        <div style={{ width: `${p}%`, height: '100%', background: c, borderRadius: 3 }} />
+      <div style={{ flex: 1, height: 5, background: 'var(--grigio-5)', borderRadius: 8 }}>
+        <div style={{ width: `${p}%`, height: '100%', background: c, borderRadius: 8 }} />
       </div>
-      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--grigio-3)', width: 30, textAlign: 'right' }}>{p}%</span>
+      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-3)', width: 30, textAlign: 'right' }}>{p}%</span>
     </div>
   )
 }
@@ -50,8 +50,8 @@ function PercBar({ p, c }: { p: number; c: string }) {
 function GruppoHeader({ label, count }: { label: string; count: number }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-      <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--grigio-3)', fontFamily: 'var(--font-display)' }}>{label}</span>
-      <span style={{ fontSize: 10, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>({count})</span>
+      <span style={{ fontSize: 12, fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-3)', fontFamily: 'var(--font-display)' }}>{label}</span>
+      <span style={{ fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>({count})</span>
       <div style={{ flex: 1, height: 1, background: 'var(--grigio-5)' }} />
     </div>
   )
@@ -61,7 +61,7 @@ function TabButton({ label, active, onClick }: { label: string; active: boolean;
   return (
     <button onClick={onClick} style={{
       padding: '8px 18px', fontFamily: 'var(--font-display)', fontSize: 12,
-      textTransform: 'uppercase' as const, letterSpacing: '0.08em',
+      textTransform: 'none' as const, letterSpacing: '0',
       fontWeight: active ? 700 : 500,
       background: active ? 'var(--accent)' : 'transparent',
       color: active ? 'var(--black)' : 'var(--grigio-3)',
@@ -170,7 +170,7 @@ export default function PresidenteRisultatiPage() {
     <div style={{ animation: 'fadeIn 0.3s ease' }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Risultati</h1>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Risultati</h1>
           <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>Andamento sportivo stagione corrente</p>
         </div>
         <div style={{ display: 'flex', gap: 6 }}>
@@ -197,7 +197,7 @@ export default function PresidenteRisultatiPage() {
             const tot = sq.v + sq.p + sq.s
             return (
               <div key={sq.id} style={{ marginBottom: 28 }}>
-                <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--grigio-4)', fontFamily: 'var(--font-display)', marginBottom: 12 }}>{sq.nome}</div>
+                <div style={{ fontSize: 12, fontWeight: 600, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-4)', fontFamily: 'var(--font-display)', marginBottom: 12 }}>{sq.nome}</div>
                 {tot > 0 && (
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 10, marginBottom: 16 }}>
                     {[
@@ -209,7 +209,7 @@ export default function PresidenteRisultatiPage() {
                       { l: 'Diff. reti', v: `${sq.gf > sq.gs ? '+' : ''}${sq.gf - sq.gs}`, c: sq.gf > sq.gs ? 'var(--verde)' : sq.gf < sq.gs ? 'var(--rosso)' : undefined },
                     ].map(stat => (
                       <div key={stat.l} className="stat-card" style={{ padding: '10px 12px' }}>
-                        <div className="stat-label" style={{ fontSize: 10 }}>{stat.l}</div>
+                        <div className="stat-label" style={{ fontSize: 12 }}>{stat.l}</div>
                         <div className="stat-value" style={{ fontSize: 20, color: (stat as any).c }}>{stat.v}</div>
                       </div>
                     ))}
@@ -233,16 +233,16 @@ export default function PresidenteRisultatiPage() {
                                 {new Date(p.data_ora).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit' })}
                               </td>
                               <td style={{ fontWeight: 500, fontSize: 13 }}>
-                                {p.casa_trasferta === 'trasferta' && <span style={{ fontSize: 10, color: 'var(--grigio-4)', marginRight: 4 }}>@</span>}
+                                {p.casa_trasferta === 'trasferta' && <span style={{ fontSize: 12, color: 'var(--grigio-4)', marginRight: 4 }}>@</span>}
                                 {p.avversario}
                               </td>
                               <td>
-                                <span style={{ display: 'inline-flex', width: 24, height: 24, borderRadius: 4, alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, background: esito.bg, color: esito.c }}>
+                                <span style={{ display: 'inline-flex', width: 24, height: 24, borderRadius: 10, alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, background: esito.bg, color: esito.c }}>
                                   {esito.l}
                                 </span>
                               </td>
                               <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 700 }}>{gf} – {gs}</td>
-                              <td><span className="badge badge-grigio" style={{ fontSize: 10 }}>{p.tipo}</span></td>
+                              <td><span className="badge badge-grigio" style={{ fontSize: 12 }}>{p.tipo}</span></td>
                               <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-4)' }}>{p.giornata ? `G${p.giornata}` : '—'}</td>
                             </tr>
                           )
@@ -278,7 +278,7 @@ export default function PresidenteRisultatiPage() {
             const tot = sq.v + sq.p + sq.s
             if (tot === 0) return (
               <div key={sq.id} className="card" style={{ padding: '16px 20px', marginBottom: 16 }}>
-                <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', color: 'var(--grigio-4)', marginBottom: 6 }}>{sq.nome}</div>
+                <div style={{ fontSize: 12, fontWeight: 600, textTransform: 'none', color: 'var(--grigio-4)', marginBottom: 6 }}>{sq.nome}</div>
                 <div style={{ color: 'var(--grigio-4)', fontSize: 13 }}>Nessuna partita giocata</div>
               </div>
             )
@@ -291,7 +291,7 @@ export default function PresidenteRisultatiPage() {
             })
             return (
               <div key={sq.id} style={{ marginBottom: 28 }}>
-                <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--grigio-4)', fontFamily: 'var(--font-display)', marginBottom: 12 }}>{sq.nome}</div>
+                <div style={{ fontSize: 12, fontWeight: 600, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-4)', fontFamily: 'var(--font-display)', marginBottom: 12 }}>{sq.nome}</div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 10, marginBottom: 14 }}>
                   {[
                     { l: 'Giocate', v: tot },
@@ -301,7 +301,7 @@ export default function PresidenteRisultatiPage() {
                     { l: 'Clean Sheet', v: cleanSheet, c: cleanSheet > 0 ? 'var(--verde)' : undefined },
                   ].map(s => (
                     <div key={s.l} className="stat-card" style={{ padding: '10px 12px' }}>
-                      <div className="stat-label" style={{ fontSize: 10 }}>{s.l}</div>
+                      <div className="stat-label" style={{ fontSize: 12 }}>{s.l}</div>
                       <div className="stat-value" style={{ fontSize: 20, color: (s as any).c }}>{s.v}</div>
                     </div>
                   ))}
@@ -312,7 +312,7 @@ export default function PresidenteRisultatiPage() {
                     { titolo: 'Trasferta', tot: totTrasf, v: sq.vTrasf, p: sq.pTrasf, s: sq.sTrasf },
                   ].map(col => (
                     <div key={col.titolo} className="card" style={{ padding: '16px 20px' }}>
-                      <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--grigio-4)', marginBottom: 12 }}>
+                      <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-4)', marginBottom: 12 }}>
                         {col.titolo} · {col.tot} partite
                       </div>
                       {[
@@ -333,7 +333,7 @@ export default function PresidenteRisultatiPage() {
                 </div>
                 {forma.length > 0 && (
                   <div className="card" style={{ padding: '12px 18px', display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <span style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--grigio-4)', fontWeight: 600 }}>Forma recente</span>
+                    <span style={{ fontSize: 12, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-4)', fontWeight: 600 }}>Forma recente</span>
                     <div style={{ display: 'flex', gap: 4 }}>
                       {forma.map((e, i) => {
                         const cfg: Record<string, { bg: string; c: string }> = {
@@ -342,7 +342,7 @@ export default function PresidenteRisultatiPage() {
                           S: { bg: 'var(--rosso-lt)', c: 'var(--rosso)' },
                         }
                         const s = cfg[e]
-                        return <span key={i} style={{ display: 'inline-flex', width: 22, height: 22, borderRadius: 4, alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, background: s.bg, color: s.c }}>{e}</span>
+                        return <span key={i} style={{ display: 'inline-flex', width: 22, height: 22, borderRadius: 10, alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, background: s.bg, color: s.c }}>{e}</span>
                       })}
                     </div>
                   </div>
@@ -360,7 +360,7 @@ export default function PresidenteRisultatiPage() {
       {/* ── Tab 3: Inserimento manuale ────────────────────────────── */}
       {tab === 'manuale' && (
         <div className="card" style={{ padding: 24, maxWidth: 640 }}>
-          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'uppercase', fontSize: 14, letterSpacing: '0.06em', marginBottom: 20, color: 'var(--white)' }}>
+          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 14, letterSpacing: '0', marginBottom: 20, color: 'var(--white)' }}>
             Inserisci risultato manualmente
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
@@ -400,7 +400,7 @@ export default function PresidenteRisultatiPage() {
               <input className="input" type="number" min={0} max={20} value={form.gs} onChange={e => setF('gs', parseInt(e.target.value) || 0)} style={{ width: '100%' }} />
             </div>
             <div style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'center' }}>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 28, fontWeight: 700, letterSpacing: '0.05em', color: form.gf > form.gs ? 'var(--verde)' : form.gf < form.gs ? 'var(--rosso)' : 'var(--ambra)' }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 28, fontWeight: 700, letterSpacing: '0', color: form.gf > form.gs ? 'var(--verde)' : form.gf < form.gs ? 'var(--rosso)' : 'var(--ambra)' }}>
                 {form.gf} – {form.gs}
               </div>
             </div>
@@ -450,7 +450,7 @@ export default function PresidenteRisultatiPage() {
 }
 
 const lblStyle: React.CSSProperties = {
-  display: 'block', fontSize: 11, fontFamily: 'var(--font-display)',
-  textTransform: 'uppercase', letterSpacing: '0.08em',
+  display: 'block', fontSize: 12, fontFamily: 'var(--font-display)',
+  textTransform: 'none', letterSpacing: '0',
   color: 'var(--grigio-3)', marginBottom: 6, fontWeight: 600,
 }

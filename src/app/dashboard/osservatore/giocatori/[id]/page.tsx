@@ -81,7 +81,7 @@ function KpiCard({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="card" style={{ padding: '14px 18px', textAlign: 'center' }}>
       <div style={{ fontSize: 22, fontWeight: 700, fontFamily: 'var(--font-mono)', color: 'var(--text-primary)' }}>{value}</div>
-      <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 4, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</div>
+      <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 4, textTransform: 'none', letterSpacing: '0' }}>{label}</div>
     </div>
   )
 }
@@ -90,7 +90,7 @@ function RatingBadge({ label, value }: { label: string; value?: number }) {
   return (
     <span style={{
       display: 'inline-flex', alignItems: 'center', gap: 4,
-      padding: '2px 8px', borderRadius: 6,
+      padding: '2px 8px', borderRadius: 10,
       background: 'var(--bg-input, #21262d)', fontSize: 12,
     }}>
       <span style={{ color: 'var(--text-muted)' }}>{label}</span>
@@ -209,7 +209,7 @@ export default function ProfiloGiocatoreScoutingPage() {
       <div className="card" style={{ padding: '20px 24px', marginBottom: 20 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, flexWrap: 'wrap' }}>
           <div style={{ flex: 1 }}>
-            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)', marginBottom: 8 }}>
+            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)', marginBottom: 8 }}>
               {report.nome_giocatore_ext ?? 'Giocatore sconosciuto'}
             </h1>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', marginBottom: 12 }}>
@@ -228,7 +228,7 @@ export default function ProfiloGiocatoreScoutingPage() {
                 <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>🌍 {report.nazione_provenienza}</span>
               )}
               {report.ruolo && (
-                <span className="badge badge-blu" style={{ fontSize: 11 }}>{report.ruolo.replace('_', ' ')}</span>
+                <span className="badge badge-blu" style={{ fontSize: 12 }}>{report.ruolo.replace('_', ' ')}</span>
               )}
               {report.piede_preferito && (
                 <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>Piede: {report.piede_preferito}</span>
@@ -274,7 +274,7 @@ export default function ProfiloGiocatoreScoutingPage() {
 
       {/* KPI Statistiche stagione */}
       <div style={{ marginBottom: 20 }}>
-        <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 10 }}>
+        <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'none', letterSpacing: '0', marginBottom: 10 }}>
           Statistiche stagione
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: 10 }}>
@@ -291,7 +291,7 @@ export default function ProfiloGiocatoreScoutingPage() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
         {/* Radar */}
         <div className="card" style={{ padding: '16px 20px' }}>
-          <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>
+          <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'none', letterSpacing: '0', marginBottom: 12 }}>
             Profilo tecnico
           </div>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -301,7 +301,7 @@ export default function ProfiloGiocatoreScoutingPage() {
 
         {/* Storico club */}
         <div className="card" style={{ padding: '16px 20px' }}>
-          <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>
+          <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'none', letterSpacing: '0', marginBottom: 12 }}>
             Storico club
           </div>
           {storico.length === 0 ? (
@@ -311,7 +311,7 @@ export default function ProfiloGiocatoreScoutingPage() {
               <thead>
                 <tr>
                   {['Club', 'Stagione', 'Camp.', 'Pres.', 'Gol', 'Assist'].map(h => (
-                    <th key={h} style={{ padding: '4px 8px', textAlign: 'left', color: 'var(--text-muted)', fontWeight: 600, fontSize: 11, borderBottom: '1px solid var(--border-light)' }}>
+                    <th key={h} style={{ padding: '4px 8px', textAlign: 'left', color: 'var(--text-muted)', fontWeight: 600, fontSize: 12, borderBottom: '1px solid var(--border-light)' }}>
                       {h}
                     </th>
                   ))}
@@ -337,7 +337,7 @@ export default function ProfiloGiocatoreScoutingPage() {
       {/* Storico osservazioni */}
       <div className="card" style={{ padding: '16px 20px', marginBottom: 20 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-          <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'none', letterSpacing: '0' }}>
             Storico osservazioni ({osservazioni.length})
           </div>
           <button className="btn btn-secondary btn-sm" onClick={() => { setObsForm({ data_osservazione: new Date().toISOString().slice(0, 10) }); setObsOpen(true) }}>
@@ -353,7 +353,7 @@ export default function ProfiloGiocatoreScoutingPage() {
             {osservazioni.map(obs => {
               const expanded = expandedObs.has(obs.id)
               return (
-                <div key={obs.id} style={{ background: 'var(--bg-input, #21262d)', borderRadius: 8, padding: '12px 14px' }}>
+                <div key={obs.id} style={{ background: 'var(--bg-input, #21262d)', borderRadius: 12, padding: '12px 14px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
                     <div>
                       <span style={{ fontWeight: 600, fontSize: 13, color: 'var(--text-primary)' }}>
@@ -364,7 +364,7 @@ export default function ProfiloGiocatoreScoutingPage() {
                       )}
                     </div>
                     {obs.video_link && (
-                      <a href={obs.video_link} target="_blank" rel="noopener noreferrer" className="btn btn-ghost btn-sm" style={{ fontSize: 11 }}>
+                      <a href={obs.video_link} target="_blank" rel="noopener noreferrer" className="btn btn-ghost btn-sm" style={{ fontSize: 12 }}>
                         ▶ Video
                       </a>
                     )}
@@ -400,13 +400,13 @@ export default function ProfiloGiocatoreScoutingPage() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
           {report.punti_forza && (
             <div className="card" style={{ padding: '14px 18px' }}>
-              <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--accent-green)', textTransform: 'uppercase', marginBottom: 6 }}>Punti di forza</div>
+              <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--accent-green)', textTransform: 'none', marginBottom: 6 }}>Punti di forza</div>
               <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{report.punti_forza}</div>
             </div>
           )}
           {report.punti_debolezza && (
             <div className="card" style={{ padding: '14px 18px' }}>
-              <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--accent-red)', textTransform: 'uppercase', marginBottom: 6 }}>Punti deboli</div>
+              <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--accent-red)', textTransform: 'none', marginBottom: 6 }}>Punti deboli</div>
               <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{report.punti_debolezza}</div>
             </div>
           )}
@@ -414,7 +414,7 @@ export default function ProfiloGiocatoreScoutingPage() {
       )}
       {report.note_libere && (
         <div className="card" style={{ padding: '14px 18px', marginBottom: 20 }}>
-          <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 6 }}>Note libere</div>
+          <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'none', marginBottom: 6 }}>Note libere</div>
           <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6 }}>{report.note_libere}</div>
         </div>
       )}

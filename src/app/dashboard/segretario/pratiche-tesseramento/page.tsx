@@ -153,11 +153,11 @@ export default function PraticheTesseramentoPage() {
           <div style={{ flex: 1 }}>
             <div style={{
               fontFamily: 'var(--font-display)', fontWeight: 700,
-              textTransform: 'uppercase', fontSize: 13, color: '#ff4444', marginBottom: 2,
+              textTransform: 'none', fontSize: 13, color: '#ff4444', marginBottom: 2,
             }}>
               {blocate} {blocate === 1 ? 'pratica bloccata' : 'pratiche bloccate'}
             </div>
-            <div style={{ fontSize: 11, color: 'var(--grigio-4)' }}>
+            <div style={{ fontSize: 12, color: 'var(--grigio-4)' }}>
               Richiedono intervento immediato per sbloccare i tesseramenti
             </div>
           </div>
@@ -165,9 +165,9 @@ export default function PraticheTesseramentoPage() {
             onClick={() => setTabAttivo('bloccata')}
             style={{
               padding: '6px 14px', background: '#ff4444', color: 'white',
-              border: 'none', borderRadius: 2, cursor: 'pointer',
+              border: 'none', borderRadius: 8, cursor: 'pointer',
               fontFamily: 'var(--font-display)', fontWeight: 700,
-              fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.06em',
+              fontSize: 12, textTransform: 'none', letterSpacing: '0',
             }}
           >
             Vedi subito →
@@ -218,11 +218,11 @@ export default function PraticheTesseramentoPage() {
                 <div style={{ width: 200, flexShrink: 0 }}>
                   <div style={{
                     fontFamily: 'var(--font-display)', fontWeight: 700,
-                    textTransform: 'uppercase', fontSize: 12, marginBottom: 2, color: 'var(--white)',
+                    textTransform: 'none', fontSize: 12, marginBottom: 2, color: 'var(--white)',
                   }}>
                     {g?.cognome} {g?.nome}
                   </div>
-                  <div style={{ fontSize: 10, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>
+                  <div style={{ fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>
                     {g?.ruolo_principale?.replace(/_/g, ' ') ?? '—'}
                   </div>
                 </div>
@@ -230,24 +230,24 @@ export default function PraticheTesseramentoPage() {
                 {/* Tipo e info */}
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{
-                    fontSize: 11, color: 'var(--white)',
+                    fontSize: 12, color: 'var(--white)',
                     fontFamily: 'var(--font-display)', fontWeight: 600,
-                    textTransform: 'uppercase', marginBottom: 4, letterSpacing: '0.04em',
+                    textTransform: 'none', marginBottom: 4, letterSpacing: '0',
                   }}>
                     {tipoLabel} — {p.stagione}
                   </div>
                   {p.motivo_blocco && (
-                    <div style={{ fontSize: 11, color: '#ff4444', fontFamily: 'var(--font-mono)' }}>
+                    <div style={{ fontSize: 12, color: '#ff4444', fontFamily: 'var(--font-mono)' }}>
                       ⛔ {p.motivo_blocco}
                     </div>
                   )}
                   {p.documenti_mancanti && p.documenti_mancanti.length > 0 && (
-                    <div style={{ fontSize: 10, color: '#ff9900', fontFamily: 'var(--font-mono)', marginTop: 2 }}>
+                    <div style={{ fontSize: 12, color: '#ff9900', fontFamily: 'var(--font-mono)', marginTop: 2 }}>
                       📋 Mancano: {p.documenti_mancanti.join(', ')}
                     </div>
                   )}
                   {p.note_figc && (
-                    <div style={{ fontSize: 10, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)', marginTop: 2 }}>
+                    <div style={{ fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)', marginTop: 2 }}>
                       📝 {p.note_figc.slice(0, 70)}{p.note_figc.length > 70 ? '…' : ''}
                     </div>
                   )}
@@ -256,11 +256,11 @@ export default function PraticheTesseramentoPage() {
                 {/* Badge stato */}
                 <div style={{ flexShrink: 0 }}>
                   <span style={{
-                    fontSize: 10, padding: '3px 8px',
+                    fontSize: 12, padding: '3px 8px',
                     background: `${statoMeta.colore}22`,
                     border: `1px solid ${statoMeta.colore}55`,
                     color: statoMeta.colore,
-                    fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', textTransform: 'uppercase',
+                    fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none',
                   }}>
                     {statoMeta.label}
                   </span>
@@ -272,9 +272,9 @@ export default function PraticheTesseramentoPage() {
                   style={{
                     padding: '6px 12px', background: 'transparent',
                     color: 'var(--grigio-3)', border: '1px solid var(--border-solid)',
-                    borderRadius: 2, cursor: 'pointer', fontSize: 11, flexShrink: 0,
+                    borderRadius: 8, cursor: 'pointer', fontSize: 12, flexShrink: 0,
                     fontFamily: 'var(--font-display)', fontWeight: 600,
-                    textTransform: 'uppercase', letterSpacing: '0.06em',
+                    textTransform: 'none', letterSpacing: '0',
                   }}
                 >
                   Aggiorna
@@ -296,9 +296,9 @@ export default function PraticheTesseramentoPage() {
             width={480}
           >
             <div style={{
-              padding: '10px 14px', background: '#111',
+              padding: '10px 14px', background: 'var(--surface-2)',
               border: '1px solid var(--border-solid)',
-              fontFamily: 'var(--font-mono)', fontSize: 11,
+              fontFamily: 'var(--font-mono)', fontSize: 12,
               color: 'var(--grigio-4)', marginBottom: 20,
             }}>
               {TIPI_PRATICA.find(t => t.value === modalEdit.tipo_pratica)?.label ?? modalEdit.tipo_pratica}
@@ -350,8 +350,8 @@ export default function PraticheTesseramentoPage() {
                 style={{
                   padding: '9px 20px', background: 'transparent',
                   color: 'var(--grigio-3)', border: '1px solid var(--border-solid)',
-                  borderRadius: 2, cursor: 'pointer',
-                  fontFamily: 'var(--font-display)', fontSize: 11, textTransform: 'uppercase',
+                  borderRadius: 8, cursor: 'pointer',
+                  fontFamily: 'var(--font-display)', fontSize: 12, textTransform: 'none',
                 }}
               >
                 Annulla
@@ -361,9 +361,9 @@ export default function PraticheTesseramentoPage() {
                 disabled={salvando}
                 style={{
                   padding: '9px 22px', background: 'var(--accent)', color: '#0a0a0a',
-                  border: 'none', borderRadius: 2, cursor: salvando ? 'not-allowed' : 'pointer',
+                  border: 'none', borderRadius: 8, cursor: salvando ? 'not-allowed' : 'pointer',
                   fontFamily: 'var(--font-display)', fontWeight: 700,
-                  fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.08em',
+                  fontSize: 12, textTransform: 'none', letterSpacing: '0',
                   opacity: salvando ? 0.6 : 1,
                 }}
               >

@@ -273,7 +273,7 @@ export default function ComplianceCampionatoPage() {
             <div style={{
               display: 'flex', alignItems: 'center', gap: 14,
               background: 'rgba(34,197,94,0.08)', border: '1px solid var(--verde)',
-              borderRadius: 10, padding: '16px 20px', marginBottom: 20,
+              borderRadius: 14, padding: '16px 20px', marginBottom: 20,
             }}>
               <span style={{ fontSize: 24 }}>✅</span>
               <div>
@@ -297,12 +297,12 @@ export default function ComplianceCampionatoPage() {
                 {Math.round((soddisfatti / Math.max(tutti, 1)) * 100)}%
               </div>
             </div>
-            <div style={{ height: 8, background: 'var(--grigio-6)', borderRadius: 4, overflow: 'hidden' }}>
+            <div style={{ height: 8, background: 'var(--grigio-6)', borderRadius: 10, overflow: 'hidden' }}>
               <div style={{
                 height: '100%',
                 width: `${(soddisfatti / Math.max(tutti, 1)) * 100}%`,
                 background: pronti ? 'var(--verde)' : soddisfatti >= tutti / 2 ? 'var(--ambra)' : 'var(--rosso)',
-                borderRadius: 4,
+                borderRadius: 10,
                 transition: 'width 0.4s ease',
               }} />
             </div>
@@ -347,12 +347,12 @@ export default function ComplianceCampionatoPage() {
                   </div>
                   {/* Mini progress bar per check con percentuale */}
                   {chk.result.totale != null && chk.result.totale > 0 && (
-                    <div style={{ marginTop: 6, height: 4, background: 'var(--grigio-6)', borderRadius: 2, width: 200, overflow: 'hidden' }}>
+                    <div style={{ marginTop: 6, height: 4, background: 'var(--grigio-6)', borderRadius: 8, width: 200, overflow: 'hidden' }}>
                       <div style={{
                         height: '100%',
                         width: `${Math.min(100, (chk.result.valore / chk.result.totale) * 100)}%`,
                         background: chk.result.ok ? 'var(--verde)' : 'var(--rosso)',
-                        borderRadius: 2,
+                        borderRadius: 8,
                       }} />
                     </div>
                   )}
@@ -458,7 +458,7 @@ export default function ComplianceCampionatoPage() {
             padding: '14px 20px',
             background: 'rgba(100,100,100,0.06)',
             border: '1px solid var(--border)',
-            borderRadius: 8,
+            borderRadius: 12,
             fontSize: 12,
             color: 'var(--grigio-4)',
             lineHeight: 1.6,

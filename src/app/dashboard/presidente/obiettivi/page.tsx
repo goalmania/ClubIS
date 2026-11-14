@@ -170,7 +170,7 @@ export default function ObiettiviPage() {
           {/* Header */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
             <div>
-              <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Obiettivi club</h1>
+              <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Obiettivi club</h1>
               <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>
                 Goal tracking sportivo, economico e strategico
               </p>
@@ -229,7 +229,7 @@ export default function ObiettiviPage() {
                   {/* Header categoria */}
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
                     <div style={{ fontSize: 14, fontWeight: 600, color: c.color }}>{c.label}</div>
-                    <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                    <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                       {c.raggiunti}/{c.obiettivi.length}
                     </span>
                   </div>
@@ -248,7 +248,7 @@ export default function ObiettiviPage() {
                     c.obiettivi.map(o => (
                       <div key={o.id} style={{
                         padding: '8px 10px', marginBottom: 6,
-                        background: 'var(--bg-input)', borderRadius: 6,
+                        background: 'var(--bg-input)', borderRadius: 10,
                         borderLeft: `3px solid ${c.color}`,
                         opacity: o.stato === 'non_raggiunto' ? 0.6 : 1,
                       }}>
@@ -256,12 +256,12 @@ export default function ObiettiviPage() {
                           <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)', flex: 1 }}>
                             {o.titolo}
                           </span>
-                          <span className={`badge ${statoBadge[o.stato] ?? 'badge-grigio'}`} style={{ fontSize: 10, flexShrink: 0 }}>
+                          <span className={`badge ${statoBadge[o.stato] ?? 'badge-grigio'}`} style={{ fontSize: 12, flexShrink: 0 }}>
                             {o.stato.replace('_', ' ')}
                           </span>
                         </div>
                         {o.target && (
-                          <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 4 }}>
+                          <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>
                             Target: {o.target}
                           </div>
                         )}
@@ -273,13 +273,13 @@ export default function ObiettiviPage() {
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}>
                           <button
                             className="btn btn-ghost btn-sm"
-                            style={{ fontSize: 11, padding: '3px 8px' }}
+                            style={{ fontSize: 12, padding: '3px 8px' }}
                             onClick={() => apriModifica(o)}
                           >
                             Modifica
                           </button>
                           {o.scadenza && (
-                            <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>
+                            <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                               Scad. {formatData(o.scadenza)}
                             </span>
                           )}

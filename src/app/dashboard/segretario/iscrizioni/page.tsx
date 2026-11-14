@@ -190,7 +190,7 @@ export default function IscrizioniPage() {
       {moduli.length > 0 && (
         <div className="card" style={{ marginBottom: 24, overflow: 'hidden' }}>
           <div style={{ padding: '12px 18px', borderBottom: '1px solid var(--border-solid)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, textTransform: 'none', letterSpacing: '0' }}>
               Moduli iscrizione
             </span>
           </div>
@@ -199,7 +199,7 @@ export default function IscrizioniPage() {
               <thead>
                 <tr>
                   {['Titolo', 'Tipo', 'Stagione', 'Scadenza', 'Iscritti', 'Link pubblico', 'Stato', ''].map(h => (
-                    <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontSize: 11, fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--grigio-3)', borderBottom: '1px solid var(--border-solid)' }}>{h}</th>
+                    <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontSize: 12, fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none', color: 'var(--grigio-3)', borderBottom: '1px solid var(--border-solid)' }}>{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -216,7 +216,7 @@ export default function IscrizioniPage() {
                       <td style={{ padding: '10px 14px', fontSize: 13, fontFamily: 'var(--font-mono)', fontWeight: 700 }}>{cnt}{m.max_iscrizioni ? `/${m.max_iscrizioni}` : ''}</td>
                       <td style={{ padding: '10px 14px' }}>
                         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                          <a href={link} target="_blank" rel="noreferrer" style={{ fontSize: 11, color: 'var(--accent)', fontFamily: 'var(--font-mono)', wordBreak: 'break-all' }}>
+                          <a href={link} target="_blank" rel="noreferrer" style={{ fontSize: 12, color: 'var(--accent)', fontFamily: 'var(--font-mono)', wordBreak: 'break-all' }}>
                             /iscriviti/{m.slug}
                           </a>
                           <button onClick={() => navigator.clipboard.writeText(link)} style={iconBtn} title="Copia link">📋</button>
@@ -227,7 +227,7 @@ export default function IscrizioniPage() {
                         <span className={`badge ${m.attivo ? 'badge-verde' : 'badge-grigio'}`}>{m.attivo ? 'Attivo' : 'Chiuso'}</span>
                       </td>
                       <td style={{ padding: '10px 14px' }}>
-                        <button onClick={() => toggleModulo(m.id, m.attivo)} style={{ fontSize: 11, padding: '3px 8px', background: 'var(--grigio-mid)', border: '1px solid var(--border-solid)', borderRadius: 2, cursor: 'pointer', color: 'var(--grigio-3)' }}>
+                        <button onClick={() => toggleModulo(m.id, m.attivo)} style={{ fontSize: 12, padding: '3px 8px', background: 'var(--grigio-mid)', border: '1px solid var(--border-solid)', borderRadius: 8, cursor: 'pointer', color: 'var(--grigio-3)' }}>
                           {m.attivo ? 'Disattiva' : 'Attiva'}
                         </button>
                       </td>
@@ -270,17 +270,17 @@ export default function IscrizioniPage() {
               ) : filtrate.map(r => (
                 <tr key={r.id}>
                   <td style={{ fontWeight: 600 }}>{r.cognome} {r.nome}
-                    {r.data_nascita && <div style={{ fontSize: 11, color: 'var(--grigio-3)', fontFamily: 'var(--font-mono)' }}>
+                    {r.data_nascita && <div style={{ fontSize: 12, color: 'var(--grigio-3)', fontFamily: 'var(--font-mono)' }}>
                       {new Date(r.data_nascita).toLocaleDateString('it-IT')}
                     </div>}
                   </td>
                   <td>
                     <div style={{ fontSize: 13 }}>{r.genitore_nome} {r.genitore_cognome}</div>
-                    <div style={{ fontSize: 11, color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>{r.genitore_email}</div>
+                    <div style={{ fontSize: 12, color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>{r.genitore_email}</div>
                   </td>
                   <td style={{ fontSize: 12, color: 'var(--grigio-3)' }}>
                     {r.moduli_iscrizione?.titolo ?? '—'}
-                    <div style={{ fontSize: 10, fontFamily: 'var(--font-mono)' }}>{r.moduli_iscrizione?.stagione}</div>
+                    <div style={{ fontSize: 12, fontFamily: 'var(--font-mono)' }}>{r.moduli_iscrizione?.stagione}</div>
                   </td>
                   <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
                     {new Date(r.created_at).toLocaleDateString('it-IT')}
@@ -292,7 +292,7 @@ export default function IscrizioniPage() {
                         {r.pagamento_stato === 'pagato' && r.pagamento_importo ? ` €${Number(r.pagamento_importo).toFixed(2)}` : ''}
                       </span>
                     ) : (
-                      <span style={{ fontSize: 11, color: 'var(--grigio-4)' }}>Gratuito</span>
+                      <span style={{ fontSize: 12, color: 'var(--grigio-4)' }}>Gratuito</span>
                     )}
                   </td>
                   <td>
@@ -302,14 +302,14 @@ export default function IscrizioniPage() {
                   </td>
                   <td>
                     <div style={{ display: 'flex', gap: 6 }}>
-                      <button className="btn btn-sm" style={{ fontSize: 11 }} onClick={() => setDettaglio(r)}>
+                      <button className="btn btn-sm" style={{ fontSize: 12 }} onClick={() => setDettaglio(r)}>
                         Dettaglio
                       </button>
                       {r.stato === 'in_attesa' && (
                         <>
                           <button
                             className="btn btn-sm"
-                            style={{ fontSize: 11, background: 'var(--verde-lt)', color: 'var(--verde)', border: '1px solid var(--verde)' }}
+                            style={{ fontSize: 12, background: 'var(--verde-lt)', color: 'var(--verde)', border: '1px solid var(--verde)' }}
                             onClick={() => approva(r)}
                             disabled={approving === r.id}
                           >
@@ -317,7 +317,7 @@ export default function IscrizioniPage() {
                           </button>
                           <button
                             className="btn btn-sm"
-                            style={{ fontSize: 11, background: 'var(--rosso-lt)', color: 'var(--rosso)', border: '1px solid var(--rosso)' }}
+                            style={{ fontSize: 12, background: 'var(--rosso-lt)', color: 'var(--rosso)', border: '1px solid var(--rosso)' }}
                             onClick={() => setRifiutoId(r.id)}
                           >
                             Rifiuta
@@ -446,7 +446,7 @@ export default function IscrizioniPage() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div style={{ marginBottom: 24 }}>
-      <div style={{ fontSize: '0.65rem', fontFamily: 'var(--font-mono)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--accent)', paddingBottom: 8, borderBottom: '1px solid var(--border-solid)', marginBottom: 16 }}>{title}</div>
+      <div style={{ fontSize: '0.8rem', fontFamily: 'var(--font-mono)', fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--accent)', paddingBottom: 8, borderBottom: '1px solid var(--border-solid)', marginBottom: 16 }}>{title}</div>
       {children}
     </div>
   )
@@ -457,14 +457,14 @@ function Field({ label, hint, children }: { label: string; hint?: string; childr
     <div style={{ marginBottom: 14 }}>
       <label className="label">{label}</label>
       {children}
-      {hint && <div style={{ fontSize: 11, color: 'var(--grigio-3)', marginTop: 4 }}>{hint}</div>}
+      {hint && <div style={{ fontSize: 12, color: 'var(--grigio-3)', marginTop: 4 }}>{hint}</div>}
     </div>
   )
 }
 
 function SectionLabel({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) {
   return (
-    <div style={{ fontSize: '0.6rem', fontFamily: 'var(--font-mono)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--accent)', ...style }}>
+    <div style={{ fontSize: '0.78rem', fontFamily: 'var(--font-mono)', fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--accent)', ...style }}>
       {children}
     </div>
   )

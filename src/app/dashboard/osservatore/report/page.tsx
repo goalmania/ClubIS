@@ -55,7 +55,7 @@ export default function OsservatoreReportPage() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>
             I miei report
           </h1>
           <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>
@@ -107,8 +107,8 @@ export default function OsservatoreReportPage() {
                   <td style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{r.club_attuale_ext ?? '—'}</td>
                   <td style={{ fontSize: 12, color: 'var(--grigio-3)' }}>
                     {r.regione_provenienza
-                      ? <span style={{ fontSize: 11, padding: '2px 6px', borderRadius: 4, background: 'var(--grigio-5)', color: 'var(--grigio-2)' }}>📍 {r.regione_provenienza}</span>
-                      : <span style={{ fontSize: 11, color: 'var(--grigio-5)' }}>—</span>
+                      ? <span style={{ fontSize: 12, padding: '2px 6px', borderRadius: 10, background: 'var(--grigio-5)', color: 'var(--grigio-2)' }}>📍 {r.regione_provenienza}</span>
+                      : <span style={{ fontSize: 12, color: 'var(--grigio-5)' }}>—</span>
                     }
                   </td>
                   <td style={{ fontSize: 12, color: 'var(--grigio-3)', maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -129,7 +129,7 @@ export default function OsservatoreReportPage() {
                   <td>
                     {r.voto_globale !== null ? (
                       <span style={{
-                        display: 'inline-flex', width: 28, height: 28, borderRadius: 6,
+                        display: 'inline-flex', width: 28, height: 28, borderRadius: 10,
                         alignItems: 'center', justifyContent: 'center',
                         fontWeight: 700, fontSize: 13, fontFamily: 'var(--font-mono)',
                         background: votoColore(r.voto_globale), color: 'white',
@@ -139,12 +139,12 @@ export default function OsservatoreReportPage() {
                     ) : '—'}
                   </td>
                   <td>
-                    <span className={`badge ${potenzialeColore[r.potenziale] ?? 'badge-grigio'}`} style={{ fontSize: 10 }}>
+                    <span className={`badge ${potenzialeColore[r.potenziale] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>
                       {r.potenziale}
                     </span>
                   </td>
                   <td>
-                    <span className={`badge ${esitoColore[r.esito] ?? 'badge-grigio'}`} style={{ fontSize: 10 }}>
+                    <span className={`badge ${esitoColore[r.esito] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>
                       {r.esito?.replace('_', ' ')}
                     </span>
                   </td>
@@ -152,7 +152,7 @@ export default function OsservatoreReportPage() {
                     <Link
                       href={`/dashboard/osservatore/giocatori/${r.id}`}
                       className="btn btn-ghost btn-sm"
-                      style={{ fontSize: 11 }}
+                      style={{ fontSize: 12 }}
                     >
                       Dettaglio →
                     </Link>

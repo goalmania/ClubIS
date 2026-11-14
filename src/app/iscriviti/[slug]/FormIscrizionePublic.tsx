@@ -172,10 +172,10 @@ export default function FormIscrizionePublic({ modulo }: { modulo: Modulo }) {
         {club.logo_url && (
           <img src={club.logo_url} alt={club.nome} style={{ width: 64, height: 64, objectFit: 'contain', marginBottom: 10 }} />
         )}
-        <h1 style={{ fontFamily: 'Barlow Condensed, sans-serif', fontWeight: 900, fontSize: 22, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#f5f3ee', marginBottom: 4 }}>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 28, textTransform: 'none', letterSpacing: '-0.025em', color: '#f5f3ee', marginBottom: 4 }}>
           {club.nome}
         </h1>
-        <p style={{ color: accent, fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+        <p style={{ color: accent, fontSize: 13, fontWeight: 700, textTransform: 'none', letterSpacing: '0' }}>
           {modulo.titolo}
         </p>
         {modulo.descrizione && (
@@ -198,12 +198,12 @@ export default function FormIscrizionePublic({ modulo }: { modulo: Modulo }) {
                 background: done ? accent : active ? accent : '#222',
                 border: `2px solid ${done || active ? accent : '#333'}`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 11, fontWeight: 700, color: done || active ? '#000' : '#555',
+                fontSize: 12, fontWeight: 700, color: done || active ? '#000' : '#555',
                 fontFamily: 'monospace',
               }}>
                 {done ? '✓' : n}
               </div>
-              <span style={{ fontSize: 11, color: active ? accent : done ? '#aaa' : '#444', fontWeight: active ? 700 : 400, marginLeft: 5, marginRight: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              <span style={{ fontSize: 12, color: active ? accent : done ? '#aaa' : '#444', fontWeight: active ? 700 : 400, marginLeft: 5, marginRight: 12, textTransform: 'none', letterSpacing: '0' }}>
                 {s}
               </span>
               {i < steps.length - 1 && <div style={{ width: 20, height: 1, background: '#333', marginRight: 12 }} />}
@@ -237,7 +237,7 @@ export default function FormIscrizionePublic({ modulo }: { modulo: Modulo }) {
             )}
             {modulo.richiedi_codice_fiscale && (
               <Field label="Codice fiscale">
-                <input style={{ ...inputStyle, textTransform: 'uppercase' }} value={cf}
+                <input style={{ ...inputStyle, textTransform: 'none' }} value={cf}
                   onChange={e => setCf(e.target.value.toUpperCase())} placeholder="RSSMRA90A01H501Z" maxLength={16} />
               </Field>
             )}
@@ -283,7 +283,7 @@ export default function FormIscrizionePublic({ modulo }: { modulo: Modulo }) {
               </Field>
             </div>
             <Field label="Codice fiscale genitore">
-              <input style={{ ...inputStyle, textTransform: 'uppercase' }} value={gCf}
+              <input style={{ ...inputStyle, textTransform: 'none' }} value={gCf}
                 onChange={e => setGCf(e.target.value.toUpperCase())} placeholder="RSSANN70A41H501Z" maxLength={16} />
             </Field>
             <div style={{ marginTop: 20, display: 'flex', justifyContent: 'space-between' }}>
@@ -345,20 +345,20 @@ export default function FormIscrizionePublic({ modulo }: { modulo: Modulo }) {
         {step === 4 && (
           <div>
             <h3 style={sectionTitle}>Riepilogo e conferma</h3>
-            <div style={{ background: '#0d0d0d', borderRadius: 4, padding: '16px 18px', marginBottom: 16, fontSize: 13, lineHeight: 1.8 }}>
+            <div style={{ background: 'var(--surface-1)', borderRadius: 10, padding: '16px 18px', marginBottom: 16, fontSize: 13, lineHeight: 1.8 }}>
               <Row label="Atleta" value={`${nome} ${cognome}`} />
               {dataNascita && <Row label="Nato/a il" value={new Date(dataNascita).toLocaleDateString('it-IT')} />}
               {cf && <Row label="Codice fiscale" value={cf} />}
-              <div style={{ height: 1, background: '#222', margin: '8px 0' }} />
+              <div style={{ height: 1, background: 'var(--surface-3)', margin: '8px 0' }} />
               <Row label="Genitore" value={`${gNome} ${gCognome}`.trim() || '—'} />
               <Row label="Email" value={gEmail} />
               {gTel && <Row label="Telefono" value={gTel} />}
-              <div style={{ height: 1, background: '#222', margin: '8px 0' }} />
+              <div style={{ height: 1, background: 'var(--surface-3)', margin: '8px 0' }} />
               <Row label="Consenso dati" value={gdpr ? '✓ Accordato' : '—'} />
               <Row label="Consenso foto" value={foto ? '✓ Accordato' : '—'} />
             </div>
             {richiedePagamento && (
-              <div style={{ background: '#1a1a00', border: `1px solid ${accent}`, borderRadius: 4, padding: '12px 16px', marginBottom: 16, fontSize: 13 }}>
+              <div style={{ background: '#1a1a00', border: `1px solid ${accent}`, borderRadius: 10, padding: '12px 16px', marginBottom: 16, fontSize: 13 }}>
                 <strong style={{ color: accent }}>Quota iscrizione: €{Number(modulo.importo_iscrizione).toFixed(2)}</strong>
                 <br /><span style={{ color: '#888', fontSize: 12 }}>Il pagamento con carta è obbligatorio e avviene subito, in modo sicuro tramite Stripe. Nessun pagamento in sede.</span>
               </div>
@@ -384,7 +384,7 @@ export default function FormIscrizionePublic({ modulo }: { modulo: Modulo }) {
         )}
       </div>
 
-      <p style={{ textAlign: 'center', color: '#444', fontSize: 11, marginTop: 20 }}>
+      <p style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: 12, marginTop: 20 }}>
         ClubIS — The Intelligence System · Dati protetti e trattati ai sensi del GDPR
       </p>
     </div>
@@ -394,7 +394,7 @@ export default function FormIscrizionePublic({ modulo }: { modulo: Modulo }) {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div style={{ marginBottom: 14 }}>
-      <label style={{ display: 'block', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#888', marginBottom: 5 }}>{label}</label>
+      <label style={{ display: 'block', fontSize: 12, fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: '#888', marginBottom: 5 }}>{label}</label>
       {children}
     </div>
   )
@@ -403,7 +403,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <div style={{ display: 'flex', gap: 8 }}>
-      <span style={{ color: '#666', minWidth: 130 }}>{label}:</span>
+      <span style={{ color: 'var(--gray)', minWidth: 130 }}>{label}:</span>
       <span style={{ color: '#f5f3ee', fontWeight: 500 }}>{value}</span>
     </div>
   )
@@ -415,34 +415,34 @@ const pageStyle: React.CSSProperties = {
   padding: '32px 16px', fontFamily: 'system-ui, -apple-system, sans-serif',
 }
 const cardStyle: React.CSSProperties = {
-  maxWidth: 520, margin: '0 auto', background: '#111',
-  border: '1px solid #222', borderRadius: 6, padding: '24px 28px',
+  maxWidth: 520, margin: '0 auto', background: 'var(--surface-2)',
+  border: '1px solid var(--separator)', borderRadius: 10, padding: '24px 28px',
 }
 const h2Style: React.CSSProperties = {
-  fontFamily: 'Barlow Condensed, sans-serif', fontWeight: 900,
-  fontSize: 24, textTransform: 'uppercase', marginBottom: 12, letterSpacing: '-0.01em',
+  fontFamily: 'var(--font-display)', fontWeight: 700,
+  fontSize: 24, textTransform: 'none', marginBottom: 12, letterSpacing: '-0.01em',
 }
 const sectionTitle: React.CSSProperties = {
-  fontFamily: 'Barlow Condensed, sans-serif', fontWeight: 700,
-  fontSize: 15, textTransform: 'uppercase', letterSpacing: '0.08em',
+  fontFamily: 'var(--font-display)', fontWeight: 700,
+  fontSize: 15, textTransform: 'none', letterSpacing: '0',
   color: '#f5f3ee', marginBottom: 18, paddingBottom: 10,
-  borderBottom: '1px solid #222',
+  borderBottom: '1px solid var(--separator)',
 }
 const inputStyle: React.CSSProperties = {
-  width: '100%', background: '#0d0d0d', border: '1px solid #333',
-  borderRadius: 4, padding: '10px 12px', color: '#f5f3ee', fontSize: 14,
+  width: '100%', background: 'var(--surface-1)', border: '1px solid var(--separator)',
+  borderRadius: 10, padding: '10px 12px', color: '#f5f3ee', fontSize: 14,
   outline: 'none', boxSizing: 'border-box',
 }
 const gridStyle: React.CSSProperties = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 14px' }
 const btnPrimary: React.CSSProperties = {
-  background: accent, color: '#000', border: 'none', borderRadius: 4,
+  background: accent, color: '#000', border: 'none', borderRadius: 10,
   padding: '11px 22px', fontWeight: 700, fontSize: 13, cursor: 'pointer',
-  textTransform: 'uppercase', letterSpacing: '0.08em',
+  textTransform: 'none', letterSpacing: '0',
 }
 const btnSecondary: React.CSSProperties = {
-  background: 'transparent', color: '#888', border: '1px solid #333', borderRadius: 4,
+  background: 'transparent', color: '#888', border: '1px solid var(--separator)', borderRadius: 10,
   padding: '10px 18px', fontWeight: 600, fontSize: 13, cursor: 'pointer',
-  textTransform: 'uppercase', letterSpacing: '0.08em',
+  textTransform: 'none', letterSpacing: '0',
 }
 const checkLabel: React.CSSProperties = {
   display: 'flex', gap: 12, alignItems: 'flex-start', cursor: 'pointer',

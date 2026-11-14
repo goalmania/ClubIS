@@ -150,7 +150,7 @@ export default function MessaggiPage() {
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 26, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)', marginBottom: 4 }}>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 28, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)', marginBottom: 4 }}>
             Comunicazioni
           </h1>
           <p style={{ fontSize: 13, color: 'var(--gray)' }}>{bacheca.length} post · {soli_msg.length} messaggi</p>
@@ -167,7 +167,7 @@ export default function MessaggiPage() {
             padding: '9px 20px', background: 'none', border: 'none', cursor: 'pointer',
             borderBottom: `2px solid ${tab === t.key ? 'var(--accent)' : 'transparent'}`,
             color: tab === t.key ? 'var(--accent)' : 'var(--gray)', fontSize: 13,
-            fontWeight: tab === t.key ? 700 : 400, textTransform: 'uppercase', letterSpacing: '0.06em', fontFamily: 'var(--font-mono)',
+            fontWeight: tab === t.key ? 700 : 400, textTransform: 'none', letterSpacing: '0', fontFamily: 'var(--font-mono)',
           }}>{t.label}</button>
         ))}
       </div>
@@ -178,20 +178,20 @@ export default function MessaggiPage() {
           {fissati.length === 0 && normali.length === 0 && (
             <div style={{ textAlign: 'center', padding: '80px 20px', color: 'var(--gray)' }}>
               <div style={{ fontSize: 40, marginBottom: 12 }}>📌</div>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, textTransform: 'uppercase', color: 'var(--white)', marginBottom: 6 }}>Bacheca vuota</div>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, textTransform: 'none', color: 'var(--white)', marginBottom: 6 }}>Bacheca vuota</div>
               <div style={{ fontSize: 13, marginBottom: 20 }}>Pubblica il primo annuncio per il club.</div>
               <button onClick={() => { setForm({ ...EMPTY_FORM, tipo_comunicazione: 'bacheca_post' }); setDrawerOpen(true) }} className="btn btn-primary btn-sm">+ Primo post</button>
             </div>
           )}
           {fissati.length > 0 && (
             <>
-              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 4 }}>📌 Fissati</div>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0', textTransform: 'none', color: 'var(--accent)', marginBottom: 4 }}>📌 Fissati</div>
               {fissati.map(m => <PostCard key={m.id} m={m} expanded={expanded.has(m.id)} onToggle={toggleExpand} onFix={fixPost} onDelete={eliminaPost} />)}
             </>
           )}
           {normali.length > 0 && (
             <>
-              {fissati.length > 0 && <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--gray)', margin: '8px 0 4px' }}>Recenti</div>}
+              {fissati.length > 0 && <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', fontWeight: 700, letterSpacing: '0', textTransform: 'none', color: 'var(--gray)', margin: '8px 0 4px' }}>Recenti</div>}
               {normali.map(m => <PostCard key={m.id} m={m} expanded={expanded.has(m.id)} onToggle={toggleExpand} onFix={fixPost} onDelete={eliminaPost} />)}
             </>
           )}
@@ -211,18 +211,18 @@ export default function MessaggiPage() {
             const mitt = m.utenti
             const tb = TIPO_BADGE[m.tipo] ?? { label: m.tipo, color: 'var(--gray)' }
             return (
-              <div key={m.id} style={{ background: '#111', border: '1px solid var(--border-solid)', borderRadius: 2, padding: '14px 18px' }}>
+              <div key={m.id} style={{ background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8, padding: '14px 18px' }}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-                  <div style={{ width: 34, height: 34, borderRadius: '50%', flexShrink: 0, background: mitt ? `${RUOLO_COLORE[mitt.ruolo] ?? 'var(--gray)'}22` : '#1a1a1a', border: `1px solid ${mitt ? RUOLO_COLORE[mitt.ruolo] ?? 'var(--border-solid)' : 'var(--border-solid)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 12, color: mitt ? RUOLO_COLORE[mitt.ruolo] ?? 'var(--white)' : 'var(--white)' }}>
+                  <div style={{ width: 34, height: 34, borderRadius: '50%', flexShrink: 0, background: mitt ? `${RUOLO_COLORE[mitt.ruolo] ?? 'var(--gray)'}22` : '#1a1a1a', border: `1px solid ${mitt ? RUOLO_COLORE[mitt.ruolo] ?? 'var(--border-solid)' : 'var(--border-solid)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, color: mitt ? RUOLO_COLORE[mitt.ruolo] ?? 'var(--white)' : 'var(--white)' }}>
                     {mitt?.nome?.[0]}{mitt?.cognome?.[0]}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4, flexWrap: 'wrap' }}>
                       <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--white)' }}>{m.titolo}</span>
-                      <span style={{ fontSize: 10, fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', textTransform: 'uppercase', color: tb.color, background: `${tb.color}18`, padding: '2px 6px', borderRadius: 2 }}>{tb.label}</span>
+                      <span style={{ fontSize: 12, fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none', color: tb.color, background: `${tb.color}18`, padding: '2px 6px', borderRadius: 8 }}>{tb.label}</span>
                     </div>
                     {m.corpo && <p style={{ fontSize: 12, color: 'var(--gray)', margin: 0, lineHeight: 1.6 }}>{m.corpo}</p>}
-                    <div style={{ fontSize: 11, color: '#444', marginTop: 6, display: 'flex', gap: 10 }}>
+                    <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 6, display: 'flex', gap: 10 }}>
                       {mitt && <span>{mitt.nome} {mitt.cognome}</span>}
                       <span>{new Date(m.inviato_at).toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
                     </div>
@@ -237,9 +237,9 @@ export default function MessaggiPage() {
       {/* ── Drawer nuovo post ── */}
       {drawerOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', zIndex: 900, display: 'flex', justifyContent: 'flex-end' }} onClick={() => setDrawerOpen(false)}>
-          <div style={{ width: 460, background: '#111', borderLeft: '1px solid var(--border-solid)', height: '100%', overflowY: 'auto', padding: 24 }} onClick={e => e.stopPropagation()}>
+          <div style={{ width: 460, background: 'var(--surface-2)', borderLeft: '1px solid var(--border-solid)', height: '100%', overflowY: 'auto', padding: 24 }} onClick={e => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 16, textTransform: 'uppercase', color: 'var(--white)' }}>Nuova comunicazione</div>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16, textTransform: 'none', color: 'var(--white)' }}>Nuova comunicazione</div>
               <button onClick={() => setDrawerOpen(false)} style={{ background: 'none', border: 'none', color: 'var(--gray)', fontSize: 22, cursor: 'pointer' }}>×</button>
             </div>
 
@@ -247,7 +247,7 @@ export default function MessaggiPage() {
               <label className="label">Tipo comunicazione</label>
               <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                 {([{ key: 'bacheca_post', label: '📌 Post' }, { key: 'annuncio', label: '📢 Annuncio' }, { key: 'messaggio', label: '✉ Messaggio' }] as const).map(t => (
-                  <button key={t.key} onClick={() => setForm(p => ({ ...p, tipo_comunicazione: t.key }))} style={{ padding: '6px 12px', borderRadius: 2, fontSize: 11, cursor: 'pointer', fontFamily: 'var(--font-mono)', letterSpacing: '0.06em', textTransform: 'uppercase', border: '1px solid', background: form.tipo_comunicazione === t.key ? 'var(--accent)' : 'transparent', borderColor: form.tipo_comunicazione === t.key ? 'var(--accent)' : 'var(--border-solid)', color: form.tipo_comunicazione === t.key ? '#000' : 'var(--gray)' }}>
+                  <button key={t.key} onClick={() => setForm(p => ({ ...p, tipo_comunicazione: t.key }))} style={{ padding: '6px 12px', borderRadius: 8, fontSize: 12, cursor: 'pointer', fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none', border: '1px solid', background: form.tipo_comunicazione === t.key ? 'var(--accent)' : 'transparent', borderColor: form.tipo_comunicazione === t.key ? 'var(--accent)' : 'var(--border-solid)', color: form.tipo_comunicazione === t.key ? '#000' : 'var(--gray)' }}>
                     {t.label}
                   </button>
                 ))}
@@ -264,7 +264,7 @@ export default function MessaggiPage() {
             </div>
             <div style={{ marginBottom: 14 }}>
               <label className="label">Visibile a</label>
-              <select className="input" value={form.visibile_a[0]} onChange={e => setForm(p => ({ ...p, visibile_a: [e.target.value] }))} style={{ background: '#1a1a1a', color: 'var(--white)' }}>
+              <select className="input" value={form.visibile_a[0]} onChange={e => setForm(p => ({ ...p, visibile_a: [e.target.value] }))} style={{ background: 'var(--surface-2)', color: 'var(--white)' }}>
                 <option value="tutti">Tutto il club</option>
                 <option value="famiglia">Solo famiglie</option>
                 <option value="staff">Solo staff tecnico</option>
@@ -330,28 +330,28 @@ function PostCard({ m, expanded, onToggle, onFix, onDelete }: {
   const inScadenza = m.data_scadenza_post && new Date(m.data_scadenza_post) <= new Date(Date.now() + 3 * 86400000)
 
   return (
-    <div style={{ background: m.fissato ? '#0f110a' : '#111', border: `1px solid ${m.fissato ? 'rgba(200,240,0,0.25)' : 'var(--border-solid)'}`, borderTop: `3px solid ${m.fissato ? 'var(--accent)' : tb.color}`, borderRadius: 2, padding: '16px 20px' }}>
+    <div style={{ background: m.fissato ? '#0f110a' : '#111', border: `1px solid ${m.fissato ? 'rgba(200,240,0,0.25)' : 'var(--border-solid)'}`, borderTop: `3px solid ${m.fissato ? 'var(--accent)' : tb.color}`, borderRadius: 8, padding: '16px 20px' }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 10 }}>
-        <div style={{ width: 36, height: 36, borderRadius: '50%', flexShrink: 0, background: mitt ? `${RUOLO_COLORE[mitt.ruolo] ?? 'var(--gray)'}22` : '#1a1a1a', border: `1px solid ${mitt ? RUOLO_COLORE[mitt.ruolo] ?? 'var(--border-solid)' : 'var(--border-solid)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 13, color: mitt ? RUOLO_COLORE[mitt.ruolo] ?? 'var(--white)' : 'var(--white)' }}>
+        <div style={{ width: 36, height: 36, borderRadius: '50%', flexShrink: 0, background: mitt ? `${RUOLO_COLORE[mitt.ruolo] ?? 'var(--gray)'}22` : '#1a1a1a', border: `1px solid ${mitt ? RUOLO_COLORE[mitt.ruolo] ?? 'var(--border-solid)' : 'var(--border-solid)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, color: mitt ? RUOLO_COLORE[mitt.ruolo] ?? 'var(--white)' : 'var(--white)' }}>
           {mitt ? `${mitt.nome?.[0] ?? ''}${mitt.cognome?.[0] ?? ''}` : '?'}
         </div>
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 2 }}>
             {mitt && <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--white)' }}>{mitt.nome} {mitt.cognome}</span>}
-            {mitt && <span style={{ fontSize: 10, color: 'var(--gray)', textTransform: 'uppercase', fontFamily: 'var(--font-mono)' }}>{mitt.ruolo}</span>}
-            <span style={{ fontSize: 10, fontFamily: 'var(--font-mono)', letterSpacing: '0.1em', textTransform: 'uppercase', color: tb.color, background: `${tb.color}18`, padding: '2px 6px', borderRadius: 2 }}>{tb.label}</span>
+            {mitt && <span style={{ fontSize: 12, color: 'var(--gray)', textTransform: 'none', fontFamily: 'var(--font-mono)' }}>{mitt.ruolo}</span>}
+            <span style={{ fontSize: 12, fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none', color: tb.color, background: `${tb.color}18`, padding: '2px 6px', borderRadius: 8 }}>{tb.label}</span>
             {m.fissato && <span>📌</span>}
-            {inScadenza && <span style={{ fontSize: 10, fontFamily: 'var(--font-mono)', color: '#f97316', background: 'rgba(249,115,22,0.1)', padding: '2px 6px', borderRadius: 2 }}>⏳ scade {new Date(m.data_scadenza_post!).toLocaleDateString('it-IT')}</span>}
+            {inScadenza && <span style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: '#f97316', background: 'rgba(249,115,22,0.1)', padding: '2px 6px', borderRadius: 8 }}>⏳ scade {new Date(m.data_scadenza_post!).toLocaleDateString('it-IT')}</span>}
           </div>
-          <div style={{ fontSize: 11, color: '#555' }}>{new Date(m.inviato_at).toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
+          <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{new Date(m.inviato_at).toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</div>
         </div>
         <div style={{ display: 'flex', gap: 4, flexShrink: 0 }}>
-          <button onClick={() => onFix(m.id, m.fissato)} title={m.fissato ? 'Rimuovi pin' : 'Fissa'} style={{ padding: '4px 8px', background: 'transparent', border: '1px solid var(--border-solid)', borderRadius: 2, color: m.fissato ? 'var(--accent)' : 'var(--gray)', fontSize: 12, cursor: 'pointer' }}>📌</button>
-          <button onClick={() => onDelete(m.id)} style={{ padding: '4px 8px', background: 'transparent', border: '1px solid var(--border-solid)', borderRadius: 2, color: 'var(--gray)', fontSize: 12, cursor: 'pointer' }}>✕</button>
+          <button onClick={() => onFix(m.id, m.fissato)} title={m.fissato ? 'Rimuovi pin' : 'Fissa'} style={{ padding: '4px 8px', background: 'transparent', border: '1px solid var(--border-solid)', borderRadius: 8, color: m.fissato ? 'var(--accent)' : 'var(--gray)', fontSize: 12, cursor: 'pointer' }}>📌</button>
+          <button onClick={() => onDelete(m.id)} style={{ padding: '4px 8px', background: 'transparent', border: '1px solid var(--border-solid)', borderRadius: 8, color: 'var(--gray)', fontSize: 12, cursor: 'pointer' }}>✕</button>
         </div>
       </div>
 
-      <div style={{ fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 16, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)', marginBottom: 8, lineHeight: 1.3 }}>{m.titolo}</div>
+      <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16, textTransform: 'none', letterSpacing: '-0.01em', color: 'var(--white)', marginBottom: 8, lineHeight: 1.3 }}>{m.titolo}</div>
       {corpo && <p style={{ fontSize: 13, color: 'var(--gray)', lineHeight: 1.7, margin: '0 0 6px', whiteSpace: 'pre-wrap' }}>{corpo}</p>}
       {(m.corpo?.length ?? 0) > 200 && (
         <button onClick={() => onToggle(m.id)} style={{ background: 'none', border: 'none', color: 'var(--accent)', fontSize: 12, cursor: 'pointer', fontFamily: 'var(--font-mono)', padding: 0 }}>
@@ -362,7 +362,7 @@ function PostCard({ m, expanded, onToggle, onFix, onDelete }: {
       {m.allegati && m.allegati.length > 0 && (
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 10 }}>
           {m.allegati.map((a, i) => (
-            <a key={i} href={a.url} target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '5px 10px', background: '#1a1a1a', border: '1px solid var(--border-solid)', borderRadius: 2, fontSize: 11, color: 'var(--gray)', textDecoration: 'none', fontFamily: 'var(--font-mono)' }}>
+            <a key={i} href={a.url} target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '5px 10px', background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8, fontSize: 12, color: 'var(--gray)', textDecoration: 'none', fontFamily: 'var(--font-mono)' }}>
               <span>{a.tipo === 'immagine' ? '🖼' : '📎'}</span><span>{a.nome}</span>
             </a>
           ))}
@@ -370,7 +370,7 @@ function PostCard({ m, expanded, onToggle, onFix, onDelete }: {
       )}
 
       {m.visibile_a?.[0] && m.visibile_a[0] !== 'tutti' && (
-        <div style={{ marginTop: 10, fontSize: 10, color: '#444', fontFamily: 'var(--font-mono)' }}>👁 Visibile a: {m.visibile_a.join(', ')}</div>
+        <div style={{ marginTop: 10, fontSize: 12, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>👁 Visibile a: {m.visibile_a.join(', ')}</div>
       )}
     </div>
   )

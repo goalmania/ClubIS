@@ -158,7 +158,7 @@ export default function GiocatoriPage() {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Giocatori</h1>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Giocatori</h1>
           <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 2 }}>
             {giocatori.length} tesserati stagione corrente
             {categoriaTab !== 'tutti' && ` · ${countByTab(categoriaTab)} in questa categoria`}
@@ -198,8 +198,8 @@ export default function GiocatoriPage() {
                 fontFamily: 'var(--font-display)',
                 fontWeight: active ? 700 : 500,
                 fontSize: 13,
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em',
+                textTransform: 'none',
+                letterSpacing: '0',
                 cursor: 'pointer',
                 transition: 'all 0.15s',
                 display: 'flex',
@@ -210,11 +210,11 @@ export default function GiocatoriPage() {
             >
               {tab.label}
               <span style={{
-                fontSize: 11,
+                fontSize: 12,
                 background: active ? 'rgba(200,240,0,0.15)' : 'var(--gray-mid)',
                 color: active ? 'var(--accent)' : 'var(--grigio-4)',
                 padding: '1px 6px',
-                borderRadius: 10,
+                borderRadius: 14,
                 fontFamily: 'var(--font-mono)',
                 fontWeight: 600,
               }}>
@@ -325,7 +325,7 @@ export default function GiocatoriPage() {
                       <td style={{ fontSize: 13, color: 'var(--grigio-3)' }}>{eta} anni</td>
                       <td>
                         {g.ruolo_principale ? (
-                          <span className="badge badge-grigio" style={{ fontFamily: 'var(--font-mono)', fontSize: 11 }}>
+                          <span className="badge badge-grigio" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
                             {ruoloLabel[g.ruolo_principale] ?? g.ruolo_principale}
                           </span>
                         ) : '—'}
@@ -334,7 +334,7 @@ export default function GiocatoriPage() {
                         {g.piede ?? '—'}
                       </td>
                       <td>
-                        <span className={`badge ${nazBadge[g.nazionalita_tipo] ?? 'badge-grigio'}`} style={{ fontSize: 11 }}>
+                        <span className={`badge ${nazBadge[g.nazionalita_tipo] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>
                           {g.nazionalita_tipo?.toUpperCase().slice(0, 3) ?? '—'}
                         </span>
                       </td>
@@ -345,7 +345,7 @@ export default function GiocatoriPage() {
                           onChange={e => spostaSquadra(t.id, e.target.value || null)}
                           style={{
                             background: 'var(--gray-mid)', color: 'var(--white)',
-                            border: '1px solid var(--border)', borderRadius: 2,
+                            border: '1px solid var(--border)', borderRadius: 8,
                             fontSize: 12, padding: '3px 6px', cursor: 'pointer',
                             opacity: spostando === t.id ? 0.5 : 1,
                           }}
@@ -357,7 +357,7 @@ export default function GiocatoriPage() {
                         </select>
                       </td>
                       <td>
-                        <span className="badge badge-grigio" style={{ fontSize: 11 }}>{t.tipo}</span>
+                        <span className="badge badge-grigio" style={{ fontSize: 12 }}>{t.tipo}</span>
                       </td>
                       <td>
                         <div style={{ display: 'flex', gap: 6 }}>

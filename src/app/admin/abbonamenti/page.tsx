@@ -70,7 +70,7 @@ export default function AdminAbbonamentiPage() {
   return (
     <div>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 600 }}>Gestione Abbonamenti</h1>
+        <h1 style={{ fontSize: 28, fontWeight: 600, letterSpacing: '-0.025em'}}>Gestione Abbonamenti</h1>
         <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 2 }}>
           {clubs.length} club — {abbonatiAttivi.length} attivi · {trialAttivi.length} in trial · {scaduti.length + trialScaduti.length} scaduti · {attiviSenzaRinnovo.length} senza rinnovo auto
         </p>

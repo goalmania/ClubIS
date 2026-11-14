@@ -43,7 +43,7 @@ export default async function FFPBudgetPage() {
     <div style={{ animation: 'fadeIn 0.3s ease' }}>
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>FFP / Budget</h1>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>FFP / Budget</h1>
         <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>
           Fair Play Finanziario — panoramica entrate vs uscite per categoria
         </p>
@@ -103,18 +103,18 @@ export default async function FFPBudgetPage() {
             {ffpRatio}% {ffpOk ? '— In regola' : '— Fuori soglia'}
           </span>
         </div>
-        <div style={{ height: 10, background: 'var(--bg-input)', borderRadius: 6, overflow: 'hidden' }}>
+        <div style={{ height: 10, background: 'var(--bg-input)', borderRadius: 10, overflow: 'hidden' }}>
           <div style={{
             height: '100%',
             width: `${Math.min(Number(ffpRatio), 100)}%`,
             background: ffpOk ? 'var(--accent-green)' : 'var(--accent-red)',
-            borderRadius: 6,
+            borderRadius: 10,
             transition: 'width 0.4s ease',
           }} />
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 6 }}>
-          <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>0%</span>
-          <span style={{ fontSize: 11, color: 'var(--accent-orange)' }}>Soglia 100%</span>
+          <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>0%</span>
+          <span style={{ fontSize: 12, color: 'var(--accent-orange)' }}>Soglia 100%</span>
         </div>
       </div>
 
@@ -150,12 +150,12 @@ export default async function FFPBudgetPage() {
                   {fmt(imp)}
                 </span>
               </div>
-              <div style={{ height: 4, background: 'var(--bg-input)', borderRadius: 3, overflow: 'hidden' }}>
+              <div style={{ height: 4, background: 'var(--bg-input)', borderRadius: 8, overflow: 'hidden' }}>
                 <div style={{
                   height: '100%',
                   width: `${barW(imp, maxEntrata)}%`,
                   background: 'var(--accent-green)',
-                  borderRadius: 3,
+                  borderRadius: 8,
                 }} />
               </div>
             </div>
@@ -166,7 +166,7 @@ export default async function FFPBudgetPage() {
               display: 'flex', justifyContent: 'space-between',
               background: 'var(--accent-green-lt)',
             }}>
-              <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--accent-green)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Totale</span>
+              <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--accent-green)', textTransform: 'none', letterSpacing: '0' }}>Totale</span>
               <span style={{ fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 700, color: 'var(--accent-green)' }}>{fmt(totEntrate)}</span>
             </div>
           )}
@@ -202,12 +202,12 @@ export default async function FFPBudgetPage() {
                   {fmt(imp)}
                 </span>
               </div>
-              <div style={{ height: 4, background: 'var(--bg-input)', borderRadius: 3, overflow: 'hidden' }}>
+              <div style={{ height: 4, background: 'var(--bg-input)', borderRadius: 8, overflow: 'hidden' }}>
                 <div style={{
                   height: '100%',
                   width: `${barW(imp, maxUscita)}%`,
                   background: 'var(--accent-red)',
-                  borderRadius: 3,
+                  borderRadius: 8,
                 }} />
               </div>
             </div>
@@ -218,7 +218,7 @@ export default async function FFPBudgetPage() {
               display: 'flex', justifyContent: 'space-between',
               background: 'var(--accent-red-lt)',
             }}>
-              <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--accent-red)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Totale</span>
+              <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--accent-red)', textTransform: 'none', letterSpacing: '0' }}>Totale</span>
               <span style={{ fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 700, color: 'var(--accent-red)' }}>{fmt(totUscite)}</span>
             </div>
           )}
@@ -227,7 +227,7 @@ export default async function FFPBudgetPage() {
 
       {/* Summary footer card */}
       <div className="card" style={{ padding: '18px 20px' }}>
-        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 14, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', marginBottom: 14, textTransform: 'none', letterSpacing: '0' }}>
           Riepilogo Finanziario
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 0 }}>
@@ -244,7 +244,7 @@ export default async function FFPBudgetPage() {
                 textAlign: 'center',
               }}
             >
-              <div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>
+              <div style={{ fontSize: 12, color: 'var(--text-muted)', textTransform: 'none', letterSpacing: '0', marginBottom: 6 }}>
                 {item.label}
               </div>
               <div style={{ fontSize: 20, fontWeight: 700, color: item.color, fontFamily: 'var(--font-mono)' }}>

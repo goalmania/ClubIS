@@ -112,29 +112,29 @@ export default function RicercaGlobale() {
         onClick={() => setOpen(true)}
         style={{
           display: 'flex', alignItems: 'center', gap: 8,
-          height: 34, padding: '0 12px',
-          background: 'var(--grigio-6, #1a1a1a)',
-          border: '1px solid var(--border-solid, #2a2a2a)',
-          borderRadius: 4,
+          height: 38, padding: '0 14px',
+          background: 'var(--surface-2)',
+          border: 0,
+          borderRadius: 10,
           cursor: 'pointer',
           color: 'var(--gray, #666)',
           fontSize: 13,
-          minWidth: 220,
+          minWidth: 0,
           flex: 1,
-          maxWidth: 360,
+          maxWidth: 380,
         }}
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
         </svg>
-        <span style={{ flex: 1, textAlign: 'left', fontFamily: 'var(--font-mono)', letterSpacing: '0.05em' }}>
+        <span style={{ flex: 1, textAlign: 'left', fontFamily: 'var(--font-mono)', letterSpacing: '0' }}>
           Cerca in ClubIS…
         </span>
         <span style={{
-          fontSize: 10, fontFamily: 'var(--font-mono)',
-          background: 'var(--grigio-5, #222)', border: '1px solid #333',
-          padding: '1px 5px', borderRadius: 3, letterSpacing: '0.05em',
-          color: '#555',
+          fontSize: 12, fontFamily: 'var(--font-mono)',
+          background: 'var(--grigio-5, #222)', border: '1px solid var(--separator)',
+          padding: '1px 5px', borderRadius: 8, letterSpacing: '0',
+          color: 'var(--text-muted)',
         }}>
           ⌘K
         </span>
@@ -164,10 +164,10 @@ export default function RicercaGlobale() {
           transform: 'translateX(-50%)',
           width: 'min(640px, 95vw)',
           zIndex: 9999,
-          background: '#111',
-          border: '1px solid #2a2a2a',
-          borderRadius: 8,
-          boxShadow: '0 24px 80px rgba(0,0,0,0.9)',
+          background: 'var(--surface-2)',
+          border: '1px solid var(--separator)',
+          borderRadius: 20,
+          boxShadow: '0 24px 80px rgba(0,0,0,0.7)',
           overflow: 'hidden',
           display: 'flex',
           flexDirection: 'column',
@@ -178,7 +178,7 @@ export default function RicercaGlobale() {
         <div style={{
           display: 'flex', alignItems: 'center', gap: 10,
           padding: '12px 16px',
-          borderBottom: '1px solid #1e1e1e',
+          borderBottom: '1px solid var(--separator)',
         }}>
           {loading ? (
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="2" style={{ flexShrink: 0, animation: 'spin 1s linear infinite' }}>
@@ -198,8 +198,8 @@ export default function RicercaGlobale() {
             style={{
               flex: 1, background: 'transparent', border: 'none', outline: 'none',
               color: '#f0f0f0', fontSize: 15,
-              fontFamily: 'var(--font-display, sans-serif)',
-              letterSpacing: '0.03em',
+              fontFamily: 'var(--font-display)',
+              letterSpacing: '0',
             }}
             autoComplete="off"
             spellCheck={false}
@@ -207,9 +207,9 @@ export default function RicercaGlobale() {
           <button
             onClick={() => { setOpen(false); setQuery(''); setRisultati([]) }}
             style={{
-              background: 'none', border: '1px solid #2a2a2a', cursor: 'pointer',
-              color: '#555', fontSize: 11, padding: '2px 6px', borderRadius: 3,
-              fontFamily: 'var(--font-mono)', letterSpacing: '0.05em',
+              background: 'none', border: '1px solid var(--separator)', cursor: 'pointer',
+              color: 'var(--text-muted)', fontSize: 12, padding: '2px 6px', borderRadius: 8,
+              fontFamily: 'var(--font-mono)', letterSpacing: '0',
               flexShrink: 0,
             }}
           >
@@ -222,7 +222,7 @@ export default function RicercaGlobale() {
           {risultati.length === 0 && !loading && query.length >= 2 ? (
             <div style={{
               padding: '32px 20px', textAlign: 'center',
-              color: '#444', fontSize: 13, fontFamily: 'var(--font-mono)',
+              color: 'var(--text-muted)', fontSize: 13, fontFamily: 'var(--font-mono)',
             }}>
               Nessun risultato per &quot;{query}&quot;
             </div>
@@ -232,12 +232,12 @@ export default function RicercaGlobale() {
                 {/* Header categoria */}
                 <div style={{
                   padding: '8px 16px 4px',
-                  fontSize: 10, fontWeight: 700,
+                  fontSize: 12, fontWeight: 700,
                   fontFamily: 'var(--font-mono)',
-                  letterSpacing: '0.15em',
-                  textTransform: 'uppercase',
+                  letterSpacing: '0',
+                  textTransform: 'none',
                   color: COLORI_CATEGORIA[categoria] ?? '#666',
-                  borderTop: '1px solid #181818',
+                  borderTop: '1px solid var(--separator)',
                 }}>
                   {categoria}
                 </div>
@@ -256,7 +256,7 @@ export default function RicercaGlobale() {
                         padding: '9px 16px',
                         cursor: 'pointer',
                         background: attivo ? 'rgba(200,240,0,0.06)' : 'transparent',
-                        borderLeft: attivo ? '2px solid var(--accent, #c8f000)' : '2px solid transparent',
+                        borderRadius: 12, margin: '0 6px',
                         transition: 'background 0.08s',
                       }}
                     >
@@ -265,7 +265,7 @@ export default function RicercaGlobale() {
                         width: 28, height: 28, flexShrink: 0,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         background: attivo ? 'rgba(200,240,0,0.08)' : '#1a1a1a',
-                        borderRadius: 4, fontSize: 14,
+                        borderRadius: 10, fontSize: 14,
                         border: `1px solid ${attivo ? 'rgba(200,240,0,0.2)' : '#242424'}`,
                       }}>
                         {r.icon}
@@ -274,9 +274,9 @@ export default function RicercaGlobale() {
                       {/* Testi */}
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{
-                          fontFamily: 'var(--font-display, sans-serif)',
+                          fontFamily: 'var(--font-display)',
                           fontWeight: 600, fontSize: 13,
-                          letterSpacing: '0.04em',
+                          letterSpacing: '0',
                           color: attivo ? 'var(--accent, #c8f000)' : '#e0e0e0',
                           overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                         }}>
@@ -284,7 +284,7 @@ export default function RicercaGlobale() {
                         </div>
                         {r.sublabel && (
                           <div style={{
-                            fontSize: 11, color: '#555',
+                            fontSize: 12, color: 'var(--text-muted)',
                             fontFamily: 'var(--font-mono)',
                             overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                           }}>
@@ -295,15 +295,15 @@ export default function RicercaGlobale() {
 
                       {/* Badge tipo */}
                       <span style={{
-                        fontSize: 9, color: '#333',
+                        fontSize: 11, color: 'var(--text-muted)',
                         fontFamily: 'var(--font-mono)',
-                        letterSpacing: '0.1em',
-                        textTransform: 'uppercase',
+                        letterSpacing: '0',
+                        textTransform: 'none',
                         flexShrink: 0,
-                        background: '#191919',
+                        background: 'var(--surface-3)',
                         padding: '2px 5px',
-                        borderRadius: 3,
-                        border: '1px solid #242424',
+                        borderRadius: 8,
+                        border: '1px solid var(--separator)',
                       }}>
                         {r.tipo}
                       </span>
@@ -318,10 +318,10 @@ export default function RicercaGlobale() {
         {/* Footer hint */}
         <div style={{
           padding: '7px 16px',
-          borderTop: '1px solid #181818',
-          fontSize: 10, color: '#333',
+          borderTop: '1px solid var(--separator)',
+          fontSize: 12, color: 'var(--text-muted)',
           fontFamily: 'var(--font-mono)',
-          display: 'flex', gap: 18, letterSpacing: '0.08em',
+          display: 'flex', gap: 18, letterSpacing: '0',
         }}>
           <span>↑↓ naviga</span>
           <span>↵ apri</span>

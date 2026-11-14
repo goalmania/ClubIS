@@ -73,21 +73,21 @@ export default function CalendarioMediaPage() {
   return (
     <div>
       {toast && (
-        <div style={{ position: 'fixed', bottom: 24, right: 24, background: 'var(--verde)', color: '#fff', padding: '10px 18px', borderRadius: 4, fontFamily: 'var(--font-mono)', fontSize: 13, zIndex: 1000 }}>
+        <div style={{ position: 'fixed', bottom: 24, right: 24, background: 'var(--verde)', color: '#fff', padding: '10px 18px', borderRadius: 10, fontFamily: 'var(--font-mono)', fontSize: 13, zIndex: 1000 }}>
           {toast}
         </div>
       )}
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Calendario Media</h1>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Calendario Media</h1>
           <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>Interviste, conferenze stampa e impegni media</p>
         </div>
         <Link href="/dashboard/ufficio-stampa/interviste/nuova" style={{
           display: 'inline-flex', alignItems: 'center', gap: 6,
           padding: '9px 16px', background: 'var(--accent)', color: '#0a0a0a',
           fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12,
-          textTransform: 'uppercase', letterSpacing: '0.08em', textDecoration: 'none', borderRadius: 2,
+          textTransform: 'none', letterSpacing: '0', textDecoration: 'none', borderRadius: 8,
         }}>
           + Nuovo evento
         </Link>
@@ -100,8 +100,8 @@ export default function CalendarioMediaPage() {
             key={s}
             onClick={() => setFiltroStato(s)}
             style={{
-              padding: '5px 12px', borderRadius: 2, border: '1px solid var(--border-solid)',
-              fontFamily: 'var(--font-mono)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.1em',
+              padding: '5px 12px', borderRadius: 8, border: '1px solid var(--border-solid)',
+              fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'none', letterSpacing: '0',
               cursor: 'pointer',
               background: filtroStato === s ? 'var(--accent)' : 'transparent',
               color: filtroStato === s ? '#0a0a0a' : 'var(--grigio-3)',
@@ -129,9 +129,9 @@ export default function CalendarioMediaPage() {
             return (
               <div key={lunedì}>
                 <div style={{
-                  fontFamily: 'var(--font-mono)', fontSize: '0.65rem', fontWeight: 700,
-                  letterSpacing: '0.2em', textTransform: 'uppercase',
-                  color: '#444', marginBottom: 10, paddingBottom: 6,
+                  fontFamily: 'var(--font-mono)', fontSize: '0.8rem', fontWeight: 700,
+                  letterSpacing: '0', textTransform: 'none',
+                  color: 'var(--text-muted)', marginBottom: 10, paddingBottom: 6,
                   borderBottom: '1px solid var(--border-solid)',
                 }}>
                   Settimana {formatData(lunedì)} – {formatData(fine.toISOString().slice(0, 10))}
@@ -144,8 +144,8 @@ export default function CalendarioMediaPage() {
                         display: 'grid', gridTemplateColumns: '56px 1fr auto',
                         gap: 16, alignItems: 'center',
                         padding: '14px 16px',
-                        background: '#111', border: '1px solid var(--border-solid)',
-                        borderRadius: 2,
+                        background: 'var(--surface-2)', border: '1px solid var(--border-solid)',
+                        borderRadius: 8,
                         borderLeft: `3px solid ${info.colore}`,
                       }}>
                         {/* Data/ora */}
@@ -153,10 +153,10 @@ export default function CalendarioMediaPage() {
                           <div style={{ fontFamily: 'var(--font-mono)', fontSize: 20, fontWeight: 700, color: 'var(--white)', lineHeight: 1 }}>
                             {new Date(ev.data_ora).getDate()}
                           </div>
-                          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--grigio-4)', textTransform: 'uppercase' }}>
+                          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-4)', textTransform: 'none' }}>
                             {new Date(ev.data_ora).toLocaleDateString('it-IT', { month: 'short' })}
                           </div>
-                          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--grigio-3)', marginTop: 2 }}>
+                          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-3)', marginTop: 2 }}>
                             {formatOra(ev.data_ora)}
                           </div>
                         </div>
@@ -178,15 +178,15 @@ export default function CalendarioMediaPage() {
                               <span>👤 {ev.soggetti_coinvolti.length} soggett{ev.soggetti_coinvolti.length === 1 ? 'o' : 'i'}</span>
                             )}
                           </div>
-                          {ev.note && <div style={{ fontSize: 11, color: 'var(--grigio-4)', marginTop: 4, fontStyle: 'italic' }}>{ev.note}</div>}
+                          {ev.note && <div style={{ fontSize: 12, color: 'var(--grigio-4)', marginTop: 4, fontStyle: 'italic' }}>{ev.note}</div>}
                         </div>
 
                         {/* Azioni */}
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8 }}>
                           <span style={{
-                            fontSize: 10, fontFamily: 'var(--font-mono)',
+                            fontSize: 12, fontFamily: 'var(--font-mono)',
                             color: info.colore, background: info.bg,
-                            padding: '4px 10px', borderRadius: 2,
+                            padding: '4px 10px', borderRadius: 8,
                           }}>
                             {info.label}
                           </span>
@@ -197,8 +197,8 @@ export default function CalendarioMediaPage() {
                                 disabled={aggiornando === ev.id}
                                 style={{
                                   padding: '4px 10px', background: 'var(--verde-lt)', color: 'var(--verde)',
-                                  border: '1px solid var(--verde-bd)', borderRadius: 2, cursor: 'pointer',
-                                  fontFamily: 'var(--font-mono)', fontSize: 10, textTransform: 'uppercase',
+                                  border: '1px solid var(--verde-bd)', borderRadius: 8, cursor: 'pointer',
+                                  fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'none',
                                 }}
                               >
                                 Conferma
@@ -209,9 +209,9 @@ export default function CalendarioMediaPage() {
                                 onClick={() => cambiaStato(ev.id, 'completato')}
                                 disabled={aggiornando === ev.id}
                                 style={{
-                                  padding: '4px 10px', background: '#1a1a1a', color: 'var(--grigio-3)',
-                                  border: '1px solid var(--border-solid)', borderRadius: 2, cursor: 'pointer',
-                                  fontFamily: 'var(--font-mono)', fontSize: 10, textTransform: 'uppercase',
+                                  padding: '4px 10px', background: 'var(--surface-2)', color: 'var(--grigio-3)',
+                                  border: '1px solid var(--border-solid)', borderRadius: 8, cursor: 'pointer',
+                                  fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'none',
                                 }}
                               >
                                 Completa
@@ -221,8 +221,8 @@ export default function CalendarioMediaPage() {
                               onClick={() => elimina(ev.id)}
                               style={{
                                 padding: '4px 8px', background: 'transparent', color: 'var(--grigio-4)',
-                                border: '1px solid var(--border-solid)', borderRadius: 2, cursor: 'pointer',
-                                fontSize: 11,
+                                border: '1px solid var(--border-solid)', borderRadius: 8, cursor: 'pointer',
+                                fontSize: 12,
                               }}
                             >
                               ✕

@@ -128,7 +128,7 @@ function NuovaValutazioneTecnicaForm() {
       <BackButton label="Torna alla dashboard" />
 
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Nuova valutazione tecnica</h1>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Nuova valutazione tecnica</h1>
         <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>
           Valuta le qualità del giocatore da 1 a 10 in ogni area.
         </p>
@@ -165,7 +165,7 @@ function NuovaValutazioneTecnicaForm() {
                 <div key={item.label} style={{
                   padding: '16px 18px',
                   border: '1px solid var(--grigio-5)',
-                  borderRadius: 10,
+                  borderRadius: 14,
                   background: item.val ? (item.val >= 7 ? 'var(--verde-lt)' : item.val >= 5 ? 'var(--ambra-lt)' : 'var(--rosso-lt)') : 'var(--grigio-6)',
                   transition: 'background 0.2s',
                 }}>
@@ -176,7 +176,7 @@ function NuovaValutazioneTecnicaForm() {
                     </div>
                     {item.val && (
                       <div style={{
-                        width: 40, height: 40, borderRadius: 8,
+                        width: 40, height: 40, borderRadius: 12,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         fontWeight: 700, fontSize: 18, fontFamily: 'var(--font-mono)',
                         background: item.val >= 7 ? 'var(--verde)' : item.val >= 5 ? 'var(--ambra)' : 'var(--rosso)',
@@ -195,10 +195,10 @@ function NuovaValutazioneTecnicaForm() {
             {media && (
               <div style={{
                 marginTop: 20, padding: '14px 18px',
-                borderRadius: 10, textAlign: 'center',
+                borderRadius: 14, textAlign: 'center',
                 background: 'white', border: '1px solid var(--grigio-5)',
               }}>
-                <div style={{ fontSize: 12, fontWeight: 500, color: 'var(--grigio-4)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>
+                <div style={{ fontSize: 12, fontWeight: 500, color: 'var(--grigio-4)', textTransform: 'none', letterSpacing: '0', marginBottom: 6 }}>
                   Media voti
                 </div>
                 <div style={{ fontSize: 36, fontWeight: 700, color: coloreMedia(media), fontFamily: 'var(--font-mono)' }}>

@@ -303,7 +303,7 @@ export default function TatticaPage() {
   return (
     <div style={{ animation: 'fadeIn 0.3s ease' }}>
       <div style={{ marginBottom: 20 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Tattica</h1>
+        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Tattica</h1>
         <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>Schema e formazione — clicca posizione, poi giocatore</p>
       </div>
 
@@ -322,7 +322,7 @@ export default function TatticaPage() {
         <div data-onboarding="campo-tattico" style={{
           position: 'relative', aspectRatio: '7/10', maxHeight: 680,
           background: 'linear-gradient(180deg, #1a4d2e 0%, #0f3d22 100%)',
-          borderRadius: 12, border: '2px solid var(--border)', overflow: 'hidden',
+          borderRadius: 16, border: '2px solid var(--border)', overflow: 'hidden',
         }}>
           <svg viewBox="0 0 100 140" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} preserveAspectRatio="none">
             <rect x="2" y="2" width="96" height="136" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="0.3" />
@@ -373,7 +373,7 @@ export default function TatticaPage() {
                 >
                   {g?.numero_maglia ?? p.numero}
                 </div>
-                <div style={{ fontSize: 10, color: 'white', fontWeight: 600, marginTop: 4, textShadow: '0 1px 2px rgba(0,0,0,0.8)' }}>
+                <div style={{ fontSize: 12, color: 'white', fontWeight: 600, marginTop: 4, textShadow: '0 1px 2px rgba(0,0,0,0.8)' }}>
                   {g ? g.cognome.slice(0, 8) : p.nome}
                 </div>
               </div>
@@ -401,13 +401,13 @@ export default function TatticaPage() {
                   }}
                 >
                   {g.numero_maglia && (
-                    <span style={{ width: 22, height: 22, borderRadius: 4, background: 'var(--bg-input)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: 'var(--text-secondary)', flexShrink: 0 }}>
+                    <span style={{ width: 22, height: 22, borderRadius: 10, background: 'var(--bg-input)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', flexShrink: 0 }}>
                       {g.numero_maglia}
                     </span>
                   )}
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 12, fontWeight: 500 }}>{g.cognome} {g.nome}</div>
-                    <div style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'capitalize' }}>{g.ruolo_principale?.replace('_', ' ')}</div>
+                    <div style={{ fontSize: 12, color: 'var(--text-muted)', textTransform: 'capitalize' }}>{g.ruolo_principale?.replace('_', ' ')}</div>
                   </div>
                 </button>
               ))}
@@ -456,19 +456,19 @@ export default function TatticaPage() {
                   <tr key={s.id}>
                     <td style={{ fontWeight: 500 }}>
                       {s.nome}
-                      {s.is_default && <span className="badge badge-verde" style={{ fontSize: 10, marginLeft: 8 }}>Predefinito</span>}
+                      {s.is_default && <span className="badge badge-verde" style={{ fontSize: 12, marginLeft: 8 }}>Predefinito</span>}
                     </td>
-                    <td><span className="badge badge-grigio" style={{ fontSize: 10 }}>{s.modulo}</span></td>
+                    <td><span className="badge badge-grigio" style={{ fontSize: 12 }}>{s.modulo}</span></td>
                     <td style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                       {new Date(s.created_at).toLocaleDateString('it-IT')}
                     </td>
                     <td>
                       <div style={{ display: 'flex', gap: 6 }}>
-                        <button className="btn btn-secondary btn-sm" style={{ fontSize: 11 }} onClick={() => caricaSchema(s)}>Carica</button>
+                        <button className="btn btn-secondary btn-sm" style={{ fontSize: 12 }} onClick={() => caricaSchema(s)}>Carica</button>
                         {!s.is_default && (
-                          <button className="btn btn-secondary btn-sm" style={{ fontSize: 11 }} onClick={() => impostaDefault(s.id)}>Default</button>
+                          <button className="btn btn-secondary btn-sm" style={{ fontSize: 12 }} onClick={() => impostaDefault(s.id)}>Default</button>
                         )}
-                        <button className="btn btn-secondary btn-sm" style={{ fontSize: 11, color: 'var(--accent-red)' }} onClick={() => eliminaSchema(s.id)}>Elimina</button>
+                        <button className="btn btn-secondary btn-sm" style={{ fontSize: 12, color: 'var(--accent-red)' }} onClick={() => eliminaSchema(s.id)}>Elimina</button>
                       </div>
                     </td>
                   </tr>

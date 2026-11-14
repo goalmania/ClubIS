@@ -89,11 +89,11 @@ export default function GiocatoriTable({
   const thStyle = (key: SortKey): React.CSSProperties => ({
     padding: '10px 14px',
     textAlign: 'left',
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: 600,
     color: sort === key ? 'var(--text-primary)' : 'var(--text-muted)',
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em',
+    textTransform: 'none',
+    letterSpacing: '0',
     cursor: 'pointer',
     whiteSpace: 'nowrap',
     userSelect: 'none',
@@ -160,12 +160,12 @@ export default function GiocatoriTable({
                     ) : '—'}
                   </td>
                   <td style={{ padding: '12px 14px' }}>
-                    <span className={`badge ${potenzialeColore[r.potenziale] ?? 'badge-grigio'}`} style={{ fontSize: 10 }}>
+                    <span className={`badge ${potenzialeColore[r.potenziale] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>
                       {r.potenziale}
                     </span>
                   </td>
                   <td style={{ padding: '12px 14px' }}>
-                    <span className={`badge ${PIPELINE_COLORE[r.stato_pipeline ?? 'in_osservazione'] ?? 'badge-grigio'}`} style={{ fontSize: 10 }}>
+                    <span className={`badge ${PIPELINE_COLORE[r.stato_pipeline ?? 'in_osservazione'] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>
                       {PIPELINE_LABEL[r.stato_pipeline ?? 'in_osservazione'] ?? r.stato_pipeline}
                     </span>
                   </td>

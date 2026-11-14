@@ -89,7 +89,7 @@ function NoGiocatorePreview() {
       <div style={{ fontSize: 36, marginBottom: 12 }}>👨‍👩‍👧</div>
       <div style={{
         fontFamily: 'var(--font-display)', fontWeight: 700,
-        fontSize: 16, textTransform: 'uppercase', color: 'var(--white)', marginBottom: 8,
+        fontSize: 16, textTransform: 'none', color: 'var(--white)', marginBottom: 8,
       }}>
         Anteprima area famiglia
       </div>
@@ -108,8 +108,8 @@ function NoGiocatorePreview() {
         ].map(item => (
           <Link key={item.href} href={item.href} style={{
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
-            padding: '16px 12px', background: '#111', border: '1px solid var(--border-solid)',
-            borderRadius: 2, color: 'var(--white)', textDecoration: 'none', fontSize: 12, fontWeight: 600,
+            padding: '16px 12px', background: 'var(--surface-2)', border: '1px solid var(--border-solid)',
+            borderRadius: 8, color: 'var(--white)', textDecoration: 'none', fontSize: 12, fontWeight: 600,
           }}>
             <span style={{ fontSize: 22 }}>{item.icon}</span>
             {item.label}
@@ -145,8 +145,8 @@ function DashboardContent({
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
         <h1 style={{
-          fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900,
-          textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)',
+          fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700,
+          textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)',
         }}>
           {familiaNome ? `Ciao, ${familiaNome}` : 'Area Famiglia'}
         </h1>
@@ -168,7 +168,7 @@ function DashboardContent({
                 key={f.id}
                 href={`/dashboard/famiglia?figlio=${f.giocatore_id}`}
                 style={{
-                  padding: '6px 14px', borderRadius: 2, fontSize: 12, fontWeight: 600,
+                  padding: '6px 14px', borderRadius: 8, fontSize: 12, fontWeight: 600,
                   textDecoration: 'none', border: '1px solid var(--border-solid)',
                   background: active ? 'var(--accent)' : 'transparent',
                   color: active ? '#000' : 'var(--white)',
@@ -192,7 +192,7 @@ function DashboardContent({
           </span>
           <Link href="/dashboard/famiglia/pagamenti" style={{
             marginLeft: 'auto', fontFamily: 'var(--font-mono)',
-            fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase',
+            fontSize: 12, letterSpacing: '0', textTransform: 'none',
             color: 'inherit', textDecoration: 'none', fontWeight: 700, whiteSpace: 'nowrap',
           }}>
             PAGA ORA →
@@ -227,15 +227,15 @@ function DashboardContent({
         ].map(k => (
           <div key={k.label} style={{ background: 'var(--gray-light)', padding: '16px 20px' }}>
             <div style={{
-              fontFamily: 'var(--font-display)', fontWeight: 900,
+              fontFamily: 'var(--font-display)', fontWeight: 700,
               fontSize: 26, color: k.color, lineHeight: 1,
             }}>{k.value}</div>
             <div style={{
-              fontFamily: 'var(--font-mono)', fontSize: '0.58rem',
-              letterSpacing: '0.15em', textTransform: 'uppercase',
-              color: '#444', marginTop: 4,
+              fontFamily: 'var(--font-mono)', fontSize: '0.78rem',
+              letterSpacing: '0', textTransform: 'none',
+              color: 'var(--text-muted)', marginTop: 4,
             }}>{k.label}</div>
-            <div style={{ fontSize: 11, color: 'var(--gray)', marginTop: 3 }}>{k.sub}</div>
+            <div style={{ fontSize: 12, color: 'var(--gray)', marginTop: 3 }}>{k.sub}</div>
           </div>
         ))}
       </div>
@@ -248,7 +248,7 @@ function DashboardContent({
           <div style={{
             padding: '12px 18px', borderBottom: '1px solid var(--border)',
             fontFamily: 'var(--font-display)', fontWeight: 700,
-            textTransform: 'uppercase', fontSize: 12, letterSpacing: '0.08em',
+            textTransform: 'none', fontSize: 12, letterSpacing: '0',
           }}>
             📅 Prossimi eventi
           </div>
@@ -258,10 +258,10 @@ function DashboardContent({
             </div>
           ) : prossimi.map(p => (
             <div key={p.id} style={{ padding: '12px 18px', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, textTransform: 'uppercase' }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, textTransform: 'none' }}>
                 {p.casa_trasferta === 'trasferta' ? '@ ' : 'vs '}{p.avversario}
               </div>
-              <div style={{ fontSize: 11, color: 'var(--gray)', fontFamily: 'var(--font-mono)', marginTop: 3 }}>
+              <div style={{ fontSize: 12, color: 'var(--gray)', fontFamily: 'var(--font-mono)', marginTop: 3 }}>
                 {new Date(p.data_ora).toLocaleDateString('it-IT', {
                   weekday: 'short', day: 'numeric', month: 'short',
                   hour: '2-digit', minute: '2-digit',
@@ -276,7 +276,7 @@ function DashboardContent({
           <div style={{
             padding: '12px 18px', borderBottom: '1px solid var(--border)',
             fontFamily: 'var(--font-display)', fontWeight: 700,
-            textTransform: 'uppercase', fontSize: 12, letterSpacing: '0.08em',
+            textTransform: 'none', fontSize: 12, letterSpacing: '0',
           }}>
             ⭐ Valutazioni
           </div>
@@ -287,7 +287,7 @@ function DashboardContent({
           ) : valutazioni.map((v, i) => (
             <div key={i} style={{ padding: '12px 18px', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                <div style={{ fontSize: 11, color: 'var(--gray)', fontFamily: 'var(--font-mono)' }}>
+                <div style={{ fontSize: 12, color: 'var(--gray)', fontFamily: 'var(--font-mono)' }}>
                   {formatData(v.data)}
                 </div>
               </div>
@@ -297,7 +297,7 @@ function DashboardContent({
                   { l: 'FIS', v: v.fisico }, { l: 'MEN', v: v.mentale },
                 ].filter(x => x.v != null).map(x => (
                   <div key={x.l} style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
-                    <span style={{ fontSize: 10, color: 'var(--gray)', fontFamily: 'var(--font-mono)' }}>{x.l}</span>
+                    <span style={{ fontSize: 12, color: 'var(--gray)', fontFamily: 'var(--font-mono)' }}>{x.l}</span>
                     <span style={{
                       fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14,
                       color: x.v >= 7 ? 'var(--accent)' : x.v >= 5 ? 'var(--ambra)' : 'var(--rosso)',
@@ -306,7 +306,7 @@ function DashboardContent({
                 ))}
               </div>
               {v.note && (
-                <div style={{ fontSize: 11, color: 'var(--gray)', marginTop: 4, lineHeight: 1.5 }}>
+                <div style={{ fontSize: 12, color: 'var(--gray)', marginTop: 4, lineHeight: 1.5 }}>
                   {v.note.slice(0, 80)}{v.note.length > 80 ? '…' : ''}
                 </div>
               )}
@@ -322,19 +322,19 @@ function DashboardContent({
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             padding: '12px 18px', borderBottom: '1px solid var(--border)',
           }}>
-            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, textTransform: 'none', letterSpacing: '0' }}>
               ✉ Comunicazioni recenti
             </span>
-            <Link href="/dashboard/famiglia/comunicazioni" style={{ fontSize: 11, color: 'var(--accent)', textDecoration: 'none' }}>
+            <Link href="/dashboard/famiglia/comunicazioni" style={{ fontSize: 12, color: 'var(--accent)', textDecoration: 'none' }}>
               Vedi tutte →
             </Link>
           </div>
           {messaggi.map(m => (
             <div key={m.id} style={{ padding: '11px 18px', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, textTransform: 'uppercase' }}>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, textTransform: 'none' }}>
                 {m.titolo}
               </div>
-              <div style={{ fontSize: 11, color: 'var(--gray)', marginTop: 2 }}>
+              <div style={{ fontSize: 12, color: 'var(--gray)', marginTop: 2 }}>
                 {formatData(m.inviato_at)}
               </div>
             </div>
@@ -355,14 +355,14 @@ function DashboardContent({
             padding: '14px 16px',
             background: 'var(--gray-light)',
             border: '1px solid var(--border)',
-            borderRadius: 2,
+            borderRadius: 8,
             textDecoration: 'none',
             color: 'var(--gray)',
             fontSize: 14,
             fontFamily: 'var(--font-display)',
             fontWeight: 700,
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em',
+            textTransform: 'none',
+            letterSpacing: '0',
           }}>
             <span style={{ fontSize: 20 }}>{l.icon}</span>
             {l.label}

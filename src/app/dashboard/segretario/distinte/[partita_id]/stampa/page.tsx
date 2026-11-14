@@ -85,30 +85,30 @@ export default async function StampaPage({
           fontFamily: 'Arial, Helvetica, sans-serif',
           padding: '24px',
           border: '1px solid var(--border)',
-          borderRadius: 8,
+          borderRadius: 12,
         }}
       >
         {/* Intestazione */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 18, paddingBottom: 14, borderBottom: '2px solid #222', marginBottom: 18 }}>
           <div style={{
             width: 60, height: 60, flexShrink: 0,
-            border: '1px solid #bbb', borderRadius: 6,
+            border: '1px solid #bbb', borderRadius: 10,
             background: '#f5f5f5',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 9, color: '#888', textAlign: 'center', lineHeight: 1.3,
+            fontSize: 11, color: '#888', textAlign: 'center', lineHeight: 1.3,
           }}>
             LOGO<br />CLUB
           </div>
           <div>
             <div style={{ fontSize: 20, fontWeight: 700 }}>{club?.nome ?? 'Club'}</div>
-            <div style={{ fontSize: 11, color: '#555', marginTop: 2, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            <div style={{ fontSize: 12, color: '#555', marginTop: 2, textTransform: 'none', letterSpacing: '0' }}>
               Distinta Gara Ufficiale
             </div>
           </div>
         </div>
 
         {/* Dati partita */}
-        <div style={{ border: '1px solid #ddd', borderRadius: 4, padding: '10px 14px', marginBottom: 18, background: '#fafafa' }}>
+        <div style={{ border: '1px solid #ddd', borderRadius: 10, padding: '10px 14px', marginBottom: 18, background: '#fafafa' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 20px', fontSize: 12 }}>
             <div><strong>Avversario:</strong> {partita.avversario}</div>
             <div><strong>Data:</strong> {fmtData}</div>
@@ -136,7 +136,7 @@ export default async function StampaPage({
                 <td style={{ fontWeight: 700, textAlign: 'center' }}>{g.numero_maglia ?? i + 1}</td>
                 <td style={{ fontWeight: 600 }}>{(g.cognome ?? '').toUpperCase()}</td>
                 <td>{g.nome ?? ''}</td>
-                <td style={{ fontFamily: 'monospace', fontSize: 10 }}>{g.codice_tessera_figc ?? ''}</td>
+                <td style={{ fontFamily: 'monospace', fontSize: 12 }}>{g.codice_tessera_figc ?? ''}</td>
                 <td className="firma"></td>
               </tr>
             ))}
@@ -151,7 +151,7 @@ export default async function StampaPage({
         {/* Staff */}
         {Object.values(staff).some(Boolean) && (
           <div style={{ marginTop: 18 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'none', letterSpacing: '0', marginBottom: 6 }}>
               Staff tecnico
             </div>
             <table className="dt">
@@ -182,14 +182,14 @@ export default async function StampaPage({
           ].map(([role, name]) => (
             <div key={role} style={{ textAlign: 'center' }}>
               <div style={{ borderBottom: '1px solid #333', height: 36, marginBottom: 6 }}></div>
-              <div style={{ fontSize: 11, fontWeight: 700 }}>{role}</div>
-              {name && <div style={{ fontSize: 10, color: '#666', marginTop: 2 }}>{name}</div>}
+              <div style={{ fontSize: 12, fontWeight: 700 }}>{role}</div>
+              {name && <div style={{ fontSize: 12, color: '#666', marginTop: 2 }}>{name}</div>}
             </div>
           ))}
         </div>
 
         {/* Footer */}
-        <div style={{ marginTop: 20, fontSize: 9, color: '#aaa', textAlign: 'right' }}>
+        <div style={{ marginTop: 20, fontSize: 11, color: '#aaa', textAlign: 'right' }}>
           Generata il{' '}
           {new Date(distinta.generata_at).toLocaleDateString('it-IT')} · ClubIS
         </div>

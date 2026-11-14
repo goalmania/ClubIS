@@ -310,10 +310,10 @@ export default function FigcSqualifichePage() {
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                   {comunicati.map(c => (
                     <span key={c.id} style={{
-                      fontSize: 11,
+                      fontSize: 12,
                       background: c.lega === 'LegaPro' ? 'rgba(0,112,243,0.08)' : 'var(--grigio-6)',
                       border: c.lega === 'LegaPro' ? '1px solid rgba(0,112,243,0.2)' : 'none',
-                      borderRadius: 4, padding: '3px 10px',
+                      borderRadius: 10, padding: '3px 10px',
                       color: c.lega === 'LegaPro' ? '#60a5fa' : 'var(--grigio-3)',
                     }}>
                       {c.lega === 'LegaPro' ? '🔵 Lega Pro' : c.comitato_regionale} {c.numero_comunicato && `n. ${c.numero_comunicato}`} — {fmt(c.data_comunicato)}
@@ -358,7 +358,7 @@ export default function FigcSqualifichePage() {
                 {/* ── Da confermare ── */}
                 {daConfermare.length > 0 && (
                   <>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--ambra)', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--ambra)', marginBottom: 10, textTransform: 'none', letterSpacing: '0' }}>
                       ⚠ Da confermare ({daConfermare.length})
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 24 }}>
@@ -371,7 +371,7 @@ export default function FigcSqualifichePage() {
                         return (
                           <div key={sq.id} style={{
                             border: `1px solid ${autoMatch ? 'var(--verde)' : 'var(--ambra)'}`,
-                            borderRadius: 8,
+                            borderRadius: 12,
                             padding: '14px 16px',
                             background: autoMatch ? 'rgba(34,197,94,0.04)' : 'rgba(245,158,11,0.04)',
                             display: 'grid',
@@ -384,7 +384,7 @@ export default function FigcSqualifichePage() {
                               <div style={{ fontWeight: 600, fontSize: 13 }}>
                                 {sq.cognome_raw} {sq.nome_raw}
                               </div>
-                              <div style={{ fontSize: 11, color: 'var(--grigio-4)', marginBottom: 4 }}>
+                              <div style={{ fontSize: 12, color: 'var(--grigio-4)', marginBottom: 4 }}>
                                 {sq.societa_raw}
                               </div>
                               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
@@ -393,12 +393,12 @@ export default function FigcSqualifichePage() {
                                 </span>
                                 <span className="badge badge-grigio">{sq.durata}</span>
                                 {autoMatch && (
-                                  <span className="badge badge-verde" style={{ fontSize: 10 }}>
+                                  <span className="badge badge-verde" style={{ fontSize: 12 }}>
                                     match {Math.round(sq.match_score * 100)}%
                                   </span>
                                 )}
                               </div>
-                              <div style={{ fontSize: 10, color: 'var(--grigio-4)', marginTop: 6 }}>
+                              <div style={{ fontSize: 12, color: 'var(--grigio-4)', marginTop: 6 }}>
                                 CU {c.comitato_regionale}{c.numero_comunicato ? ` n. ${c.numero_comunicato}` : ''} — {fmt(c.data_comunicato)}
                               </div>
                             </div>
@@ -437,7 +437,7 @@ export default function FigcSqualifichePage() {
                                       ))}
                                   </select>
                                   <div>
-                                    <label className="label" style={{ fontSize: 11 }}>Data inizio</label>
+                                    <label className="label" style={{ fontSize: 12 }}>Data inizio</label>
                                     <input
                                       className="input"
                                       type="date"
@@ -468,17 +468,17 @@ export default function FigcSqualifichePage() {
                 {/* ── Confermate ── */}
                 {confermate.length > 0 && (
                   <>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--grigio-4)', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--grigio-4)', marginBottom: 10, textTransform: 'none', letterSpacing: '0' }}>
                       ✓ Confermate ({confermate.length})
                     </div>
-                    <div style={{ border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden' }}>
+                    <div style={{ border: '1px solid var(--border)', borderRadius: 12, overflow: 'hidden' }}>
                       <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                         <thead>
                           <tr style={{ background: 'var(--grigio-6)', borderBottom: '1px solid var(--border)' }}>
-                            <th style={{ padding: '8px 14px', textAlign: 'left', fontWeight: 600, fontSize: 11, color: 'var(--grigio-4)' }}>Giocatore</th>
-                            <th style={{ padding: '8px 14px', textAlign: 'left', fontWeight: 600, fontSize: 11, color: 'var(--grigio-4)' }}>Tipo</th>
-                            <th style={{ padding: '8px 14px', textAlign: 'left', fontWeight: 600, fontSize: 11, color: 'var(--grigio-4)' }}>Durata</th>
-                            <th style={{ padding: '8px 14px', textAlign: 'left', fontWeight: 600, fontSize: 11, color: 'var(--grigio-4)' }}>Comunicato</th>
+                            <th style={{ padding: '8px 14px', textAlign: 'left', fontWeight: 600, fontSize: 12, color: 'var(--grigio-4)' }}>Giocatore</th>
+                            <th style={{ padding: '8px 14px', textAlign: 'left', fontWeight: 600, fontSize: 12, color: 'var(--grigio-4)' }}>Tipo</th>
+                            <th style={{ padding: '8px 14px', textAlign: 'left', fontWeight: 600, fontSize: 12, color: 'var(--grigio-4)' }}>Durata</th>
+                            <th style={{ padding: '8px 14px', textAlign: 'left', fontWeight: 600, fontSize: 12, color: 'var(--grigio-4)' }}>Comunicato</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -498,7 +498,7 @@ export default function FigcSqualifichePage() {
                                     ? `${giocatore.cognome} ${giocatore.nome}`
                                     : <span style={{ color: 'var(--grigio-4)', fontWeight: 400 }}>{sq.cognome_raw} {sq.nome_raw}</span>
                                   }
-                                  <div style={{ fontSize: 10, color: 'var(--grigio-4)', fontWeight: 400 }}>{sq.societa_raw}</div>
+                                  <div style={{ fontSize: 12, color: 'var(--grigio-4)', fontWeight: 400 }}>{sq.societa_raw}</div>
                                 </td>
                                 <td style={{ padding: '10px 14px' }}>
                                   <span className={`badge ${TIPO_COLOR[sq.tipo_sanzione] ?? 'badge-grigio'}`}>
@@ -506,7 +506,7 @@ export default function FigcSqualifichePage() {
                                   </span>
                                 </td>
                                 <td style={{ padding: '10px 14px', color: 'var(--grigio-3)' }}>{sq.durata}</td>
-                                <td style={{ padding: '10px 14px', fontSize: 11, color: 'var(--grigio-4)' }}>
+                                <td style={{ padding: '10px 14px', fontSize: 12, color: 'var(--grigio-4)' }}>
                                   {c.lega === 'LegaPro'
                                     ? <span style={{ color: '#60a5fa', fontWeight: 600 }}>Lega Pro</span>
                                     : c.comitato_regionale
@@ -530,7 +530,7 @@ export default function FigcSqualifichePage() {
           <div className="card" style={{ padding: '20px 24px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <div style={{ fontWeight: 700, fontSize: 15 }}>3 — Disponibilità attuale della rosa</div>
-              <div style={{ display: 'flex', gap: 12, fontSize: 11, color: 'var(--grigio-4)' }}>
+              <div style={{ display: 'flex', gap: 12, fontSize: 12, color: 'var(--grigio-4)' }}>
                 <span><span style={{ color: 'var(--verde)' }}>●</span> Disponibile</span>
                 <span><span style={{ color: 'var(--rosso)' }}>●</span> Squalificato</span>
                 <span><span style={{ color: 'var(--ambra)' }}>●</span> Diffidato</span>
@@ -577,7 +577,7 @@ export default function FigcSqualifichePage() {
                     gap: 10,
                     padding: '10px 14px',
                     border: '1px solid var(--border)',
-                    borderRadius: 8,
+                    borderRadius: 12,
                     background: isSq ? 'rgba(220,38,38,0.04)' : isInf ? 'rgba(100,100,100,0.04)' : isDiff ? 'rgba(245,158,11,0.04)' : 'transparent',
                   }}>
                     <div style={{
@@ -589,10 +589,10 @@ export default function FigcSqualifichePage() {
                     }} />
                     <div style={{ minWidth: 0 }}>
                       <div style={{ fontWeight: 600, fontSize: 13, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {g.numero_maglia != null ? <span style={{ fontSize: 10, color: 'var(--grigio-4)', marginRight: 4 }}>#{g.numero_maglia}</span> : null}
+                        {g.numero_maglia != null ? <span style={{ fontSize: 12, color: 'var(--grigio-4)', marginRight: 4 }}>#{g.numero_maglia}</span> : null}
                         {g.cognome} {g.nome}
                       </div>
-                      <div style={{ fontSize: 11, color: isSq ? 'var(--rosso)' : isDiff ? 'var(--ambra)' : 'var(--grigio-4)' }}>
+                      <div style={{ fontSize: 12, color: isSq ? 'var(--rosso)' : isDiff ? 'var(--ambra)' : 'var(--grigio-4)' }}>
                         {sottotitolo ?? statoLabel}
                       </div>
                     </div>

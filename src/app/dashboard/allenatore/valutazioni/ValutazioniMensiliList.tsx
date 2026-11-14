@@ -17,7 +17,7 @@ export default async function ValutazioniMensiliList({ allenatoreId, clubId }: {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 24, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '-0.01em', color: 'var(--white)' }}>Valutazioni mensili</h1>
+          <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Valutazioni mensili</h1>
           <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>{valutazioni?.length ?? 0} valutazioni registrate — una al mese per ragazzo, visibile solo alla famiglia</p>
         </div>
         <Link href="/dashboard/allenatore/valutazioni/nuova" className="btn btn-primary btn-sm">+ Nuova valutazione</Link>
