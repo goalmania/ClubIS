@@ -622,9 +622,9 @@ tbody tr:last-child td { border-bottom: none; }
 
 .dashboard-topbar {
   flex-wrap: nowrap;
-  background: rgba(10,10,10,0.78);
-  backdrop-filter: saturate(180%) blur(20px);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  /* Niente backdrop-filter qui: renderebbe la barra il riferimento dei figli
+     position:fixed (ricerca ⌘K, pannello notifiche) e li confinerebbe dentro. */
+  background: rgba(10,10,10,0.94);
 }
 
 .dashboard-trial-banner { flex-wrap: nowrap; }
@@ -760,4 +760,74 @@ tbody tr:last-child td { border-bottom: none; }
 @media (hover: none) {
   .fav-btn { opacity: 0.55; padding: 8px; margin-right: -6px; }
   .fav-btn.on { opacity: 1; }
+}
+
+/* ── NOTIFICHE ── */
+.notif-backdrop { display: none; }
+.notif-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 400px;
+  max-height: min(560px, 75vh);
+  background: rgba(24,24,27,0.94);
+  backdrop-filter: saturate(180%) blur(30px);
+  -webkit-backdrop-filter: saturate(180%) blur(30px);
+  border-radius: 20px;
+  box-shadow: var(--shadow-pop);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: fadeIn 0.15s var(--ease);
+}
+.notif-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px 10px;
+  border-radius: 14px;
+  transition: background 0.15s var(--ease);
+}
+.notif-row:hover { background: rgba(255,255,255,0.04) !important; }
+.notif-del {
+  background: var(--surface-3); border: 0; color: var(--gray); cursor: pointer;
+  width: 24px; height: 24px; border-radius: 999px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.15s var(--ease);
+}
+.notif-row:hover .notif-del, .notif-del:focus-visible { opacity: 1; }
+@media (hover: none) { .notif-del { opacity: 0.7; } }
+
+.notif-toasts {
+  position: fixed; top: 16px; right: 16px; z-index: 9999;
+  display: flex; flex-direction: column; gap: 10px; pointer-events: none;
+}
+.notif-toast {
+  pointer-events: auto;
+  width: 360px;
+  display: flex; gap: 12px; align-items: center;
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: rgba(30,30,33,0.92);
+  backdrop-filter: saturate(180%) blur(30px);
+  -webkit-backdrop-filter: saturate(180%) blur(30px);
+  box-shadow: var(--shadow-pop);
+}
+@keyframes toastIn  { from { transform: translateY(-120%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes toastOut { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-120%); opacity: 0; } }
+
+@media (max-width: 860px) {
+  .notif-backdrop { display: block; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 999; }
+  .notif-panel {
+    position: fixed;
+    top: auto; left: 0; right: 0; bottom: 0;
+    width: 100%;
+    max-height: 85dvh;
+    border-radius: 22px 22px 0 0;
+    padding-bottom: env(safe-area-inset-bottom);
+    animation: sheetUp 0.32s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  .notif-toasts { top: calc(10px + env(safe-area-inset-top)); left: 10px; right: 10px; }
+  .notif-toast { width: 100%; }
 }

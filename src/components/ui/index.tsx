@@ -15,12 +15,12 @@ export function PageHeader({
         <h1 style={{
           fontFamily: 'var(--font-display)',
           fontWeight: 700,
-          fontSize: 26,
+          fontSize: 28,
           textTransform: 'none',
-          letterSpacing: '-0.01em',
+          letterSpacing: '-0.025em',
           color: 'var(--white)',
         }}>{title}</h1>
-        {subtitle && <p style={{ fontFamily: 'var(--font-sans)', fontSize: 13, color: 'var(--gray)', marginTop: 4, fontWeight: 300 }}>{subtitle}</p>}
+        {subtitle && <p style={{ fontFamily: 'var(--font-sans)', fontSize: 13, color: 'var(--gray)', marginTop: 4, fontWeight: 400 }}>{subtitle}</p>}
       </div>
       {actions && <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>{actions}</div>}
     </div>
@@ -65,9 +65,9 @@ export function FormSection({ title, children }: { title: string; children: Reac
     <div style={{ marginBottom: 32 }}>
       <div style={{
         fontFamily: 'var(--font-mono)',
-        fontSize: '0.8rem', fontWeight: 700, textTransform: 'none',
-        letterSpacing: '0', color: 'var(--accent)',
-        paddingBottom: 10, borderBottom: '1px solid var(--border-solid)', marginBottom: 20,
+        fontSize: 17, fontWeight: 600, textTransform: 'none',
+        letterSpacing: '-0.01em', color: 'var(--white)',
+        marginBottom: 14,
       }}>
         {title}
       </div>
@@ -154,8 +154,7 @@ export function Toast({ msg, tipo = 'success', onClose }: {
       background: bg, color,
       borderRadius: 14,
       padding: '12px 18px',
-      fontFamily: 'var(--font-display)', fontSize: '0.8rem', fontWeight: 700,
-      letterSpacing: '0', textTransform: 'none',
+      fontSize: 14, fontWeight: 600,
       display: 'flex', alignItems: 'center', gap: 12,
       boxShadow: 'var(--shadow)',
       animation: 'slideIn 0.2s ease',
@@ -264,20 +263,20 @@ export function TabBar({ tabs, active, onChange }: {
 }) {
   return (
     <div style={{
-      display: 'flex', gap: 0, borderBottom: '1px solid var(--border-solid)',
-      marginBottom: 20,
+      display: 'inline-flex', gap: 2, padding: 3, borderRadius: 12,
+      background: 'var(--surface-3)', marginBottom: 20, maxWidth: '100%', overflowX: 'auto',
     }}>
       {tabs.map(t => (
         <button
           key={t.key}
           onClick={() => onChange(t.key)}
           style={{
-            padding: '10px 16px',
-            fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 600,
-            letterSpacing: '0', textTransform: 'none',
-            background: 'none', border: 'none', cursor: 'pointer',
-            color: active === t.key ? 'var(--accent)' : 'var(--gray)',
-            borderBottom: active === t.key ? '2px solid var(--accent)' : '2px solid transparent',
+            padding: '7px 14px', borderRadius: 9, whiteSpace: 'nowrap',
+            fontSize: 14, fontWeight: active === t.key ? 600 : 500,
+            border: 'none', cursor: 'pointer',
+            background: active === t.key ? 'var(--surface-4)' : 'transparent',
+            color: active === t.key ? 'var(--white)' : 'var(--label)',
+            boxShadow: active === t.key ? '0 1px 3px rgba(0,0,0,0.4)' : 'none',
             transition: 'all 0.15s',
           }}
         >
@@ -322,7 +321,7 @@ export function Modal({ open, onClose, title, children, width = 520 }: {
       onClick={onClose}
       style={{
         position: 'fixed', inset: 0, zIndex: 999,
-        background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(4px)',
+        background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)', padding: 16,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         animation: 'fadeIn 0.15s ease',
       }}
@@ -331,27 +330,26 @@ export function Modal({ open, onClose, title, children, width = 520 }: {
         onClick={e => e.stopPropagation()}
         style={{
           width, maxWidth: '90vw', maxHeight: '85vh',
-          background: 'var(--surface-2)', borderRadius: 16,
-          border: '1px solid var(--border-solid)',
-          boxShadow: 'var(--shadow)',
+          background: 'var(--surface-2)', borderRadius: 22,
+          boxShadow: 'var(--shadow-pop)',
           overflow: 'auto',
           animation: 'slideIn 0.2s ease',
         }}
       >
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '16px 20px', borderBottom: '1px solid var(--border-solid)',
+          padding: '18px 20px 8px',
         }}>
           <h3 style={{
             fontFamily: 'var(--font-display)', fontWeight: 700,
-            fontSize: 16, textTransform: 'none', letterSpacing: '0',
+            fontSize: 19, textTransform: 'none', letterSpacing: '-0.015em',
             color: 'var(--white)',
           }}>{title}</h3>
           <button
             onClick={onClose}
             style={{
-              background: 'none', border: '1px solid var(--border-solid)', cursor: 'pointer',
-              color: 'var(--gray)', fontSize: 16, padding: '2px 8px', borderRadius: 12,
+              background: 'var(--surface-3)', border: 'none', cursor: 'pointer',
+              color: 'var(--label)', fontSize: 18, width: 30, height: 30, borderRadius: 999, lineHeight: 1,
               transition: 'all 0.2s',
             }}
           >×</button>
@@ -383,26 +381,25 @@ export function Drawer({ open, onClose, title, children, width = 720 }: {
         onClick={e => e.stopPropagation()}
         style={{
           width, maxWidth: '95vw', height: '100%',
-          background: 'var(--surface-2)', borderLeft: '1px solid var(--border-solid)',
-          boxShadow: 'var(--shadow)',
+          background: 'var(--surface-2)', boxShadow: 'var(--shadow-pop)',
           overflow: 'auto',
           animation: 'slideIn 0.2s ease',
         }}
       >
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '16px 20px', borderBottom: '1px solid var(--border-solid)',
+          padding: '18px 20px 8px',
         }}>
           <h3 style={{
             fontFamily: 'var(--font-display)', fontWeight: 700,
-            fontSize: 16, textTransform: 'none', letterSpacing: '0',
+            fontSize: 19, textTransform: 'none', letterSpacing: '-0.015em',
             color: 'var(--white)',
           }}>{title}</h3>
           <button
             onClick={onClose}
             style={{
-              background: 'none', border: '1px solid var(--border-solid)', cursor: 'pointer',
-              color: 'var(--gray)', fontSize: 16, padding: '2px 8px', borderRadius: 12,
+              background: 'var(--surface-3)', border: 'none', cursor: 'pointer',
+              color: 'var(--label)', fontSize: 18, width: 30, height: 30, borderRadius: 999, lineHeight: 1,
               transition: 'all 0.2s',
             }}
           >×</button>
