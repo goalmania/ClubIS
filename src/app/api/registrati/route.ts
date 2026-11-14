@@ -1,5 +1,6 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { NextRequest, NextResponse } from 'next/server'
+import { notificaNuovaProva } from '@/lib/notifications/nuova-prova'
 
 const PIANI_VALIDI = ['starter', 'pro', 'elite', 'scuola_calcio'] as const
 type Piano = typeof PIANI_VALIDI[number]
@@ -133,6 +134,15 @@ export async function POST(req: NextRequest) {
   await db.from('trial_registrations').insert({
     email: emailNorm,
     product: 'clubis',
+    club_id: club.id,
+  })
+
+  await notificaNuovaProva({
+    nome, cognome, email: emailNorm, club_nome,
+    club_categoria: club_categoria ?? 'eccellenza',
+    piano: pianoScelto,
+    origine: 'clubis.it/registrati',
+    trial_ends_at: trialEndsAt.toISOString(),
     club_id: club.id,
   })
 

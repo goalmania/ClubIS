@@ -1,6 +1,7 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
+import { notificaNuovaProva } from '@/lib/notifications/nuova-prova'
 
 /**
  * POST /api/trial/start
@@ -225,6 +226,15 @@ export async function POST(req: NextRequest) {
   await db.from('trial_registrations').insert({
     email: emailNorm,
     product,
+    club_id: clubId,
+  })
+
+  await notificaNuovaProva({
+    nome, cognome, email: emailNorm, club_nome,
+    club_categoria: club_categoria ?? 'eccellenza',
+    piano: product === 'clubis' ? 'elite (ClubIS)' : product === 'dmscout' ? 'solo DM Scout' : 'elite (ClubIS + DM Scout)',
+    origine: 'dmfootballservices (api/trial/start)',
+    trial_ends_at: trialEndsAtIso,
     club_id: clubId,
   })
 
