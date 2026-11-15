@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
   if (error || !data) return Response.json({ error: error?.message ?? 'Errore' }, { status: 500 })
 
   // ── Notifiche a presidente e segretario ──────────────────────────────────
-  const urgenzaEmoji = body.urgenza === 'alta' ? '🔴' : body.urgenza === 'media' ? '🟡' : '🟢'
+  const urgenzaEmoji = body.urgenza === 'alta' ? '⚠' : body.urgenza === 'media' ? '⏳' : '✔'
   const titoloNotifica = `${urgenzaEmoji} Nuova richiesta materiale`
   const messaggioNotifica = `${body.richiedente ?? 'Team Manager'} ha richiesto: ${body.tipo.trim()}` +
     (body.quantita > 1 ? ` (x${body.quantita})` : '') +

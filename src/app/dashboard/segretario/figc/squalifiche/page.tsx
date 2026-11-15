@@ -316,7 +316,7 @@ export default function FigcSqualifichePage() {
                       borderRadius: 10, padding: '3px 10px',
                       color: c.lega === 'LegaPro' ? '#60a5fa' : 'var(--grigio-3)',
                     }}>
-                      {c.lega === 'LegaPro' ? '🔵 Lega Pro' : c.comitato_regionale} {c.numero_comunicato && `n. ${c.numero_comunicato}`} — {fmt(c.data_comunicato)}
+                      {c.lega === 'LegaPro' ? 'Lega Pro' : c.comitato_regionale} {c.numero_comunicato && `n. ${c.numero_comunicato}`} — {fmt(c.data_comunicato)}
                       <span style={{ marginLeft: 6, color: 'var(--verde)' }}>
                         ({c.squalifiche.length} sanzioni)
                       </span>

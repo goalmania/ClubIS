@@ -180,7 +180,7 @@ export default function PraticheTesseramentoPage() {
           { key: 'tutte',      label: 'Tutte',        count: counts.tutte },
           { key: 'da_avviare', label: 'Da avviare',   count: counts.da_avviare },
           { key: 'in_corso',   label: 'In corso',     count: counts.in_corso },
-          { key: 'bloccata',   label: '🔴 Bloccate',  count: counts.bloccata },
+          { key: 'bloccata',   label: '⛔ Bloccate',  count: counts.bloccata },
           { key: 'completata', label: '✓ Completate', count: counts.completata },
         ]}
         active={tabAttivo}

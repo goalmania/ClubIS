@@ -179,7 +179,7 @@ export default function NuovoReportScoutingPage() {
                   display: 'flex', alignItems: 'center', gap: 20,
                   padding: '14px 16px',
                   border: '1px solid var(--grigio-5)', borderRadius: 14,
-                  background: item.val ? (item.val >= 7 ? 'var(--verde-lt)' : item.val >= 5 ? 'var(--ambra-lt)' : 'var(--rosso-lt)') : 'white',
+                  background: item.val ? (item.val >= 7 ? 'var(--verde-lt)' : item.val >= 5 ? 'var(--ambra-lt)' : 'var(--rosso-lt)') : 'var(--surface-2)',
                   transition: 'background 0.2s',
                 }}>
                   <div style={{ width: 90, flexShrink: 0 }}>

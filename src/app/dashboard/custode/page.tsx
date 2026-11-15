@@ -73,7 +73,7 @@ export default async function CustodeDashboard() {
 
         <Link href="/dashboard/custode/impianti?tab=ticket" style={{ textDecoration: 'none' }}>
           <div className="card" style={{ padding: '28px 24px', cursor: 'pointer', borderLeft: '4px solid var(--accent-red)', transition: 'opacity 0.15s' }}>
-            <div style={{ fontSize: 32, marginBottom: 12 }}>🔴</div>
+            <div style={{ fontSize: 32, marginBottom: 12 }}>⚠</div>
             <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 16, marginBottom: 6, color: 'var(--white)' }}>
               Apri ticket
             </div>

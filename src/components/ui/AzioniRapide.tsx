@@ -89,7 +89,7 @@ const AZIONI_PER_RUOLO: Record<RuoloUtente, AzioneRapida[]> = {
   ],
   custode: [
     { area: 'Impianti',  label: 'Esegui checklist',  href: '/dashboard/custode/impianti', icon: '✅', colore: 'var(--accent)' },
-    { area: 'Impianti',  label: 'Apri ticket',        href: '/dashboard/custode/impianti', icon: '🔴', colore: 'var(--rosso)' },
+    { area: 'Impianti',  label: 'Apri ticket',        href: '/dashboard/custode/impianti', icon: '⚠', colore: 'var(--rosso)' },
   ],
   ufficio_stampa: [
     { area: 'Media',      label: 'Nuova intervista',    href: '/dashboard/ufficio-stampa/interviste/nuova',   icon: '🎙', colore: 'var(--accent)' },

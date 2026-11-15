@@ -143,7 +143,7 @@ export default async function PortafoglioFIGC({ clubId }: Props) {
           color: saldoStimato < 20 ? 'var(--rosso)' : 'var(--ambra)',
         }}>
           {saldoStimato < 20
-            ? '🔴 Saldo critico — ricarica il portafoglio FIGC prima del prossimo tesseramento'
+            ? '⚠ Saldo critico — ricarica il portafoglio FIGC prima del prossimo tesseramento'
             : '⚠ Saldo basso — considera di ricaricare il portafoglio FIGC'}
         </div>
       )}

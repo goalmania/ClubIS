@@ -171,7 +171,7 @@ export default function PortafoglioFIGCPage() {
       {saldo !== null && saldo < 50 && (
         <div className={`alert ${saldo < 20 ? 'alert-danger' : 'alert-warning'}`} style={{ marginBottom: 20 }}>
           {saldo < 20
-            ? '🔴 Saldo critico — ricarica prima del prossimo tesseramento'
+            ? '⚠ Saldo critico — ricarica prima del prossimo tesseramento'
             : '⚠ Saldo basso — considera di ricaricare il portafoglio FIGC'}
           <a href="https://tesseramenti.figc.it" target="_blank" rel="noopener noreferrer"
              style={{ marginLeft: 12, color: 'inherit', fontSize: 12 }}>

@@ -145,7 +145,7 @@ export default async function IndisponibiliPage() {
           <div className="stat-value" style={{ color: 'var(--accent-red)' }}>{infortunati.length}</div>
         </div>
         <div className="stat-card">
-          <div className="stat-label">🟥 Squalificati</div>
+          <div className="stat-label">🚫 Squalificati</div>
           <div className="stat-value" style={{ color: 'var(--accent-orange)' }}>{squalificati.length}</div>
         </div>
         <div className="stat-card">
@@ -189,7 +189,7 @@ export default async function IndisponibiliPage() {
         {/* Squalificati */}
         <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
           <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border)', fontSize: 14, fontWeight: 600, color: 'var(--accent-orange)' }}>
-            🟥 Squalificati
+            🚫 Squalificati
           </div>
           {squalificati.length === 0 ? (
             <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)', fontSize: 13 }}>

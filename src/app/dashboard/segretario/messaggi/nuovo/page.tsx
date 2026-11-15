@@ -88,7 +88,7 @@ export default function NuovoMessaggioPage() {
                   style={{
                     padding: '6px 14px', borderRadius: 20, fontSize: 13, cursor: 'pointer',
                     border: destinatariSel.includes(s.id) ? '1px solid var(--verde)' : '1px solid var(--grigio-5)',
-                    background: destinatariSel.includes(s.id) ? 'var(--verde-lt)' : 'white',
+                    background: destinatariSel.includes(s.id) ? 'var(--verde-lt)' : 'var(--surface-3)',
                     color: destinatariSel.includes(s.id) ? 'var(--verde)' : 'var(--grigio-3)',
                     fontWeight: destinatariSel.includes(s.id) ? 500 : 400,
                   }}>

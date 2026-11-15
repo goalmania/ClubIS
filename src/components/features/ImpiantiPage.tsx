@@ -180,7 +180,7 @@ export default function ImpiantiPage({ defaultTab = 'dashboard' }: Props) {
                   + Manutenzione
                 </button>
                 <button className="btn btn-primary btn-sm" onClick={() => setModalTicket(true)}>
-                  🔴 Apri ticket
+                  ⚠ Apri ticket
                 </button>
               </>
             )}
@@ -264,7 +264,7 @@ export default function ImpiantiPage({ defaultTab = 'dashboard' }: Props) {
           {ticketAperti.filter(t => t.urgenza === 'alta' || t.urgenza === 'bloccante').length > 0 && (
             <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
               <div style={{ padding: '12px 18px', borderBottom: '1px solid var(--border)', fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 12, color: 'var(--accent-red)' }}>
-                🔴 Ticket urgenti aperti
+                ⚠ Ticket urgenti aperti
               </div>
               {ticketAperti
                 .filter(t => t.urgenza === 'alta' || t.urgenza === 'bloccante')

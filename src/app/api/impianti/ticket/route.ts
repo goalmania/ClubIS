@@ -73,7 +73,7 @@ export async function POST(req: Request) {
           destinatario_id:    u.id,
           ruolo_destinatario: u.ruolo,
           tipo:               'alert_sistema',
-          titolo:             `🔴 Problema impianto ${urgenza === 'bloccante' ? 'BLOCCANTE' : 'urgente'}`,
+          titolo:             `⚠ Problema impianto ${urgenza === 'bloccante' ? 'BLOCCANTE' : 'urgente'}`,
           messaggio:          `${area}: ${descrizione_problema.slice(0, 100)}`,
           azione_url:         '/dashboard/custode/impianti',
           letta:              false,

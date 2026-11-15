@@ -18,7 +18,7 @@ function EsauritoPage({ club }: { club: { nome: string } }) {
   return (
     <div style={centeredStyle}>
       <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: 48, marginBottom: 16 }}>🔴</div>
+        <div style={{ fontSize: 48, marginBottom: 16 }}>⚠</div>
         <h1 style={headingStyle}>Posti esauriti</h1>
         <p style={subStyle}>Tutti i posti disponibili per <strong>{club.nome}</strong> sono stati occupati.</p>
         <p style={subStyle}>Contatta la segreteria per essere messo/a in lista d'attesa.</p>

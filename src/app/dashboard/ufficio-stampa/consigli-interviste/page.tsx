@@ -388,9 +388,9 @@ function ConsiglioFormModal({ initial, saving, error, membriPerRuolo, onSave, on
               onChange={e => setForm(p => ({ ...p, priorita: Number(e.target.value) as Priorita }))}
               style={{ background: 'var(--surface-2)', color: 'var(--white)' }}
             >
-              <option value={1}>🔴 Alta — domanda probabile e delicata</option>
-              <option value={2}>🟡 Media</option>
-              <option value={3}>🟢 Bassa</option>
+              <option value={1}>Alta — domanda probabile e delicata</option>
+              <option value={2}>Media</option>
+              <option value={3}>Bassa</option>
             </select>
           </div>
 

@@ -13,7 +13,7 @@ const TIPI_PAGAMENTO = [
   { categoria: 'uscita',  label: 'Compenso allenatore',      icon: '👔', soggetto: 'staff'     },
   { categoria: 'uscita',  label: 'Rimborso trasferta',       icon: '🚌', soggetto: 'squadra'   },
   { categoria: 'uscita',  label: 'Quota affiliazione FIGC',  icon: '🏛', soggetto: 'ente'      },
-  { categoria: 'uscita',  label: 'Arbitraggi',               icon: '🟥', soggetto: 'ente'      },
+  { categoria: 'uscita',  label: 'Arbitraggi',               icon: '⚖', soggetto: 'ente'      },
   { categoria: 'uscita',  label: 'Manutenzione campo',       icon: '⚙️', soggetto: 'fornitore' },
   { categoria: 'uscita',  label: 'Materiale sportivo',       icon: '👟', soggetto: 'fornitore' },
   { categoria: 'uscita',  label: 'Iscrizione campionato',    icon: '📋', soggetto: 'ente'      },
