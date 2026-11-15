@@ -323,7 +323,7 @@ export default function ComunicatiFIGCPage() {
                 {/* Textarea testo */}
                 <div>
                   <label style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', display: 'block', marginBottom: 6 }}>
-                    TESTO DEL COMUNICATO — incolla il contenuto estratto dal PDF
+                    Testo del comunicato: incolla il contenuto estratto dal PDF
                   </label>
                   <textarea
                     value={testo}
@@ -368,7 +368,7 @@ export default function ComunicatiFIGCPage() {
                   {[
                     ['TROVATI', abbinamenti.length, 'var(--white)'],
                     ['ABBINATI', abbinati, 'var(--accent)'],
-                    ['DA ASSEGNARE', nonAbbinati, nonAbbinati > 0 ? 'var(--rosso)' : 'var(--gray)'],
+                    ['Da assegnare', nonAbbinati, nonAbbinati > 0 ? 'var(--rosso)' : 'var(--gray)'],
                   ].map(([label, val, color]) => (
                     <div key={label as string} style={{
                       background: 'var(--gray-light)', padding: '16px 20px', textAlign: 'center',
@@ -435,7 +435,7 @@ export default function ComunicatiFIGCPage() {
                             {a.provvedimento.tipo === 'ammenda' ? (
                               <div>
                                 <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', marginBottom: 5 }}>
-                                  USCITA IN PRIMA NOTA — AMMENDE FIGC
+                                  Uscita in prima nota · ammende FIGC
                                 </div>
                                 <select
                                   className="input"

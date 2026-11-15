@@ -223,7 +223,7 @@ function ComunicatiLegaProContent() {
           border: '1px solid rgba(0,112,243,0.3)',
           borderRadius: 10, padding: '4px 10px',
         }}>
-          LEGA PRO — SERIE C
+          Lega Pro · Serie C
         </span>
       </div>
 

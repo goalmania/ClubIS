@@ -585,9 +585,9 @@ export default function RimborsiPage() {
             {rimborsi.length > 0 && (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1, background: 'var(--border)', borderRadius: 10, overflow: 'hidden', marginTop: 16 }}>
                 {[
-                  ['TOTALE Q' + filtroTrim, fmtEur(rimborsi.reduce((s, r) => s + Number(r.importo), 0))],
-                  ['N. SOGGETTI', String(new Set(rimborsi.map(r => r.codice_fiscale)).size)],
-                  ['N. RIMBORSI', String(rimborsi.length)],
+                  ['Totale Q' + filtroTrim, fmtEur(rimborsi.reduce((s, r) => s + Number(r.importo), 0))],
+                  ['N. soggetti', String(new Set(rimborsi.map(r => r.codice_fiscale)).size)],
+                  ['N. rimborsi', String(rimborsi.length)],
                 ].map(([label, val]) => (
                   <div key={label} style={{ background: 'var(--gray-light)', padding: '14px 20px', textAlign: 'center' }}>
                     <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-4)', marginBottom: 4 }}>{label}</div>

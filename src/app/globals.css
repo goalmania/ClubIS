@@ -1078,3 +1078,15 @@ select option { background: #1c1c1e; color: var(--white); }
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 }
+@media (max-width: 860px) {
+  /* Barre di schede (bottoni sottolineati): scorrono di lato, non vanno a capo */
+  .dashboard-content [style*="display: flex"]:has(> button[style*="border-bottom: 2px"]),
+  .dashboard-content [style*="display:flex"]:has(> button[style*="border-bottom:2px"]) {
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .dashboard-content [style*="display: flex"]:has(> button[style*="border-bottom: 2px"]) > button,
+  .dashboard-content [style*="display:flex"]:has(> button[style*="border-bottom:2px"]) > button { flex-shrink: 0; white-space: nowrap; }
+}

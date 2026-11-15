@@ -228,17 +228,17 @@ export default function ScadenzeFIGCPage() {
               fontFamily: 'var(--font-display)', fontWeight: 700,
               fontSize: 42, color: col, lineHeight: 1, flexShrink: 0, minWidth: 52, textAlign: 'center',
             }}>
-              {giorni >= 0 ? giorni : '!'}
+              {giorni >= 0 ? giorni : '⚠'}
             </div>
             <div>
               <div style={{
                 fontFamily: 'var(--font-mono)', fontSize: '0.78rem',
                 letterSpacing: '0', textTransform: 'none', color: col, marginBottom: 4,
               }}>
-                {giorni < 0 ? 'SCADENZA SUPERATA'
-                  : giorni === 0 ? 'SCADE OGGI'
-                  : giorni === 1 ? 'SCADE DOMANI'
-                  : `PROSSIMA SCADENZA — ${giorni} GIORNI`}
+                {giorni < 0 ? 'Scadenza superata'
+                  : giorni === 0 ? 'Scade oggi'
+                  : giorni === 1 ? 'Scade domani'
+                  : `Prossima scadenza tra ${giorni} giorni`}
               </div>
               <div style={{
                 fontFamily: 'var(--font-display)', fontWeight: 700,
@@ -355,7 +355,7 @@ export default function ScadenzeFIGCPage() {
                   {!isCompletata && (
                     <div style={{ width: 52, textAlign: 'center', flexShrink: 0 }}>
                       <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 24, color: col, lineHeight: 1 }}>
-                        {giorni >= 0 ? giorni : '!'}
+                        {giorni >= 0 ? giorni : '⚠'}
                       </div>
                       <div style={{ fontFamily: 'var(--font-mono)', fontSize: 11, textTransform: 'none', letterSpacing: '0', color: col }}>
                         {giorni >= 0 ? 'giorni' : 'scad.'}

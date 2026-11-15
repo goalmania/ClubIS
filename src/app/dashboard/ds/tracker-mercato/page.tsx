@@ -251,7 +251,7 @@ export default function TrackerMercatoDS() {
               <div className="card" style={{ overflow: 'hidden' }}>
                 {filtrate.length === 0 ? (
                   <div style={{ padding: 48, textAlign: 'center', color: 'var(--gray)', fontFamily: 'var(--font-mono)', fontSize: '0.82rem', letterSpacing: 0 }}>
-                    {trattative.length === 0 ? 'NESSUNA TRATTATIVA REGISTRATA' : 'NESSUNA CORRISPONDENZA CON I FILTRI'}
+                    {trattative.length === 0 ? 'Nessuna trattativa registrata' : 'Nessuna corrispondenza con i filtri'}
                   </div>
                 ) : (
                   <div className="table-wrap">

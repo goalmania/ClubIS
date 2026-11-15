@@ -73,7 +73,7 @@ function TabBtn({ label, active, onClick }: { label: string; active: boolean; on
       fontWeight: active ? 700 : 500,
       background: active ? 'var(--accent)' : 'transparent',
       color: active ? 'var(--black)' : 'var(--grigio-3)',
-      border: active ? 'none' : '1px solid var(--grigio-5)', cursor: 'pointer',
+      border: active ? 'none' : '1px solid var(--grigio-5)', cursor: 'pointer', borderRadius: 14
     }}>
       {label}
     </button>

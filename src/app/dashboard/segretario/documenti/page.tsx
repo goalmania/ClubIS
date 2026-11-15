@@ -549,7 +549,7 @@ export default function DocumentiPage() {
                               color: '#00c8a0',
                               fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none', borderRadius: 14
                             }}>
-                              ✓ VERIFICATO
+                              ✓ Verificato
                             </span>
                           )}
                           {doc.ha_varianti && (
@@ -559,7 +559,7 @@ export default function DocumentiPage() {
                               color: 'var(--accent)',
                               fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none', borderRadius: 14
                             }}>
-                              {doc.documenti_varianti?.length ?? 0} VARIANTI
+                              {doc.documenti_varianti?.length ?? 0} varianti
                             </span>
                           )}
                         </div>

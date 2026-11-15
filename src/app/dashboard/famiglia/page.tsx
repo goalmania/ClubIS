@@ -207,19 +207,19 @@ function DashboardContent({
       }}>
         {[
           {
-            label: 'PRESENZE 30GG',
+            label: 'Presenze 30 giorni',
             value: percPresenze !== null ? `${percPresenze}%` : '—',
             sub: `${presenze.presenti}/${presenze.tot} allenamenti`,
             color: percPresenze !== null && percPresenze < 60 ? 'var(--rosso)' : 'var(--accent)',
           },
           {
-            label: 'QUOTA STAGIONALE',
+            label: 'Quota stagionale',
             value: quota ? (quota.stato === 'pagato' ? '✓' : formatEuro(totDaPagare)) : '—',
             sub: quota ? quota.stato.replace('_', ' ') : 'Non assegnata',
             color: quota ? statoQuotaColore[quota.stato] : 'var(--gray)',
           },
           {
-            label: 'ULTIME VALUTAZIONI',
+            label: 'Ultime valutazioni',
             value: valutazioni.length > 0 ? `${valutazioni.length}` : '—',
             sub: valutazioni.length > 0 ? `Ultima: ${formatData(valutazioni[0]?.data)}` : 'Nessuna',
             color: 'var(--accent)',

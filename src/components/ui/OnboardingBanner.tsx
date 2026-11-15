@@ -99,7 +99,7 @@ export default function OnboardingBanner({ clubId }: { clubId: string }) {
                 padding: '10px 12px',
                 background: isCurrent ? 'rgba(200,240,0,0.06)' : 'transparent',
                 border: isCurrent ? '1px solid rgba(200,240,0,0.2)' : '1px solid transparent',
-                opacity: completato ? 0.5 : 1,
+                opacity: completato ? 0.5 : 1, borderRadius: 14
               }}
             >
               {/* Indicatore step */}

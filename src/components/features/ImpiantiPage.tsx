@@ -207,10 +207,10 @@ export default function ImpiantiPage({ defaultTab = 'dashboard' }: Props) {
             gap: 1, background: 'var(--border)', marginBottom: 24,
           }}>
             {[
-              { label: 'TICKET APERTI',      value: ticketAperti.length,  color: ticketAperti.length > 0 ? 'var(--accent-red)' : 'var(--accent)' },
-              { label: 'TICKET RISOLTI',     value: ticketRisolti.length, color: 'var(--accent)' },
-              { label: 'CHECKLIST OGGI',     value: ultimeEsec.filter(e => new Date(e.data_esecuzione).toDateString() === new Date().toDateString()).length, color: 'var(--accent2)' },
-              { label: 'MANUTENZIONI LOG',   value: manutenzioni.length,  color: 'var(--gray)' },
+              { label: 'Ticket aperti',      value: ticketAperti.length,  color: ticketAperti.length > 0 ? 'var(--accent-red)' : 'var(--accent)' },
+              { label: 'Ticket risolti',     value: ticketRisolti.length, color: 'var(--accent)' },
+              { label: 'Checklist oggi',     value: ultimeEsec.filter(e => new Date(e.data_esecuzione).toDateString() === new Date().toDateString()).length, color: 'var(--accent2)' },
+              { label: 'Registro manutenzioni',   value: manutenzioni.length,  color: 'var(--gray)' },
             ].map(k => (
               <div key={k.label} style={{ background: 'var(--gray-light)', padding: '14px 18px' }}>
                 <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 28, color: k.color, lineHeight: 1 }}>{k.value}</div>

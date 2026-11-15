@@ -98,7 +98,7 @@ export default function OrganigrammaModificaPage() {
             background: 'var(--surface-1)',
             borderBottom: '2px solid var(--border)',
           }}>
-            {['MEMBRO STAFF', 'TITOLO ORGANIGRAMMA', 'ORDINE', 'VISIBILE'].map(h => (
+            {['Membro staff', 'Titolo organigramma', 'Ordine', 'Visibile'].map(h => (
               <div key={h} style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--gray)' }}>
                 {h}
               </div>

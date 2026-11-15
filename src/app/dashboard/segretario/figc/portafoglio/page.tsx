@@ -156,9 +156,9 @@ export default function PortafoglioFIGCPage() {
         background: 'var(--border)', borderRadius: 10, overflow: 'hidden', marginBottom: 24,
       }}>
         {[
-          ['SALDO STIMATO', saldo !== null ? fmt(saldo) : '—', saldoColor],
-          ['GIOCATORI TESSERATI', String(nTess), 'var(--white)'],
-          ['TOTALE RICARICATO', fmt(ricariche.reduce((s, r) => s + r.importo, 0)), 'var(--gray)'],
+          ['Saldo stimato', saldo !== null ? fmt(saldo) : '—', saldoColor],
+          ['Giocatori tesserati', String(nTess), 'var(--white)'],
+          ['Totale ricaricato', fmt(ricariche.reduce((s, r) => s + r.importo, 0)), 'var(--gray)'],
         ].map(([label, val, color]) => (
           <div key={label} style={{ background: 'var(--gray-light)', padding: '20px 24px', textAlign: 'center' }}>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', marginBottom: 6 }}>{label}</div>

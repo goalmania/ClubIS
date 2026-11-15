@@ -339,7 +339,7 @@ export default function SegretarioPartitePage() {
               background: tab === t ? 'var(--accent)' : 'transparent',
               color: tab === t ? 'var(--black)' : 'var(--grigio-3)',
               border: tab === t ? 'none' : '1px solid var(--grigio-5)',
-              cursor: 'pointer',
+              cursor: 'pointer', borderRadius: 14
             }}>
               {t === 'calendario' ? 'Calendario' : 'Statistiche'}
             </button>
