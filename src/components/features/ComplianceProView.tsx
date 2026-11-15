@@ -70,7 +70,7 @@ function RischioIndicatore({ livello }: { livello: RischioLivello }) {
   }[livello]
 
   return (
-    <div style={{ padding: '20px 24px', background: cfg.bg, border: `1px solid ${cfg.border}`, marginBottom: 24, display: 'flex', alignItems: 'center', gap: 20 }}>
+    <div style={{ padding: '20px 24px', background: cfg.bg, border: `1px solid ${cfg.border}`, marginBottom: 24, display: 'flex', alignItems: 'center', gap: 20, borderRadius: 14 }}>
       <div style={{ width: 14, height: 14, borderRadius: '50%', background: cfg.color, flexShrink: 0, boxShadow: `0 0 10px ${cfg.color}` }} />
       <div>
         <div style={{ fontFamily: 'var(--font-display)', fontSize: 12, fontWeight: 700, letterSpacing: '0', textTransform: 'none', color: cfg.color }}>{cfg.label}</div>

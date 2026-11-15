@@ -73,7 +73,7 @@ export default function FinestaMercatoProBanner() {
     const border = urgente ? 'rgba(255,68,68,0.2)'  : info.giorni <= 7 ? 'rgba(255,214,0,0.2)'  : 'rgba(76,255,136,0.2)'
 
     return (
-      <div style={{ padding: '14px 20px', background: bg, border: `1px solid ${border}`, marginBottom: 20, display: 'flex', alignItems: 'center', gap: 16 }}>
+      <div style={{ padding: '14px 20px', background: bg, border: `1px solid ${border}`, marginBottom: 20, display: 'flex', alignItems: 'center', gap: 16, borderRadius: 14 }}>
         <div style={{ width: 10, height: 10, borderRadius: '50%', background: color, flexShrink: 0, boxShadow: `0 0 8px ${color}` }} />
         <div style={{ flex: 1 }}>
           <span style={{ fontFamily: 'var(--font-display)', fontSize: 12, fontWeight: 700, textTransform: 'none', letterSpacing: '0', color }}>

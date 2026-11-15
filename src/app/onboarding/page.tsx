@@ -336,7 +336,7 @@ export default function OnboardingPage() {
                       background: tipoProdotto === 'club_agonistico' ? 'var(--accent)' : 'transparent',
                       color: tipoProdotto === 'club_agonistico' ? '#000' : 'var(--gray)',
                       border: `1px solid ${tipoProdotto === 'club_agonistico' ? 'var(--accent)' : 'var(--border)'}`,
-                      fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, textTransform: 'none', letterSpacing: '0',
+                      fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, textTransform: 'none', letterSpacing: '0', borderRadius: 14
                     }}
                   >
                     Club agonistico
@@ -349,7 +349,7 @@ export default function OnboardingPage() {
                       background: tipoProdotto === 'scuola_calcio_standalone' ? 'var(--accent)' : 'transparent',
                       color: tipoProdotto === 'scuola_calcio_standalone' ? '#000' : 'var(--gray)',
                       border: `1px solid ${tipoProdotto === 'scuola_calcio_standalone' ? 'var(--accent)' : 'var(--border)'}`,
-                      fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, textTransform: 'none', letterSpacing: '0',
+                      fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, textTransform: 'none', letterSpacing: '0', borderRadius: 14
                     }}
                   >
                     Scuola calcio
@@ -477,7 +477,7 @@ export default function OnboardingPage() {
                     display: 'flex', alignItems: 'center', gap: 12,
                     padding: '12px 16px', cursor: 'pointer',
                     border: `1px solid ${sel ? 'rgba(200,240,0,0.4)' : 'var(--border)'}`,
-                    background: sel ? 'rgba(200,240,0,0.05)' : 'transparent',
+                    background: sel ? 'rgba(200,240,0,0.05)' : 'transparent', borderRadius: 14
                   }}>
                     <input
                       type="checkbox"

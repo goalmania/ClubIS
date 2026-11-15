@@ -44,43 +44,40 @@ export default function ScadenzeFIGCWidget({ compact = false }: Props) {
     return (
       <Link href="/dashboard/segretario/scadenze-figc" style={{ textDecoration: 'none', display: 'block', marginBottom: 16 }}>
         <div style={{
-          padding: '10px 14px',
-          background: `${col}11`,
-          border: `1px solid ${col}44`,
-          borderLeft: `3px solid ${col}`,
+          padding: '12px 14px',
+          background: `color-mix(in srgb, ${col} 9%, rgba(255,255,255,0.03))`,
+          border: `1px solid color-mix(in srgb, ${col} 26%, transparent)`,
+          borderRadius: 16,
           display: 'flex', alignItems: 'center', gap: 12,
           cursor: 'pointer',
           transition: 'background 0.15s',
         }}>
-          <span style={{ fontSize: 16, flexShrink: 0 }}>{tipoMeta?.icona}</span>
+          <span style={{
+            width: 34, height: 34, borderRadius: 10, flexShrink: 0,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 17, color: col,
+            background: `color-mix(in srgb, ${col} 16%, transparent)`,
+          }}>{tipoMeta?.icona}</span>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{
-              fontSize: 12, fontFamily: 'var(--font-display)',
-              fontWeight: 700, textTransform: 'none', letterSpacing: '0',
+              fontSize: 14, fontWeight: 600, letterSpacing: '-0.01em',
               color: 'var(--white)', marginBottom: 2,
               overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
             }}>
               {prossima.titolo}
             </div>
-            <div style={{
-              fontSize: 12, fontFamily: 'var(--font-mono)',
-              color: col, textTransform: 'none', letterSpacing: '0',
-            }}>
+            <div style={{ fontSize: 13, color: 'var(--gray)' }}>
               {labelCountdown(giorni)}
-              {attive.length > 1 && ` · +${attive.length - 1} altre`}
+              {attive.length > 1 && ` · altre ${attive.length - 1}`}
             </div>
           </div>
           <div style={{
-            fontFamily: 'var(--font-display)', fontWeight: 700,
-            fontSize: 20, color: col, flexShrink: 0, textAlign: 'right', lineHeight: 1,
+            flexShrink: 0, padding: '5px 11px', borderRadius: 999,
+            fontSize: 13, fontWeight: 600, color: col, whiteSpace: 'nowrap',
+            fontVariantNumeric: 'tabular-nums',
+            background: `color-mix(in srgb, ${col} 16%, transparent)`,
           }}>
-            {giorni >= 0 ? giorni : '!'}
-            <div style={{
-              fontSize: 11, fontFamily: 'var(--font-mono)',
-              color: col, textTransform: 'none', letterSpacing: '0',
-            }}>
-              {giorni >= 0 ? 'GG' : 'SCAD'}
-            </div>
+            {giorni < 0 ? 'Scaduta' : giorni === 0 ? 'Oggi' : giorni === 1 ? 'Domani' : `${giorni} giorni`}
           </div>
         </div>
       </Link>
@@ -95,11 +92,10 @@ export default function ScadenzeFIGCWidget({ compact = false }: Props) {
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
       }}>
         <div style={{
-          fontFamily: 'var(--font-display)', fontWeight: 700,
-          textTransform: 'none', fontSize: 12, letterSpacing: '0',
+          fontWeight: 600, fontSize: 17, letterSpacing: '-0.01em',
           color: 'var(--white)',
         }}>
-          📋 Scadenziario FIGC
+          Scadenziario FIGC
         </div>
         <Link href="/dashboard/segretario/scadenze-figc" style={{
           fontSize: 12, color: 'var(--grigio-3)', fontFamily: 'var(--font-mono)',
@@ -119,11 +115,10 @@ export default function ScadenzeFIGCWidget({ compact = false }: Props) {
             borderBottom: '1px solid rgba(255,255,255,0.04)',
             display: 'flex', alignItems: 'center', gap: 12,
           }}>
-            <span style={{ fontSize: 14, flexShrink: 0 }}>{tipoMeta?.icona}</span>
+            <span style={{ fontSize: 16, flexShrink: 0, color: col }}>{tipoMeta?.icona}</span>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{
-                fontFamily: 'var(--font-display)', fontWeight: 700,
-                textTransform: 'none', fontSize: 12,
+                fontWeight: 600, fontSize: 14,
                 overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                 color: 'var(--white)',
               }}>

@@ -238,7 +238,7 @@ export default function ImpiantiPage({ defaultTab = 'dashboard' }: Props) {
                 const col = colori[statoArea]
 
                 return (
-                  <div key={key} style={{ padding: '16px 18px', border: `1px solid ${col.border}`, background: col.bg, borderLeft: `4px solid ${col.c}` }}>
+                  <div key={key} style={{ padding: '16px 18px', border: `1px solid ${col.border}`, background: col.bg, borderLeft: `4px solid ${col.c}`, borderRadius: 14 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
                       <div>
                         <span style={{ fontSize: 20 }}>{meta.icona}</span>
@@ -383,10 +383,10 @@ export default function ImpiantiPage({ defaultTab = 'dashboard' }: Props) {
                             <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 12 }}>
                               {areaMeta?.icona} {t.descrizione_problema.slice(0, 80)}{t.descrizione_problema.length > 80 && '...'}
                             </span>
-                            <span style={{ fontSize: 11, padding: '2px 6px', background: `${urgMeta?.colore}22`, border: `1px solid ${urgMeta?.colore}55`, color: urgMeta?.colore, fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none' }}>
+                            <span style={{ fontSize: 11, padding: '2px 6px', background: `${urgMeta?.colore}22`, border: `1px solid ${urgMeta?.colore}55`, color: urgMeta?.colore, fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none', borderRadius: 14 }}>
                               {urgMeta?.label}
                             </span>
-                            <span style={{ fontSize: 11, padding: '2px 6px', background: `${statMeta?.colore}22`, border: `1px solid ${statMeta?.colore}55`, color: statMeta?.colore, fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none' }}>
+                            <span style={{ fontSize: 11, padding: '2px 6px', background: `${statMeta?.colore}22`, border: `1px solid ${statMeta?.colore}55`, color: statMeta?.colore, fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none', borderRadius: 14 }}>
                               {statMeta?.label}
                             </span>
                           </div>

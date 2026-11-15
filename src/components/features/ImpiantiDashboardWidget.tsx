@@ -87,7 +87,7 @@ export default function ImpiantiDashboardWidget({ ruolo }: Props) {
           Caricamento stato impianti...
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 8 }}>
+        <div className="impianti-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 8 }}>
           {(Object.entries(AREE_IMPIANTO) as [AreaImpianto, typeof AREE_IMPIANTO[AreaImpianto]][]).map(([key, meta]) => {
             const stato = stati[key] ?? 'giallo'
             const sem = SEMAFORO[stato]

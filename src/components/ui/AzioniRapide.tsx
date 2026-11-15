@@ -157,7 +157,7 @@ export default function AzioniRapide({ ruolo, variante = 'agonistico' }: { ruolo
             <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--gray)', marginBottom: 6 }}>
               {area}
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <div className="azioni-list" style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               {azioniArea.map(a => (
                 <AzioneLink key={a.href} azione={a} />
               ))}
@@ -175,7 +175,8 @@ function AzioneLink({ azione: a }: { azione: AzioneRapida }) {
       <span aria-hidden="true" style={{
         width: 26, height: 26, borderRadius: 8, flexShrink: 0,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontSize: 13, lineHeight: 1,
+        fontSize: 14, lineHeight: 1,
+        color: a.colore ?? 'var(--accent)',
         background: `color-mix(in srgb, ${a.colore ?? 'var(--accent)'} 18%, transparent)`,
       }}>{a.icon}</span>
       <span style={{ lineHeight: 1.25, minWidth: 0 }}>{a.label}</span>

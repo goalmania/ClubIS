@@ -237,7 +237,7 @@ export default async function VistaDisponibilita({ clubId, ruolo, squadraIds }: 
                     border: `1px solid ${cfg.border}`,
                     fontFamily: 'var(--font-display)', fontWeight: 700,
                     fontSize: '0.8rem', letterSpacing: '0',
-                    textTransform: 'none', color: cfg.color,
+                    textTransform: 'none', color: cfg.color, borderRadius: 14
                   }}>
                     {cfg.icon} {cfg.label}
                   </span>

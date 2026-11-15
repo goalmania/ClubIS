@@ -260,7 +260,7 @@ export default function PraticheTesseramentoPage() {
                     background: `${statoMeta.colore}22`,
                     border: `1px solid ${statoMeta.colore}55`,
                     color: statoMeta.colore,
-                    fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none',
+                    fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none', borderRadius: 14
                   }}>
                     {statoMeta.label}
                   </span>

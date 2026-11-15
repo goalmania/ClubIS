@@ -222,7 +222,7 @@ export default function ScadenzeFIGCPage() {
             background: `${col}10`,
             border: `1px solid ${col}44`,
             borderLeft: `4px solid ${col}`,
-            display: 'flex', alignItems: 'center', gap: 16,
+            display: 'flex', alignItems: 'center', gap: 16, borderRadius: 14
           }}>
             <div style={{
               fontFamily: 'var(--font-display)', fontWeight: 700,
@@ -378,7 +378,7 @@ export default function ScadenzeFIGCPage() {
                         background: `${statoMeta?.colore}22`,
                         border: `1px solid ${statoMeta?.colore}55`,
                         color: statoMeta?.colore,
-                        fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none',
+                        fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none', borderRadius: 14
                       }}>
                         {statoMeta?.label}
                       </span>

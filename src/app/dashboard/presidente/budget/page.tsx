@@ -423,7 +423,7 @@ export default function BudgetPage() {
                         fontFamily: 'var(--font-mono)',
                         fontSize: 13,
                         padding: '5px 8px',
-                        outline: 'none',
+                        outline: 'none', borderRadius: 14
                       }}
                     />
                   </td>
@@ -508,7 +508,7 @@ export default function BudgetPage() {
                         fontFamily: 'var(--font-mono)',
                         fontSize: 13,
                         padding: '5px 8px',
-                        outline: 'none',
+                        outline: 'none', borderRadius: 14
                       }}
                     />
                   </td>
@@ -545,7 +545,7 @@ export default function BudgetPage() {
         color: statusColor,
         fontFamily: 'var(--font-display)',
         textTransform: 'none',
-        letterSpacing: '0',
+        letterSpacing: '0', borderRadius: 14
       }}>
         {statusFPF === 'verde' && '✓ Situazione sostenibile — entrate coprono le uscite con margine positivo'}
         {statusFPF === 'ambra' && '⚠ Situazione in equilibrio — monitorare le uscite straordinarie'}

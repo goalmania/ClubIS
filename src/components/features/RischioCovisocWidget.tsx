@@ -48,7 +48,7 @@ export default function RischioCovisocWidget() {
 
   return (
     <a href="/dashboard/segretario/compliance-pro" style={{ textDecoration: 'none' }}>
-      <div style={{ padding: '16px 20px', background: cfg.bg, border: `1px solid ${cfg.border}`, marginBottom: 20, display: 'flex', gap: 16, alignItems: 'center', cursor: 'pointer', transition: 'opacity 0.2s' }}>
+      <div style={{ padding: '16px 20px', background: cfg.bg, border: `1px solid ${cfg.border}`, marginBottom: 20, display: 'flex', gap: 16, alignItems: 'center', cursor: 'pointer', transition: 'opacity 0.2s', borderRadius: 14 }}>
         <div style={{ width: 12, height: 12, borderRadius: '50%', background: cfg.color, flexShrink: 0, boxShadow: `0 0 8px ${cfg.color}` }} />
         <div style={{ flex: 1 }}>
           <div style={{ fontFamily: 'var(--font-display)', fontSize: 12, fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: cfg.color }}>{cfg.label}</div>

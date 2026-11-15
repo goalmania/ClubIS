@@ -212,7 +212,7 @@ export default function ImportPage() {
               background: tipoSel === t.key ? 'rgba(200,240,0,0.08)' : 'var(--gray-light)',
               border: `1px solid ${tipoSel === t.key ? 'rgba(200,240,0,0.4)' : 'var(--border)'}`,
               borderLeft: `3px solid ${tipoSel === t.key ? 'var(--accent)' : 'transparent'}`,
-              transition: 'all 0.15s',
+              transition: 'all 0.15s', borderRadius: 14
             }}
           >
             <div style={{ fontSize: 24, marginBottom: 8 }}>{t.icon}</div>

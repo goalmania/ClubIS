@@ -1060,3 +1060,21 @@ select option { background: #1c1c1e; color: var(--white); }
   .sidebar-shell { background: rgba(17,17,19,0.9) !important; }
   body::before { inset: 0; }
 }
+@media (max-width: 560px) {
+  .azioni-list { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .impianti-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+}
+@media (max-width: 860px) {
+  /* Barre di filtri/azioni scritte in riga: vanno a capo invece di uscire dallo schermo */
+  .dashboard-content input, .dashboard-content select, .dashboard-content textarea { max-width: 100%; }
+  .dashboard-content [style*="display: flex"]:has(> input, > select, > .btn, > button),
+  .dashboard-content [style*="display:flex"]:has(> input, > select, > .btn, > button) { flex-wrap: wrap; }
+  .dashboard-content [style*="display: flex"] > input[style*="width"],
+  .dashboard-content [style*="display:flex"] > input[style*="width"] { flex: 1 1 180px; width: auto !important; margin-left: 0 !important; }
+}
+@media (max-width: 560px) {
+  /* Righe di modulo a colonne fisse (nome · numero · colore · rimuovi) → 2 colonne */
+  .dashboard-content [style*="grid-template-columns"][style*="px"]:has(> input, > select, > button) {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
