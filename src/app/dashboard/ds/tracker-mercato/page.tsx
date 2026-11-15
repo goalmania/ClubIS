@@ -142,7 +142,7 @@ export default function TrackerMercatoDS() {
 
           {/* header */}
           <div style={{ marginBottom: 28 }}>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', letterSpacing: '3px', textTransform: 'none', color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', letterSpacing: '0', textTransform: 'none', color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
               <span style={{ display: 'block', width: 20, height: 1, background: 'var(--accent)' }} />
               Mercato — Tracker
             </div>
@@ -168,7 +168,7 @@ export default function TrackerMercatoDS() {
             <>
               {/* contatori per tipo */}
               {trattative.length > 0 && (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1, background: 'var(--border)', border: '1px solid var(--border)', marginBottom: 20 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1, background: 'var(--border)', border: '1px solid var(--border)', marginBottom: 20, borderRadius: 14 }}>
                   {TIPO_CONFIG.map(cfg => {
                     const all    = trattative.filter(t => getTipo(t) === cfg.key)
                     const closed = chiuse.filter(t => getTipo(t) === cfg.key)
@@ -299,7 +299,7 @@ export default function TrackerMercatoDS() {
 
               {/* saldo netto footer */}
               {chiuse.length > 0 && (
-                <div style={{ marginTop: 1, padding: '14px 18px', background: 'var(--gray-light)', border: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ marginTop: 1, padding: '14px 18px', background: 'var(--gray-light)', border: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderRadius: 14 }}>
                   <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', letterSpacing: '0', textTransform: 'none', color: 'var(--text-muted)' }}>
                     Saldo netto operazioni concluse
                   </span>

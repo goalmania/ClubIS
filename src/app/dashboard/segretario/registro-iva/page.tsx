@@ -176,13 +176,13 @@ export default function RegistroIvaPage() {
 
       {/* Banner normativo */}
       <div style={{
-        background: '#eff6ff',
-        border: '1px solid #bfdbfe',
+        background: 'rgba(10,132,255,0.10)',
+        border: '1px solid rgba(10,132,255,0.25)',
         borderRadius: 12,
         padding: '12px 18px',
         marginBottom: 20,
         fontSize: 13,
-        color: '#1e40af',
+        color: '#8cc8ff',
         display: 'flex',
         gap: 10,
         alignItems: 'flex-start',

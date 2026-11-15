@@ -348,16 +348,16 @@ export default function PagamentiDashboard() {
       {!bannerDismissed && (
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          background: '#fffbeb', border: '1px solid #fcd34d', borderRadius: 14,
+          background: 'rgba(255,153,0,0.10)', border: '1px solid rgba(255,153,0,0.3)', borderRadius: 14,
           padding: '12px 18px', marginBottom: 20, gap: 12,
         }}>
-          <span style={{ fontSize: 13, color: '#92400e' }}>
+          <span style={{ fontSize: 13, color: '#ffad33' }}>
             💡 <strong>ClubIS non applica commissioni sui pagamenti.</strong>{' '}
             Con 80 famiglie a 50 €/mese, risparmiate ~<strong>€ 800/anno</strong> rispetto a piattaforme che trattengono il 2%.
           </span>
           <button
             onClick={dismissBanner}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: '#92400e', flexShrink: 0 }}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: '#ffad33', flexShrink: 0 }}
             title="Chiudi"
           >
             ×
@@ -453,7 +453,7 @@ export default function PagamentiDashboard() {
               </tbody>
             </table>
           ) : (
-            <table>
+            <div className="table-wrap"><table>
               <thead>
                 <tr>
                   <th>Famiglia</th>
@@ -515,7 +515,7 @@ export default function PagamentiDashboard() {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table></div>
           )}
         </div>
       </div>

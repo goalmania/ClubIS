@@ -117,10 +117,10 @@ export default function ConvocazioniPage() {
         </div>
         <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 4, alignItems: 'flex-end' }}>
           {c.stato_risposta === 'confermato' && (
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--accent)', background: 'rgba(200,240,0,0.08)', padding: '3px 8px', border: '1px solid rgba(200,240,0,0.2)' }}>✓ CONFERMATO</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--accent)', background: 'rgba(200,240,0,0.08)', padding: '3px 8px', border: '1px solid rgba(200,240,0,0.2)', borderRadius: 14 }}>✓ CONFERMATO</span>
           )}
           {c.stato_risposta === 'indisponibile' && (
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--rosso)', background: 'rgba(255,60,60,0.08)', padding: '3px 8px', border: '1px solid rgba(255,60,60,0.2)' }}>✕ NON DISPONIBILE</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--rosso)', background: 'rgba(255,60,60,0.08)', padding: '3px 8px', border: '1px solid rgba(255,60,60,0.2)', borderRadius: 14 }}>✕ NON DISPONIBILE</span>
           )}
           {c.stato_risposta === 'in_attesa' && (
             <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--ambra)', padding: '3px 8px', border: '1px solid var(--border)' }}>In attesa</span>
@@ -148,7 +148,7 @@ export default function ConvocazioniPage() {
       </div>
 
       {future.length > 0 && (
-        <div style={{ border: '1px solid var(--border)', background: 'var(--bg-card)', marginBottom: 20 }}>
+        <div style={{ border: '1px solid var(--border)', background: 'var(--bg-card)', marginBottom: 20, borderRadius: 14 }}>
           <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border)', fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 13, color: 'var(--accent)' }}>
             Prossime partite ({future.length})
           </div>
@@ -157,7 +157,7 @@ export default function ConvocazioniPage() {
       )}
 
       {past.length > 0 && (
-        <div style={{ border: '1px solid var(--border)', background: 'var(--bg-card)' }}>
+        <div style={{ border: '1px solid var(--border)', background: 'var(--bg-card)', borderRadius: 14 }}>
           <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border)', fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 13, color: 'var(--white)' }}>
             Storico ({past.length})
           </div>

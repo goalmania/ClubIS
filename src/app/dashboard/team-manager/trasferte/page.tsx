@@ -55,7 +55,7 @@ export default async function TMTrasfertePage() {
         {(!trasferte || trasferte.length === 0) ? (
           <div style={{ padding: '50px', textAlign: 'center', color: 'var(--text-muted)', fontSize: 13 }}>Nessuna trasferta registrata</div>
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <div className="table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ background: 'var(--bg-input)' }}>
                 <th style={thStyle}>Destinazione</th>
@@ -96,7 +96,7 @@ export default async function TMTrasfertePage() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></div>
         )}
       </div>
 

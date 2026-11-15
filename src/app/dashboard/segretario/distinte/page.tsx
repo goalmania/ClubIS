@@ -133,7 +133,7 @@ export default function DistintePage() {
             Nessuna partita in calendario{categoriaTab !== 'tutti' ? ` per ${LABEL_CAT[categoriaTab]}` : ''}
           </div>
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <div className="table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ background: 'var(--bg-input)' }}>
                 <th style={th}>Data</th>
@@ -188,7 +188,7 @@ export default function DistintePage() {
                 )
               })}
             </tbody>
-          </table>
+          </table></div>
         )}
       </div>
     </div>

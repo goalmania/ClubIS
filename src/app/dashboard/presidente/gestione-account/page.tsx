@@ -325,7 +325,7 @@ export default function GestioneAccountPage() {
       {/* Header */}
       <div style={{ marginBottom: 28 }}>
         <div style={{
-          fontFamily: 'var(--font-mono)', fontSize: '0.78rem', letterSpacing: '3px',
+          fontFamily: 'var(--font-mono)', fontSize: '0.78rem', letterSpacing: '0',
           textTransform: 'none', color: 'var(--accent)',
           display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8,
         }}>

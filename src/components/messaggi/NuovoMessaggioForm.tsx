@@ -178,7 +178,7 @@ export default function NuovoMessaggioForm({ backUrl }: Props) {
         <div style={{
           border: '1px solid var(--border)', background: 'var(--bg-card)',
           padding: '20px 24px', marginBottom: 16,
-          display: 'flex', flexDirection: 'column', gap: 18,
+          display: 'flex', flexDirection: 'column', gap: 18, borderRadius: 14
         }}>
 
           {/* Tipo destinatario */}

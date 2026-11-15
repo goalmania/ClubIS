@@ -125,7 +125,7 @@ export default function CompletaProfiloPage() {
           })}
         </div>
 
-        <div className="card" style={{ padding: '28px 32px', background: 'var(--surface-2)', border: '1px solid var(--border-solid)' }}>
+        <div className="card" style={{ padding: '28px 32px', background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 14 }}>
 
           {/* Step 1 — Dati personali */}
           {step === 1 && (

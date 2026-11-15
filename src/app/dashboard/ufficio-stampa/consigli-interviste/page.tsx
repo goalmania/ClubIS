@@ -652,7 +652,7 @@ export default function ConsigliIntervistePage() {
       <div style={{ padding: '28px 32px', maxWidth: 800, animation: 'fadeIn .3s ease' }}>
         <div style={{ marginBottom: 28 }}>
           <div style={{
-            fontFamily: 'var(--font-mono)', fontSize: '0.78rem', letterSpacing: '3px',
+            fontFamily: 'var(--font-mono)', fontSize: '0.78rem', letterSpacing: '0',
             textTransform: 'none', color: 'var(--accent)',
             display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8,
           }}>
@@ -757,7 +757,7 @@ export default function ConsigliIntervistePage() {
       }}>
         <div>
           <div style={{
-            fontFamily: 'var(--font-mono)', fontSize: '0.78rem', letterSpacing: '3px',
+            fontFamily: 'var(--font-mono)', fontSize: '0.78rem', letterSpacing: '0',
             textTransform: 'none', color: 'var(--accent)',
             display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8,
           }}>

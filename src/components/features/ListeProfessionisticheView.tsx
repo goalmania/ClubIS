@@ -193,7 +193,7 @@ function ListaSection({
                 )}
                 <button
                   className="btn btn-sm"
-                  style={{ padding: '4px 10px', fontSize: 12, color: 'var(--accent-red)', border: '1px solid rgba(255,68,68,0.3)', background: 'transparent' }}
+                  style={{ padding: '4px 10px', fontSize: 12, color: 'var(--accent-red)', border: '1px solid rgba(255,68,68,0.3)', background: 'transparent', borderRadius: 14 }}
                   onClick={() => onRemove(v.id)}
                 >
                   Rimuovi

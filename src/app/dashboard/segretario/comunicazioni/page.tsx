@@ -106,7 +106,7 @@ export default function ComunicazioniPage() {
         padding: '10px 14px', marginBottom: 20,
         background: 'rgba(200,240,0,0.04)',
         border: '1px solid rgba(200,240,0,0.12)',
-        fontSize: 12, color: 'var(--grigio-4)', lineHeight: 1.6,
+        fontSize: 12, color: 'var(--grigio-4)', lineHeight: 1.6, borderRadius: 14
       }}>
         💡 Le comunicazioni vengono inviate a tutti i tesserati del gruppo selezionato con accesso a ClubIS.
         Per il canale email è necessario che i destinatari abbiano l&apos;indirizzo configurato nel profilo.
@@ -234,7 +234,7 @@ export default function ComunicazioniPage() {
             padding: '10px 14px', marginBottom: 4,
             background: 'rgba(200,240,0,0.04)',
             border: '1px solid rgba(200,240,0,0.15)',
-            fontSize: 12, color: 'var(--grigio-4)',
+            fontSize: 12, color: 'var(--grigio-4)', borderRadius: 14
           }}>
             📣 Invierai a: <strong style={{ color: 'var(--white)' }}>
               {GRUPPI_DEST.find(g => g.value === form.destinatari_gruppo)?.label}

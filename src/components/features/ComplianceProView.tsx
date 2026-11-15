@@ -91,7 +91,7 @@ function Countdown({ scadenze }: { scadenze: Scadenza[] }) {
   const color = giorni <= 2 ? '#ff4444' : giorni <= 7 ? '#ffd600' : 'var(--accent)'
 
   return (
-    <div style={{ padding: '20px 24px', background: 'var(--grigio-7)', border: '1px solid var(--grigio-5)', marginBottom: 24, display: 'flex', gap: 24, alignItems: 'center' }}>
+    <div style={{ padding: '20px 24px', background: 'var(--grigio-7)', border: '1px solid var(--grigio-5)', marginBottom: 24, display: 'flex', gap: 24, alignItems: 'center', borderRadius: 14 }}>
       <div style={{ textAlign: 'center', minWidth: 70 }}>
         <div style={{ fontFamily: 'var(--font-mono)', fontSize: 36, fontWeight: 700, color, lineHeight: 1 }}>{giorni}</div>
         <div style={{ fontFamily: 'var(--font-display)', fontSize: 11, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-3)', marginTop: 4 }}>giorni</div>
@@ -191,7 +191,7 @@ function ScadenzaCard({
                 value={nota}
                 onChange={e => setNota(e.target.value)}
                 rows={2}
-                style={{ width: '100%', padding: '6px 10px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', resize: 'none', fontFamily: 'inherit', fontSize: 12 }}
+                style={{ width: '100%', padding: '6px 10px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', resize: 'none', fontFamily: 'inherit', fontSize: 12, borderRadius: 14 }}
               />
             </div>
             <div>
@@ -201,7 +201,7 @@ function ScadenzaCard({
                 value={importo}
                 onChange={e => setImporto(e.target.value)}
                 placeholder="Facoltativo"
-                style={{ width: '100%', padding: '6px 10px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', fontSize: 12 }}
+                style={{ width: '100%', padding: '6px 10px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', fontSize: 12, borderRadius: 14 }}
               />
             </div>
           </div>
@@ -216,20 +216,20 @@ function ScadenzaCard({
             {s.stato !== 'completata' && (
               <button
                 onClick={() => onComplete(s.id, nota)}
-                style={{ padding: '6px 16px', background: 'rgba(76,255,136,0.1)', border: '1px solid rgba(76,255,136,0.3)', color: '#4cff88', cursor: 'pointer', fontSize: 12, fontFamily: 'var(--font-display)', textTransform: 'none', letterSpacing: '0' }}
+                style={{ padding: '6px 16px', background: 'rgba(76,255,136,0.1)', border: '1px solid rgba(76,255,136,0.3)', color: '#4cff88', cursor: 'pointer', fontSize: 12, fontFamily: 'var(--font-display)', textTransform: 'none', letterSpacing: '0', borderRadius: 14 }}
               >
                 ✓ Segna come completata
               </button>
             )}
             <button
               onClick={() => onUpdate(s.id, { note: nota, importo_coinvolto: importo ? Number(importo) : null } as any)}
-              style={{ padding: '6px 16px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', cursor: 'pointer', fontSize: 12 }}
+              style={{ padding: '6px 16px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', cursor: 'pointer', fontSize: 12, borderRadius: 14 }}
             >
               Salva note
             </button>
             <button
               onClick={() => onDelete(s.id)}
-              style={{ padding: '6px 14px', background: 'rgba(255,68,68,0.08)', border: '1px solid rgba(255,68,68,0.2)', color: '#f66', cursor: 'pointer', fontSize: 12 }}
+              style={{ padding: '6px 14px', background: 'rgba(255,68,68,0.08)', border: '1px solid rgba(255,68,68,0.2)', color: '#f66', cursor: 'pointer', fontSize: 12, borderRadius: 14 }}
             >
               Elimina
             </button>
@@ -364,7 +364,7 @@ export default function ComplianceProView() {
           { label: 'Urgenti (≤7gg)', v: urgenti, color: '#ffd600' },
           { label: 'Scadute', v: scadute, color: '#ff4444' },
         ].map(({ label, v, color }) => (
-          <div key={label} style={{ padding: '14px 18px', background: 'var(--grigio-7)', border: '1px solid var(--grigio-5)' }}>
+          <div key={label} style={{ padding: '14px 18px', background: 'var(--grigio-7)', border: '1px solid var(--grigio-5)', borderRadius: 14 }}>
             <div style={{ fontFamily: 'var(--font-display)', fontSize: 12, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-3)', marginBottom: 6 }}>{label}</div>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 24, fontWeight: 700, color }}>{v}</div>
           </div>
@@ -374,18 +374,18 @@ export default function ComplianceProView() {
       {/* Toolbar */}
       <div style={{ display: 'flex', gap: 10, marginBottom: 20, flexWrap: 'wrap', alignItems: 'center' }}>
         {/* Stagione */}
-        <select value={stagione} onChange={e => setStagione(e.target.value)} style={{ padding: '7px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', fontSize: 12 }}>
+        <select value={stagione} onChange={e => setStagione(e.target.value)} style={{ padding: '7px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', fontSize: 12, borderRadius: 14 }}>
           {STAGIONI.map(s => <option key={s} value={s}>{s}</option>)}
         </select>
 
         {/* Filtro categoria */}
-        <select value={filtroCateg} onChange={e => setFiltroCateg(e.target.value)} style={{ padding: '7px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', fontSize: 12 }}>
+        <select value={filtroCateg} onChange={e => setFiltroCateg(e.target.value)} style={{ padding: '7px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', fontSize: 12, borderRadius: 14 }}>
           <option value="TUTTE">Tutte le categorie</option>
           {categorie.map(c => <option key={c} value={c}>{c}</option>)}
         </select>
 
         {/* Filtro stato */}
-        <select value={filtroStato} onChange={e => setFiltroStato(e.target.value)} style={{ padding: '7px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', fontSize: 12 }}>
+        <select value={filtroStato} onChange={e => setFiltroStato(e.target.value)} style={{ padding: '7px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', fontSize: 12, borderRadius: 14 }}>
           <option value="TUTTE">Tutti gli stati</option>
           <option value="DA_FARE">Da completare</option>
           <option value="URGENTI">Urgenti (≤7gg)</option>
@@ -396,7 +396,7 @@ export default function ComplianceProView() {
           <button
             onClick={seed}
             disabled={seeding}
-            style={{ padding: '7px 16px', background: 'rgba(200,240,0,0.08)', border: '1px solid rgba(200,240,0,0.2)', color: 'var(--accent)', cursor: seeding ? 'not-allowed' : 'pointer', fontSize: 12, fontFamily: 'var(--font-display)', textTransform: 'none', letterSpacing: '0', opacity: seeding ? 0.6 : 1 }}
+            style={{ padding: '7px 16px', background: 'rgba(200,240,0,0.08)', border: '1px solid rgba(200,240,0,0.2)', color: 'var(--accent)', cursor: seeding ? 'not-allowed' : 'pointer', fontSize: 12, fontFamily: 'var(--font-display)', textTransform: 'none', letterSpacing: '0', opacity: seeding ? 0.6 : 1, borderRadius: 14 }}
           >
             {seeding ? 'Caricamento…' : `⟳ Carica standard ${stagione}`}
           </button>

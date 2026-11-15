@@ -206,7 +206,7 @@ export default function ScontiPage() {
             </button>
           </div>
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <div className="table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid var(--border)' }}>
                 {['Nome', 'Tipo', 'Valore', 'Stato', 'Azioni'].map(h => (
@@ -235,7 +235,7 @@ export default function ScontiPage() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></div>
         )}
       </div>
 
@@ -317,7 +317,7 @@ export default function ScontiPage() {
               Totale risparmiato: €{totaleRisparmiato.toFixed(2)}
             </div>
           </div>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <div className="table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid var(--border)' }}>
                 {['Famiglia / Giocatore', 'Piano', 'Sconto applicato', 'Importo risparmiato'].map(h => (
@@ -340,7 +340,7 @@ export default function ScontiPage() {
                 )
               })}
             </tbody>
-          </table>
+          </table></div>
         </div>
       )}
 

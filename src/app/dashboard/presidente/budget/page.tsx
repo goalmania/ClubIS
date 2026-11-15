@@ -389,7 +389,7 @@ export default function BudgetPage() {
             Modifica budget → salva con TAB o clic fuori
           </span>
         </div>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <div className="table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ borderBottom: '1px solid var(--grigio-5)' }}>
               {['Categoria', 'Budget Annuo', 'Speso YTD', 'Avanzamento', 'Residuo'].map(h => (
@@ -463,7 +463,7 @@ export default function BudgetPage() {
               <td style={{ padding: '11px 16px', fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 700, color: residuo < 0 ? 'var(--rosso)' : 'var(--verde)' }}>{fmt(residuo)}</td>
             </tr>
           </tfoot>
-        </table>
+        </table></div>
       </div>
 
       {/* Tabella entrate con editing */}
@@ -476,7 +476,7 @@ export default function BudgetPage() {
             {fmt(totBudgetEntrate)}
           </span>
         </div>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <div className="table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ borderBottom: '1px solid var(--grigio-5)' }}>
               {['Categoria', 'Budget Annuo', 'Incassato YTD', 'Da Incassare'].map(h => (
@@ -522,7 +522,7 @@ export default function BudgetPage() {
               )
             })}
           </tbody>
-        </table>
+        </table></div>
       </div>
 
       {/* ── Fair Play Finanziario ─────────────────────────────────── */}

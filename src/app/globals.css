@@ -1,4 +1,24 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+/* Font locali (niente richieste a Google): Inter variabile con asse ottico,
+   i titoli grandi prendono da soli il taglio "Display".
+   "ClubIS Icone": le emoji diventano icone a linea nel colore del testo. */
+@font-face {
+  font-family: 'ClubIS Icone';
+  src: url('/fonts/clubis-icone.woff2') format('woff2');
+  font-display: block;
+  unicode-range: U+200D,U+203C,U+2139,U+2197,U+2198,U+21AA,U+231A,U+231B,U+2328,U+23ED,U+23F0,U+23F1,U+23F2,U+23F3,U+23F8,U+23F9,U+25B6,U+2600,U+2601,U+2602,U+260E,U+2611,U+2612,U+265F,U+2691,U+2695,U+2696,U+2699,U+26A0,U+26A1,U+26BD,U+26C5,U+26D4,U+26FD,U+2705,U+2708,U+2709,U+270B,U+270D,U+270F,U+2714,U+2716,U+2728,U+2744,U+274C,U+274E,U+2753,U+2754,U+2757,U+2764,U+2795,U+2796,U+27A1,U+2B05,U+2B06,U+2B07,U+2B50,U+FE0E,U+FE0F,U+1F0CF,U+1F17F,U+1F195,U+1F197,U+1F30D,U+1F30E,U+1F30F,U+1F310,U+1F319,U+1F31F,U+1F321,U+1F327,U+1F331,U+1F333,U+1F34E,U+1F374,U+1F37D,U+1F381,U+1F389,U+1F38A,U+1F392,U+1F393,U+1F396,U+1F399,U+1F39E,U+1F39F,U+1F3A4,U+1F3A5,U+1F3A7,U+1F3A8,U+1F3AB,U+1F3AC,U+1F3AD,U+1F3AE,U+1F3AF,U+1F3B2,U+1F3B5,U+1F3B6,U+1F3BD,U+1F3C1,U+1F3C3,U+1F3C5,U+1F3C6,U+1F3CB,U+1F3D6,U+1F3D7,U+1F3DB,U+1F3DF,U+1F3E0,U+1F3E1,U+1F3E2,U+1F3E5,U+1F3E6,U+1F3E8,U+1F3EB,U+1F3EE,U+1F3F4,U+1F3F7,U+1F440,U+1F441,U+1F446,U+1F447,U+1F448,U+1F449,U+1F44B,U+1F44D,U+1F44E,U+1F44F,U+1F451,U+1F454,U+1F455,U+1F45F,U+1F464,U+1F465,U+1F466,U+1F467,U+1F468,U+1F469,U+1F476,U+1F489,U+1F48A,U+1F48E,U+1F499,U+1F49A,U+1F49B,U+1F4A1,U+1F4A4,U+1F4A7,U+1F4AA,U+1F4AC,U+1F4B0,U+1F4B3,U+1F4B5,U+1F4B6,U+1F4B7,U+1F4B8,U+1F4B9,U+1F4BB,U+1F4BC,U+1F4BE,U+1F4C1,U+1F4C2,U+1F4C3,U+1F4C4,U+1F4C5,U+1F4C6,U+1F4C8,U+1F4C9,U+1F4CA,U+1F4CB,U+1F4CC,U+1F4CD,U+1F4CE,U+1F4CF,U+1F4D0,U+1F4D2,U+1F4D3,U+1F4D4,U+1F4D5,U+1F4D6,U+1F4D7,U+1F4D8,U+1F4D9,U+1F4DA,U+1F4DD,U+1F4DE,U+1F4E1,U+1F4E2,U+1F4E3,U+1F4E4,U+1F4E5,U+1F4E6,U+1F4E7,U+1F4E8,U+1F4E9,U+1F4EC,U+1F4F0,U+1F4F1,U+1F4F2,U+1F4F6,U+1F4F7,U+1F4F8,U+1F4F9,U+1F4FA,U+1F4FB,U+1F4FD,U+1F500,U+1F501,U+1F502,U+1F503,U+1F504,U+1F507,U+1F50A,U+1F50B,U+1F50C,U+1F50D,U+1F50E,U+1F510,U+1F511,U+1F512,U+1F513,U+1F514,U+1F515,U+1F516,U+1F517,U+1F51C,U+1F525,U+1F527,U+1F528,U+1F52C,U+1F52D,U+1F53A,U+1F53B,U+1F550,U+1F552,U+1F553,U+1F587,U+1F58A,U+1F58B,U+1F5A4,U+1F5A5,U+1F5A8,U+1F5B1,U+1F5BC,U+1F5C2,U+1F5C4,U+1F5D1,U+1F5D2,U+1F5D3,U+1F5DD,U+1F5DE,U+1F5E8,U+1F5FA,U+1F624,U+1F64F,U+1F680,U+1F684,U+1F686,U+1F68C,U+1F690,U+1F691,U+1F697,U+1F699,U+1F6A7,U+1F6A9,U+1F6AA,U+1F6AB,U+1F6B9,U+1F6BA,U+1F6BF,U+1F6CD,U+1F6CF,U+1F6D2,U+1F6E0,U+1F6E1,U+1F6EB,U+1F90D,U+1F916,U+1F91A,U+1F91D,U+1F947,U+1F948,U+1F949,U+1F9B5,U+1F9B6,U+1F9CA,U+1F9D1,U+1F9D2,U+1F9E0,U+1F9E2,U+1F9E9,U+1F9EA,U+1F9ED,U+1F9EE,U+1F9F3,U+1F9F9,U+1F9FC,U+1F9FE,U+1FA79,U+1FA7A,U+1FA91,U+1FA99,U+1FAAA;
+}
+@font-face {
+  font-family: 'Inter ClubIS';
+  src: url('/fonts/inter-latin.woff2') format('woff2-variations'), url('/fonts/inter-latin.woff2') format('woff2');
+  font-weight: 100 900; font-style: normal; font-display: swap;
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face {
+  font-family: 'Inter ClubIS';
+  src: url('/fonts/inter-latin-ext.woff2') format('woff2-variations'), url('/fonts/inter-latin-ext.woff2') format('woff2');
+  font-weight: 100 900; font-style: normal; font-display: swap;
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
 
 @tailwind base;
 @tailwind components;
@@ -19,17 +39,17 @@
   --accent: #c8f000;
   --accent2: #00c8a0;
   --gray: #9a9a9f;
-  --gray-light: #161618;
-  --gray-mid: #232326;
+  --gray-light: rgba(255,255,255,0.055);
+  --gray-mid: rgba(120,120,128,0.22);
   --border: rgba(255,255,255,0.07);
   --border-solid: #2a2a2e;
 
   /* Superfici a strati */
   --surface-0: #0a0a0a;   /* sfondo app */
-  --surface-1: #111113;   /* menu laterale */
-  --surface-2: #161618;   /* card */
-  --surface-3: #232326;   /* campi, card dentro card */
-  --surface-4: #2c2c30;   /* hover / selezionato */
+  --surface-1: rgba(17,17,19,0.72);   /* menu laterale */
+  --surface-2: rgba(255,255,255,0.055);   /* card */
+  --surface-3: rgba(120,120,128,0.22);   /* campi, card dentro card */
+  --surface-4: rgba(120,120,128,0.34);   /* hover / selezionato */
   --separator: rgba(255,255,255,0.06);
   --text-tertiary: #6e6e73;
   --label: #c7c7cc;
@@ -76,10 +96,10 @@
   /* Font: una sola famiglia (SF su Apple, Inter altrove).
      display e mono puntano allo stesso stack: così i ~1.300 stili inline
      che usano var(--font-display)/var(--font-mono) passano al nuovo look. */
-  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
-  --font-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'ClubIS Icone', 'Inter ClubIS', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto, sans-serif;
+  --font-display: var(--font-sans);
   --font-mono: var(--font-sans);
-  --font-code: ui-monospace, 'SF Mono', Menlo, monospace;
+  --font-code: 'ClubIS Icone', ui-monospace, 'SF Mono', Menlo, monospace;
   --font-body: var(--font-sans);
 
   /* Forme */
@@ -106,7 +126,7 @@ body {
   color: var(--white);
   line-height: 1.5;
   letter-spacing: -0.005em;
-  font-feature-settings: 'cv11', 'ss01';
+  font-optical-sizing: auto;
 }
 
 h1, h2, h3 { letter-spacing: -0.02em; }
@@ -296,7 +316,7 @@ tbody tr:last-child td { border-bottom: none; }
   overflow: hidden;
   transition: background 0.2s var(--ease), transform 0.2s var(--ease);
 }
-.stat-card:hover { background: #1a1a1d; }
+.stat-card:hover { background: rgba(255,255,255,0.08); }
 
 .stat-label {
   font-family: var(--font-sans);
@@ -465,7 +485,7 @@ tbody tr:last-child td { border-bottom: none; }
   cursor: pointer;
   transition: background 0.2s var(--ease), transform 0.2s var(--ease);
 }
-.card-clickable:hover { background: #1a1a1d !important; }
+.card-clickable:hover { background: rgba(255,255,255,0.085) !important; }
 .card-clickable:active { transform: scale(0.99); }
 
 /* ── ARROW LINKS ("Gestisci →") ── */
@@ -886,4 +906,157 @@ tbody tr:last-child td { border-bottom: none; }
 @media (max-width: 860px) {
   .fc .fc-toolbar { flex-wrap: wrap; gap: 8px; }
   .fc .fc-toolbar-title { font-size: 1.15rem; }
+}
+
+/* ── MOBILE: adattamento automatico degli stili scritti dentro le pagine ──
+   Le pagine usano griglie inline (style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}).
+   Il selettore sull'attributo style le riconosce sia nel markup del server
+   ("grid-template-columns:repeat(4, 1fr)") sia in quello del client (con lo spazio). */
+@media (max-width: 860px) {
+  .dashboard-content [style*="grid-template-columns"][style*="repeat(4,"],
+  .dashboard-content [style*="grid-template-columns"][style*="repeat(5,"],
+  .dashboard-content [style*="grid-template-columns"][style*="repeat(6,"],
+  .dashboard-content [style*="grid-template-columns"][style*="1fr 1fr 1fr 1fr"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+  /* Colonna laterale fissa (es. "1fr 320px", "260px 1fr") → una colonna sola */
+  .dashboard-content [style*="grid-template-columns"][style*="1fr 2"]:not([style*="repeat"]),
+  .dashboard-content [style*="grid-template-columns"][style*="1fr 3"]:not([style*="repeat"]),
+  .dashboard-content [style*="grid-template-columns"][style*="columns: 2"]:not([style*="repeat"]),
+  .dashboard-content [style*="grid-template-columns"][style*="columns:2"]:not([style*="repeat"]),
+  .dashboard-content [style*="grid-template-columns"][style*="columns: 3"]:not([style*="repeat"]),
+  .dashboard-content [style*="grid-template-columns"][style*="columns:3"]:not([style*="repeat"]),
+  .dashboard-content [style*="grid-template-columns"][style*="2fr 1fr"],
+  .dashboard-content [style*="grid-template-columns"][style*="3fr 1fr"],
+  .dashboard-content [style*="grid-template-columns"][style*="1fr 2fr"] {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  .dashboard-content .page-header h1 { font-size: 24px !important; }
+  .dashboard-content .page-header-actions { width: 100%; }
+  .dashboard-content .page-header-actions > * { flex: 1 1 auto; justify-content: center; }
+
+  /* Tabelle con tante colonne: scorrono in orizzontale invece di schiacciarsi */
+  .table-wrap > table:has(th:nth-child(4)),
+  .table-wrap > table:has(td:nth-child(4)) { min-width: 600px; }
+
+  /* Pannelli laterali/modali scritti a larghezza fissa */
+  .dashboard-content [style*="width: 4"][style*="height: 100%"],
+  .dashboard-content [style*="width:4"][style*="height:100%"] { width: 100% !important; max-width: 100vw; }
+
+  /* Immagini e media non escono mai dallo schermo */
+  .dashboard-content img, .dashboard-content video, .dashboard-content canvas, .dashboard-content svg { max-width: 100%; }
+}
+
+@media (max-width: 560px) {
+  /* Righe di modulo affiancate → una sotto l'altra quando contengono campi */
+  .dashboard-content [style*="grid-template-columns"][style*="1fr 1fr"]:has(input, select, textarea),
+  .dashboard-content [style*="grid-template-columns"][style*="repeat(2,"]:has(input, select, textarea),
+  .dashboard-content [style*="grid-template-columns"][style*="repeat(3,"]:has(input, select, textarea) {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+  .dashboard-content [style*="grid-template-columns"][style*="repeat(3,"]:not(:has(input, select, textarea)),
+  .dashboard-content [style*="grid-template-columns"][style*="1fr 1fr 1fr"]:not(:has(input, select, textarea)) {
+    gap: 8px !important;
+  }
+  /* Card con molto padding: meno spazio sprecato ai lati */
+  .dashboard-content .card { padding-left: 16px !important; padding-right: 16px !important; }
+}
+@media (max-width: 860px) {
+  /* Griglie portate a 2 colonne: se gli elementi sono dispari l'ultimo prende tutta la riga */
+  .dashboard-content [style*="grid-template-columns"][style*="repeat(5,"] > :last-child:nth-child(odd),
+  .dashboard-content [style*="grid-template-columns"][style*="repeat(6,"] > :last-child:nth-child(odd),
+  .dashboard-content [style*="grid-template-columns"][style*="repeat(4,"] > :last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ═══ VETRO (stile Apple) ═══
+   Le superfici sono traslucide su uno sfondo con due luci soffuse di marca.
+   La sfocatura vera (costosa) solo sugli strati che galleggiano sopra i contenuti:
+   barra in alto, menu, barra in basso, finestre, menu a tendina, elementi fissi. */
+body { background: var(--black); }
+body::before {
+  content: '';
+  position: fixed;
+  inset: -10vh -10vw;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(42vw 42vw at 8% 0%, rgba(200,240,0,0.075), transparent 70%),
+    radial-gradient(46vw 46vw at 100% 100%, rgba(0,200,160,0.065), transparent 70%),
+    radial-gradient(30vw 30vw at 70% 20%, rgba(255,255,255,0.025), transparent 70%);
+}
+.card, .stat-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.04));
+  border: 1px solid rgba(255,255,255,0.075);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 8px 24px rgba(0,0,0,0.18);
+}
+/* Riquadri inline con lo sfondo "card": stesso bordo luminoso del vetro */
+.dashboard-content [style*="background: var(--bg-card)"],
+.dashboard-content [style*="background:var(--bg-card)"],
+.dashboard-content [style*="background: var(--surface-2)"],
+.dashboard-content [style*="background:var(--surface-2)"] {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+}
+.sidebar-shell {
+  -webkit-backdrop-filter: saturate(180%) blur(30px);
+  backdrop-filter: saturate(180%) blur(30px);
+  border-right: 1px solid rgba(255,255,255,0.06);
+}
+/* Barra in alto: la sfocatura sta su uno pseudo-elemento, così la barra
+   non diventa il riferimento dei figli position:fixed (⌘K, notifiche). */
+.dashboard-topbar { background: transparent !important; isolation: isolate; }
+.dashboard-topbar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: rgba(10,10,10,0.62);
+  -webkit-backdrop-filter: saturate(180%) blur(24px);
+  backdrop-filter: saturate(180%) blur(24px);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+/* Menu a tendina, popover ed elementi fissi/appiccicosi scritti inline */
+.dashboard-content [style*="position: absolute"][style*="var(--surface-"],
+.dashboard-content [style*="position:absolute"][style*="var(--surface-"],
+.dashboard-content [style*="position: absolute"][style*="var(--bg-card"],
+.dashboard-content [style*="position:absolute"][style*="var(--bg-card"],
+.dashboard-content [style*="position: fixed"][style*="var(--surface-"],
+.dashboard-content [style*="position:fixed"][style*="var(--surface-"],
+.dashboard-content [style*="position: fixed"][style*="var(--bg-card"],
+.dashboard-content [style*="position:fixed"][style*="var(--bg-card"],
+.dashboard-content [style*="position: sticky"][style*="var(--surface-"],
+.dashboard-content [style*="position:sticky"][style*="var(--surface-"],
+.dashboard-content [style*="position: sticky"][style*="var(--bg-card"],
+.dashboard-content [style*="position:sticky"][style*="var(--bg-card"] {
+  background: rgba(30,30,33,0.84) !important;
+  -webkit-backdrop-filter: saturate(180%) blur(28px);
+  backdrop-filter: saturate(180%) blur(28px);
+}
+/* Pannelli laterali a tutta altezza scritti inline (messaggi, fornitori…) */
+.dashboard-content [style*="height: 100%"][style*="var(--surface-2)"][style*="border-left"] {
+  background: rgba(24,24,27,0.9) !important;
+  -webkit-backdrop-filter: saturate(180%) blur(30px);
+  backdrop-filter: saturate(180%) blur(30px);
+}
+thead th { background: rgba(255,255,255,0.03); }
+select option { background: #1c1c1e; color: var(--white); }
+
+/* Numeri: cifre a larghezza fissa (le colonne si allineano), taglio display
+   e spaziatura stretta sui numeri grandi, come nelle app Apple. */
+.dashboard-content [style*="font-display"],
+.stat-card, table, .badge { font-variant-numeric: tabular-nums; }
+.dashboard-content [style*="font-display"][style*="font-size: 2"],
+.dashboard-content [style*="font-display"][style*="font-size:2"],
+.dashboard-content [style*="font-display"][style*="font-size: 3"],
+.dashboard-content [style*="font-display"][style*="font-size:3"],
+.dashboard-content [style*="font-display"][style*="font-size: 4"],
+.dashboard-content [style*="font-display"][style*="font-size:4"] {
+  letter-spacing: -0.035em !important;
+  font-weight: 650 !important;
+}
+
+@media (max-width: 860px) {
+  .sidebar-shell { background: rgba(17,17,19,0.9) !important; }
+  body::before { inset: 0; }
 }

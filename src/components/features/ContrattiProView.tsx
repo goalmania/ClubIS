@@ -109,25 +109,25 @@ function PremioRow({
         value={premio.tipo}
         onChange={e => onChange(idx, 'tipo', e.target.value)}
         placeholder="Tipo (es. gol)"
-        style={{ padding: '6px 10px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', fontSize: 12 }}
+        style={{ padding: '6px 10px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', fontSize: 12, borderRadius: 14 }}
       />
       <input
         type="number"
         value={premio.importo}
         onChange={e => onChange(idx, 'importo', e.target.value)}
         placeholder="Importo €"
-        style={{ padding: '6px 10px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', fontSize: 12 }}
+        style={{ padding: '6px 10px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', fontSize: 12, borderRadius: 14 }}
       />
       <input
         value={premio.condizione}
         onChange={e => onChange(idx, 'condizione', e.target.value)}
         placeholder="Condizione (es. per ogni gol segnato)"
-        style={{ padding: '6px 10px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', fontSize: 12 }}
+        style={{ padding: '6px 10px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', fontSize: 12, borderRadius: 14 }}
       />
       <button
         type="button"
         onClick={() => onRemove(idx)}
-        style={{ padding: '6px 10px', background: 'rgba(255,80,80,0.1)', border: '1px solid rgba(255,80,80,0.3)', color: '#f66', cursor: 'pointer', fontSize: 12 }}
+        style={{ padding: '6px 10px', background: 'rgba(255,80,80,0.1)', border: '1px solid rgba(255,80,80,0.3)', color: '#f66', cursor: 'pointer', fontSize: 12, borderRadius: 14 }}
       >
         ✕
       </button>
@@ -331,7 +331,7 @@ export default function ContrattiProView({ clubId, ruolo }: { clubId: string; ru
           { label: 'Da depositare', v: contratti.filter(c => c.stato_deposito === 'da_depositare').length },
           { label: 'Scaduti', v: scaduti.length },
         ].map(({ label, v }) => (
-          <div key={label} style={{ flex: 1, padding: '14px 18px', background: 'var(--grigio-7)', border: '1px solid var(--grigio-5)' }}>
+          <div key={label} style={{ flex: 1, padding: '14px 18px', background: 'var(--grigio-7)', border: '1px solid var(--grigio-5)', borderRadius: 14 }}>
             <div style={{ fontFamily: 'var(--font-display)', fontSize: 12, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-3)', marginBottom: 6 }}>{label}</div>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 22, fontWeight: 700, color: 'var(--white)' }}>{v}</div>
           </div>
@@ -344,7 +344,7 @@ export default function ContrattiProView({ clubId, ruolo }: { clubId: string; ru
           Nessun contratto professionista registrato
         </div>
       ) : (
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <div className="table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ borderBottom: '1px solid var(--grigio-5)' }}>
               {['Tesserato', 'Tipo', 'Retribuzione lorda', 'Scadenza', 'Stato', ''].map(h => (
@@ -391,19 +391,19 @@ export default function ContrattiProView({ clubId, ruolo }: { clubId: string; ru
                         } catch { setToast({ msg: 'Errore generazione PDF', tipo: 'error' }) }
                       }}
                       title="Genera PDF"
-                      style={{ padding: '4px 10px', background: 'rgba(200,240,0,0.08)', border: '1px solid rgba(200,240,0,0.2)', color: 'var(--accent)', cursor: 'pointer', fontSize: 12 }}
+                      style={{ padding: '4px 10px', background: 'rgba(200,240,0,0.08)', border: '1px solid rgba(200,240,0,0.2)', color: 'var(--accent)', cursor: 'pointer', fontSize: 12, borderRadius: 14 }}
                     >
                       PDF
                     </button>
                     <button
                       onClick={() => openEdit(c)}
-                      style={{ padding: '4px 10px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', cursor: 'pointer', fontSize: 12 }}
+                      style={{ padding: '4px 10px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', cursor: 'pointer', fontSize: 12, borderRadius: 14 }}
                     >
                       Modifica
                     </button>
                     <button
                       onClick={() => elimina(c.id)}
-                      style={{ padding: '4px 10px', background: 'rgba(255,80,80,0.08)', border: '1px solid rgba(255,80,80,0.2)', color: '#f66', cursor: 'pointer', fontSize: 12 }}
+                      style={{ padding: '4px 10px', background: 'rgba(255,80,80,0.08)', border: '1px solid rgba(255,80,80,0.2)', color: '#f66', cursor: 'pointer', fontSize: 12, borderRadius: 14 }}
                     >
                       Elimina
                     </button>
@@ -412,7 +412,7 @@ export default function ContrattiProView({ clubId, ruolo }: { clubId: string; ru
               )
             })}
           </tbody>
-        </table>
+        </table></div>
       )}
 
       {/* Drawer form */}
@@ -427,7 +427,7 @@ export default function ContrattiProView({ clubId, ruolo }: { clubId: string; ru
               <select
                 value={form.tesserato_id}
                 onChange={e => selectPersona(e.target.value)}
-                style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)' }}
+                style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', borderRadius: 14 }}
               >
                 <option value="">— seleziona giocatore —</option>
                 {persone.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
@@ -436,15 +436,15 @@ export default function ContrattiProView({ clubId, ruolo }: { clubId: string; ru
           </FormGrid>
           <FormGrid cols={2}>
             <FormField label="Cognome *">
-              <input value={form.cognome_tesserato} onChange={e => setF('cognome_tesserato', e.target.value)} placeholder="Cognome" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)' }} />
+              <input value={form.cognome_tesserato} onChange={e => setF('cognome_tesserato', e.target.value)} placeholder="Cognome" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', borderRadius: 14 }} />
             </FormField>
             <FormField label="Nome *">
-              <input value={form.nome_tesserato} onChange={e => setF('nome_tesserato', e.target.value)} placeholder="Nome" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)' }} />
+              <input value={form.nome_tesserato} onChange={e => setF('nome_tesserato', e.target.value)} placeholder="Nome" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', borderRadius: 14 }} />
             </FormField>
           </FormGrid>
           <FormGrid cols={1}>
             <FormField label="Tipo lavoratore">
-              <select value={form.tipo_lavoratore} onChange={e => setF('tipo_lavoratore', e.target.value)} style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)' }}>
+              <select value={form.tipo_lavoratore} onChange={e => setF('tipo_lavoratore', e.target.value)} style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', borderRadius: 14 }}>
                 {TIPI_LAVORATORE.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
               </select>
             </FormField>
@@ -454,23 +454,23 @@ export default function ContrattiProView({ clubId, ruolo }: { clubId: string; ru
         <FormSection title="Dati anagrafici ufficiali tesserato">
           <FormGrid cols={2}>
             <FormField label="Codice fiscale">
-              <input value={form.cf_tesserato} onChange={e => setF('cf_tesserato', e.target.value)} placeholder="RSSMRC80A01H501U" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)' }} />
+              <input value={form.cf_tesserato} onChange={e => setF('cf_tesserato', e.target.value)} placeholder="RSSMRC80A01H501U" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', borderRadius: 14 }} />
             </FormField>
             <FormField label="Matricola FIGC">
-              <input value={form.matricola_tesserato} onChange={e => setF('matricola_tesserato', e.target.value)} placeholder="Matricola federale" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)' }} />
+              <input value={form.matricola_tesserato} onChange={e => setF('matricola_tesserato', e.target.value)} placeholder="Matricola federale" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', borderRadius: 14 }} />
             </FormField>
           </FormGrid>
           <FormGrid cols={2}>
             <FormField label="Data di nascita">
-              <input value={form.data_nascita_tesserato} onChange={e => setF('data_nascita_tesserato', e.target.value)} placeholder="gg/mm/aaaa" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)' }} />
+              <input value={form.data_nascita_tesserato} onChange={e => setF('data_nascita_tesserato', e.target.value)} placeholder="gg/mm/aaaa" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', borderRadius: 14 }} />
             </FormField>
             <FormField label="Luogo di nascita">
-              <input value={form.luogo_nascita_tesserato} onChange={e => setF('luogo_nascita_tesserato', e.target.value)} placeholder="Città (Provincia)" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)' }} />
+              <input value={form.luogo_nascita_tesserato} onChange={e => setF('luogo_nascita_tesserato', e.target.value)} placeholder="Città (Provincia)" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', borderRadius: 14 }} />
             </FormField>
           </FormGrid>
           <FormGrid cols={1}>
             <FormField label="Domicilio">
-              <input value={form.domicilio_tesserato} onChange={e => setF('domicilio_tesserato', e.target.value)} placeholder="Via, n° — Città (Provincia) CAP" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)' }} />
+              <input value={form.domicilio_tesserato} onChange={e => setF('domicilio_tesserato', e.target.value)} placeholder="Via, n° — Città (Provincia) CAP" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', borderRadius: 14 }} />
             </FormField>
           </FormGrid>
         </FormSection>
@@ -478,10 +478,10 @@ export default function ContrattiProView({ clubId, ruolo }: { clubId: string; ru
         <FormSection title="Rappresentante legale Società">
           <FormGrid cols={2}>
             <FormField label="Nome rappresentante legale">
-              <input value={form.rappresentante_legale} onChange={e => setF('rappresentante_legale', e.target.value)} placeholder="Cognome e nome" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)' }} />
+              <input value={form.rappresentante_legale} onChange={e => setF('rappresentante_legale', e.target.value)} placeholder="Cognome e nome" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', borderRadius: 14 }} />
             </FormField>
             <FormField label="Qualifica">
-              <input value={form.qualifica_rappresentante} onChange={e => setF('qualifica_rappresentante', e.target.value)} placeholder="es. Presidente / Amministratore Delegato" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)' }} />
+              <input value={form.qualifica_rappresentante} onChange={e => setF('qualifica_rappresentante', e.target.value)} placeholder="es. Presidente / Amministratore Delegato" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', borderRadius: 14 }} />
             </FormField>
           </FormGrid>
         </FormSection>
@@ -490,23 +490,23 @@ export default function ContrattiProView({ clubId, ruolo }: { clubId: string; ru
           <div style={{ marginBottom: 10, fontSize: 12, color: 'var(--grigio-3)' }}>Lascia vuoto se nessuna delle parti si è avvalsa di un agente.</div>
           <FormGrid cols={2}>
             <FormField label="Agente del calciatore (nome)">
-              <input value={form.agente_calciatore_nome} onChange={e => setF('agente_calciatore_nome', e.target.value)} placeholder="Cognome e nome agente" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)' }} />
+              <input value={form.agente_calciatore_nome} onChange={e => setF('agente_calciatore_nome', e.target.value)} placeholder="Cognome e nome agente" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', borderRadius: 14 }} />
             </FormField>
             <FormField label="N. registro nazionale agente calciatore">
-              <input value={form.agente_calciatore_reg} onChange={e => setF('agente_calciatore_reg', e.target.value)} placeholder="es. 12345" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)' }} />
+              <input value={form.agente_calciatore_reg} onChange={e => setF('agente_calciatore_reg', e.target.value)} placeholder="es. 12345" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', borderRadius: 14 }} />
             </FormField>
           </FormGrid>
           <FormGrid cols={2}>
             <FormField label="Agente della Società (nome)">
-              <input value={form.agente_societa_nome} onChange={e => setF('agente_societa_nome', e.target.value)} placeholder="Cognome e nome agente" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)' }} />
+              <input value={form.agente_societa_nome} onChange={e => setF('agente_societa_nome', e.target.value)} placeholder="Cognome e nome agente" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', borderRadius: 14 }} />
             </FormField>
             <FormField label="N. registro nazionale agente Società">
-              <input value={form.agente_societa_reg} onChange={e => setF('agente_societa_reg', e.target.value)} placeholder="es. 12345" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)' }} />
+              <input value={form.agente_societa_reg} onChange={e => setF('agente_societa_reg', e.target.value)} placeholder="es. 12345" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', borderRadius: 14 }} />
             </FormField>
           </FormGrid>
           <FormGrid cols={1}>
             <FormField label="Numero modulo (Serie B)">
-              <input value={form.numero_modulo} onChange={e => setF('numero_modulo', e.target.value)} placeholder="Solo per Serie B — numero progressivo modulo" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)' }} />
+              <input value={form.numero_modulo} onChange={e => setF('numero_modulo', e.target.value)} placeholder="Solo per Serie B — numero progressivo modulo" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', borderRadius: 14 }} />
             </FormField>
           </FormGrid>
         </FormSection>
@@ -514,10 +514,10 @@ export default function ContrattiProView({ clubId, ruolo }: { clubId: string; ru
         <FormSection title="Termini economici">
           <FormGrid cols={2}>
             <FormField label="Retribuzione lorda annua (€)">
-              <input type="number" value={form.retribuzione_lorda_annua} onChange={e => setF('retribuzione_lorda_annua', e.target.value)} placeholder="es. 30000" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)' }} />
+              <input type="number" value={form.retribuzione_lorda_annua} onChange={e => setF('retribuzione_lorda_annua', e.target.value)} placeholder="es. 30000" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', borderRadius: 14 }} />
             </FormField>
             <FormField label="Clausola rescissoria (€, opzionale)">
-              <input type="number" value={form.clausola_rescissoria} onChange={e => setF('clausola_rescissoria', e.target.value)} placeholder="es. 500000" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)' }} />
+              <input type="number" value={form.clausola_rescissoria} onChange={e => setF('clausola_rescissoria', e.target.value)} placeholder="es. 500000" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', borderRadius: 14 }} />
             </FormField>
           </FormGrid>
         </FormSection>
@@ -532,7 +532,7 @@ export default function ContrattiProView({ clubId, ruolo }: { clubId: string; ru
           <button
             type="button"
             onClick={addPremio}
-            style={{ padding: '6px 14px', background: 'rgba(200,240,0,0.06)', border: '1px solid rgba(200,240,0,0.2)', color: 'var(--accent)', cursor: 'pointer', fontSize: 12, marginTop: 4 }}
+            style={{ padding: '6px 14px', background: 'rgba(200,240,0,0.06)', border: '1px solid rgba(200,240,0,0.2)', color: 'var(--accent)', cursor: 'pointer', fontSize: 12, marginTop: 4, borderRadius: 14 }}
           >
             + Aggiungi premio
           </button>
@@ -541,13 +541,13 @@ export default function ContrattiProView({ clubId, ruolo }: { clubId: string; ru
         <FormSection title="Durata contrattuale">
           <FormGrid cols={3}>
             <FormField label="Data inizio *">
-              <input type="date" value={form.data_inizio} onChange={e => setF('data_inizio', e.target.value)} style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)' }} />
+              <input type="date" value={form.data_inizio} onChange={e => setF('data_inizio', e.target.value)} style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', borderRadius: 14 }} />
             </FormField>
             <FormField label="Data scadenza *">
-              <input type="date" value={form.data_scadenza} onChange={e => setF('data_scadenza', e.target.value)} style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)' }} />
+              <input type="date" value={form.data_scadenza} onChange={e => setF('data_scadenza', e.target.value)} style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', borderRadius: 14 }} />
             </FormField>
             <FormField label="Durata (anni)">
-              <input type="number" value={form.durata_anni} onChange={e => setF('durata_anni', e.target.value)} placeholder="es. 2" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)' }} />
+              <input type="number" value={form.durata_anni} onChange={e => setF('durata_anni', e.target.value)} placeholder="es. 2" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', borderRadius: 14 }} />
             </FormField>
           </FormGrid>
         </FormSection>
@@ -555,15 +555,15 @@ export default function ContrattiProView({ clubId, ruolo }: { clubId: string; ru
         <FormSection title="Deposito Lega Pro">
           <FormGrid cols={2}>
             <FormField label="Stato deposito">
-              <select value={form.stato_deposito} onChange={e => setF('stato_deposito', e.target.value)} style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)' }}>
+              <select value={form.stato_deposito} onChange={e => setF('stato_deposito', e.target.value)} style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', borderRadius: 14 }}>
                 {STATI_DEPOSITO.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
               </select>
             </FormField>
             <FormField label="Riferimento deposito Lega">
-              <input value={form.lega_ref} onChange={e => setF('lega_ref', e.target.value)} placeholder="N° protocollo Lega Pro" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)' }} />
+              <input value={form.lega_ref} onChange={e => setF('lega_ref', e.target.value)} placeholder="N° protocollo Lega Pro" style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', borderRadius: 14 }} />
             </FormField>
           </FormGrid>
-          <div style={{ marginTop: 8, padding: '8px 12px', background: 'rgba(200,240,0,0.04)', border: '1px solid rgba(200,240,0,0.12)', fontSize: 12, color: 'var(--grigio-3)', lineHeight: 1.5 }}>
+          <div style={{ marginTop: 8, padding: '8px 12px', background: 'rgba(200,240,0,0.04)', border: '1px solid rgba(200,240,0,0.12)', fontSize: 12, color: 'var(--grigio-3)', lineHeight: 1.5, borderRadius: 14 }}>
             Il deposito avviene manualmente sul portale ufficiale Lega Pro. Genera il PDF da consegnare al tesserato, poi deposita sul portale.
           </div>
         </FormSection>
@@ -574,12 +574,12 @@ export default function ContrattiProView({ clubId, ruolo }: { clubId: string; ru
             onChange={e => setF('note', e.target.value)}
             placeholder="Note libere sul contratto..."
             rows={4}
-            style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', resize: 'vertical', fontFamily: 'inherit' }}
+            style={{ width: '100%', padding: '8px 12px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', resize: 'vertical', fontFamily: 'inherit', borderRadius: 14 }}
           />
         </FormSection>
 
         <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end', paddingTop: 8 }}>
-          <button onClick={() => setDrawerOpen(false)} style={{ padding: '8px 20px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', cursor: 'pointer' }}>
+          <button onClick={() => setDrawerOpen(false)} style={{ padding: '8px 20px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-5)', color: 'var(--white)', cursor: 'pointer', borderRadius: 14 }}>
             Annulla
           </button>
           <button onClick={save} disabled={saving} style={{ padding: '8px 20px', background: 'var(--accent)', border: 'none', color: 'var(--black)', fontWeight: 700, cursor: saving ? 'not-allowed' : 'pointer', opacity: saving ? 0.6 : 1 }}>

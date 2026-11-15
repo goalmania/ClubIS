@@ -147,7 +147,7 @@ export default function PraticheTesseramentoPage() {
           background: 'rgba(255,68,68,0.08)',
           border: '1px solid rgba(255,68,68,0.25)',
           borderLeft: '4px solid #ff4444',
-          display: 'flex', alignItems: 'center', gap: 12,
+          display: 'flex', alignItems: 'center', gap: 12, borderRadius: 14
         }}>
           <span style={{ fontSize: 20 }}>🚫</span>
           <div style={{ flex: 1 }}>
@@ -299,7 +299,7 @@ export default function PraticheTesseramentoPage() {
               padding: '10px 14px', background: 'var(--surface-2)',
               border: '1px solid var(--border-solid)',
               fontFamily: 'var(--font-mono)', fontSize: 12,
-              color: 'var(--grigio-4)', marginBottom: 20,
+              color: 'var(--grigio-4)', marginBottom: 20, borderRadius: 14
             }}>
               {TIPI_PRATICA.find(t => t.value === modalEdit.tipo_pratica)?.label ?? modalEdit.tipo_pratica}
               {' — stagione '}{modalEdit.stagione}

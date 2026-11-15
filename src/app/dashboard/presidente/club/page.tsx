@@ -508,7 +508,7 @@ export default function InfoClubPage() {
                   <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', textTransform: 'none', letterSpacing: '0', marginBottom: 8 }}>
                     Firma attuale
                   </div>
-                  <div style={{ background: '#ffffff', padding: '16px 24px', border: '1px solid var(--border)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: 220, marginBottom: 12 }}>
+                  <div style={{ background: '#ffffff', padding: '16px 24px', border: '1px solid var(--border)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: 220, marginBottom: 12, borderRadius: 14 }}>
                     <img
                       src={form.firma_presidente_url}
                       alt="Firma presidente"
@@ -557,7 +557,7 @@ export default function InfoClubPage() {
               )}
 
               {/* Tip PNG trasparente */}
-              <div style={{ padding: '10px 14px', background: 'rgba(200,240,0,0.05)', border: '1px solid rgba(200,240,0,0.15)', fontSize: 12, color: 'var(--gray)', lineHeight: 1.7, marginTop: 8 }}>
+              <div style={{ padding: '10px 14px', background: 'rgba(200,240,0,0.05)', border: '1px solid rgba(200,240,0,0.15)', fontSize: 12, color: 'var(--gray)', lineHeight: 1.7, marginTop: 8, borderRadius: 14 }}>
                 <strong style={{ color: 'var(--accent)' }}>💡 Come creare una firma PNG con sfondo trasparente:</strong>
                 <br />1. Firma su un foglio bianco con penna nera
                 <br />2. Fotografa o scansiona ad alta risoluzione
@@ -576,7 +576,7 @@ export default function InfoClubPage() {
                 Firma Presidente
               </div>
               {club?.firma_presidente_url ? (
-                <div style={{ background: '#ffffff', padding: '16px 24px', border: '1px solid var(--border)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ background: '#ffffff', padding: '16px 24px', border: '1px solid var(--border)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', borderRadius: 14 }}>
                   <img
                     src={club.firma_presidente_url}
                     alt="Firma Presidente"

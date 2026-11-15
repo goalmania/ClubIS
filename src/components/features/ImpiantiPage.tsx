@@ -479,7 +479,7 @@ export default function ImpiantiPage({ defaultTab = 'dashboard' }: Props) {
               options={Object.entries(URGENZA_TICKET).map(([k, v]) => ({ value: k, label: v.label }))}
             />
           </FormField>
-          <div style={{ fontSize: 12, color: 'var(--accent-orange)', padding: '10px 12px', background: 'rgba(255,153,0,0.08)', border: '1px solid rgba(255,153,0,0.3)', marginTop: 8 }}>
+          <div style={{ fontSize: 12, color: 'var(--accent-orange)', padding: '10px 12px', background: 'rgba(255,153,0,0.08)', border: '1px solid rgba(255,153,0,0.3)', marginTop: 8, borderRadius: 14 }}>
             ⚠️ Ticket con urgenza "Alta" o "Bloccante" inviano una notifica immediata al presidente e al DG.
           </div>
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 16 }}>
@@ -494,7 +494,7 @@ export default function ImpiantiPage({ defaultTab = 'dashboard' }: Props) {
       {/* Modal: Dettaglio ticket */}
       {ticketDettaglio && (
         <Modal open title="Gestisci ticket" onClose={() => setTicketDettaglio(null)} width={500}>
-          <div style={{ padding: '14px 16px', background: 'var(--gray-mid)', border: '1px solid var(--border)', marginBottom: 16 }}>
+          <div style={{ padding: '14px 16px', background: 'var(--gray-mid)', border: '1px solid var(--border)', marginBottom: 16, borderRadius: 14 }}>
             <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 13, marginBottom: 6 }}>
               {AREE_IMPIANTO[ticketDettaglio.area as AreaImpianto]?.icona}{' '}
               {ticketDettaglio.descrizione_problema}

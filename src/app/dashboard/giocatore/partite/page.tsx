@@ -81,7 +81,7 @@ export default function PartiteGiocatorePage() {
           { label: 'Da titolare', val: titolari },
           { label: 'Minuti totali', val: minuti },
         ].map(s => (
-          <div key={s.label} style={{ border: '1px solid var(--border)', background: 'var(--bg-card)', padding: '16px 20px' }}>
+          <div key={s.label} style={{ border: '1px solid var(--border)', background: 'var(--bg-card)', padding: '16px 20px', borderRadius: 14 }}>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', textTransform: 'none', letterSpacing: '0', marginBottom: 6 }}>{s.label}</div>
             <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 28, color: 'var(--accent)' }}>{s.val}</div>
           </div>
@@ -96,7 +96,7 @@ export default function PartiteGiocatorePage() {
         ))}
       </div>
 
-      <div style={{ border: '1px solid var(--border)', background: 'var(--bg-card)' }}>
+      <div style={{ border: '1px solid var(--border)', background: 'var(--bg-card)', borderRadius: 14 }}>
         {list.map(p => {
           const data = new Date(p.data_ora)
           const ris = p.gol_fatti !== null && p.gol_subiti !== null ? `${p.gol_fatti} - ${p.gol_subiti}` : null

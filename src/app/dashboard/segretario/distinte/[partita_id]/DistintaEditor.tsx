@@ -184,7 +184,7 @@ export default function DistintaEditor({
             Nessun giocatore eleggibile
           </div>
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <div className="table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ background: 'var(--bg-input)' }}>
                 <th style={thS}></th>
@@ -238,7 +238,7 @@ export default function DistintaEditor({
                 )
               })}
             </tbody>
-          </table>
+          </table></div>
         )}
       </div>
 
@@ -250,7 +250,7 @@ export default function DistintaEditor({
               Non eleggibili ({nonEleggibili.length})
             </div>
           </div>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <div className="table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <tbody>
               {nonEleggibili.map(({ giocatore: g, motivi }) => (
                 <tr key={g.id} style={{ borderBottom: '1px solid var(--border-light)' }}>
@@ -270,7 +270,7 @@ export default function DistintaEditor({
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></div>
         </div>
       )}
 

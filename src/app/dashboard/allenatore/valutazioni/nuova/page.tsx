@@ -196,7 +196,7 @@ function NuovaValutazioneTecnicaForm() {
               <div style={{
                 marginTop: 20, padding: '14px 18px',
                 borderRadius: 14, textAlign: 'center',
-                background: 'white', border: '1px solid var(--grigio-5)',
+                background: 'var(--surface-3)', border: '1px solid var(--separator)',
               }}>
                 <div style={{ fontSize: 12, fontWeight: 500, color: 'var(--grigio-4)', textTransform: 'none', letterSpacing: '0', marginBottom: 6 }}>
                   Media voti

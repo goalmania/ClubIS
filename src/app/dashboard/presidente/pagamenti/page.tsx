@@ -414,7 +414,7 @@ export default function PresidentePagamentiPage() {
             </button>
           </div>
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <div className="table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ background: 'var(--bg-input)' }}>
                 {(['Descrizione', 'Tipo', 'Importo', 'Rate', ''] as const).map(h => (
@@ -458,7 +458,7 @@ export default function PresidentePagamentiPage() {
                 )
               })}
             </tbody>
-          </table>
+          </table></div>
         )}
       </div>
 

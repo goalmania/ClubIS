@@ -106,7 +106,7 @@ export default function UniscitiForm({
           padding: '20px 24px',
           border: '1px solid rgba(200,240,0,0.3)',
           background: 'rgba(200,240,0,0.04)',
-          marginBottom: 24,
+          marginBottom: 24, borderRadius: 14
         }}>
           <div style={{
             fontFamily: 'var(--font-mono)', fontSize: '0.78rem',
@@ -133,7 +133,7 @@ export default function UniscitiForm({
         <form onSubmit={handleSubmit} style={{
           border: '1px solid var(--border)',
           background: 'var(--bg-card)',
-          padding: '28px 24px',
+          padding: '28px 24px', borderRadius: 14
         }}>
           <div style={{
             fontFamily: 'var(--font-display)', fontWeight: 700,
@@ -217,7 +217,7 @@ export default function UniscitiForm({
               background: 'rgba(220,38,38,0.08)',
               border: '1px solid var(--rosso)',
               color: 'var(--rosso)',
-              fontFamily: 'var(--font-mono)', fontSize: 12,
+              fontFamily: 'var(--font-mono)', fontSize: 12, borderRadius: 14
             }}>
               {errore}
             </div>

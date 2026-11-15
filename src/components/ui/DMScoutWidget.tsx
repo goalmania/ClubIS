@@ -23,7 +23,7 @@ export default function DMScoutWidget({ attivo, scadenza, clubId }: Props) {
       <div style={{
         border: '1px solid var(--border)',
         background: 'var(--bg-card)',
-        marginBottom: 24,
+        marginBottom: 24, borderRadius: 14
       }}>
         <div style={{
           padding: '14px 18px',
@@ -82,7 +82,7 @@ export default function DMScoutWidget({ attivo, scadenza, clubId }: Props) {
     <div style={{
       border: '1px solid rgba(200,240,0,0.3)',
       background: 'rgba(200,240,0,0.04)',
-      marginBottom: 24,
+      marginBottom: 24, borderRadius: 14
     }}>
       <button
         onClick={() => setExpanded(p => !p)}
@@ -141,7 +141,7 @@ export default function DMScoutWidget({ attivo, scadenza, clubId }: Props) {
                 padding: '10px 12px',
                 border: '1px solid rgba(200,240,0,0.15)',
                 background: 'rgba(200,240,0,0.03)',
-                textDecoration: 'none',
+                textDecoration: 'none', borderRadius: 14
               }}
             >
               <span style={{ fontSize: 16 }}>{item.icona}</span>

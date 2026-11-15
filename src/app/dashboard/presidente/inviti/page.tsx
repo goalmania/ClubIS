@@ -172,7 +172,7 @@ export default function InvitiPage() {
           marginBottom: 16, padding: '12px 16px',
           background: 'rgba(255,60,60,0.08)', border: '1px solid rgba(255,60,60,0.3)',
           fontFamily: 'var(--font-mono)', fontSize: 12, color: '#ff6060',
-          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderRadius: 14
         }}>
           <span>⚠ {errore}</span>
           <button onClick={() => setErrore(null)} style={{ background: 'none', border: 'none', color: '#ff6060', cursor: 'pointer', fontSize: 14 }}>✕</button>
@@ -184,7 +184,7 @@ export default function InvitiPage() {
         padding: '20px 24px',
         border: '1px solid var(--border)',
         background: 'var(--bg-card)',
-        marginBottom: 24,
+        marginBottom: 24, borderRadius: 14
       }}>
         <div style={{
           fontFamily: 'var(--font-display)', fontWeight: 700,
@@ -295,7 +295,7 @@ export default function InvitiPage() {
 
       {/* Lista inviti */}
       {inviti.length > 0 && (
-        <div style={{ border: '1px solid var(--border)', background: 'var(--bg-card)' }}>
+        <div style={{ border: '1px solid var(--border)', background: 'var(--bg-card)', borderRadius: 14 }}>
           <div style={{
             padding: '14px 18px',
             borderBottom: '1px solid var(--border)',

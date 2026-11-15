@@ -192,7 +192,7 @@ export default function ImportPage() {
 
       <div className="card" style={{
         padding: '14px 18px', marginBottom: 20, display: 'flex', gap: 12, alignItems: 'flex-start',
-        background: 'rgba(200,240,0,0.06)', border: '1px solid rgba(200,240,0,0.25)',
+        background: 'rgba(200,240,0,0.06)', border: '1px solid rgba(200,240,0,0.25)', borderRadius: 14
       }}>
         <span style={{ fontSize: 18 }}>🔄</span>
         <div style={{ fontSize: 13, color: 'var(--grigio-2, #ccc)', lineHeight: 1.7 }}>
@@ -400,7 +400,7 @@ export default function ImportPage() {
             <div style={{
               marginTop: 12, padding: '10px 14px',
               background: 'rgba(200,240,0,0.06)', border: '1px solid rgba(200,240,0,0.25)',
-              fontSize: 12, fontFamily: 'var(--font-mono)',
+              fontSize: 12, fontFamily: 'var(--font-mono)', borderRadius: 14
             }}>
               I movimenti sono stati registrati nel periodo{' '}
               <strong style={{ color: 'var(--accent)' }}>{risultato.periodo_min}</strong>
@@ -422,7 +422,7 @@ export default function ImportPage() {
             <div style={{
               marginTop: 12, padding: '10px 14px',
               background: 'rgba(200,240,0,0.06)', border: '1px solid rgba(200,240,0,0.25)',
-              fontSize: 12, fontFamily: 'var(--font-mono)',
+              fontSize: 12, fontFamily: 'var(--font-mono)', borderRadius: 14
             }}>
               Giocatori aggiunti con tesseramento attivo.{' '}
               <a
@@ -439,7 +439,7 @@ export default function ImportPage() {
             <div style={{
               marginTop: 12, padding: '10px 14px',
               background: 'rgba(96,165,250,0.06)', border: '1px solid rgba(96,165,250,0.25)',
-              fontSize: 12, fontFamily: 'var(--font-mono)',
+              fontSize: 12, fontFamily: 'var(--font-mono)', borderRadius: 14
             }}>
               Creati {risultato.importati} tesserati (bambini) con i relativi record famiglia.
               I tesserati sono visibili in{' '}
@@ -456,7 +456,7 @@ export default function ImportPage() {
             <div style={{
               marginTop: 12, padding: '10px 14px',
               background: 'rgba(200,240,0,0.06)', border: '1px solid rgba(200,240,0,0.25)',
-              fontSize: 12, fontFamily: 'var(--font-mono)',
+              fontSize: 12, fontFamily: 'var(--font-mono)', borderRadius: 14
             }}>
               Quote registrate.{' '}
               <a href="/dashboard/segretario/quote" style={{ color: 'var(--accent)', textDecoration: 'underline' }}>
@@ -469,7 +469,7 @@ export default function ImportPage() {
             <div style={{
               marginTop: 12, padding: '10px 14px',
               background: 'rgba(200,240,0,0.06)', border: '1px solid rgba(200,240,0,0.25)',
-              fontSize: 12, fontFamily: 'var(--font-mono)',
+              fontSize: 12, fontFamily: 'var(--font-mono)', borderRadius: 14
             }}>
               Eventi aggiunti al calendario.{' '}
               <a href="/dashboard/segretario/calendario" style={{ color: 'var(--accent)', textDecoration: 'underline' }}>
@@ -482,7 +482,7 @@ export default function ImportPage() {
             <div style={{
               marginTop: 12, padding: '10px 14px',
               background: 'rgba(200,240,0,0.06)', border: '1px solid rgba(200,240,0,0.25)',
-              fontSize: 12, fontFamily: 'var(--font-mono)',
+              fontSize: 12, fontFamily: 'var(--font-mono)', borderRadius: 14
             }}>
               Certificati registrati.{' '}
               <a href="/dashboard/segretario/certificati" style={{ color: 'var(--accent)', textDecoration: 'underline' }}>
@@ -502,7 +502,7 @@ export default function ImportPage() {
               <div style={{
                 maxHeight: 200, overflowY: 'auto',
                 background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.3)',
-                padding: '8px 12px',
+                padding: '8px 12px', borderRadius: 14
               }}>
                 {risultato.errori.map((e, i) => (
                   <div key={i} style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: '#ef4444', padding: '2px 0', borderBottom: i < risultato.errori.length - 1 ? '1px solid rgba(239,68,68,0.15)' : 'none' }}>

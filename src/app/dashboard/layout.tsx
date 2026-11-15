@@ -201,7 +201,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           minWidth: 0,
           overflowX: 'clip',
           maxWidth: '100%',
-          background: 'var(--bg-app)',
+          background: 'transparent',
           minHeight: '100vh',
         }}>
           <div className="dashboard-topbar" style={{

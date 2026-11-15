@@ -434,7 +434,7 @@ export default function ModuliFIGCPage() {
             </p>
 
             {affiliazioneRegistrata ? (
-              <div style={{ padding: '14px 16px', background: '#f0fdf4', border: '1px solid #86efac', borderRadius: 12, fontSize: 13, color: '#15803d', marginBottom: 16 }}>
+              <div style={{ padding: '14px 16px', background: 'rgba(200,240,0,0.08)', border: '1px solid rgba(200,240,0,0.25)', borderRadius: 12, fontSize: 13, color: 'var(--accent)', marginBottom: 16 }}>
                 Quota affiliazione FIGC già registrata per l'anno {new Date().getFullYear()}.
               </div>
             ) : (
@@ -465,9 +465,9 @@ export default function ModuliFIGCPage() {
             {giorni30Sept !== null && (
               <div style={{
                 marginTop: 20, padding: '12px 14px', borderRadius: 12, fontSize: 12,
-                background: giorni30Sept <= 30 ? '#fef3c7' : '#f9fafb',
-                border: `1px solid ${giorni30Sept <= 30 ? '#fcd34d' : 'var(--grigio-5)'}`,
-                color: giorni30Sept <= 30 ? '#92400e' : 'var(--grigio-3)',
+                background: giorni30Sept <= 30 ? 'rgba(255,153,0,0.12)' : 'var(--surface-3)',
+                border: `1px solid ${giorni30Sept <= 30 ? 'rgba(255,153,0,0.35)' : 'var(--separator)'}`,
+                color: giorni30Sept <= 30 ? '#ffad33' : 'var(--gray)',
               }}>
                 Scadenza affiliazione: 30 settembre — {giorni30Sept} giorni rimanenti
               </div>

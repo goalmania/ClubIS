@@ -33,7 +33,7 @@ export default function LockedFeature({ requiredPlan, children }: LockedFeatureP
           <div style={{
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
             background: 'var(--bg-card)', border: '1px solid rgba(200,240,0,0.35)',
-            padding: '14px 22px',
+            padding: '14px 22px', borderRadius: 14
           }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
               stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

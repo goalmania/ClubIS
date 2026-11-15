@@ -547,7 +547,7 @@ export default function DocumentiPage() {
                               fontSize: 11, padding: '2px 6px',
                               background: 'rgba(0,200,160,0.1)', border: '1px solid rgba(0,200,160,0.3)',
                               color: '#00c8a0',
-                              fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none',
+                              fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none', borderRadius: 14
                             }}>
                               ✓ VERIFICATO
                             </span>
@@ -557,7 +557,7 @@ export default function DocumentiPage() {
                               fontSize: 11, padding: '2px 6px',
                               background: 'rgba(200,240,0,0.08)', border: '1px solid rgba(200,240,0,0.2)',
                               color: 'var(--accent)',
-                              fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none',
+                              fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none', borderRadius: 14
                             }}>
                               {doc.documenti_varianti?.length ?? 0} VARIANTI
                             </span>

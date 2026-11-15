@@ -32,7 +32,7 @@ export default function AppMobilePage() {
       {piattaforma !== 'altro' && (
         <div className="card" style={{
           padding: '12px 16px', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 10,
-          background: 'rgba(200,240,0,0.06)', border: '1px solid rgba(200,240,0,0.25)',
+          background: 'rgba(200,240,0,0.06)', border: '1px solid rgba(200,240,0,0.25)', borderRadius: 14
         }}>
           <span style={{ fontSize: 18 }}>📱</span>
           <span style={{ fontSize: 13, color: 'var(--grigio-2, #ccc)' }}>

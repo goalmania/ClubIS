@@ -26,7 +26,7 @@ export default function UpgradeModal({ requiredPlan, onClose }: UpgradeModalProp
         style={{
           background: 'var(--bg-card)', border: '1px solid var(--border)',
           padding: '32px 36px', maxWidth: 440, width: '90%',
-          display: 'flex', flexDirection: 'column', gap: 22,
+          display: 'flex', flexDirection: 'column', gap: 22, borderRadius: 14
         }}
         onClick={e => e.stopPropagation()}
       >
@@ -34,7 +34,7 @@ export default function UpgradeModal({ requiredPlan, onClose }: UpgradeModalProp
           <div style={{
             width: 48, height: 48, flexShrink: 0,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            background: 'rgba(200,240,0,0.1)', border: '1px solid rgba(200,240,0,0.3)',
+            background: 'rgba(200,240,0,0.1)', border: '1px solid rgba(200,240,0,0.3)', borderRadius: 14
           }}>
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
               stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

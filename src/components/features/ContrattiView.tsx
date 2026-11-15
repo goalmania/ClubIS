@@ -129,7 +129,7 @@ function CostoRiepilogo({ form }: { form: FormState }) {
       background: 'rgba(200,240,0,0.06)',
       border: '1px solid rgba(200,240,0,0.2)',
       padding: '16px 20px',
-      marginBottom: 24,
+      marginBottom: 24, borderRadius: 14
     }}>
       <div style={{ fontFamily: 'var(--font-display)', fontSize: 12, textTransform: 'none', letterSpacing: '0', color: 'var(--accent)', marginBottom: 12, fontWeight: 700 }}>
         Riepilogo costo stimato

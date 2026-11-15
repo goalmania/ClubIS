@@ -10,8 +10,8 @@ export function PageHeader({
   actions?: React.ReactNode
 }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 24 }}>
-      <div>
+    <div className="page-header" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 24 }}>
+      <div style={{ minWidth: 0 }}>
         <h1 style={{
           fontFamily: 'var(--font-display)',
           fontWeight: 700,
@@ -22,7 +22,7 @@ export function PageHeader({
         }}>{title}</h1>
         {subtitle && <p style={{ fontFamily: 'var(--font-sans)', fontSize: 13, color: 'var(--gray)', marginTop: 4, fontWeight: 400 }}>{subtitle}</p>}
       </div>
-      {actions && <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>{actions}</div>}
+      {actions && <div className="page-header-actions" style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>{actions}</div>}
     </div>
   )
 }
@@ -330,7 +330,7 @@ export function Modal({ open, onClose, title, children, width = 520 }: {
         onClick={e => e.stopPropagation()}
         style={{
           width, maxWidth: '90vw', maxHeight: '85vh',
-          background: 'var(--surface-2)', borderRadius: 22,
+          background: 'rgba(30,30,33,0.82)', backdropFilter: 'saturate(180%) blur(30px)', WebkitBackdropFilter: 'saturate(180%) blur(30px)', borderRadius: 22,
           boxShadow: 'var(--shadow-pop)',
           overflow: 'auto',
           animation: 'slideIn 0.2s ease',
@@ -381,7 +381,7 @@ export function Drawer({ open, onClose, title, children, width = 720 }: {
         onClick={e => e.stopPropagation()}
         style={{
           width, maxWidth: '95vw', height: '100%',
-          background: 'var(--surface-2)', boxShadow: 'var(--shadow-pop)',
+          background: 'rgba(30,30,33,0.86)', backdropFilter: 'saturate(180%) blur(30px)', WebkitBackdropFilter: 'saturate(180%) blur(30px)', boxShadow: 'var(--shadow-pop)',
           overflow: 'auto',
           animation: 'slideIn 0.2s ease',
         }}

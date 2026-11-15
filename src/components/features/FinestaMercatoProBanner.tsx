@@ -91,7 +91,7 @@ export default function FinestaMercatoProBanner() {
   }
 
   return (
-    <div style={{ padding: '14px 20px', background: 'rgba(150,150,150,0.05)', border: '1px solid var(--grigio-5)', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 16 }}>
+    <div style={{ padding: '14px 20px', background: 'rgba(150,150,150,0.05)', border: '1px solid var(--grigio-5)', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 16, borderRadius: 14 }}>
       <div style={{ width: 10, height: 10, borderRadius: '50%', background: 'var(--grigio-4)', flexShrink: 0 }} />
       <div style={{ flex: 1 }}>
         <span style={{ fontFamily: 'var(--font-display)', fontSize: 12, fontWeight: 700, textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-3)' }}>

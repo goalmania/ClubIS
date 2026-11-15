@@ -30,7 +30,7 @@ function StelleInput({ value, onChange, size = 38, fontSize = 18 }: { value: num
 
 function StelleReadonly({ n }: { n: number }) {
   return (
-    <span style={{ color: 'var(--accent)', fontSize: 16, letterSpacing: 1 }}>
+    <span style={{ color: 'var(--accent)', fontSize: 16, letterSpacing: 0 }}>
       {'★'.repeat(n)}<span style={{ color: 'var(--gray-mid)' }}>{'★'.repeat(5 - n)}</span>
     </span>
   )

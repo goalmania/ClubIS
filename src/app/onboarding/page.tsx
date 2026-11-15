@@ -55,7 +55,7 @@ const inputStyle: React.CSSProperties = {
   fontSize: 14,
   fontFamily: 'var(--font-body)',
   outline: 'none',
-  boxSizing: 'border-box',
+  boxSizing: 'border-box', borderRadius: 14
 }
 
 const labelStyle: React.CSSProperties = {
@@ -307,7 +307,7 @@ export default function OnboardingPage() {
         width: '100%', maxWidth: 580,
         border: '1px solid var(--border)',
         background: 'var(--surface)',
-        padding: '40px 36px',
+        padding: '40px 36px', borderRadius: 14
       }}>
 
         {/* ─── STEP 1 ─────────────────────────────────────────────── */}
@@ -451,7 +451,7 @@ export default function OnboardingPage() {
               padding: '12px 16px', marginBottom: 16,
               background: 'rgba(200,240,0,0.06)',
               border: '1px solid rgba(200,240,0,0.3)',
-              display: 'flex', alignItems: 'center', gap: 10,
+              display: 'flex', alignItems: 'center', gap: 10, borderRadius: 14
             }}>
               <div style={{
                 width: 18, height: 18, background: 'var(--accent)', borderRadius: 8,
@@ -498,7 +498,7 @@ export default function OnboardingPage() {
                 flex: '0 0 auto', padding: '13px 20px',
                 background: 'transparent', border: '1px solid var(--border)',
                 color: 'var(--gray)', cursor: 'pointer', fontFamily: 'var(--font-display)',
-                fontWeight: 700, fontSize: 13,
+                fontWeight: 700, fontSize: 13, borderRadius: 14
               }}>
                 ← Indietro
               </button>
@@ -555,7 +555,7 @@ export default function OnboardingPage() {
                 padding: '13px 20px',
                 background: 'transparent', border: '1px solid var(--border)',
                 color: 'var(--gray)', cursor: 'pointer', fontFamily: 'var(--font-display)',
-                fontWeight: 700, fontSize: 13,
+                fontWeight: 700, fontSize: 13, borderRadius: 14
               }}>
                 ← Indietro
               </button>
@@ -586,7 +586,7 @@ export default function OnboardingPage() {
             <div style={{
               width: 64, height: 64, margin: '0 auto 24px',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              background: 'rgba(200,240,0,0.1)', border: '1px solid rgba(200,240,0,0.4)',
+              background: 'rgba(200,240,0,0.1)', border: '1px solid rgba(200,240,0,0.4)', borderRadius: 14
             }}>
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none"
                 stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -610,7 +610,7 @@ export default function OnboardingPage() {
             {/* Riepilogo */}
             <div style={{
               textAlign: 'left', padding: '20px 24px', marginBottom: 32,
-              border: '1px solid var(--border)', background: 'rgba(255,255,255,0.02)',
+              border: '1px solid var(--border)', background: 'rgba(255,255,255,0.02)', borderRadius: 14
             }}>
               <div style={{ fontSize: 12, fontFamily: 'var(--font-mono)', letterSpacing: '0', textTransform: 'none', color: 'var(--gray)', marginBottom: 12 }}>
                 Riepilogo configurazione
@@ -658,7 +658,7 @@ export default function OnboardingPage() {
                 padding: '4px 12px', background: 'rgba(200,240,0,0.12)',
                 border: '1px solid rgba(200,240,0,0.4)', fontSize: 12,
                 fontFamily: 'var(--font-mono)', letterSpacing: '0',
-                textTransform: 'none', color: 'var(--accent)',
+                textTransform: 'none', color: 'var(--accent)', borderRadius: 14
               }}>
                 Moduli Pro
               </div>
@@ -707,7 +707,7 @@ export default function OnboardingPage() {
                   display: 'flex', alignItems: 'flex-start', gap: 14,
                   padding: '14px 16px',
                   border: '1px solid var(--border)',
-                  background: 'rgba(255,255,255,0.02)',
+                  background: 'rgba(255,255,255,0.02)', borderRadius: 14
                 }}>
                   <span style={{ fontSize: 20, flexShrink: 0, lineHeight: 1.2 }}>{m.icon}</span>
                   <div>

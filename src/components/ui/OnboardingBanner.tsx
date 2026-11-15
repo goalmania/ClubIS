@@ -18,7 +18,7 @@ export default function OnboardingBanner({ clubId }: { clubId: string }) {
       margin: '0 0 16px 0', padding: '10px 16px',
       background: 'rgba(200,240,0,0.06)',
       border: '1px solid rgba(200,240,0,0.2)',
-      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderRadius: 14
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <span style={{
@@ -46,7 +46,7 @@ export default function OnboardingBanner({ clubId }: { clubId: string }) {
     <div style={{
       marginBottom: 20,
       border: '1px solid rgba(200,240,0,0.3)',
-      background: 'rgba(200,240,0,0.04)',
+      background: 'rgba(200,240,0,0.04)', borderRadius: 14
     }}>
       {/* Header */}
       <div style={{

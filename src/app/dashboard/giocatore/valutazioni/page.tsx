@@ -90,7 +90,7 @@ export default function ValutazioniPage() {
 
       {/* Medie generali */}
       {valutazioni.length > 0 && (
-        <div style={{ border: '1px solid var(--border)', background: 'var(--bg-card)', padding: '20px 24px', marginBottom: 24 }}>
+        <div style={{ border: '1px solid var(--border)', background: 'var(--bg-card)', padding: '20px 24px', marginBottom: 24, borderRadius: 14 }}>
           <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 13, color: 'var(--accent)', marginBottom: 16 }}>
             Media generale
           </div>
@@ -118,7 +118,7 @@ export default function ValutazioniPage() {
       )}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         {valutazioni.map(v => (
-          <div key={v.id} style={{ border: '1px solid var(--border)', background: 'var(--bg-card)', padding: '18px 24px' }}>
+          <div key={v.id} style={{ border: '1px solid var(--border)', background: 'var(--bg-card)', padding: '18px 24px', borderRadius: 14 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
               <div>
                 <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 13, color: 'var(--white)' }}>

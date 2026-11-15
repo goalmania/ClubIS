@@ -62,7 +62,7 @@ export default function StatisticheGiocatorePage() {
       )}
 
       {stats.map(s => (
-        <div key={s.stagione} style={{ border: '1px solid var(--border)', background: 'var(--bg-card)', padding: '20px 24px', marginBottom: 16 }}>
+        <div key={s.stagione} style={{ border: '1px solid var(--border)', background: 'var(--bg-card)', padding: '20px 24px', marginBottom: 16, borderRadius: 14 }}>
           <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 16, color: 'var(--accent)', marginBottom: 20 }}>
             Stagione {s.stagione}
           </div>

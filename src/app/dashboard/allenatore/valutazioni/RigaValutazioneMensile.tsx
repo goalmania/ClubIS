@@ -4,7 +4,7 @@ import { ASSI_VALUTAZIONE, type AsseValutazione, type DettaglioAssi } from '@/li
 
 function Stelle({ n }: { n: number }) {
   return (
-    <span style={{ letterSpacing: 1, color: 'var(--accent)' }}>
+    <span style={{ letterSpacing: 0, color: 'var(--accent)' }}>
       {'★'.repeat(n)}<span style={{ color: 'var(--gray-mid)' }}>{'★'.repeat(5 - n)}</span>
     </span>
   )

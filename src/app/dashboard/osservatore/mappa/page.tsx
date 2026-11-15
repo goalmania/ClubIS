@@ -99,7 +99,7 @@ export default async function OsservatoreMappaPage() {
       ) : totaleConRegione === 0 ? (
         /* Report presenti ma nessuno ha la regione: mostra lista + istruzioni */
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          <div className="card" style={{ padding: '14px 18px', background: 'var(--ambra-lt)', border: '1px solid var(--ambra-bd)' }}>
+          <div className="card" style={{ padding: '14px 18px', background: 'var(--ambra-lt)', border: '1px solid var(--ambra-bd)', borderRadius: 14 }}>
             <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--ambra)', marginBottom: 4 }}>
               📍 Aggiungi la regione di provenienza ai nuovi report
             </div>

@@ -415,7 +415,7 @@ export default function RosaFIGCPage() {
                     </div>
                   </div>
                   {i < 11 && (
-                    <span style={{ marginLeft: 'auto', fontSize: 12, background: '#e8f0fe', color: '#1a56db', padding: '2px 6px', borderRadius: 10, fontWeight: 600 }}>
+                    <span style={{ marginLeft: 'auto', fontSize: 12, background: 'rgba(10,132,255,0.15)', color: '#5ab0ff', padding: '2px 6px', borderRadius: 10, fontWeight: 600 }}>
                       Titolare
                     </span>
                   )}

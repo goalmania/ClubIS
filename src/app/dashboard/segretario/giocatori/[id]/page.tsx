@@ -550,7 +550,7 @@ export default function GiocatoreDetailPage() {
                 {certificati.length === 0 ? (
                   <p style={{ fontSize: 13, color: 'var(--grigio-4)' }}>Nessun certificato registrato</p>
                 ) : (
-                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                  <div className="table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                     <thead><tr style={{ borderBottom: '1px solid var(--border-solid)' }}>{['Tipo', 'Rilascio', 'Scadenza', 'Stato'].map(h => <th key={h} style={{ textAlign: 'left', padding: '6px 10px', fontSize: 12, fontFamily: 'var(--font-mono)', textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-4)' }}>{h}</th>)}</tr></thead>
                     <tbody>
                       {certificati.map(c => {
@@ -566,7 +566,7 @@ export default function GiocatoreDetailPage() {
                         )
                       })}
                     </tbody>
-                  </table>
+                  </table></div>
                 )}
               </div>
             </>
@@ -800,7 +800,7 @@ export default function GiocatoreDetailPage() {
               {matComodato.length === 0 ? (
                 <p style={{ fontSize: 13, color: 'var(--grigio-4)', padding: '12px 0' }}>Nessun materiale in comodato</p>
               ) : (
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                <div className="table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                   <thead><tr style={{ borderBottom: '1px solid var(--border-solid)' }}>{['Materiale', 'Consegna', 'Restituzione'].map(h => <th key={h} style={{ textAlign: 'left', padding: '6px 10px', fontSize: 12, fontFamily: 'var(--font-mono)', textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-4)' }}>{h}</th>)}</tr></thead>
                   <tbody>
                     {matComodato.map((m: any, i: number) => (
@@ -811,7 +811,7 @@ export default function GiocatoreDetailPage() {
                       </tr>
                     ))}
                   </tbody>
-                </table>
+                </table></div>
               )}
               {editMode && (
                 <div style={{ marginTop: 14 }}>
@@ -838,7 +838,7 @@ export default function GiocatoreDetailPage() {
               {presenze.length === 0 ? (
                 <p style={{ fontSize: 13, color: 'var(--grigio-4)' }}>Nessuna presenza registrata</p>
               ) : (
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                <div className="table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                   <thead><tr style={{ borderBottom: '1px solid var(--border-solid)' }}>{['Data', 'Tipo', 'Presenza'].map(h => <th key={h} style={{ textAlign: 'left', padding: '6px 10px', fontSize: 12, fontFamily: 'var(--font-mono)', textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-4)' }}>{h}</th>)}</tr></thead>
                   <tbody>
                     {presenze.slice(0, 30).map(p => (
@@ -849,7 +849,7 @@ export default function GiocatoreDetailPage() {
                       </tr>
                     ))}
                   </tbody>
-                </table>
+                </table></div>
               )}
             </div>
           )}
@@ -908,7 +908,7 @@ export default function GiocatoreDetailPage() {
                       </div>
                     </div>
                     {qPag.length > 0 && (
-                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                      <div className="table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                         <thead><tr>{['Data', 'Importo', 'Metodo', ''].map(h => <th key={h} style={{ textAlign: 'left', padding: '6px 10px', fontSize: 12, fontFamily: 'var(--font-mono)', textTransform: 'none', color: 'var(--grigio-4)', borderBottom: '1px solid var(--border)' }}>{h}</th>)}</tr></thead>
                         <tbody>
                           {qPag.map(p => {
@@ -935,7 +935,7 @@ export default function GiocatoreDetailPage() {
                             )
                           })}
                         </tbody>
-                      </table>
+                      </table></div>
                     )}
                   </div>
                 )
@@ -1021,7 +1021,7 @@ export default function GiocatoreDetailPage() {
               {pagamentiCompenso.length === 0 ? (
                 <p style={{ fontSize: 13, color: 'var(--grigio-4)' }}>Nessun pagamento registrato per questo giocatore</p>
               ) : (
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                <div className="table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                   <thead>
                     <tr style={{ borderBottom: '1px solid var(--border-solid)' }}>
                       {['Data', 'Descrizione', 'Importo'].map(h => (
@@ -1038,7 +1038,7 @@ export default function GiocatoreDetailPage() {
                       </tr>
                     ))}
                   </tbody>
-                </table>
+                </table></div>
               )}
               <div style={{ fontSize: 12, color: 'var(--grigio-4)', marginTop: 14 }}>
                 Ogni pagamento registrato qui viene salvato in Prima Nota come uscita (categoria &quot;Stipendi/ingaggi&quot;) e si somma automaticamente alle spese del budget stagionale del club.

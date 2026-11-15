@@ -309,7 +309,7 @@ export default function IscrizioniPage() {
                         <>
                           <button
                             className="btn btn-sm"
-                            style={{ fontSize: 12, background: 'var(--verde-lt)', color: 'var(--verde)', border: '1px solid var(--verde)' }}
+                            style={{ fontSize: 12, background: 'var(--verde-lt)', color: 'var(--verde)', border: '1px solid var(--verde)', borderRadius: 14 }}
                             onClick={() => approva(r)}
                             disabled={approving === r.id}
                           >
@@ -317,7 +317,7 @@ export default function IscrizioniPage() {
                           </button>
                           <button
                             className="btn btn-sm"
-                            style={{ fontSize: 12, background: 'var(--rosso-lt)', color: 'var(--rosso)', border: '1px solid var(--rosso)' }}
+                            style={{ fontSize: 12, background: 'var(--rosso-lt)', color: 'var(--rosso)', border: '1px solid var(--rosso)', borderRadius: 14 }}
                             onClick={() => setRifiutoId(r.id)}
                           >
                             Rifiuta

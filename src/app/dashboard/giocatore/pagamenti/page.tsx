@@ -101,7 +101,7 @@ export default function PagamentiGiocatorePage() {
           { label: 'Pagato',         val: `€ ${totalePagato.toFixed(2)}`,  color: 'var(--accent)' },
           { label: 'Da saldare',     val: `€ ${totaleArretr.toFixed(2)}`,  color: totaleArretr > 0 ? 'var(--rosso)' : 'var(--gray)' },
         ].map(s => (
-          <div key={s.label} style={{ border: '1px solid var(--border)', background: 'var(--bg-card)', padding: '16px 20px' }}>
+          <div key={s.label} style={{ border: '1px solid var(--border)', background: 'var(--bg-card)', padding: '16px 20px', borderRadius: 14 }}>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', textTransform: 'none', letterSpacing: '0', marginBottom: 6 }}>{s.label}</div>
             <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 22, color: s.color }}>{s.val}</div>
           </div>
@@ -109,7 +109,7 @@ export default function PagamentiGiocatorePage() {
       </div>
 
       {/* Lista quote */}
-      <div style={{ border: '1px solid var(--border)', background: 'var(--bg-card)' }}>
+      <div style={{ border: '1px solid var(--border)', background: 'var(--bg-card)', borderRadius: 14 }}>
         <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border)', fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 13, color: 'var(--white)' }}>
           Quote iscrizione
         </div>

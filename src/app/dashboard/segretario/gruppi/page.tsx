@@ -300,7 +300,7 @@ export default function GruppiPage() {
               </div>
             </div>
           ) : (
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <div className="table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr>
                   {['Atleta', 'Ruolo', 'Maglia', 'Ruolo nel gruppo', 'Ingresso', ''].map(h => (
@@ -339,7 +339,7 @@ export default function GruppiPage() {
                   )
                 })}
               </tbody>
-            </table>
+            </table></div>
           )}
         </div>
 

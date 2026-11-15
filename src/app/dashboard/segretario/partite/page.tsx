@@ -263,14 +263,14 @@ export default function SegretarioPartitePage() {
                 type="number" min={0} max={20}
                 value={editVal.gf}
                 onChange={e => setEditVal(v => ({ ...v, gf: e.target.value }))}
-                style={{ width: 36, padding: '2px 4px', fontFamily: 'var(--font-mono)', fontSize: 13, textAlign: 'center', background: 'var(--grigio-6)', border: '1px solid var(--grigio-4)', color: 'var(--white)' }}
+                style={{ width: 36, padding: '2px 4px', fontFamily: 'var(--font-mono)', fontSize: 13, textAlign: 'center', background: 'var(--grigio-6)', border: '1px solid var(--grigio-4)', color: 'var(--white)', borderRadius: 14 }}
               />
               <span>–</span>
               <input
                 type="number" min={0} max={20}
                 value={editVal.gs}
                 onChange={e => setEditVal(v => ({ ...v, gs: e.target.value }))}
-                style={{ width: 36, padding: '2px 4px', fontFamily: 'var(--font-mono)', fontSize: 13, textAlign: 'center', background: 'var(--grigio-6)', border: '1px solid var(--grigio-4)', color: 'var(--white)' }}
+                style={{ width: 36, padding: '2px 4px', fontFamily: 'var(--font-mono)', fontSize: 13, textAlign: 'center', background: 'var(--grigio-6)', border: '1px solid var(--grigio-4)', color: 'var(--white)', borderRadius: 14 }}
               />
             </span>
           ) : (
@@ -282,7 +282,7 @@ export default function SegretarioPartitePage() {
             <select
               value={editVal.stato}
               onChange={e => setEditVal(v => ({ ...v, stato: e.target.value as StatoPartita }))}
-              style={{ fontSize: 12, padding: '2px 4px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-4)', color: 'var(--white)' }}
+              style={{ fontSize: 12, padding: '2px 4px', background: 'var(--grigio-6)', border: '1px solid var(--grigio-4)', color: 'var(--white)', borderRadius: 14 }}
             >
               <option value="programmata">Programmata</option>
               <option value="giocata">Giocata</option>
@@ -356,7 +356,7 @@ export default function SegretarioPartitePage() {
               color: 'var(--grigio-3)',
               border: '1px solid var(--grigio-5)',
               cursor: 'pointer',
-              textDecoration: 'none',
+              textDecoration: 'none', borderRadius: 14
             }}
           >
             Importa PDF

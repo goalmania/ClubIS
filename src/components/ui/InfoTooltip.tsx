@@ -58,7 +58,7 @@ export default function InfoTooltip({ testo }: { testo: string }) {
               width: 8, height: 8,
               background: 'var(--surface-2)',
               border: '1px solid var(--border-solid)',
-              borderTop: 'none', borderLeft: 'none',
+              borderTop: 'none', borderLeft: 'none', borderRadius: 14
             }} />
             {testo}
             <div style={{

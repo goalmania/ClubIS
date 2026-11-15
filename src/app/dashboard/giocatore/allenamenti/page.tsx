@@ -120,7 +120,7 @@ export default function AllenamentiPage() {
           { label: 'Assenze', val: assenze, color: 'var(--rosso)' },
           { label: '% Presenze', val: `${percPresenza}%`, color: 'var(--white)' },
         ].map(s => (
-          <div key={s.label} style={{ border: '1px solid var(--border)', background: 'var(--bg-card)', padding: '16px 20px' }}>
+          <div key={s.label} style={{ border: '1px solid var(--border)', background: 'var(--bg-card)', padding: '16px 20px', borderRadius: 14 }}>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', textTransform: 'none', letterSpacing: '0', marginBottom: 6 }}>{s.label}</div>
             <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 28, color: s.color }}>{s.val}</div>
           </div>
@@ -128,7 +128,7 @@ export default function AllenamentiPage() {
       </div>
 
       {/* Lista sessioni */}
-      <div style={{ border: '1px solid var(--border)', background: 'var(--bg-card)' }}>
+      <div style={{ border: '1px solid var(--border)', background: 'var(--bg-card)', borderRadius: 14 }}>
         <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border)', fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 13, color: 'var(--white)' }}>
           Storico sessioni ({sessioni.length})
         </div>
@@ -162,10 +162,10 @@ export default function AllenamentiPage() {
               </div>
               <div style={{ flexShrink: 0 }}>
                 {statoPres === true && (
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--accent)', background: 'rgba(200,240,0,0.08)', padding: '3px 8px', border: '1px solid rgba(200,240,0,0.2)' }}>✓ PRESENTE</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--accent)', background: 'rgba(200,240,0,0.08)', padding: '3px 8px', border: '1px solid rgba(200,240,0,0.2)', borderRadius: 14 }}>✓ PRESENTE</span>
                 )}
                 {statoPres === false && (
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--rosso)', background: 'rgba(255,60,60,0.08)', padding: '3px 8px', border: '1px solid rgba(255,60,60,0.2)' }}>✕ ASSENTE</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--rosso)', background: 'rgba(255,60,60,0.08)', padding: '3px 8px', border: '1px solid rgba(255,60,60,0.2)', borderRadius: 14 }}>✕ ASSENTE</span>
                 )}
                 {statoPres === null && s.stato === 'programmato' && (
                   <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', padding: '3px 8px', border: '1px solid var(--border)' }}>Programmato</span>

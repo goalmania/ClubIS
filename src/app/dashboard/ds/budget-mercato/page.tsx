@@ -112,7 +112,7 @@ export default function BudgetMercatoDS() {
 
           {/* header */}
           <div style={{ marginBottom: 28 }}>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', letterSpacing: '3px', textTransform: 'none', color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', letterSpacing: '0', textTransform: 'none', color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
               <span style={{ display: 'block', width: 20, height: 1, background: 'var(--accent)' }} />
               Budget di Mercato
             </div>
@@ -143,7 +143,7 @@ export default function BudgetMercatoDS() {
               )}
 
               {/* KPI */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1, background: 'var(--border)', border: '1px solid var(--border)', marginBottom: 20 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1, background: 'var(--border)', border: '1px solid var(--border)', marginBottom: 20, borderRadius: 14 }}>
                 {[
                   { label: 'Budget mercato', value: fmt(budgetMercato), sub: 'Assegnato dal Presidente' },
                   { label: 'Totale acquisti', value: fmt(totaleAcquisti), sub: 'Operazioni chiuse in entrata', accent: 'var(--rosso)' },
@@ -214,7 +214,7 @@ export default function BudgetMercatoDS() {
 
               {/* riepilogo */}
               {chiuse.length > 0 && (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1, background: 'var(--border)', border: '1px solid var(--border)', marginTop: 1 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1, background: 'var(--border)', border: '1px solid var(--border)', marginTop: 1, borderRadius: 14 }}>
                   {[
                     {
                       label: 'Acquisti / Prestiti in',

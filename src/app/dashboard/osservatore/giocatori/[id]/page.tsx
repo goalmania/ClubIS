@@ -307,7 +307,7 @@ export default function ProfiloGiocatoreScoutingPage() {
           {storico.length === 0 ? (
             <div style={{ fontSize: 12, color: 'var(--text-muted)', textAlign: 'center', padding: '20px 0' }}>Nessun dato</div>
           ) : (
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+            <div className="table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
               <thead>
                 <tr>
                   {['Club', 'Stagione', 'Camp.', 'Pres.', 'Gol', 'Assist'].map(h => (
@@ -329,7 +329,7 @@ export default function ProfiloGiocatoreScoutingPage() {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table></div>
           )}
         </div>
       </div>

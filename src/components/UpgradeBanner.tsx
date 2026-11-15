@@ -13,14 +13,14 @@ export default function UpgradeBanner({ feature, requiredPlan }: UpgradeBannerPr
       padding: '24px 28px',
       display: 'flex',
       alignItems: 'center',
-      gap: 20,
+      gap: 20, borderRadius: 14
     }}>
       {/* Icona lucchetto */}
       <div style={{
         width: 48, height: 48, flexShrink: 0,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         background: 'rgba(200,240,0,0.1)',
-        border: '1px solid rgba(200,240,0,0.3)',
+        border: '1px solid rgba(200,240,0,0.3)', borderRadius: 14
       }}>
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
           stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

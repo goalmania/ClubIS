@@ -555,10 +555,10 @@ function generaHTMLReport(
 <h1>REPORT FINANZIARIO — ${anno}</h1>
 <p>Generato il: ${oggi}</p>
 <h2 style="color:green">Entrate</h2>
-<table><thead><tr><th>Cod.</th><th>Categoria</th><th style="text-align:right">Importo</th></tr></thead><tbody>${rows(entratePerCat, 'green')}</tbody></table>
+<div className="table-wrap"><table><thead><tr><th>Cod.</th><th>Categoria</th><th style="text-align:right">Importo</th></tr></thead><tbody>${rows(entratePerCat, 'green')}</tbody></table></div>
 <p class="tot" style="color:green">TOTALE ENTRATE: € ${fmt(totEntrate)}</p>
 <h2 style="color:red">Uscite</h2>
-<table><thead><tr><th>Cod.</th><th>Categoria</th><th style="text-align:right">Importo</th></tr></thead><tbody>${rows(uscitePerCat, 'red')}</tbody></table>
+<div className="table-wrap"><table><thead><tr><th>Cod.</th><th>Categoria</th><th style="text-align:right">Importo</th></tr></thead><tbody>${rows(uscitePerCat, 'red')}</tbody></table></div>
 <p class="tot" style="color:red">TOTALE USCITE: € ${fmt(totUscite)}</p>
 <hr><p class="saldo" style="color:${saldo >= 0 ? 'green' : 'red'}">SALDO: ${saldo >= 0 ? '+' : ''}€ ${fmt(saldo)}</p>
 </body></html>`

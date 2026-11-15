@@ -208,7 +208,7 @@ export default function PresenzeSessioneDetail({ sessioneId, readonly = false }:
           <button key={f.v} onClick={() => setFiltro(f.v)} style={{
             padding: '5px 12px', borderRadius: 20, fontSize: 12, cursor: 'pointer',
             border: filtro === f.v ? '1px solid var(--verde)' : '1px solid var(--grigio-5)',
-            background: filtro === f.v ? 'var(--verde-lt)' : 'white',
+            background: filtro === f.v ? 'var(--verde-lt)' : 'var(--surface-3)',
             color: filtro === f.v ? 'var(--verde)' : 'var(--grigio-3)',
             fontWeight: filtro === f.v ? 500 : 400,
           }}>{f.l}</button>
@@ -280,13 +280,13 @@ export default function PresenzeSessioneDetail({ sessioneId, readonly = false }:
                       <button key={m.value} onClick={() => aggiornaPresenza(g.giocatore_id, 'assente', m.value)} style={{
                         padding: '6px 12px', borderRadius: 20, fontSize: 12, cursor: 'pointer',
                         border: g.motivo_assenza === m.value ? '1px solid var(--rosso)' : '1px solid var(--grigio-5)',
-                        background: g.motivo_assenza === m.value ? 'var(--rosso)' : 'white',
+                        background: g.motivo_assenza === m.value ? 'var(--rosso)' : 'var(--surface-3)',
                         color: g.motivo_assenza === m.value ? 'white' : 'var(--grigio-2)', fontWeight: 500,
                       }}>{m.label}</button>
                     ))}
                     <button onClick={() => aggiornaPresenza(g.giocatore_id, 'assente', null)} style={{
                       padding: '6px 12px', borderRadius: 20, fontSize: 12, cursor: 'pointer',
-                      border: '1px solid var(--grigio-5)', background: 'white', color: 'var(--grigio-3)',
+                      border: '1px solid var(--separator)', background: 'var(--surface-3)', color: 'var(--gray)',
                     }}>Senza motivo</button>
                   </div>
                 </div>
@@ -302,7 +302,7 @@ export default function PresenzeSessioneDetail({ sessioneId, readonly = false }:
       </div>
 
       {!readonly && (
-        <div style={{ position: 'sticky', bottom: 16, background: 'white', border: '1px solid var(--grigio-5)', borderRadius: 16, padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
+        <div style={{ position: 'sticky', bottom: 16, background: 'rgba(28,28,30,0.92)', backdropFilter: 'saturate(180%) blur(20px)', WebkitBackdropFilter: 'saturate(180%) blur(20px)', border: '1px solid var(--border)', borderRadius: 16, padding: '14px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
           <div style={{ fontSize: 13, color: salvato ? 'var(--verde)' : 'var(--grigio-3)' }}>
             {salvato ? '✓ Salvato automaticamente' : daReg > 0 ? `${daReg} giocatori da registrare` : '✓ Tutti registrati'}
           </div>

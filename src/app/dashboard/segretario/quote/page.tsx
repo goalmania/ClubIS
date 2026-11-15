@@ -466,7 +466,7 @@ export default function QuotePage() {
       />
 
       {isScuolaCalcio && (
-        <div className="alert" style={{ marginBottom: 20, fontSize: 13, background: 'var(--grigio-6)', border: '1px solid var(--border-solid)' }}>
+        <div className="alert" style={{ marginBottom: 20, fontSize: 13, background: 'var(--grigio-6)', border: '1px solid var(--border-solid)', borderRadius: 14 }}>
           💡 Ogni mese genera una quota per tutti i tesserati (o per un solo giocatore) con l'importo della retta
           mensile. Segna il pagamento quando arriva, mese per mese — come una palestra.
         </div>

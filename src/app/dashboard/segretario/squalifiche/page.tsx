@@ -178,7 +178,7 @@ export default function SqualifichePage() {
             Nessuna squalifica attiva
           </div>
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <div className="table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ background: 'var(--bg-input)' }}>
                 <th style={th}>Giocatore</th>
@@ -256,7 +256,7 @@ export default function SqualifichePage() {
                 )
               })}
             </tbody>
-          </table>
+          </table></div>
         )}
       </div>
 

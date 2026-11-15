@@ -159,7 +159,7 @@ export default async function OsservatoreDashboard() {
           </div>
 
           {/* Suggerimento */}
-          <div className="card" style={{ padding: 16, background: 'var(--verde-lt)', border: '1px solid var(--verde-bd)' }}>
+          <div className="card" style={{ padding: 16, background: 'var(--verde-lt)', border: '1px solid var(--verde-bd)', borderRadius: 14 }}>
             <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--verde)', marginBottom: 8 }}>
               Come funziona
             </div>

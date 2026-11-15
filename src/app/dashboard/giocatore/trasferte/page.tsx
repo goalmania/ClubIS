@@ -177,7 +177,7 @@ export default function TrasferteGiocatorePage() {
       )}
 
       {future.length > 0 && (
-        <div style={{ border: '1px solid var(--border)', background: 'var(--bg-card)', marginBottom: 20 }}>
+        <div style={{ border: '1px solid var(--border)', background: 'var(--bg-card)', marginBottom: 20, borderRadius: 14 }}>
           <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border)', fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 13, color: 'var(--accent)' }}>
             Prossime trasferte ({future.length})
           </div>
@@ -186,7 +186,7 @@ export default function TrasferteGiocatorePage() {
       )}
 
       {past.length > 0 && (
-        <div style={{ border: '1px solid var(--border)', background: 'var(--bg-card)' }}>
+        <div style={{ border: '1px solid var(--border)', background: 'var(--bg-card)', borderRadius: 14 }}>
           <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--border)', fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 13, color: 'var(--white)' }}>
             Storico ({past.length})
           </div>
