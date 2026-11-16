@@ -141,13 +141,46 @@ function DashboardContent({
   }
 
   return (
-    <div style={{ maxWidth: 560, margin: '0 auto' }}>
+    <div style={{ maxWidth: 980, margin: '0 auto' }}>
       {/* Header */}
       <div className="pagina-testa">
         <h1>{familiaNome ? `Ciao, ${familiaNome}` : 'Area Famiglia'}</h1>
         <p>{giocatore?.nome} {giocatore?.cognome} —{' '}
           {giocatore?.ruolo_principale?.replace(/_/g, ' ') ?? 'Giocatore'}
           {giocatore?.data_nascita && ` · ${new Date().getFullYear() - new Date(giocatore.data_nascita).getFullYear()} anni`}</p>
+      </div>
+
+      {/* Statistiche: la prima in lime */}
+      <div className="kpi-riga" data-onboarding="card-profilo-figlio" style={{ gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
+        {[
+          {
+            label: 'Presenze 30 giorni',
+            value: percPresenze !== null ? `${percPresenze}%` : '—',
+            sub: `${presenze.presenti}/${presenze.tot} allenamenti`,
+            color: percPresenze !== null && percPresenze < 60 ? 'var(--rosso)' : undefined,
+            href: '/dashboard/famiglia/calendario',
+          },
+          {
+            label: 'Quota stagionale',
+            value: quota ? (quota.stato === 'pagato' ? '✓' : formatEuro(totDaPagare)) : '—',
+            sub: quota ? quota.stato.replace('_', ' ') : 'Non assegnata',
+            color: quota ? statoQuotaColore[quota.stato] : undefined,
+            href: '/dashboard/famiglia/pagamenti',
+          },
+          {
+            label: 'Ultime valutazioni',
+            value: valutazioni.length > 0 ? `${valutazioni.length}` : '—',
+            sub: valutazioni.length > 0 ? `Ultima: ${formatData(valutazioni[0]?.data)}` : 'Nessuna',
+            color: undefined,
+            href: '/dashboard/famiglia/sviluppo',
+          },
+        ].map(k => (
+          <Link key={k.label} href={k.href} className="stat-card">
+            <div className="stat-label">{k.label}</div>
+            <div className="stat-value" style={{ color: k.color }}>{k.value}</div>
+            <div className="stat-sub" style={{ textTransform: 'capitalize' }}>{k.sub}</div>
+          </Link>
+        ))}
       </div>
 
       {/* Selettore figlio multiplo */}
@@ -161,7 +194,7 @@ function DashboardContent({
                 key={f.id}
                 href={`/dashboard/famiglia?figlio=${f.giocatore_id}`}
                 style={{
-                  padding: '6px 14px', borderRadius: 8, fontSize: 12, fontWeight: 600,
+                  padding: '8px 16px', borderRadius: 999, fontSize: 13, fontWeight: 600,
                   textDecoration: 'none', border: '1px solid var(--border-solid)',
                   background: active ? 'var(--accent)' : 'transparent',
                   color: active ? '#000' : 'var(--white)',
@@ -193,46 +226,6 @@ function DashboardContent({
         </div>
       )}
 
-      {/* KPI */}
-      <div data-onboarding="card-profilo-figlio" style={{
-        display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-        gap: 1, background: 'var(--border)', marginBottom: 24,
-      }}>
-        {[
-          {
-            label: 'Presenze 30 giorni',
-            value: percPresenze !== null ? `${percPresenze}%` : '—',
-            sub: `${presenze.presenti}/${presenze.tot} allenamenti`,
-            color: percPresenze !== null && percPresenze < 60 ? 'var(--rosso)' : 'var(--accent)',
-          },
-          {
-            label: 'Quota stagionale',
-            value: quota ? (quota.stato === 'pagato' ? '✓' : formatEuro(totDaPagare)) : '—',
-            sub: quota ? quota.stato.replace('_', ' ') : 'Non assegnata',
-            color: quota ? statoQuotaColore[quota.stato] : 'var(--gray)',
-          },
-          {
-            label: 'Ultime valutazioni',
-            value: valutazioni.length > 0 ? `${valutazioni.length}` : '—',
-            sub: valutazioni.length > 0 ? `Ultima: ${formatData(valutazioni[0]?.data)}` : 'Nessuna',
-            color: 'var(--accent)',
-          },
-        ].map(k => (
-          <div key={k.label} style={{ background: 'var(--gray-light)', padding: '16px 20px' }}>
-            <div style={{
-              fontFamily: 'var(--font-display)', fontWeight: 700,
-              fontSize: 26, color: k.color, lineHeight: 1,
-            }}>{k.value}</div>
-            <div style={{
-              fontFamily: 'var(--font-mono)', fontSize: '0.78rem',
-              letterSpacing: '0', textTransform: 'none',
-              color: 'var(--text-muted)', marginTop: 4,
-            }}>{k.label}</div>
-            <div style={{ fontSize: 12, color: 'var(--gray)', marginTop: 3 }}>{k.sub}</div>
-          </div>
-        ))}
-      </div>
-
       {/* Grid 2 colonne */}
       <div className="stack-mobile" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
 
@@ -240,10 +233,9 @@ function DashboardContent({
         <div className="card" data-onboarding="sezione-calendario" style={{ padding: 0, overflow: 'hidden' }}>
           <div style={{
             padding: '12px 18px', borderBottom: '1px solid var(--border)',
-            fontFamily: 'var(--font-display)', fontWeight: 700,
-            textTransform: 'none', fontSize: 12, letterSpacing: '0',
+            fontWeight: 600, fontSize: 15, letterSpacing: '-0.01em',
           }}>
-            📅 Prossimi eventi
+            Prossimi eventi
           </div>
           {prossimi.length === 0 ? (
             <div style={{ padding: '24px', textAlign: 'center', color: 'var(--gray)', fontSize: 12 }}>
@@ -268,10 +260,9 @@ function DashboardContent({
         <div className="card" data-onboarding="section-valutazioni-figlio" style={{ padding: 0, overflow: 'hidden' }}>
           <div style={{
             padding: '12px 18px', borderBottom: '1px solid var(--border)',
-            fontFamily: 'var(--font-display)', fontWeight: 700,
-            textTransform: 'none', fontSize: 12, letterSpacing: '0',
+            fontWeight: 600, fontSize: 15, letterSpacing: '-0.01em',
           }}>
-            ⭐ Valutazioni
+            Valutazioni
           </div>
           {valutazioni.length === 0 ? (
             <div style={{ padding: '24px', textAlign: 'center', color: 'var(--gray)', fontSize: 12 }}>
@@ -315,8 +306,8 @@ function DashboardContent({
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             padding: '12px 18px', borderBottom: '1px solid var(--border)',
           }}>
-            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, textTransform: 'none', letterSpacing: '0' }}>
-              ✉ Comunicazioni recenti
+            <span style={{ fontWeight: 600, fontSize: 15, letterSpacing: '-0.01em' }}>
+              Comunicazioni recenti
             </span>
             <Link href="/dashboard/famiglia/comunicazioni" style={{ fontSize: 12, color: 'var(--accent)', textDecoration: 'none' }}>
               Vedi tutte →
@@ -335,29 +326,17 @@ function DashboardContent({
         </div>
       )}
 
-      {/* Link rapidi */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 10 }}>
+      {/* Vai a: collegamenti rapidi */}
+      <div className="card vai-a">
+        <span className="vai-a-titolo">Vai a</span>
         {[
           { href: '/dashboard/famiglia/calendario',   label: 'Calendario',  icon: '📅' },
           { href: '/dashboard/famiglia/sviluppo',     label: 'Progressi',   icon: '⭐' },
           { href: '/dashboard/famiglia/pagamenti',    label: 'Pagamenti',   icon: '💶' },
           { href: '/dashboard/famiglia/messaggi',     label: 'Bacheca',     icon: '✉️' },
         ].map(l => (
-          <Link key={l.href} href={l.href} style={{
-            display: 'flex', alignItems: 'center', gap: 10,
-            padding: '14px 16px',
-            background: 'var(--gray-light)',
-            border: '1px solid var(--border)',
-            borderRadius: 8,
-            textDecoration: 'none',
-            color: 'var(--gray)',
-            fontSize: 14,
-            fontFamily: 'var(--font-display)',
-            fontWeight: 700,
-            textTransform: 'none',
-            letterSpacing: '0',
-          }}>
-            <span style={{ fontSize: 20 }}>{l.icon}</span>
+          <Link key={l.href} href={l.href} className="btn btn-secondary btn-sm">
+            <span style={{ color: 'var(--accent)' }}>{l.icon}</span>
             {l.label}
           </Link>
         ))}
