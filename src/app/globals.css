@@ -1548,3 +1548,13 @@ body::before {
   .dashboard-content [style*="repeat(7,"][style*="min-width: 700px"] > *,
   .dashboard-content [style*="repeat(7,"][style*="min-width:700px"] > * { min-height: 56px !important; }
 }
+@media (max-width: 640px) {
+  /* Numeri grandi nelle caselle: si adattano alla larghezza invece di essere tagliati */
+  .stat-card .stat-value { font-size: clamp(20px, 6.4vw, 28px) !important; white-space: normal; overflow-wrap: anywhere; }
+  .kpi-riga .stat-value { font-size: 32px !important; white-space: nowrap; }
+  /* Pannelli affiancati (due card) → uno sotto l'altro */
+  .dashboard-content [style*="grid-template-columns: 1fr 1fr"]:has(> .card, > section, > .glass),
+  .dashboard-content [style*="grid-template-columns:1fr 1fr"]:has(> .card, > section, > .glass),
+  .dashboard-content [style*="grid-template-columns: 2fr 1fr"]:has(> .card, > section),
+  .dashboard-content [style*="grid-template-columns: 160px 1fr"] { grid-template-columns: minmax(0, 1fr) !important; }
+}
