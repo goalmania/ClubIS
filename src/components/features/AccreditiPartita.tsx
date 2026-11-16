@@ -540,7 +540,7 @@ export default function AccreditiPartita({
         </div>
       ) : (
         <div className="table-wrap">
-          <table>
+          <table className="tabella-schede">
             <thead>
               <tr>
                 <th>Nominativo</th>
@@ -559,17 +559,17 @@ export default function AccreditiPartita({
                 const tipoLabel = TIPO_ACCREDITO_LABEL[a.tipo] ?? a.tipo
                 return (
                   <tr key={a.id}>
-                    <td style={{ fontWeight: 500 }}>
+                    <td data-label="Nominativo" style={{ fontWeight: 500 }}>
                       {a.cognome} {a.nome}
                       {a.email && (
                         <div style={{ fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)', marginTop: 2 }}>{a.email}</div>
                       )}
                     </td>
-                    <td style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{tipoLabel}</td>
-                    <td style={{ fontSize: 12, color: 'var(--grigio-4)' }}>{a.organizzazione ?? '—'}</td>
-                    <td style={{ fontSize: 12, color: 'var(--grigio-4)' }}>{a.settore ?? '—'}</td>
-                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{a.numero_badge ?? '—'}</td>
-                    <td>
+                    <td data-label="Tipo" style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{tipoLabel}</td>
+                    <td data-label="Organizzazione" style={{ fontSize: 12, color: 'var(--grigio-4)' }}>{a.organizzazione ?? '—'}</td>
+                    <td data-label="Settore" style={{ fontSize: 12, color: 'var(--grigio-4)' }}>{a.settore ?? '—'}</td>
+                    <td data-label="Badge" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{a.numero_badge ?? '—'}</td>
+                    <td data-label="Stato">
                       <div>
                         <span style={{
                           fontSize: 12, fontFamily: 'var(--font-mono)',
@@ -584,11 +584,11 @@ export default function AccreditiPartita({
                       </div>
                     </td>
                     {mostraFiltroPartita && (
-                      <td style={{ fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>
+                      <td data-label="Partita" style={{ fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>
                         {a.partite ? `${a.partite.avversario} · ${a.partite.data_ora.slice(0, 10)}` : '—'}
                       </td>
                     )}
-                    <td>
+                    <td data-label="">
                       <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
                         {canApprove && a.stato === 'in_attesa' && (
                           <button

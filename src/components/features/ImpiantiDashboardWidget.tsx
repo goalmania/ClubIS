@@ -64,7 +64,7 @@ export default function ImpiantiDashboardWidget({ ruolo }: Props) {
         <h2>Stato impianti</h2>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
           {ticketAperti > 0 && (
-            <span className="badge badge-rosso">{ticketAperti} ticket aperti</span>
+            <span className="badge badge-rosso">{ticketAperti} {ticketAperti === 1 ? "ticket aperto" : "ticket aperti"}</span>
           )}
           <Link href={detailHref}>Dettaglio</Link>
         </div>

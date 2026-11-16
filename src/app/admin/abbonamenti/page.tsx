@@ -96,7 +96,7 @@ export default function AdminAbbonamentiPage() {
           <div style={{ padding: '60px 20px', textAlign: 'center', color: 'var(--grigio-4)', fontSize: 14 }}>Caricamento...</div>
         ) : (
           <div className="table-wrap">
-            <table>
+            <table className="tabella-schede">
               <thead>
                 <tr>
                   <th>Club</th>
@@ -118,25 +118,25 @@ export default function AdminAbbonamentiPage() {
                   const scadenzaClubIS = c.plan_status === 'trial' ? c.trial_ends_at : c.current_period_end
                   return (
                     <tr key={c.id}>
-                      <td style={{ fontWeight: 500 }}>{c.nome}</td>
-                      <td style={{ fontSize: 13, color: 'var(--grigio-3)' }}>{c.citta}</td>
-                      <td><span className={`badge ${cs.cls}`}>{cs.label}</span></td>
-                      <td>
+                      <td data-label="Club" style={{ fontWeight: 500 }}>{c.nome}</td>
+                      <td data-label="Città" style={{ fontSize: 13, color: 'var(--grigio-3)' }}>{c.citta}</td>
+                      <td data-label="ClubIS"><span className={`badge ${cs.cls}`}>{cs.label}</span></td>
+                      <td data-label="Piano">
                         <span className={`badge ${c.plan_tier === 'elite' ? 'badge-viola' : c.plan_tier === 'pro' ? 'badge-blu' : 'badge-grigio'}`}>
                           {c.plan_tier ?? '—'}
                         </span>
                       </td>
-                      <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
+                      <td data-label="Scadenza ClubIS" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
                         {scadenzaClubIS ? new Date(scadenzaClubIS).toLocaleDateString('it-IT') : '—'}
                       </td>
-                      <td><span className={`badge ${ra.cls}`}>{ra.label}</span></td>
-                      <td><span className={`badge ${ds.cls}`}>{ds.label}</span></td>
-                      <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
+                      <td data-label="Rinnovo auto"><span className={`badge ${ra.cls}`}>{ra.label}</span></td>
+                      <td data-label="DM Scout"><span className={`badge ${ds.cls}`}>{ds.label}</span></td>
+                      <td data-label="Scadenza DM Scout" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
                         {c.dmscout_abbonamento_scadenza
                           ? new Date(c.dmscout_abbonamento_scadenza).toLocaleDateString('it-IT')
                           : '—'}
                       </td>
-                      <td>
+                      <td data-label="Modifica piano">
                         <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
                           <select
                             className="input"

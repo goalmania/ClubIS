@@ -472,7 +472,7 @@ export default function ImportCalendarioFIGC() {
           </div>
 
           <div className="table-wrap">
-            <table>
+            <table className="tabella-schede">
               <thead>
                 <tr>
                   <th>Giornata</th>
@@ -496,10 +496,10 @@ export default function ImportCalendarioFIGC() {
                       opacity: p.non_rilevante ? 0.55 : 1,
                     }}
                   >
-                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
+                    <td data-label="Giornata" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
                       {p.giornata ?? '—'}
                     </td>
-                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
+                    <td data-label="Data / Ora" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
                       {p.data_ora
                         ? new Date(p.data_ora).toLocaleString('it-IT', {
                             day: '2-digit', month: '2-digit', year: 'numeric',
@@ -507,18 +507,18 @@ export default function ImportCalendarioFIGC() {
                           })
                         : '—'}
                     </td>
-                    <td style={{ fontWeight: p.non_rilevante ? 400 : 500, fontSize: 13 }}>
+                    <td data-label="Avversario" style={{ fontWeight: p.non_rilevante ? 400 : 500, fontSize: 13 }}>
                       {p.avversario || '—'}
                     </td>
-                    <td>
+                    <td data-label="Casa/Trasferta">
                       {!p.errore && !p.non_rilevante && (
                         <span className={`badge ${p.casa_trasferta === 'casa' ? 'badge-verde' : p.casa_trasferta === 'trasferta' ? 'badge-grigio' : 'badge-ambra'}`}>
                           {p.casa_trasferta}
                         </span>
                       )}
                     </td>
-                    <td style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{p.campo || '—'}</td>
-                    <td>
+                    <td data-label="Campo" style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{p.campo || '—'}</td>
+                    <td data-label="Stato">
                       {p.errore
                         ? <span className="badge badge-rosso" title={p.errore}>Errore: {p.errore}</span>
                         : p.non_rilevante

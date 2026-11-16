@@ -304,7 +304,7 @@ export default function RapportoArbitralePage() {
           </div>
         ) : (
           <div className="table-wrap">
-            <table>
+            <table className="tabella-schede">
               <thead>
                 <tr>
                   <th>Data</th>
@@ -321,19 +321,19 @@ export default function RapportoArbitralePage() {
               <tbody>
                 {lista.map(r => (
                   <tr key={r.id}>
-                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12, whiteSpace: 'nowrap' }}>
+                    <td data-label="Data" style={{ fontFamily: 'var(--font-mono)', fontSize: 12, whiteSpace: 'nowrap' }}>
                       {r.data_partita
                         ? new Date(r.data_partita).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: '2-digit' })
                         : '—'}
                     </td>
-                    <td style={{ fontWeight: 500, fontSize: 13 }}>{r.avversario ?? '—'}</td>
-                    <td style={{ fontSize: 12, color: 'var(--grigio-4)' }}>{r.competizione ?? '—'}</td>
-                    <td style={{ fontSize: 13 }}>
+                    <td data-label="Avversario" style={{ fontWeight: 500, fontSize: 13 }}>{r.avversario ?? '—'}</td>
+                    <td data-label="Competizione" style={{ fontSize: 12, color: 'var(--grigio-4)' }}>{r.competizione ?? '—'}</td>
+                    <td data-label="Arbitro" style={{ fontSize: 13 }}>
                       {r.arbitro_cognome || r.arbitro_nome
                         ? `${r.arbitro_cognome ?? ''} ${r.arbitro_nome ?? ''}`.trim()
                         : '—'}
                     </td>
-                    <td style={{ textAlign: 'center' }}>
+                    <td data-label="Voto" style={{ textAlign: 'center' }}>
                       {r.voto_arbitro !== null ? (
                         <span style={{
                           display: 'inline-flex', width: 28, height: 28, borderRadius: 10,
@@ -346,14 +346,14 @@ export default function RapportoArbitralePage() {
                         </span>
                       ) : '—'}
                     </td>
-                    <td>
+                    <td data-label="Comportamento">
                       {r.comportamento ? (
                         <span className={`badge ${r.comportamento === 'corretto' ? 'badge-verde' : r.comportamento === 'scorretto' ? 'badge-rosso' : 'badge-ambra'}`} style={{ fontSize: 12 }}>
                           {COMPORTAMENTO_LABEL[r.comportamento]}
                         </span>
                       ) : '—'}
                     </td>
-                    <td style={{ textAlign: 'center', fontSize: 12, fontFamily: 'var(--font-mono)' }}>
+                    <td data-label="Amm./Esp." style={{ textAlign: 'center', fontSize: 12, fontFamily: 'var(--font-mono)' }}>
                       <span style={{ color: 'var(--ambra)' }}>
                         {r.ammoniti_nostri ? r.ammoniti_nostri.split(',').filter(Boolean).length : 0}
                       </span>
@@ -362,12 +362,12 @@ export default function RapportoArbitralePage() {
                         {r.espulsi_nostri ? r.espulsi_nostri.split(',').filter(Boolean).length : 0}
                       </span>
                     </td>
-                    <td>
+                    <td data-label="Stato">
                       <span className={`badge ${r.stato === 'completato' ? 'badge-verde' : 'badge-grigio'}`} style={{ fontSize: 12 }}>
                         {r.stato}
                       </span>
                     </td>
-                    <td>
+                    <td data-label="Azioni">
                       <div style={{ display: 'flex', gap: 4 }}>
                         <button
                           className="btn btn-ghost btn-sm"

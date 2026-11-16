@@ -282,7 +282,7 @@ export default function TuttocampoSync({ clubId, onImporta }: Props) {
           {!loading && !wafBlocked && risultati.length > 0 && (
             <>
               <div className="table-wrap">
-                <table>
+                <table className="tabella-schede">
                   <thead>
                     <tr>
                       <th>G</th>
@@ -296,18 +296,18 @@ export default function TuttocampoSync({ clubId, onImporta }: Props) {
                   <tbody>
                     {risultati.map((r, i) => (
                       <tr key={i}>
-                        <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-4)', textAlign: 'center' }}>
+                        <td data-label="G" style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-4)', textAlign: 'center' }}>
                           {r.giornata ?? '—'}
                         </td>
-                        <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12, whiteSpace: 'nowrap' }}>
+                        <td data-label="Data" style={{ fontFamily: 'var(--font-mono)', fontSize: 12, whiteSpace: 'nowrap' }}>
                           {r.data}
                         </td>
-                        <td style={{ fontWeight: 500, fontSize: 13 }}>{r.squadraCasa}</td>
-                        <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, textAlign: 'center' }}>
+                        <td data-label="Casa" style={{ fontWeight: 500, fontSize: 13 }}>{r.squadraCasa}</td>
+                        <td data-label="Risultato" style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, textAlign: 'center' }}>
                           {r.golCasa !== null ? `${r.golCasa} - ${r.golOspite}` : '—'}
                         </td>
-                        <td style={{ fontSize: 13 }}>{r.squadraOspite}</td>
-                        <td>
+                        <td data-label="Ospite" style={{ fontSize: 13 }}>{r.squadraOspite}</td>
+                        <td data-label="">
                           <button
                             className="btn btn-secondary btn-sm"
                             onClick={() => setConfirmItem(r)}

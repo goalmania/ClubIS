@@ -255,7 +255,7 @@ export default function TrackerMercatoDS() {
                   </div>
                 ) : (
                   <div className="table-wrap">
-                    <table>
+                    <table className="tabella-schede">
                       <thead>
                         <tr>
                           <th>Giocatore</th><th>Ruolo</th><th>Tipo</th><th>Club</th><th>Stato</th><th>Impatto</th><th>Data</th>
@@ -270,22 +270,22 @@ export default function TrackerMercatoDS() {
                           const impattoColor = segno === 1 ? 'var(--accent)' : 'var(--rosso)'
                           return (
                             <tr key={t.id}>
-                              <td>
+                              <td data-label="Giocatore">
                                 <div style={{ fontWeight: 600, fontFamily: 'var(--font-display)', letterSpacing: '0', textTransform: 'none', fontSize: 13 }}>{getNome(t)}</div>
                                 {t.note && <div style={{ fontSize: 12, color: 'var(--gray)', marginTop: 2, maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{t.note}</div>}
                               </td>
-                              <td style={{ color: 'var(--gray)', fontSize: 12 }}>{t.ruolo ?? '—'}</td>
-                              <td><span className={`badge ${TIPO_BADGE[tipo] ?? 'badge-grigio'}`}>{TIPO_LABEL[tipo] ?? tipo}</span></td>
-                              <td style={{ color: 'var(--gray)', fontSize: 12 }}>
+                              <td data-label="Ruolo" style={{ color: 'var(--gray)', fontSize: 12 }}>{t.ruolo ?? '—'}</td>
+                              <td data-label="Tipo"><span className={`badge ${TIPO_BADGE[tipo] ?? 'badge-grigio'}`}>{TIPO_LABEL[tipo] ?? tipo}</span></td>
+                              <td data-label="Club" style={{ color: 'var(--gray)', fontSize: 12 }}>
                                 {tipo === 'acquisto' || tipo === 'prestito_in' ? (t.club_provenienza ?? '—') : (t.club_destinazione ?? '—')}
                               </td>
-                              <td><span className={`badge ${STATO_BADGE[t.stato] ?? 'badge-grigio'}`}>{STATO_LABEL[t.stato] ?? t.stato}</span></td>
-                              <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: 700 }}>
+                              <td data-label="Stato"><span className={`badge ${STATO_BADGE[t.stato] ?? 'badge-grigio'}`}>{STATO_LABEL[t.stato] ?? t.stato}</span></td>
+                              <td data-label="Impatto" style={{ fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: 700 }}>
                                 {isChiusa && valore > 0
                                   ? <span style={{ color: impattoColor }}>{segno === 1 ? '+' : '−'} {fmt(valore)}</span>
                                   : <span style={{ color: 'var(--text-muted)' }}>—</span>}
                               </td>
-                              <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
+                              <td data-label="Data" style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>
                                 {new Date(t.created_at).toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: '2-digit' })}
                               </td>
                             </tr>

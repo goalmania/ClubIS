@@ -447,22 +447,22 @@ export default function TatticaPage() {
             Schemi salvati ({schemiSalvati.length})
           </div>
           <div className="table-wrap">
-            <table>
+            <table className="tabella-schede">
               <thead>
                 <tr><th>Nome</th><th>Modulo</th><th>Data</th><th></th></tr>
               </thead>
               <tbody>
                 {schemiSalvati.map(s => (
                   <tr key={s.id}>
-                    <td style={{ fontWeight: 500 }}>
+                    <td data-label="Nome" style={{ fontWeight: 500 }}>
                       {s.nome}
                       {s.is_default && <span className="badge badge-verde" style={{ fontSize: 12, marginLeft: 8 }}>Predefinito</span>}
                     </td>
-                    <td><span className="badge badge-grigio" style={{ fontSize: 12 }}>{s.modulo}</span></td>
-                    <td style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+                    <td data-label="Modulo"><span className="badge badge-grigio" style={{ fontSize: 12 }}>{s.modulo}</span></td>
+                    <td data-label="Data" style={{ fontSize: 12, color: 'var(--text-muted)' }}>
                       {new Date(s.created_at).toLocaleDateString('it-IT')}
                     </td>
-                    <td>
+                    <td data-label="">
                       <div style={{ display: 'flex', gap: 6 }}>
                         <button className="btn btn-secondary btn-sm" style={{ fontSize: 12 }} onClick={() => caricaSchema(s)}>Carica</button>
                         {!s.is_default && (

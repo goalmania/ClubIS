@@ -442,7 +442,7 @@ export default function SettoreGiovanilePage() {
           ) : (
             <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
               <div className="table-wrap">
-                <table>
+                <table className="tabella-schede">
                   <thead>
                     <tr>
                       <th>Giocatore</th>
@@ -459,10 +459,10 @@ export default function SettoreGiovanilePage() {
                       const statoInfo = STATI_QUOTA_GIOVANILE[q.stato as StatoQuotaGiovanile]
                       return (
                         <tr key={q.id}>
-                          <td style={{ fontWeight: 500 }}>
+                          <td data-label="Giocatore" style={{ fontWeight: 500 }}>
                             {q.giocatore ? `${q.giocatore.nome} ${q.giocatore.cognome}` : `#${q.giocatore_id.slice(-4)}`}
                           </td>
-                          <td>
+                          <td data-label="Squadra">
                             {q.squadra && (
                               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                                 <div style={{ width: 8, height: 8, borderRadius: '50%', background: q.squadra.colore_badge, flexShrink: 0 }} />
@@ -470,11 +470,11 @@ export default function SettoreGiovanilePage() {
                               </div>
                             )}
                           </td>
-                          <td style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{formatMese(q.mese_competenza)}</td>
-                          <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
+                          <td data-label="Mese" style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{formatMese(q.mese_competenza)}</td>
+                          <td data-label="Importo" style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
                             {fmtEuro(Number(q.importo_mensile))}
                           </td>
-                          <td>
+                          <td data-label="Stato">
                             <span style={{
                               display: 'inline-flex', alignItems: 'center', gap: 4,
                               padding: '3px 8px', borderRadius: 10, fontSize: 12, fontWeight: 600,
@@ -484,10 +484,10 @@ export default function SettoreGiovanilePage() {
                               {statoInfo?.icona} {statoInfo?.label ?? q.stato}
                             </span>
                           </td>
-                          <td style={{ fontSize: 13, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                          <td data-label="Pagato il" style={{ fontSize: 13, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
                             {q.data_pagamento ? new Date(q.data_pagamento).toLocaleDateString('it-IT') : '—'}
                           </td>
-                          <td>
+                          <td data-label="Azioni">
                             <div style={{ display: 'flex', gap: 6 }}>
                               {q.stato !== 'pagata' && q.stato !== 'esonerata' && (
                                 <button

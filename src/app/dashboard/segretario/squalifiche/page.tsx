@@ -178,7 +178,7 @@ export default function SqualifichePage() {
             Nessuna squalifica attiva
           </div>
         ) : (
-          <div className="table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <div className="table-wrap"><table className="tabella-schede" style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ background: 'var(--bg-input)' }}>
                 <th style={th}>Giocatore</th>
@@ -195,7 +195,7 @@ export default function SqualifichePage() {
                 const g = s.giocatori
                 return (
                   <tr key={s.id} style={{ borderBottom: '1px solid var(--border-light)' }}>
-                    <td style={td}>
+                    <td data-label="Giocatore" style={td}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                         {g?.numero_maglia != null && (
                           <span style={{
@@ -220,28 +220,28 @@ export default function SqualifichePage() {
                         </div>
                       </div>
                     </td>
-                    <td style={{ ...td, fontFamily: 'monospace', fontSize: 12, color: 'var(--text-muted)' }}>
+                    <td data-label="Comunicato FIGC" style={{ ...td, fontFamily: 'monospace', fontSize: 12, color: 'var(--text-muted)' }}>
                       {s.comunicato_figc ?? '—'}
                     </td>
-                    <td style={td}>
+                    <td data-label="Inizio" style={td}>
                       {s.data_inizio
                         ? new Date(s.data_inizio).toLocaleDateString('it-IT')
                         : '—'}
                     </td>
-                    <td style={td}>
+                    <td data-label="Fine prevista" style={td}>
                       {s.data_fine
                         ? new Date(s.data_fine).toLocaleDateString('it-IT')
                         : '—'}
                     </td>
-                    <td style={{ ...td, textAlign: 'center' }}>
+                    <td data-label="Giornate" style={{ ...td, textAlign: 'center' }}>
                       <span className="badge badge-grigio">{s.giornate_squalifica ?? '—'}</span>
                     </td>
-                    <td style={{ ...td, textAlign: 'center' }}>
+                    <td data-label="Rimanenti" style={{ ...td, textAlign: 'center' }}>
                       <span className={`badge ${(s.partite_restanti ?? 0) > 0 ? 'badge-rosso' : 'badge-verde'}`}>
                         {s.partite_restanti ?? 0}
                       </span>
                     </td>
-                    <td style={{ ...td, textAlign: 'right' }}>
+                    <td data-label="Azioni" style={{ ...td, textAlign: 'right' }}>
                       {(s.partite_restanti ?? 0) > 0 && (
                         <button
                           className="btn btn-ghost btn-sm"

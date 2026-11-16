@@ -229,7 +229,7 @@ export default async function AllenatoreDashboard() {
           </div>
           {ultimiAllenamenti && ultimiAllenamenti.length > 0 ? (
             <div className="table-wrap">
-              <table>
+              <table className="tabella-schede">
                 <thead>
                   <tr>
                     <th>Data</th>
@@ -242,21 +242,21 @@ export default async function AllenatoreDashboard() {
                 <tbody>
                   {ultimiAllenamenti.map(a => (
                     <tr key={a.id}>
-                      <td style={{ fontFamily: 'var(--font-mono)', fontSize: 13 }}>
+                      <td data-label="Data" style={{ fontFamily: 'var(--font-mono)', fontSize: 13 }}>
                         {new Date(a.data_ora).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit' })}
                         {' '}
                         <span style={{ color: 'var(--grigio-4)' }}>
                           {new Date(a.data_ora).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}
                         </span>
                       </td>
-                      <td style={{ textTransform: 'capitalize', fontSize: 13 }}>{a.tipologia}</td>
-                      <td style={{ fontSize: 13, color: 'var(--grigio-3)' }}>{sqNome(a.squadra_id)}</td>
-                      <td>
+                      <td data-label="Tipo" style={{ textTransform: 'capitalize', fontSize: 13 }}>{a.tipologia}</td>
+                      <td data-label="Squadra" style={{ fontSize: 13, color: 'var(--grigio-3)' }}>{sqNome(a.squadra_id)}</td>
+                      <td data-label="Stato">
                         <span className={`badge ${a.stato === 'effettuato' ? 'badge-verde' : a.stato === 'annullato' ? 'badge-rosso' : 'badge-ambra'}`}>
                           {a.stato}
                         </span>
                       </td>
-                      <td>
+                      <td data-label="">
                         <Link href={`/dashboard/allenatore/presenze/${a.id}`} className="btn btn-ghost btn-sm" style={{ fontSize: 12 }}>
                           Presenze →
                         </Link>

@@ -184,7 +184,7 @@ export default function DistintaEditor({
             Nessun giocatore eleggibile
           </div>
         ) : (
-          <div className="table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <div className="table-wrap"><table className="tabella-schede" style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ background: 'var(--bg-input)' }}>
                 <th style={thS}></th>
@@ -209,7 +209,7 @@ export default function DistintaEditor({
                       opacity: isDisabled ? 0.45 : 1,
                     }}
                   >
-                    <td style={{ ...tdS, width: 44 }}>
+                    <td data-label="" style={{ ...tdS, width: 44 }}>
                       <input
                         type="checkbox"
                         checked={isChecked}
@@ -218,20 +218,20 @@ export default function DistintaEditor({
                         style={{ cursor: isDisabled ? 'not-allowed' : 'pointer' }}
                       />
                     </td>
-                    <td style={{ ...tdS, width: 48, fontWeight: 700, color: 'var(--text-muted)' }}>
+                    <td data-label="N°" style={{ ...tdS, width: 48, fontWeight: 700, color: 'var(--text-muted)' }}>
                       {g.numero_maglia ?? '—'}
                     </td>
-                    <td style={tdS}>
+                    <td data-label="Giocatore" style={tdS}>
                       <span style={{ fontWeight: 600 }}>{g.cognome}</span> {g.nome}
                     </td>
-                    <td style={tdS}>
+                    <td data-label="Ruolo" style={tdS}>
                       {g.ruolo_principale ? (
                         <span className="badge badge-blu" style={{ fontSize: 12 }}>
                           {RUOLO_SHORT[g.ruolo_principale] ?? g.ruolo_principale}
                         </span>
                       ) : '—'}
                     </td>
-                    <td style={{ ...tdS, fontFamily: 'monospace', fontSize: 12, color: 'var(--text-muted)' }}>
+                    <td data-label="Tessera FIGC" style={{ ...tdS, fontFamily: 'monospace', fontSize: 12, color: 'var(--text-muted)' }}>
                       {g.codice_tessera_figc ?? '—'}
                     </td>
                   </tr>

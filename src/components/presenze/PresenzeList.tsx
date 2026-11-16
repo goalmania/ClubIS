@@ -66,7 +66,7 @@ export default function PresenzeList({ basePath, nuovoAllenamentoPath, soloMie =
           />
         ) : (
           <div className="table-wrap">
-            <table>
+            <table className="tabella-schede">
               <thead>
                 <tr>
                   <th>Data</th>
@@ -86,7 +86,7 @@ export default function PresenzeList({ basePath, nuovoAllenamentoPath, soloMie =
                   const sq    = s.squadre as any
                   return (
                     <tr key={s.id}>
-                      <td>
+                      <td data-label="Data">
                         <div style={{ fontSize: 14, fontWeight: 500 }}>
                           {data.toLocaleDateString('it-IT', { weekday: 'short', day: '2-digit', month: '2-digit' })}
                         </div>
@@ -94,12 +94,12 @@ export default function PresenzeList({ basePath, nuovoAllenamentoPath, soloMie =
                           {data.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}
                         </div>
                       </td>
-                      <td style={{ fontSize: 13, textTransform: 'capitalize' }}>{s.tipologia}</td>
-                      <td style={{ fontSize: 13, color: 'var(--grigio-3)' }}>
+                      <td data-label="Tipo" style={{ fontSize: 13, textTransform: 'capitalize' }}>{s.tipologia}</td>
+                      <td data-label="Squadra" style={{ fontSize: 13, color: 'var(--grigio-3)' }}>
                         {sq ? labelSquadra(sq, isScuolaCalcio) : '—'}
                       </td>
-                      <td style={{ fontSize: 12, color: 'var(--grigio-4)' }}>{s.campo ?? '—'}</td>
-                      <td>
+                      <td data-label="Campo" style={{ fontSize: 12, color: 'var(--grigio-4)' }}>{s.campo ?? '—'}</td>
+                      <td data-label="Presenze">
                         {perc !== null ? (
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                             <div className="progress" style={{ width: 50 }}>
@@ -116,12 +116,12 @@ export default function PresenzeList({ basePath, nuovoAllenamentoPath, soloMie =
                           <span style={{ fontSize: 12, color: 'var(--grigio-4)' }}>—</span>
                         )}
                       </td>
-                      <td>
+                      <td data-label="Stato">
                         <span className={`badge ${s.stato === 'effettuato' ? 'badge-verde' : s.stato === 'annullato' ? 'badge-rosso' : 'badge-ambra'}`}>
                           {s.stato}
                         </span>
                       </td>
-                      <td>
+                      <td data-label="">
                         <Link
                           href={`${basePath}/${s.id}`}
                           className="btn btn-sm"

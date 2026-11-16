@@ -79,7 +79,7 @@ export default async function DSRosaPage() {
 
       <div className="card" style={{ overflow: 'hidden' }}>
         <div className="table-wrap">
-          <table>
+          <table className="tabella-schede">
             <thead>
               <tr>
                 <th>#</th><th>Giocatore</th><th>Età</th><th>Ruolo</th><th>Piede</th>
@@ -95,29 +95,29 @@ export default async function DSRosaPage() {
                 const contrScadente = contr && new Date(contr.data_scadenza) <= tra90
                 return (
                   <tr key={g.id}>
-                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-4)' }}>
+                    <td data-label="#" style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-4)' }}>
                       {t.numero_maglia ? `#${t.numero_maglia}` : '—'}
                     </td>
-                    <td>
+                    <td data-label="Giocatore">
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                         <div className="avatar" style={{ width: 28, height: 28, fontSize: 12 }}>{g.nome[0]}{g.cognome[0]}</div>
                         <span style={{ fontSize: 13, fontWeight: 500 }}>{g.cognome} {g.nome}</span>
                       </div>
                     </td>
-                    <td style={{ fontSize: 13, color: 'var(--grigio-3)' }}>{eta}</td>
-                    <td><span className="badge badge-grigio" style={{ fontSize: 12 }}>{g.ruolo_principale ? ruoloShort[g.ruolo_principale] : '—'}</span></td>
-                    <td style={{ fontSize: 12, color: 'var(--grigio-3)', textTransform: 'capitalize' }}>{g.piede}</td>
-                    <td><span className={`badge ${nazBadge[g.nazionalita_tipo] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>{g.nazionalita_tipo?.slice(0, 3).toUpperCase()}</span></td>
-                    <td style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{(t.squadre as any)?.nome ?? '—'}</td>
-                    <td>
+                    <td data-label="Età" style={{ fontSize: 13, color: 'var(--grigio-3)' }}>{eta}</td>
+                    <td data-label="Ruolo"><span className="badge badge-grigio" style={{ fontSize: 12 }}>{g.ruolo_principale ? ruoloShort[g.ruolo_principale] : '—'}</span></td>
+                    <td data-label="Piede" style={{ fontSize: 12, color: 'var(--grigio-3)', textTransform: 'capitalize' }}>{g.piede}</td>
+                    <td data-label="Naz."><span className={`badge ${nazBadge[g.nazionalita_tipo] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>{g.nazionalita_tipo?.slice(0, 3).toUpperCase()}</span></td>
+                    <td data-label="Squadra" style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{(t.squadre as any)?.nome ?? '—'}</td>
+                    <td data-label="Contratto">
                       {contr ? (
                         <span className={`badge ${contrScadente ? 'badge-ambra' : 'badge-grigio'}`} style={{ fontSize: 12 }}>
                           {formatData(contr.data_scadenza, { month: '2-digit', year: '2-digit' })}
                         </span>
                       ) : <span style={{ fontSize: 12, color: 'var(--grigio-4)' }}>—</span>}
                     </td>
-                    <td><span className="badge badge-grigio" style={{ fontSize: 12 }}>{t.tipo}</span></td>
-                    <td>
+                    <td data-label="Tipo tess."><span className="badge badge-grigio" style={{ fontSize: 12 }}>{t.tipo}</span></td>
+                    <td data-label="">
                       <Link href={`/dashboard/segretario/giocatori/${g.id}`} className="btn btn-ghost btn-sm" style={{ fontSize: 12 }}>
                         Profilo →
                       </Link>

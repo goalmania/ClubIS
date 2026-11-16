@@ -133,7 +133,7 @@ export default function DistintePage() {
             Nessuna partita in calendario{categoriaTab !== 'tutti' ? ` per ${LABEL_CAT[categoriaTab]}` : ''}
           </div>
         ) : (
-          <div className="table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <div className="table-wrap"><table className="tabella-schede" style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ background: 'var(--bg-input)' }}>
                 <th style={th}>Data</th>
@@ -152,32 +152,32 @@ export default function DistintePage() {
                 const catColor = catTab === 'prima_squadra' ? 'var(--accent)' : catTab === 'settore_giovanile' ? '#388bfd' : '#66ddff'
                 return (
                   <tr key={p.id} style={{ borderBottom: '1px solid var(--border-light)' }}>
-                    <td style={td}>
+                    <td data-label="Data" style={td}>
                       <div style={{ fontSize: 13, fontWeight: 500 }}>{fmtData(p.data_ora)}</div>
                       <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{fmtOra(p.data_ora)}</div>
                     </td>
-                    <td style={td}>
+                    <td data-label="Avversario" style={td}>
                       <span style={{ fontSize: 13, fontWeight: 500 }}>
                         {p.casa_trasferta === 'trasferta' ? '✈ ' : '🏠 '}{p.avversario}
                       </span>
                     </td>
-                    <td style={td}>
+                    <td data-label="Categoria" style={td}>
                       <span style={{ fontSize: 12, fontWeight: 600, color: catColor, background: `${catColor}18`, padding: '2px 8px', borderRadius: 14 }}>
                         {p.squadra?.nome ?? LABEL_CAT[catTab]}
                       </span>
                     </td>
-                    <td style={td}>
+                    <td data-label="Competizione" style={td}>
                       <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{p.competizione ?? '—'}</span>
                     </td>
-                    <td style={td}>
+                    <td data-label="Giornata" style={td}>
                       <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{p.giornata ? `G${p.giornata}` : '—'}</span>
                     </td>
-                    <td style={td}>
+                    <td data-label="Distinta" style={td}>
                       {distinta
                         ? <span className="badge badge-verde">Generata ✓</span>
                         : <span className="badge badge-ambra">Da generare</span>}
                     </td>
-                    <td style={{ ...td, textAlign: 'right' }}>
+                    <td data-label="Azioni" style={{ ...td, textAlign: 'right' }}>
                       {distinta ? (
                         <Link href={`/dashboard/segretario/distinte/${p.id}/stampa`} className="btn btn-ghost btn-sm">Vedi</Link>
                       ) : (

@@ -170,7 +170,7 @@ export default async function UfficioStampaDashboard() {
           </div>
           {briefAperti && briefAperti.length > 0 ? (
             <div className="table-wrap">
-              <table>
+              <table className="tabella-schede">
                 <thead>
                   <tr><th>Evento</th><th>Data</th><th>Stato</th></tr>
                 </thead>
@@ -179,9 +179,9 @@ export default async function UfficioStampaDashboard() {
                     const info = STATO_BRIEF_LABEL[b.stato] ?? { label: b.stato, colore: 'var(--grigio-3)' }
                     return (
                       <tr key={b.id}>
-                        <td style={{ fontWeight: 500, fontSize: 13 }}>{b.titolo_evento}</td>
-                        <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{formatData(b.data_evento)}</td>
-                        <td>
+                        <td data-label="Evento" style={{ fontWeight: 500, fontSize: 13 }}>{b.titolo_evento}</td>
+                        <td data-label="Data" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{formatData(b.data_evento)}</td>
+                        <td data-label="Stato">
                           <span style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: info.colore, background: `${info.colore}18`, padding: '3px 8px', borderRadius: 8 }}>
                             {info.label}
                           </span>
@@ -213,20 +213,20 @@ export default async function UfficioStampaDashboard() {
         </div>
         {partiteProssime && partiteProssime.length > 0 ? (
           <div className="table-wrap">
-            <table>
+            <table className="tabella-schede">
               <thead>
                 <tr><th>Gara</th><th>Data</th><th>Competizione</th><th>Campo</th><th></th></tr>
               </thead>
               <tbody>
                 {partiteProssime.map((p: any) => (
                   <tr key={p.id}>
-                    <td style={{ fontWeight: 500, fontSize: 13 }}>
+                    <td data-label="Gara" style={{ fontWeight: 500, fontSize: 13 }}>
                       {p.casa_trasferta === 'casa' ? `${(p.squadre as any)?.nome ?? '—'} vs ${p.avversario}` : `${p.avversario} vs ${(p.squadre as any)?.nome ?? '—'}`}
                     </td>
-                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{formatData(p.data_ora)} {formatOra(p.data_ora)}</td>
-                    <td style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{p.competizione ?? '—'}</td>
-                    <td style={{ fontSize: 12, color: 'var(--grigio-4)' }}>{p.casa_trasferta === 'casa' ? 'Casa' : 'Trasferta'}</td>
-                    <td>
+                    <td data-label="Data" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{formatData(p.data_ora)} {formatOra(p.data_ora)}</td>
+                    <td data-label="Competizione" style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{p.competizione ?? '—'}</td>
+                    <td data-label="Campo" style={{ fontSize: 12, color: 'var(--grigio-4)' }}>{p.casa_trasferta === 'casa' ? 'Casa' : 'Trasferta'}</td>
+                    <td data-label="">
                       <Link
                         href={`/dashboard/ufficio-stampa/articoli?partita_id=${p.id}`}
                         style={{ fontSize: 12, color: 'var(--accent)', textDecoration: 'none', fontWeight: 600 }}

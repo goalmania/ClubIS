@@ -106,7 +106,7 @@ export default async function SegretarioDashboard() {
             <SectionHeader title="Certificati medici in scadenza" href="/dashboard/segretario/certificati" count={certInScadenza?.length} />
             {certInScadenza && certInScadenza.length > 0 ? (
               <div className="table-wrap">
-                <table>
+                <table className="tabella-schede">
                   <thead>
                     <tr>
                       <th>Giocatore</th>
@@ -121,17 +121,17 @@ export default async function SegretarioDashboard() {
                       const urgente = gg <= 7
                       return (
                         <tr key={c.id}>
-                          <td>
+                          <td data-label="Giocatore">
                             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                               <div className="avatar" style={{ width: 28, height: 28, fontSize: 12 }}>G</div>
                               <span style={{ fontSize: 13, fontWeight: 500 }}>Giocatore #{c.giocatore_id.slice(-4)}</span>
                             </div>
                           </td>
-                          <td><span className="badge badge-grigio">{c.tipo}</span></td>
-                          <td style={{ fontFamily: 'var(--font-mono)', fontSize: 13 }}>
+                          <td data-label="Tipo"><span className="badge badge-grigio">{c.tipo}</span></td>
+                          <td data-label="Scadenza" style={{ fontFamily: 'var(--font-mono)', fontSize: 13 }}>
                             {new Date(c.data_scadenza).toLocaleDateString('it-IT')}
                           </td>
-                          <td>
+                          <td data-label="Stato">
                             <span className={`badge ${urgente ? 'badge-rosso' : 'badge-ambra'}`}>
                               {urgente ? `Scade in ${gg}gg` : `${gg} giorni`}
                             </span>
@@ -152,7 +152,7 @@ export default async function SegretarioDashboard() {
             <SectionHeader title="Prossime partite" href="/dashboard/segretario/partite" count={prossimePartite?.length} />
             {prossimePartite && prossimePartite.length > 0 ? (
               <div className="table-wrap">
-                <table>
+                <table className="tabella-schede">
                   <thead>
                     <tr>
                       <th>Avversario</th>
@@ -164,20 +164,20 @@ export default async function SegretarioDashboard() {
                   <tbody>
                     {prossimePartite.map((p) => (
                       <tr key={p.id}>
-                        <td style={{ fontWeight: 500 }}>{p.avversario}</td>
-                        <td style={{ fontFamily: 'var(--font-mono)', fontSize: 13 }}>
+                        <td data-label="Avversario" style={{ fontWeight: 500 }}>{p.avversario}</td>
+                        <td data-label="Data" style={{ fontFamily: 'var(--font-mono)', fontSize: 13 }}>
                           {new Date(p.data_ora).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit' })}
                           {' '}
                           <span style={{ color: 'var(--grigio-4)' }}>
                             {new Date(p.data_ora).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}
                           </span>
                         </td>
-                        <td>
+                        <td data-label="Campo">
                           <span className={`badge ${p.casa_trasferta === 'casa' ? 'badge-verde' : 'badge-grigio'}`}>
                             {p.casa_trasferta === 'casa' ? 'Casa' : 'Trasferta'}
                           </span>
                         </td>
-                        <td style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{p.competizione ?? '—'}</td>
+                        <td data-label="Competizione" style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{p.competizione ?? '—'}</td>
                       </tr>
                     ))}
                   </tbody>

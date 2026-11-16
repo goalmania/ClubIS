@@ -55,7 +55,7 @@ export default async function SegretarioTrasfertePage() {
         {(!trasferte || trasferte.length === 0) ? (
           <div style={{ padding: '50px', textAlign: 'center', color: 'var(--text-muted)', fontSize: 13 }}>Nessuna trasferta registrata</div>
         ) : (
-          <div className="table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <div className="table-wrap"><table className="tabella-schede" style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ background: 'var(--bg-input)' }}>
                 <th style={thStyle}>Destinazione</th>
@@ -70,24 +70,24 @@ export default async function SegretarioTrasfertePage() {
             <tbody>
               {trasferte.map(t => (
                 <tr key={t.id} style={{ borderTop: '1px solid var(--border-light)' }}>
-                  <td style={{ ...tdStyle, fontWeight: 500, color: 'var(--text-primary)' }}>{t.destinazione}</td>
-                  <td style={tdStyle}>
+                  <td data-label="Destinazione" style={{ ...tdStyle, fontWeight: 500, color: 'var(--text-primary)' }}>{t.destinazione}</td>
+                  <td data-label="Data" style={tdStyle}>
                     {new Date(t.data_partenza).toLocaleDateString('it-IT')}
                     {t.data_rientro && t.data_rientro !== t.data_partenza && <> → {new Date(t.data_rientro).toLocaleDateString('it-IT')}</>}
                   </td>
-                  <td style={tdStyle}>{t.mezzo ?? '—'}</td>
-                  <td style={{ ...tdStyle, textAlign: 'right', fontFamily: 'var(--font-mono)' }}>
+                  <td data-label="Mezzo" style={tdStyle}>{t.mezzo ?? '—'}</td>
+                  <td data-label="Stimato" style={{ ...tdStyle, textAlign: 'right', fontFamily: 'var(--font-mono)' }}>
                     {t.costo_stimato ? fmt(Number(t.costo_stimato)) : '—'}
                   </td>
-                  <td style={{ ...tdStyle, textAlign: 'right', fontFamily: 'var(--font-mono)', color: 'var(--accent-green)' }}>
+                  <td data-label="Effettivo" style={{ ...tdStyle, textAlign: 'right', fontFamily: 'var(--font-mono)', color: 'var(--accent-green)' }}>
                     {t.costo_effettivo ? fmt(Number(t.costo_effettivo)) : '—'}
                   </td>
-                  <td style={tdStyle}>
+                  <td data-label="Stato" style={tdStyle}>
                     <span className={`badge ${t.stato === 'completata' ? 'badge-verde' : t.stato === 'annullata' ? 'badge-rosso' : 'badge-blu'}`}>
                       {t.stato ?? 'programmata'}
                     </span>
                   </td>
-                  <td style={tdStyle}>
+                  <td data-label="" style={tdStyle}>
                     <a href={`/api/trasferte/${t.id}/export-pdf`} target="_blank" rel="noreferrer"
                       style={{ fontSize: 12, color: 'var(--accent)', textDecoration: 'none', fontFamily: 'var(--font-mono)' }}>
                       ↓ PDF

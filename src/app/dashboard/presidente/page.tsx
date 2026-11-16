@@ -90,7 +90,7 @@ export default async function PresidenteDashboard() {
         {/* Colonna principale: cosa fare adesso */}
         <div className="dash-colonna">
           {(!isScuolaCalcio || alertTotale > 0) && (
-            <section>
+            <section className="da-fare">
               <div className="sezione-testa"><h2>Da fare</h2>{!isScuolaCalcio && <Link href="/dashboard/segretario/scadenze-figc">Scadenziario FIGC</Link>}</div>
               {!isScuolaCalcio && (
                 <>
@@ -154,11 +154,13 @@ export default async function PresidenteDashboard() {
                   <div key={s.id} className="squadra-voce">
                     <span className="pallino-lime" />
                     <span className="squadra-nome">{s.nome}</span>
-                    <span className="squadra-cat">
-                      {isScuolaCalcio && categoriaFederaleDaEta(s.categoria_eta)
+                    {(() => {
+                      const cat = isScuolaCalcio && categoriaFederaleDaEta(s.categoria_eta)
                         ? CATEGORIE_FEDERALI[categoriaFederaleDaEta(s.categoria_eta)!].label
-                        : s.categoria_eta.replace('_', ' ')}
-                    </span>
+                        : s.categoria_eta.replace(/_/g, ' ')
+                      // La categoria si mostra solo se aggiunge qualcosa al nome
+                      return cat.toLowerCase() !== s.nome.toLowerCase() ? <span className="squadra-cat">{cat}</span> : null
+                    })()}
                   </div>
                 ))}
               </div>

@@ -304,7 +304,7 @@ export default function FamigliaDettaglio() {
 
           {/* Rate */}
           <div className="table-wrap">
-            <table>
+            <table className="tabella-schede">
               <thead>
                 <tr>
                   <th>#</th>
@@ -322,12 +322,12 @@ export default function FamigliaDettaglio() {
                   const sEff = statoEffettivo(rata.stato, rata.scadenza)
                   return (
                     <tr key={rata.id}>
-                      <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>{rata.numero_rata}</td>
-                      <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>{fmt(Number(rata.importo))}</td>
-                      <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
+                      <td data-label="#" style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>{rata.numero_rata}</td>
+                      <td data-label="Importo" style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>{fmt(Number(rata.importo))}</td>
+                      <td data-label="Scadenza" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
                         {new Date(rata.scadenza).toLocaleDateString('it-IT')}
                       </td>
-                      <td>
+                      <td data-label="Stato">
                         <span className={`badge ${
                           sEff === 'pagata' ? 'badge-verde' :
                           sEff === 'in_ritardo' ? 'badge-rosso' : 'badge-grigio'
@@ -335,13 +335,13 @@ export default function FamigliaDettaglio() {
                           {sEff === 'in_attesa' ? 'In attesa' : sEff === 'pagata' ? 'Pagata' : sEff === 'in_ritardo' ? 'In ritardo' : sEff}
                         </span>
                       </td>
-                      <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
+                      <td data-label="Pagato il" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
                         {rata.data_pagamento ? new Date(rata.data_pagamento).toLocaleDateString('it-IT') : '—'}
                       </td>
-                      <td style={{ fontSize: 12, textTransform: 'capitalize' }}>
+                      <td data-label="Metodo" style={{ fontSize: 12, textTransform: 'capitalize' }}>
                         {rata.metodo_pagamento?.replace(/_/g, ' ') ?? '—'}
                       </td>
-                      <td>
+                      <td data-label="Ricevuta">
                         {rata.ricevuta_numero ? (
                           <a
                             href={`/api/pagamenti/ricevuta/${rata.id}`}
@@ -353,7 +353,7 @@ export default function FamigliaDettaglio() {
                           </a>
                         ) : '—'}
                       </td>
-                      <td>
+                      <td data-label="Azioni">
                         <div style={{ display: 'flex', gap: 6 }}>
                           {rata.stato !== 'pagata' && (
                             <>

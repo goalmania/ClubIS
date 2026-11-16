@@ -71,7 +71,7 @@ export default function AdminClubsPage() {
           <div style={{ padding: '60px 20px', textAlign: 'center', color: 'var(--grigio-4)', fontSize: 14 }}>Nessun club trovato</div>
         ) : (
           <div className="table-wrap">
-            <table>
+            <table className="tabella-schede">
               <thead>
                 <tr>
                   <th>Club</th>
@@ -86,23 +86,23 @@ export default function AdminClubsPage() {
               <tbody>
                 {filtered.map(c => (
                   <tr key={c.id}>
-                    <td style={{ fontWeight: 500 }}>{c.nome}</td>
-                    <td style={{ fontSize: 13, color: 'var(--grigio-3)' }}>{c.citta}</td>
-                    <td><span className="badge badge-grigio" style={{ fontSize: 12, textTransform: 'capitalize' }}>{c.categoria.replace(/_/g, ' ')}</span></td>
-                    <td>
+                    <td data-label="Club" style={{ fontWeight: 500 }}>{c.nome}</td>
+                    <td data-label="Città" style={{ fontSize: 13, color: 'var(--grigio-3)' }}>{c.citta}</td>
+                    <td data-label="Categoria"><span className="badge badge-grigio" style={{ fontSize: 12, textTransform: 'capitalize' }}>{c.categoria.replace(/_/g, ' ')}</span></td>
+                    <td data-label="Piano">
                       <span className={`badge ${c.piano_abbonamento === 'elite' ? 'badge-viola' : c.piano_abbonamento === 'pro' ? 'badge-blu' : 'badge-grigio'}`}>
                         {c.piano_abbonamento}
                       </span>
                     </td>
-                    <td>
+                    <td data-label="Stato">
                       <span className={`badge ${c.attivo ? 'badge-verde' : 'badge-rosso'}`}>
                         {c.attivo ? 'Attivo' : 'Sospeso'}
                       </span>
                     </td>
-                    <td style={{ fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>
+                    <td data-label="Data reg." style={{ fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>
                       {new Date(c.created_at).toLocaleDateString('it-IT')}
                     </td>
-                    <td>
+                    <td data-label="">
                       <div style={{ display: 'flex', gap: 6 }}>
                         <Link href={`/admin/clubs/${c.id}`} className="btn btn-ghost btn-sm" style={{ fontSize: 12 }}>
                           Dettaglio

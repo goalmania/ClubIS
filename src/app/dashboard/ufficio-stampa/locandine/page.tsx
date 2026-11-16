@@ -111,7 +111,7 @@ export default function LocandineListPage() {
         </div>
       ) : (
         <div className="table-wrap">
-          <table>
+          <table className="tabella-schede">
             <thead>
               <tr>
                 <th>Evento</th>
@@ -128,16 +128,16 @@ export default function LocandineListPage() {
                 const prossimo = labelProssimo[b.stato]
                 return (
                   <tr key={b.id}>
-                    <td style={{ fontWeight: 500, fontSize: 13 }}>{b.titolo_evento}</td>
-                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{formatData(b.data_evento)}</td>
-                    <td style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{b.competizione ?? '—'}</td>
-                    <td style={{ fontSize: 12, color: 'var(--grigio-4)' }}>{b.campo_impianto ?? '—'}</td>
-                    <td>
+                    <td data-label="Evento" style={{ fontWeight: 500, fontSize: 13 }}>{b.titolo_evento}</td>
+                    <td data-label="Data evento" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{formatData(b.data_evento)}</td>
+                    <td data-label="Competizione" style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{b.competizione ?? '—'}</td>
+                    <td data-label="Campo" style={{ fontSize: 12, color: 'var(--grigio-4)' }}>{b.campo_impianto ?? '—'}</td>
+                    <td data-label="Stato">
                       <span style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: info.colore, background: `${info.colore}20`, padding: '3px 8px', borderRadius: 8 }}>
                         {info.label}
                       </span>
                     </td>
-                    <td>
+                    <td data-label="">
                       <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                         {prossimo && (
                           <button

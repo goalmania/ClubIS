@@ -145,16 +145,16 @@ export default function AdminClubDetailPage() {
             <div style={{ fontSize: 13, color: 'var(--grigio-4)', padding: '20px 0', textAlign: 'center' }}>Nessun utente</div>
           ) : (
             <div className="table-wrap">
-              <table>
+              <table className="tabella-schede">
                 <thead>
                   <tr><th>Nome</th><th>Email</th><th>Ruolo</th><th>Stato</th><th>Ultimo accesso</th></tr>
                 </thead>
                 <tbody>
                   {utenti.map(u => (
                     <tr key={u.id}>
-                      <td style={{ fontWeight: 500, fontSize: 13 }}>{u.nome} {u.cognome}</td>
-                      <td style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{u.email}</td>
-                      <td>
+                      <td data-label="Nome" style={{ fontWeight: 500, fontSize: 13 }}>{u.nome} {u.cognome}</td>
+                      <td data-label="Email" style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{u.email}</td>
+                      <td data-label="Ruolo">
                         <select className="input" style={{ width: 140, padding: '4px 8px', fontSize: 12 }}
                           value={u.ruolo} onChange={e => cambiaRuolo(u.id, e.target.value)}>
                           {['presidente','ds','segretario','allenatore','osservatore','medico','team_manager','famiglia','giocatore','ufficio_stampa','custode'].map(r => (
@@ -162,8 +162,8 @@ export default function AdminClubDetailPage() {
                           ))}
                         </select>
                       </td>
-                      <td><span className={`badge ${u.attivo ? 'badge-verde' : 'badge-rosso'}`} style={{ fontSize: 12 }}>{u.attivo ? 'Attivo' : 'Inattivo'}</span></td>
-                      <td style={{ fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>
+                      <td data-label="Stato"><span className={`badge ${u.attivo ? 'badge-verde' : 'badge-rosso'}`} style={{ fontSize: 12 }}>{u.attivo ? 'Attivo' : 'Inattivo'}</span></td>
+                      <td data-label="Ultimo accesso" style={{ fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>
                         {u.ultimo_accesso ? new Date(u.ultimo_accesso).toLocaleDateString('it-IT') : '—'}
                       </td>
                     </tr>

@@ -394,7 +394,7 @@ export default function StadioPage() {
           </select>
         </div>
         <div className="table-wrap">
-          <table>
+          <table className="tabella-schede">
             <thead>
               <tr>
                 <th>Settore</th>
@@ -412,9 +412,9 @@ export default function StadioPage() {
                 const c = calcSettore(s)
                 return (
                   <tr key={s.id ?? i}>
-                    <td>{s.nome}</td>
-                    <td>{s.capienza}</td>
-                    <td>
+                    <td data-label="Settore">{s.nome}</td>
+                    <td data-label="Capienza">{s.capienza}</td>
+                    <td data-label="Prezzo">
                       <input
                         className="input"
                         type="number"
@@ -427,7 +427,7 @@ export default function StadioPage() {
                         style={{ width: 80 }}
                       />
                     </td>
-                    <td>
+                    <td data-label="Venduti">
                       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                         <button
                           className="btn btn-secondary btn-sm"
@@ -455,9 +455,9 @@ export default function StadioPage() {
                         >+</button>
                       </div>
                     </td>
-                    <td>{fmtEuro(c.ricavo)}</td>
-                    <td>{c.liberi}</td>
-                    <td>
+                    <td data-label="Ricavo">{fmtEuro(c.ricavo)}</td>
+                    <td data-label="Posti liberi">{c.liberi}</td>
+                    <td data-label="% Riempimento">
                       <div style={{ fontSize: 13, marginBottom: 4 }}>{c.riempimento}%</div>
                       <div className="progress" style={{ width: 90 }}>
                         <div

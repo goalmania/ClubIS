@@ -270,7 +270,7 @@ export default function GiocatoriPage() {
           </div>
         ) : (
           <div className="table-wrap">
-            <table>
+            <table className="tabella-schede">
               <thead>
                 <tr>
                   <th>#</th>
@@ -293,12 +293,12 @@ export default function GiocatoriPage() {
                   const eta = calcolaEta(g.data_nascita)
                   return (
                     <tr key={t.id}>
-                      <td>
+                      <td data-label="#">
                         <span style={{ fontFamily: 'var(--font-mono)', fontSize: 13, color: 'var(--grigio-4)', fontWeight: 500 }}>
                           {t.numero_maglia ? `#${t.numero_maglia}` : '—'}
                         </span>
                       </td>
-                      <td>
+                      <td data-label="Giocatore">
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                           {g.foto_url ? (
                             <img src={g.foto_url} alt="" style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover' }} />
@@ -310,7 +310,7 @@ export default function GiocatoriPage() {
                           </div>
                         </div>
                       </td>
-                      <td>
+                      <td data-label="Matricola FIGC">
                         {g.numero_matricola_figc ? (
                           <span
                             title={g.numero_matricola_figc}
@@ -322,23 +322,23 @@ export default function GiocatoriPage() {
                           <span style={{ color: 'var(--grigio-4)', fontSize: 12 }}>—</span>
                         )}
                       </td>
-                      <td style={{ fontSize: 13, color: 'var(--grigio-3)' }}>{eta} anni</td>
-                      <td>
+                      <td data-label="Età" style={{ fontSize: 13, color: 'var(--grigio-3)' }}>{eta} anni</td>
+                      <td data-label="Ruolo">
                         {g.ruolo_principale ? (
                           <span className="badge badge-grigio" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
                             {ruoloLabel[g.ruolo_principale] ?? g.ruolo_principale}
                           </span>
                         ) : '—'}
                       </td>
-                      <td style={{ fontSize: 13, color: 'var(--grigio-3)', textTransform: 'capitalize' }}>
+                      <td data-label="Piede" style={{ fontSize: 13, color: 'var(--grigio-3)', textTransform: 'capitalize' }}>
                         {g.piede ?? '—'}
                       </td>
-                      <td>
+                      <td data-label="Naz.">
                         <span className={`badge ${nazBadge[g.nazionalita_tipo] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>
                           {g.nazionalita_tipo?.toUpperCase().slice(0, 3) ?? '—'}
                         </span>
                       </td>
-                      <td>
+                      <td data-label="Squadra">
                         <select
                           value={t.squadra_id ?? ''}
                           disabled={spostando === t.id}
@@ -356,10 +356,10 @@ export default function GiocatoriPage() {
                           ))}
                         </select>
                       </td>
-                      <td>
+                      <td data-label="Tipo">
                         <span className="badge badge-grigio" style={{ fontSize: 12 }}>{t.tipo}</span>
                       </td>
-                      <td>
+                      <td data-label="">
                         <div style={{ display: 'flex', gap: 6 }}>
                           <Link
                             href={`/dashboard/segretario/giocatori/${g.id}`}

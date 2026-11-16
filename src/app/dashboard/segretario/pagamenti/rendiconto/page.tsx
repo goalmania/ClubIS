@@ -261,7 +261,7 @@ export default function RendicontoPage() {
               Riepilogo per mese
             </div>
             <div className="table-wrap">
-              <table>
+              <table className="tabella-schede">
                 <thead>
                   <tr>
                     <th>Mese</th>
@@ -279,20 +279,20 @@ export default function RendicontoPage() {
                     const pct = d.previsto > 0 ? Math.min(100, Math.round((d.entrate / d.previsto) * 100)) : (d.entrate > 0 ? 100 : 0)
                     return (
                       <tr key={i}>
-                        <td style={{ fontWeight: 500 }}>{d.label} {anno}</td>
-                        <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)' }}>
+                        <td data-label="Mese" style={{ fontWeight: 500 }}>{d.label} {anno}</td>
+                        <td data-label="Rate attese" style={{ textAlign: 'right', fontFamily: 'var(--font-mono)' }}>
                           {fmt(d.previsto)}
                         </td>
-                        <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', color: 'var(--verde)' }}>
+                        <td data-label="Entrate reali" style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', color: 'var(--verde)' }}>
                           {fmt(d.entrate)}
                         </td>
-                        <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', color: d.uscite > 0 ? 'var(--rosso)' : undefined }}>
+                        <td data-label="Uscite" style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', color: d.uscite > 0 ? 'var(--rosso)' : undefined }}>
                           {d.uscite > 0 ? `−${fmt(d.uscite)}` : fmt(0)}
                         </td>
-                        <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', color: saldoMese >= 0 ? 'var(--verde)' : 'var(--rosso)' }}>
+                        <td data-label="Saldo netto" style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', color: saldoMese >= 0 ? 'var(--verde)' : 'var(--rosso)' }}>
                           {saldoMese >= 0 ? '+' : ''}{fmt(saldoMese)}
                         </td>
-                        <td style={{ minWidth: 140 }}>
+                        <td data-label="Incasso vs atteso" style={{ minWidth: 140 }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                             <div style={{ flex: 1, background: 'var(--grigio-5)', borderRadius: 10, height: 6 }}>
                               <div style={{

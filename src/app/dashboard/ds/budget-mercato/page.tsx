@@ -185,7 +185,7 @@ export default function BudgetMercatoDS() {
                   </div>
                 ) : (
                   <div className="table-wrap">
-                    <table>
+                    <table className="tabella-schede">
                       <thead>
                         <tr>
                           <th>Giocatore</th><th>Ruolo</th><th>Tipo</th><th>Stato</th><th>Club</th><th>Valore</th>
@@ -194,14 +194,14 @@ export default function BudgetMercatoDS() {
                       <tbody>
                         {trattative.map(t => (
                           <tr key={t.id}>
-                            <td style={{ fontWeight: 600, color: 'var(--white)', fontFamily: 'var(--font-display)', letterSpacing: '0' }}>{getNome(t)}</td>
-                            <td style={{ color: 'var(--gray)', fontSize: 12 }}>{t.ruolo ?? '—'}</td>
-                            <td><span className={`badge ${TIPO_BADGE[getTipo(t)] ?? 'badge-grigio'}`}>{TIPO_LABEL[getTipo(t)] ?? getTipo(t)}</span></td>
-                            <td><span className={`badge ${STATO_BADGE[t.stato] ?? 'badge-grigio'}`}>{STATO_LABEL[t.stato] ?? t.stato}</span></td>
-                            <td style={{ color: 'var(--gray)', fontSize: 12 }}>
+                            <td data-label="Giocatore" style={{ fontWeight: 600, color: 'var(--white)', fontFamily: 'var(--font-display)', letterSpacing: '0' }}>{getNome(t)}</td>
+                            <td data-label="Ruolo" style={{ color: 'var(--gray)', fontSize: 12 }}>{t.ruolo ?? '—'}</td>
+                            <td data-label="Tipo"><span className={`badge ${TIPO_BADGE[getTipo(t)] ?? 'badge-grigio'}`}>{TIPO_LABEL[getTipo(t)] ?? getTipo(t)}</span></td>
+                            <td data-label="Stato"><span className={`badge ${STATO_BADGE[t.stato] ?? 'badge-grigio'}`}>{STATO_LABEL[t.stato] ?? t.stato}</span></td>
+                            <td data-label="Club" style={{ color: 'var(--gray)', fontSize: 12 }}>
                               {getTipo(t) === 'acquisto' || getTipo(t) === 'prestito_in' ? (t.club_provenienza ?? '—') : (t.club_destinazione ?? '—')}
                             </td>
-                            <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: getValore(t) > 0 ? 'var(--accent)' : '#444', fontWeight: 700 }}>
+                            <td data-label="Valore" style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: getValore(t) > 0 ? 'var(--accent)' : '#444', fontWeight: 700 }}>
                               {getValore(t) > 0 ? fmt(getValore(t)) : '—'}
                             </td>
                           </tr>

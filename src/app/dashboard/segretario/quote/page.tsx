@@ -529,7 +529,7 @@ export default function QuotePage() {
           />
         ) : (
           <div className="table-wrap">
-            <table>
+            <table className="tabella-schede">
               <thead>
                 <tr>
                   <th>Giocatore</th>
@@ -549,14 +549,14 @@ export default function QuotePage() {
                   const perc   = q.importo_totale > 0 ? Math.round((q.importo_pagato / q.importo_totale) * 100) : 0
                   return (
                     <tr key={q.id}>
-                      <td style={{ fontWeight: 500, fontSize: 13 }}>{g?.cognome} {g?.nome}</td>
+                      <td data-label="Giocatore" style={{ fontWeight: 500, fontSize: 13 }}>{g?.cognome} {g?.nome}</td>
                       {isScuolaCalcio && (
-                        <td style={{ fontSize: 12, color: 'var(--grigio-3)' }}>
+                        <td data-label="Mese" style={{ fontSize: 12, color: 'var(--grigio-3)' }}>
                           {q.mese ? MESE_LABEL[q.mese] ?? q.mese : '—'}
                         </td>
                       )}
-                      <td style={{ fontFamily: 'var(--font-mono)', fontSize: 13 }}>€{q.importo_totale.toFixed(0)}</td>
-                      <td>
+                      <td data-label="Totale" style={{ fontFamily: 'var(--font-mono)', fontSize: 13 }}>€{q.importo_totale.toFixed(0)}</td>
+                      <td data-label="Pagato">
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                           <div className="progress" style={{ width: 60 }}>
                             <div className="progress-fill" style={{
@@ -569,18 +569,18 @@ export default function QuotePage() {
                           </span>
                         </div>
                       </td>
-                      <td style={{ fontFamily: 'var(--font-mono)', fontSize: 13, color: manca > 0 ? 'var(--rosso)' : 'var(--grigio-4)', fontWeight: manca > 0 ? 600 : 400 }}>
+                      <td data-label="Da pagare" style={{ fontFamily: 'var(--font-mono)', fontSize: 13, color: manca > 0 ? 'var(--rosso)' : 'var(--grigio-4)', fontWeight: manca > 0 ? 600 : 400 }}>
                         {manca > 0 ? `€${manca.toFixed(0)}` : '—'}
                       </td>
-                      <td>
+                      <td data-label="Stato">
                         <span className={`badge ${statoColore[q.stato] ?? 'badge-grigio'}`}>
                           {q.stato.replace('_', ' ')}
                         </span>
                       </td>
-                      <td style={{ fontSize: 12, color: 'var(--grigio-3)' }}>
+                      <td data-label="Scadenza" style={{ fontSize: 12, color: 'var(--grigio-3)' }}>
                         {q.scadenza ? new Date(q.scadenza).toLocaleDateString('it-IT') : '—'}
                       </td>
-                      <td>
+                      <td data-label="">
                         <div style={{ display: 'flex', gap: 6 }}>
                           {q.stato !== 'pagato' && (
                             <>

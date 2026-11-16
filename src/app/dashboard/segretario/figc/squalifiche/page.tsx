@@ -472,7 +472,7 @@ export default function FigcSqualifichePage() {
                       ✓ Confermate ({confermate.length})
                     </div>
                     <div style={{ border: '1px solid var(--border)', borderRadius: 12, overflow: 'hidden' }}>
-                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                      <table className="tabella-schede" style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                         <thead>
                           <tr style={{ background: 'var(--grigio-6)', borderBottom: '1px solid var(--border)' }}>
                             <th style={{ padding: '8px 14px', textAlign: 'left', fontWeight: 600, fontSize: 12, color: 'var(--grigio-4)' }}>Giocatore</th>
@@ -493,20 +493,20 @@ export default function FigcSqualifichePage() {
                                   background: i % 2 === 0 ? 'transparent' : 'rgba(0,0,0,0.015)',
                                 }}
                               >
-                                <td style={{ padding: '10px 14px', fontWeight: 600 }}>
+                                <td data-label="Giocatore" style={{ padding: '10px 14px', fontWeight: 600 }}>
                                   {giocatore
                                     ? `${giocatore.cognome} ${giocatore.nome}`
                                     : <span style={{ color: 'var(--grigio-4)', fontWeight: 400 }}>{sq.cognome_raw} {sq.nome_raw}</span>
                                   }
                                   <div style={{ fontSize: 12, color: 'var(--grigio-4)', fontWeight: 400 }}>{sq.societa_raw}</div>
                                 </td>
-                                <td style={{ padding: '10px 14px' }}>
+                                <td data-label="Tipo" style={{ padding: '10px 14px' }}>
                                   <span className={`badge ${TIPO_COLOR[sq.tipo_sanzione] ?? 'badge-grigio'}`}>
                                     {sq.tipo_sanzione}
                                   </span>
                                 </td>
-                                <td style={{ padding: '10px 14px', color: 'var(--grigio-3)' }}>{sq.durata}</td>
-                                <td style={{ padding: '10px 14px', fontSize: 12, color: 'var(--grigio-4)' }}>
+                                <td data-label="Durata" style={{ padding: '10px 14px', color: 'var(--grigio-3)' }}>{sq.durata}</td>
+                                <td data-label="Comunicato" style={{ padding: '10px 14px', fontSize: 12, color: 'var(--grigio-4)' }}>
                                   {c.lega === 'LegaPro'
                                     ? <span style={{ color: '#60a5fa', fontWeight: 600 }}>Lega Pro</span>
                                     : c.comitato_regionale

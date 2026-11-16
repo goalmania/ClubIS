@@ -51,17 +51,17 @@ export default async function DSScadenzePage() {
                 <span className="badge badge-ambra">{contratti!.length}</span>
               </div>
               <div className="table-wrap">
-                <table>
+                <table className="tabella-schede">
                   <thead><tr><th>Giocatore</th><th>Scadenza</th><th>Gg rimanenti</th><th>Opzione rinnovo</th></tr></thead>
                   <tbody>
                     {contratti!.map(c => {
                       const g = c.giocatori as any
                       return (
                         <tr key={c.id}>
-                          <td style={{ fontWeight: 500, fontSize: 13 }}>{g?.cognome} {g?.nome}</td>
-                          <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{formatData(c.data_scadenza)}</td>
-                          <td><GgBadge data={c.data_scadenza} /></td>
-                          <td>{c.opzione_rinnovo ? <span className="badge badge-verde" style={{ fontSize: 12 }}>✓ Sì</span> : <span className="badge badge-grigio" style={{ fontSize: 12 }}>No</span>}</td>
+                          <td data-label="Giocatore" style={{ fontWeight: 500, fontSize: 13 }}>{g?.cognome} {g?.nome}</td>
+                          <td data-label="Scadenza" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{formatData(c.data_scadenza)}</td>
+                          <td data-label="Gg rimanenti"><GgBadge data={c.data_scadenza} /></td>
+                          <td data-label="Opzione rinnovo">{c.opzione_rinnovo ? <span className="badge badge-verde" style={{ fontSize: 12 }}>✓ Sì</span> : <span className="badge badge-grigio" style={{ fontSize: 12 }}>No</span>}</td>
                         </tr>
                       )
                     })}
@@ -77,17 +77,17 @@ export default async function DSScadenzePage() {
                 <span className="badge badge-rosso">{certificati!.length}</span>
               </div>
               <div className="table-wrap">
-                <table>
+                <table className="tabella-schede">
                   <thead><tr><th>Giocatore</th><th>Tipo</th><th>Scadenza</th><th>Gg rimanenti</th></tr></thead>
                   <tbody>
                     {certificati!.map(c => {
                       const g = c.giocatori as any
                       return (
                         <tr key={c.id}>
-                          <td style={{ fontWeight: 500, fontSize: 13 }}>{g?.cognome} {g?.nome}</td>
-                          <td><span className="badge badge-grigio" style={{ fontSize: 12 }}>{c.tipo}</span></td>
-                          <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{formatData(c.data_scadenza)}</td>
-                          <td><GgBadge data={c.data_scadenza} /></td>
+                          <td data-label="Giocatore" style={{ fontWeight: 500, fontSize: 13 }}>{g?.cognome} {g?.nome}</td>
+                          <td data-label="Tipo"><span className="badge badge-grigio" style={{ fontSize: 12 }}>{c.tipo}</span></td>
+                          <td data-label="Scadenza" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{formatData(c.data_scadenza)}</td>
+                          <td data-label="Gg rimanenti"><GgBadge data={c.data_scadenza} /></td>
                         </tr>
                       )
                     })}
@@ -103,17 +103,17 @@ export default async function DSScadenzePage() {
                 <span className="badge badge-blu">{tesseramentiScad!.length}</span>
               </div>
               <div className="table-wrap">
-                <table>
+                <table className="tabella-schede">
                   <thead><tr><th>Giocatore</th><th>Tipo</th><th>Fine tesseramento</th><th>Gg rimanenti</th></tr></thead>
                   <tbody>
                     {tesseramentiScad!.map(t => {
                       const g = t.giocatori as any
                       return (
                         <tr key={t.id}>
-                          <td style={{ fontWeight: 500, fontSize: 13 }}>{g?.cognome} {g?.nome}</td>
-                          <td><span className="badge badge-grigio" style={{ fontSize: 12 }}>{t.tipo}</span></td>
-                          <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{formatData(t.data_fine!)}</td>
-                          <td><GgBadge data={t.data_fine!} /></td>
+                          <td data-label="Giocatore" style={{ fontWeight: 500, fontSize: 13 }}>{g?.cognome} {g?.nome}</td>
+                          <td data-label="Tipo"><span className="badge badge-grigio" style={{ fontSize: 12 }}>{t.tipo}</span></td>
+                          <td data-label="Fine tesseramento" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{formatData(t.data_fine!)}</td>
+                          <td data-label="Gg rimanenti"><GgBadge data={t.data_fine!} /></td>
                         </tr>
                       )
                     })}

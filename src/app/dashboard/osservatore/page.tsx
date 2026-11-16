@@ -98,19 +98,19 @@ export default async function OsservatoreDashboard() {
           </div>
           {mieiReport && mieiReport.length > 0 ? (
             <div className="table-wrap">
-              <table>
+              <table className="tabella-schede">
                 <thead>
                   <tr><th>Giocatore</th><th>Club</th><th>Data</th><th>Voto</th><th>Potenziale</th><th>Esito</th></tr>
                 </thead>
                 <tbody>
                   {mieiReport.map(r => (
                     <tr key={r.id} style={{ cursor: 'pointer' }}>
-                      <td style={{ fontWeight: 500, fontSize: 13 }}>{r.nome_giocatore_ext ?? '—'}</td>
-                      <td style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{r.club_attuale_ext ?? '—'}</td>
-                      <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
+                      <td data-label="Giocatore" style={{ fontWeight: 500, fontSize: 13 }}>{r.nome_giocatore_ext ?? '—'}</td>
+                      <td data-label="Club" style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{r.club_attuale_ext ?? '—'}</td>
+                      <td data-label="Data" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
                         {new Date(r.data_osservazione).toLocaleDateString('it-IT')}
                       </td>
-                      <td>
+                      <td data-label="Voto">
                         <span style={{
                           display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
                           width: 28, height: 28, borderRadius: 10,
@@ -121,8 +121,8 @@ export default async function OsservatoreDashboard() {
                           {r.voto_globale ?? '—'}
                         </span>
                       </td>
-                      <td><span className={`badge ${potenzialeColore[r.potenziale] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>{r.potenziale}</span></td>
-                      <td><span className={`badge ${esitoColore[r.esito] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>{r.esito?.replace('_', ' ')}</span></td>
+                      <td data-label="Potenziale"><span className={`badge ${potenzialeColore[r.potenziale] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>{r.potenziale}</span></td>
+                      <td data-label="Esito"><span className={`badge ${esitoColore[r.esito] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>{r.esito?.replace('_', ' ')}</span></td>
                     </tr>
                   ))}
                 </tbody>

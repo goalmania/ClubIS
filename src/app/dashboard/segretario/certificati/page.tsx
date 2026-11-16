@@ -203,7 +203,7 @@ export default function CertificatiPage() {
           <EmptyState icon="✓" title="Nessun certificato in questa categoria" />
         ) : (
           <div className="table-wrap">
-            <table>
+            <table className="tabella-schede">
               <thead>
                 <tr>
                   <th>Giocatore</th>
@@ -220,17 +220,17 @@ export default function CertificatiPage() {
                   const g = c.giocatori
                   return (
                     <tr key={c.id}>
-                      <td style={{ fontWeight: 500, fontSize: 13 }}>{g?.cognome} {g?.nome}</td>
-                      <td><span className="badge badge-grigio">{c.tipo}</span></td>
-                      <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-3)' }}>
+                      <td data-label="Giocatore" style={{ fontWeight: 500, fontSize: 13 }}>{g?.cognome} {g?.nome}</td>
+                      <td data-label="Tipo"><span className="badge badge-grigio">{c.tipo}</span></td>
+                      <td data-label="Data rilascio" style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-3)' }}>
                         {c.data_rilascio ? new Date(c.data_rilascio).toLocaleDateString('it-IT') : '—'}
                       </td>
-                      <td style={{ fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 500 }}>
+                      <td data-label="Scadenza" style={{ fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 500 }}>
                         {new Date(c.data_scadenza).toLocaleDateString('it-IT')}
                       </td>
-                      <td style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{c.medico ?? '—'}</td>
-                      <td>{badgeStato(c)}</td>
-                      <td>
+                      <td data-label="Medico" style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{c.medico ?? '—'}</td>
+                      <td data-label="Stato">{badgeStato(c)}</td>
+                      <td data-label="">
                         <button
                           className="btn btn-ghost btn-sm"
                           style={{ fontSize: 12 }}

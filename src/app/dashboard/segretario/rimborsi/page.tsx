@@ -517,7 +517,7 @@ export default function RimborsiPage() {
                 </div>
               ) : (
                 <div className="table-wrap">
-                  <table>
+                  <table className="tabella-schede">
                     <thead>
                       <tr>
                         <th>Nome / Cognome</th>
@@ -533,26 +533,26 @@ export default function RimborsiPage() {
                     <tbody>
                       {rimborsi.map(r => (
                         <tr key={r.id}>
-                          <td style={{ fontWeight: 600 }}>{r.soggetto_cognome} {r.soggetto_nome}</td>
-                          <td>
+                          <td data-label="Nome / Cognome" style={{ fontWeight: 600 }}>{r.soggetto_cognome} {r.soggetto_nome}</td>
+                          <td data-label="CF">
                             <span title={r.codice_fiscale} style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-3)' }}>
                               {maskCF(r.codice_fiscale)}
                             </span>
                           </td>
-                          <td><span className="badge badge-grigio" style={{ fontSize: 12 }}>{r.ruolo}</span></td>
-                          <td style={{ fontSize: 12, color: 'var(--grigio-3)' }}>
+                          <td data-label="Ruolo"><span className="badge badge-grigio" style={{ fontSize: 12 }}>{r.ruolo}</span></td>
+                          <td data-label="Tipo" style={{ fontSize: 12, color: 'var(--grigio-3)' }}>
                             {r.tipo_rimborso === 'forfetario_volontario' ? 'Forfetario' : 'Documentato'}
                           </td>
-                          <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--accent)' }}>
+                          <td data-label="Importo" style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--accent)' }}>
                             {fmtEur(Number(r.importo))}
                           </td>
-                          <td style={{ fontSize: 12, color: 'var(--grigio-3)', fontFamily: 'var(--font-mono)' }}>
+                          <td data-label="Data" style={{ fontSize: 12, color: 'var(--grigio-3)', fontFamily: 'var(--font-mono)' }}>
                             {fmtDate(r.data_erogazione)}
                           </td>
-                          <td style={{ fontSize: 12, color: 'var(--grigio-3)', maxWidth: 180 }}>
+                          <td data-label="Causale" style={{ fontSize: 12, color: 'var(--grigio-3)', maxWidth: 180 }}>
                             {r.causale ? (r.causale.length > 30 ? r.causale.slice(0, 30) + '…' : r.causale) : '—'}
                           </td>
-                          <td>
+                          <td data-label="">
                             <div style={{ display: 'flex', gap: 6 }}>
                               <button className="btn btn-ghost btn-sm" style={{ fontSize: 12 }} onClick={() => {
                                 setEditId(r.id)
@@ -649,7 +649,7 @@ export default function RimborsiPage() {
                 ) : (
                   <div className="card" style={{ padding: 0, overflow: 'hidden', marginBottom: 20 }}>
                     <div className="table-wrap">
-                      <table>
+                      <table className="tabella-schede">
                         <thead>
                           <tr>
                             <th style={{ width: 36 }}></th>
@@ -664,7 +664,7 @@ export default function RimborsiPage() {
                         <tbody>
                           {rimborsiSepa.map(r => (
                             <tr key={r.id} style={{ background: selectedIds.has(r.id) ? 'rgba(200,240,0,0.04)' : undefined }}>
-                              <td>
+                              <td data-label="">
                                 <input type="checkbox" checked={selectedIds.has(r.id)}
                                   onChange={e => {
                                     const s = new Set(selectedIds)
@@ -674,12 +674,12 @@ export default function RimborsiPage() {
                                   style={{ accentColor: 'var(--accent)' }}
                                 />
                               </td>
-                              <td style={{ fontWeight: 600 }}>{r.soggetto_cognome} {r.soggetto_nome}</td>
-                              <td><span title={r.codice_fiscale} style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-3)' }}>{maskCF(r.codice_fiscale)}</span></td>
-                              <td><span className="badge badge-grigio" style={{ fontSize: 12 }}>{r.ruolo}</span></td>
-                              <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--accent)' }}>{fmtEur(Number(r.importo))}</td>
-                              <td style={{ fontSize: 12, color: 'var(--grigio-3)', fontFamily: 'var(--font-mono)' }}>{fmtDate(r.data_erogazione)}</td>
-                              <td style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{r.causale ?? '—'}</td>
+                              <td data-label="Nome" style={{ fontWeight: 600 }}>{r.soggetto_cognome} {r.soggetto_nome}</td>
+                              <td data-label="CF"><span title={r.codice_fiscale} style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-3)' }}>{maskCF(r.codice_fiscale)}</span></td>
+                              <td data-label="Ruolo"><span className="badge badge-grigio" style={{ fontSize: 12 }}>{r.ruolo}</span></td>
+                              <td data-label="Importo" style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--accent)' }}>{fmtEur(Number(r.importo))}</td>
+                              <td data-label="Data" style={{ fontSize: 12, color: 'var(--grigio-3)', fontFamily: 'var(--font-mono)' }}>{fmtDate(r.data_erogazione)}</td>
+                              <td data-label="Causale" style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{r.causale ?? '—'}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -770,7 +770,7 @@ export default function RimborsiPage() {
 
                 <div className="card" style={{ padding: 0, overflow: 'hidden', marginBottom: 20 }}>
                   <div className="table-wrap">
-                    <table>
+                    <table className="tabella-schede">
                       <thead>
                         <tr><th>Nome</th><th>IBAN (mascherato)</th><th style={{ textAlign: 'right' }}>Importo</th><th>Causale</th></tr>
                       </thead>
@@ -782,10 +782,10 @@ export default function RimborsiPage() {
                           const ibanMask = iban.length > 8 ? iban.slice(0, 4) + '****' + iban.slice(-4) : iban
                           return (
                             <tr key={r.id}>
-                              <td style={{ fontWeight: 600 }}>{r.soggetto_cognome} {r.soggetto_nome}</td>
-                              <td><span style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{ibanMask}</span></td>
-                              <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--accent)' }}>{fmtEur(Number(r.importo))}</td>
-                              <td style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{(r.causale || causaleBatch || `Rimborso ${r.soggetto_cognome}`).slice(0, 50)}</td>
+                              <td data-label="Nome" style={{ fontWeight: 600 }}>{r.soggetto_cognome} {r.soggetto_nome}</td>
+                              <td data-label="IBAN (mascherato)"><span style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{ibanMask}</span></td>
+                              <td data-label="Importo" style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--accent)' }}>{fmtEur(Number(r.importo))}</td>
+                              <td data-label="Causale" style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{(r.causale || causaleBatch || `Rimborso ${r.soggetto_cognome}`).slice(0, 50)}</td>
                             </tr>
                           )
                         })}
@@ -847,7 +847,7 @@ export default function RimborsiPage() {
             ) : (
               <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
                 <div className="table-wrap">
-                  <table>
+                  <table className="tabella-schede">
                     <thead>
                       <tr>
                         <th>ID Messaggio</th>
@@ -865,13 +865,13 @@ export default function RimborsiPage() {
                         const statoLabel = d.stato === 'eseguita' ? 'Eseguita' : d.stato === 'inviata_banca' ? 'Inviata banca' : 'Generata'
                         return (
                           <tr key={d.id}>
-                            <td><span style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{d.message_id}</span></td>
-                            <td style={{ fontSize: 12, color: 'var(--grigio-3)', fontFamily: 'var(--font-mono)' }}>{fmtDate(d.data_generazione)}</td>
-                            <td style={{ fontSize: 12, fontFamily: 'var(--font-mono)' }}>{fmtDate(d.data_esecuzione)}</td>
-                            <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)' }}>{d.numero_transazioni}</td>
-                            <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--accent)' }}>{fmtEur(Number(d.importo_totale))}</td>
-                            <td><span className={`badge ${statoColor}`} style={{ fontSize: 12 }}>{statoLabel}</span></td>
-                            <td>
+                            <td data-label="ID Messaggio"><span style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{d.message_id}</span></td>
+                            <td data-label="Generata il" style={{ fontSize: 12, color: 'var(--grigio-3)', fontFamily: 'var(--font-mono)' }}>{fmtDate(d.data_generazione)}</td>
+                            <td data-label="Data esecuzione" style={{ fontSize: 12, fontFamily: 'var(--font-mono)' }}>{fmtDate(d.data_esecuzione)}</td>
+                            <td data-label="N. bonifici" style={{ textAlign: 'right', fontFamily: 'var(--font-mono)' }}>{d.numero_transazioni}</td>
+                            <td data-label="Totale" style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--accent)' }}>{fmtEur(Number(d.importo_totale))}</td>
+                            <td data-label="Stato"><span className={`badge ${statoColor}`} style={{ fontSize: 12 }}>{statoLabel}</span></td>
+                            <td data-label="">
                               <div style={{ display: 'flex', gap: 6 }}>
                                 {d.stato === 'generata' && (
                                   <button className="btn btn-ghost btn-sm" style={{ fontSize: 12 }} onClick={() => aggiornaStato(d.id, 'inviata_banca')}>

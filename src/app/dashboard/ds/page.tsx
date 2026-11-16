@@ -136,7 +136,7 @@ export default async function DSDashboard() {
           </div>
           {contratti && contratti.length > 0 ? (
             <div className="table-wrap">
-              <table>
+              <table className="tabella-schede">
                 <thead><tr><th>Giocatore</th><th>Scadenza</th><th>Gg rimanenti</th></tr></thead>
                 <tbody>
                   {contratti.map(c => {
@@ -144,11 +144,11 @@ export default async function DSDashboard() {
                     const gg = Math.ceil((new Date(c.data_scadenza).getTime() - oggi.getTime()) / 86400000)
                     return (
                       <tr key={c.id}>
-                        <td style={{ fontWeight: 500, fontSize: 13 }}>{g?.cognome} {g?.nome}</td>
-                        <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
+                        <td data-label="Giocatore" style={{ fontWeight: 500, fontSize: 13 }}>{g?.cognome} {g?.nome}</td>
+                        <td data-label="Scadenza" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
                           {new Date(c.data_scadenza).toLocaleDateString('it-IT')}
                         </td>
-                        <td>
+                        <td data-label="Gg rimanenti">
                           <span className={`badge ${gg <= 30 ? 'badge-rosso' : 'badge-ambra'}`}>
                             {gg}gg
                           </span>

@@ -79,7 +79,7 @@ export default function IntervistePage() {
                 {gruppo.titolo} ({gruppo.items.length})
               </div>
               <div className="table-wrap">
-                <table>
+                <table className="tabella-schede">
                   <thead>
                     <tr>
                       <th>Tipo</th>
@@ -95,14 +95,14 @@ export default function IntervistePage() {
                       const info = STATO_INFO[ev.stato] ?? { label: ev.stato, colore: 'var(--grigio-3)' }
                       return (
                         <tr key={ev.id}>
-                          <td style={{ fontWeight: 500, fontSize: 13 }}>{TIPO_LABEL[ev.tipo] ?? ev.tipo}</td>
-                          <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
+                          <td data-label="Tipo" style={{ fontWeight: 500, fontSize: 13 }}>{TIPO_LABEL[ev.tipo] ?? ev.tipo}</td>
+                          <td data-label="Data / Ora" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
                             {formatData(ev.data_ora)} {formatOra(ev.data_ora)}
                           </td>
-                          <td style={{ fontSize: 12 }}>{ev.emittente_testata ?? '—'}</td>
-                          <td style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{ev.luogo ?? '—'}</td>
-                          <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{ev.durata_minuti} min</td>
-                          <td>
+                          <td data-label="Emittente" style={{ fontSize: 12 }}>{ev.emittente_testata ?? '—'}</td>
+                          <td data-label="Luogo" style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{ev.luogo ?? '—'}</td>
+                          <td data-label="Durata" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{ev.durata_minuti} min</td>
+                          <td data-label="Stato">
                             <span style={{
                               fontSize: 12, fontFamily: 'var(--font-mono)',
                               color: info.colore, background: `${info.colore}20`,

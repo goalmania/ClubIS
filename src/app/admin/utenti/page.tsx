@@ -61,26 +61,26 @@ export default function AdminUtentiPage() {
           <div style={{ padding: '60px 20px', textAlign: 'center', color: 'var(--grigio-4)', fontSize: 14 }}>Nessun utente trovato</div>
         ) : (
           <div className="table-wrap">
-            <table>
+            <table className="tabella-schede">
               <thead>
                 <tr><th>Utente</th><th>Email</th><th>Ruolo</th><th>Club</th><th>Ultimo accesso</th><th>Stato</th><th></th></tr>
               </thead>
               <tbody>
                 {filtered.map(u => (
                   <tr key={u.id}>
-                    <td style={{ fontWeight: 500 }}>{u.cognome} {u.nome}</td>
-                    <td style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{u.email}</td>
-                    <td><span className="badge badge-grigio" style={{ fontSize: 12 }}>{ruoloLabel[u.ruolo] ?? u.ruolo}</span></td>
-                    <td style={{ fontSize: 13, color: 'var(--grigio-3)' }}>{(u.clubs as any)?.nome ?? '—'}</td>
-                    <td style={{ fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>
+                    <td data-label="Utente" style={{ fontWeight: 500 }}>{u.cognome} {u.nome}</td>
+                    <td data-label="Email" style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{u.email}</td>
+                    <td data-label="Ruolo"><span className="badge badge-grigio" style={{ fontSize: 12 }}>{ruoloLabel[u.ruolo] ?? u.ruolo}</span></td>
+                    <td data-label="Club" style={{ fontSize: 13, color: 'var(--grigio-3)' }}>{(u.clubs as any)?.nome ?? '—'}</td>
+                    <td data-label="Ultimo accesso" style={{ fontSize: 12, color: 'var(--grigio-4)', fontFamily: 'var(--font-mono)' }}>
                       {u.ultimo_accesso ? new Date(u.ultimo_accesso).toLocaleDateString('it-IT') : '—'}
                     </td>
-                    <td>
+                    <td data-label="Stato">
                       <span className={`badge ${u.attivo ? 'badge-verde' : 'badge-rosso'}`} style={{ fontSize: 12 }}>
                         {u.attivo ? 'Attivo' : 'Inattivo'}
                       </span>
                     </td>
-                    <td>
+                    <td data-label="">
                       <button
                         onClick={() => toggleAttivo(u.id, u.attivo)}
                         className={`btn btn-sm ${u.attivo ? 'btn-danger' : 'btn-primary'}`}

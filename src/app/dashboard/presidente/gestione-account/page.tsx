@@ -378,7 +378,7 @@ export default function GestioneAccountPage() {
           {/* Tabella */}
           <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
             <div className="table-wrap">
-              <table>
+              <table className="tabella-schede">
                 <thead>
                   <tr>
                     <th>Membro</th>
@@ -393,7 +393,7 @@ export default function GestioneAccountPage() {
                   {membri.map(m => (
                     <tr key={m.id}>
                       {/* Nome */}
-                      <td>
+                      <td data-label="Membro">
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                           <div style={{
                             width: 32, height: 32, borderRadius: '50%',
@@ -420,7 +420,7 @@ export default function GestioneAccountPage() {
                       </td>
 
                       {/* Ruolo */}
-                      <td>
+                      <td data-label="Ruolo">
                         <span style={{
                           display: 'inline-flex', padding: '2px 8px', borderRadius: 8,
                           fontSize: 12, fontFamily: 'var(--font-mono)',
@@ -433,22 +433,22 @@ export default function GestioneAccountPage() {
                       </td>
 
                       {/* Email */}
-                      <td style={{ fontSize: 12, color: 'var(--gray)', fontFamily: 'var(--font-mono)' }}>
+                      <td data-label="Email" style={{ fontSize: 12, color: 'var(--gray)', fontFamily: 'var(--font-mono)' }}>
                         {m.email}
                       </td>
 
                       {/* Registrato */}
-                      <td style={{ fontSize: 12, color: 'var(--gray)', fontFamily: 'var(--font-mono)', whiteSpace: 'nowrap' }}>
+                      <td data-label="Registrato" style={{ fontSize: 12, color: 'var(--gray)', fontFamily: 'var(--font-mono)', whiteSpace: 'nowrap' }}>
                         {fmtData(m.created_at)}
                       </td>
 
                       {/* Ultimo accesso */}
-                      <td style={{ fontSize: 12, color: 'var(--gray)', fontFamily: 'var(--font-mono)', whiteSpace: 'nowrap' }}>
+                      <td data-label="Ultimo accesso" style={{ fontSize: 12, color: 'var(--gray)', fontFamily: 'var(--font-mono)', whiteSpace: 'nowrap' }}>
                         {fmtDataOra(m.ultimo_accesso)}
                       </td>
 
                       {/* Azione */}
-                      <td style={{ textAlign: 'right' }}>
+                      <td data-label="Azione" style={{ textAlign: 'right' }}>
                         <button
                           onClick={() => apriModal(m)}
                           style={{
