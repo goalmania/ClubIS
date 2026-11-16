@@ -110,6 +110,7 @@ export default function RicercaGlobale() {
     return (
       <button
         onClick={() => setOpen(true)}
+        className="topbar-search"
         style={{
           display: 'flex', alignItems: 'center', gap: 8,
           height: 38, padding: '0 14px',

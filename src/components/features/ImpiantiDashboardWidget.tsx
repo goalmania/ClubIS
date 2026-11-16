@@ -59,66 +59,37 @@ export default function ImpiantiDashboardWidget({ ruolo }: Props) {
     : '/dashboard/presidente/impianti'
 
   return (
-    <div className="card" style={{ padding: '16px 18px 18px', marginBottom: 20 }}>
-      <div style={{
-        marginBottom: 12,
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-      }}>
-        <h2 style={{ fontSize: 17, fontWeight: 600, letterSpacing: '-0.01em' }}>
-          Stato impianti
-        </h2>
+    <section className="card pannello">
+      <div className="pannello-testa">
+        <h2>Stato impianti</h2>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
           {ticketAperti > 0 && (
-            <span style={{
-              fontSize: 12, fontWeight: 600, padding: '2px 9px', borderRadius: 999,
-              background: 'rgba(255,68,68,0.14)', color: '#ff6b6b',
-            }}>
-              {ticketAperti} ticket aperti
-            </span>
+            <span className="badge badge-rosso">{ticketAperti} ticket aperti</span>
           )}
-          <Link href={detailHref} className="arrow-link">
-            Dettaglio →
-          </Link>
+          <Link href={detailHref}>Dettaglio</Link>
         </div>
       </div>
 
       {loading ? (
-        <div style={{ padding: '20px', textAlign: 'center', color: 'var(--gray)', fontSize: 12 }}>
-          Caricamento stato impianti...
-        </div>
+        <div className="riga riga-vuota">Caricamento stato impianti…</div>
       ) : (
-        <div className="impianti-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 8 }}>
+        <div className="impianti-lista">
           {(Object.entries(AREE_IMPIANTO) as [AreaImpianto, typeof AREE_IMPIANTO[AreaImpianto]][]).map(([key, meta]) => {
             const stato = stati[key] ?? 'giallo'
             const sem = SEMAFORO[stato]
             return (
-              <div key={key} style={{
-                padding: '10px 12px',
-                borderRadius: 14,
-                background: 'var(--surface-3)',
-                display: 'flex', alignItems: 'center', gap: 10,
-              }}>
-                <span style={{ fontSize: 17, flexShrink: 0, width: 34, height: 34, borderRadius: 10, background: sem.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{meta.icona}</span>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{
-                    fontWeight: 600, fontSize: 14, marginBottom: 1,
-                  }}>
-                    {meta.label}
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                    <span style={{ width: 7, height: 7, borderRadius: 999, background: sem.color }} />
-                    <span style={{
-                      fontSize: 12.5, color: sem.color, fontWeight: 500,
-                    }}>
-                      {STATO_LABEL[stato]}
-                    </span>
-                  </div>
-                </div>
-              </div>
+              <Link key={key} href={detailHref} className="impianto">
+                <span className="impianto-icona" aria-hidden="true">{meta.icona}</span>
+                <span className="impianto-nome">{meta.label}</span>
+                <span className="impianto-stato" style={{ color: sem.color, background: `color-mix(in srgb, ${sem.color} 14%, transparent)` }}>
+                  <span className="impianto-pallino" style={{ background: sem.color, boxShadow: `0 0 8px ${sem.color}` }} />
+                  {STATO_LABEL[stato]}
+                </span>
+              </Link>
             )
           })}
         </div>
       )}
-    </div>
+    </section>
   )
 }

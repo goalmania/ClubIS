@@ -57,184 +57,141 @@ export default async function PresidenteDashboard() {
 
   return (
     <div style={{ animation: 'fadeIn 0.3s ease' }}>
-      <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Presidenza</h1>
-        <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>
-          Riepilogo esecutivo — {oggi.toLocaleDateString('it-IT', { month: 'long', year: 'numeric' })}
-        </p>
+      <div className="pagina-testa">
+        <h1>Presidenza</h1>
+        <p>Riepilogo esecutivo · {oggi.toLocaleDateString('it-IT', { month: 'long', year: 'numeric' })}</p>
       </div>
 
-      {!isScuolaCalcio && (
-        <>
-          <ScadenzeFIGCWidget compact={true} />
-          <RischioCovisocWidget />
-        </>
-      )}
-
-      <AzioniRapide ruolo="presidente" variante={isScuolaCalcio ? 'scuola_calcio' : 'agonistico'} />
-
-      {!isScuolaCalcio && <ImpiantiDashboardWidget ruolo="presidente" />}
-
-      {alertTotale > 0 && (
-      <div className="alert alert-warning" style={{ marginBottom: 20 }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          <span>
-            {certInScadenza! > 0 && <><strong>{certInScadenza} certificati</strong> in scadenza. </>}
-            {contrInScadenza! > 0 && <><strong>{contrInScadenza} contratti</strong> in scadenza (90gg). </>}
-            {quoteArretrate! > 0 && <><strong>{quoteArretrate} quote</strong> non pagate.</>}
-          </span>
-        </div>
-      )}
-
-      {/* KPI */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 28 }}>
-        <div className="stat-card">
+      {/* Statistiche: la prima in lime */}
+      <div className="kpi-riga">
+        <Link href="/dashboard/presidente/club" className="stat-card">
           <div className="stat-label">{isScuolaCalcio ? 'Iscritti' : 'Tesserati'}</div>
           <div className="stat-value">{totTesserati ?? 0}</div>
           <div className="stat-sub">{squadre?.length ?? 0} {isScuolaCalcio ? 'categorie attive' : 'squadre attive'}</div>
-        </div>
-        <div className="stat-card">
+        </Link>
+        <Link href="/dashboard/presidente/finanze" className="stat-card">
           <div className="stat-label">Entrate mese</div>
-          <div className="stat-value" style={{ fontSize: 22, color: 'var(--accent-green)' }}>{fmtEuro(totEntrate)}</div>
-          <div className="stat-sub" style={{ color: saldo >= 0 ? 'var(--accent-green)' : 'var(--accent-red)' }}>
-            Saldo: {fmtEuro(saldo)}
-          </div>
-        </div>
-        <div className="stat-card">
+          <div className="stat-value">{fmtEuro(totEntrate)}</div>
+          <div className="stat-sub" style={{ color: saldo >= 0 ? 'var(--accent)' : 'var(--accent-red)' }}>Saldo: {fmtEuro(saldo)}</div>
+        </Link>
+        <Link href="/dashboard/presidente/finanze" className="stat-card">
           <div className="stat-label">Uscite mese</div>
-          <div className="stat-value" style={{ fontSize: 22, color: 'var(--accent-red)' }}>{fmtEuro(totUscite)}</div>
+          <div className="stat-value">{fmtEuro(totUscite)}</div>
           <div className="stat-sub">{usciteMese?.length ?? 0} movimenti</div>
-        </div>
-        <div className="stat-card">
+        </Link>
+        <Link href="/dashboard/segretario/pagamenti" className="stat-card">
           <div className="stat-label">Quote pagate</div>
           <div className="stat-value">{quotePagate ?? 0}</div>
-          <div className="stat-sub" style={{ color: 'var(--accent-red)' }}>{quoteArretrate ?? 0} arretrate</div>
-        </div>
+          <div className="stat-sub" style={{ color: (quoteArretrate ?? 0) > 0 ? 'var(--accent-red)' : undefined }}>{quoteArretrate ?? 0} arretrate</div>
+        </Link>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
-        {/* Ultime partite */}
-        <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px', borderBottom: '1px solid var(--border)' }}>
-            <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>Ultimi risultati</span>
-            <Link href="/dashboard/presidente/risultati" style={{ fontSize: 12, color: 'var(--accent-blue)', textDecoration: 'none', fontWeight: 500 }}>Vedi tutti →</Link>
-          </div>
-          {ultimiRisultati && ultimiRisultati.length > 0 ? (
-            <div>
-              {ultimiRisultati.map((p, i) => {
+      <div className="dash-griglia">
+        {/* Colonna principale: cosa fare adesso */}
+        <div className="dash-colonna">
+          {(!isScuolaCalcio || alertTotale > 0) && (
+            <section>
+              <div className="sezione-testa"><h2>Da fare</h2>{!isScuolaCalcio && <Link href="/dashboard/segretario/scadenze-figc">Scadenziario FIGC</Link>}</div>
+              {!isScuolaCalcio && (
+                <>
+                  <ScadenzeFIGCWidget compact={true} />
+                  <RischioCovisocWidget />
+                </>
+              )}
+              {alertTotale > 0 && (
+                <div className="alert alert-warning" style={{ marginBottom: 0 }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                  <span>
+                    {certInScadenza! > 0 && <><strong>{certInScadenza} certificati</strong> in scadenza. </>}
+                    {contrInScadenza! > 0 && <><strong>{contrInScadenza} contratti</strong> in scadenza (90gg). </>}
+                    {quoteArretrate! > 0 && <><strong>{quoteArretrate} quote</strong> non pagate.</>}
+                  </span>
+                </div>
+              )}
+            </section>
+          )}
+
+          <AzioniRapide ruolo="presidente" variante={isScuolaCalcio ? 'scuola_calcio' : 'agonistico'} />
+
+          <section className="card pannello">
+            <div className="pannello-testa"><h2>Ultimi risultati</h2><Link href="/dashboard/presidente/risultati">Vedi tutti</Link></div>
+            {ultimiRisultati && ultimiRisultati.length > 0 ? (
+              ultimiRisultati.map((p, i) => {
                 const vinto    = (p.gol_fatti ?? 0) > (p.gol_subiti ?? 0)
                 const pareggio = (p.gol_fatti ?? 0) === (p.gol_subiti ?? 0)
                 return (
-                  <div key={i} style={{
-                    padding: '11px 18px',
-                    borderBottom: '1px solid var(--border-light)',
-                    display: 'flex', alignItems: 'center', gap: 14,
-                  }}>
-                    <div style={{
-                      width: 32, height: 32, borderRadius: 12, flexShrink: 0,
-                      background: vinto ? 'var(--accent-green-lt)' : pareggio ? 'var(--accent-orange-lt)' : 'var(--accent-red-lt)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: 12, fontWeight: 700,
-                      color: vinto ? 'var(--accent-green)' : pareggio ? 'var(--accent-orange)' : 'var(--accent-red)',
-                    }}>
-                      {vinto ? 'V' : pareggio ? 'P' : 'S'}
+                  <div key={i} className="riga">
+                    <span className="riga-icona" style={{
+                      background: vinto ? '#c8f000' : pareggio ? 'rgba(255,181,71,0.16)' : 'rgba(255,107,94,0.16)',
+                      color: vinto ? '#0b0c0a' : pareggio ? '#ffb547' : '#ff8a7d', fontSize: 12, fontWeight: 700,
+                    }}>{vinto ? 'V' : pareggio ? 'P' : 'S'}</span>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 14, fontWeight: 600 }}>{p.casa_trasferta === 'casa' ? 'vs' : '@'} {p.avversario}</div>
+                      <div className="riga-sub">{new Date(p.data_ora).toLocaleDateString('it-IT')}</div>
                     </div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)' }}>
-                        {p.casa_trasferta === 'casa' ? 'vs' : '@'} {p.avversario}
-                      </div>
-                      <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-                        {new Date(p.data_ora).toLocaleDateString('it-IT')}
-                      </div>
-                    </div>
-                    <div style={{ fontSize: 16, fontWeight: 700, fontFamily: 'var(--font-mono)', color: 'var(--text-primary)' }}>
-                      {p.gol_fatti} - {p.gol_subiti}
-                    </div>
+                    <div style={{ fontSize: 17, fontWeight: 650, fontVariantNumeric: 'tabular-nums', letterSpacing: '-0.02em' }}>{p.gol_fatti} - {p.gol_subiti}</div>
                   </div>
                 )
-              })}
-            </div>
-          ) : (
-            <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--text-muted)', fontSize: 13 }}>
-              Nessun risultato registrato
-            </div>
-          )}
-        </div>
-
-        {/* Squadre + Sponsor */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px', borderBottom: '1px solid var(--border)' }}>
-              <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>Squadre attive</span>
-              <Link href="/dashboard/presidente/club" style={{ fontSize: 12, color: 'var(--accent-blue)', textDecoration: 'none', fontWeight: 500 }}>Dettaglio →</Link>
-            </div>
-            {squadre && squadre.length > 0 ? (
-              <div>
-                {squadre.map(s => (
-                  <div key={s.id} style={{
-                    padding: '10px 18px',
-                    borderBottom: '1px solid var(--border-light)',
-                    display: 'flex', alignItems: 'center', gap: 12,
-                  }}>
-                    <div style={{
-                      width: 8, height: 8, borderRadius: '50%',
-                      background: 'var(--accent-green)', flexShrink: 0,
-                    }} />
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)' }}>{s.nome}</div>
-                      <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-                        {isScuolaCalcio && categoriaFederaleDaEta(s.categoria_eta)
-                          ? CATEGORIE_FEDERALI[categoriaFederaleDaEta(s.categoria_eta)!].label
-                          : s.categoria_eta.toUpperCase().replace('_', ' ')}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              })
             ) : (
-              <div style={{ padding: '30px 20px', textAlign: 'center', color: 'var(--text-muted)', fontSize: 13 }}>
-                Nessuna squadra attiva
+              <div className="riga riga-vuota">
+                <span className="riga-icona neutra"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg></span>
+                Nessun risultato registrato
               </div>
             )}
-          </div>
+          </section>
+        </div>
 
-          {/* Sponsor preview */}
-          <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 18px', borderBottom: '1px solid var(--border)' }}>
-              <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>Sponsor</span>
-              <Link href="/dashboard/presidente/sponsor" style={{ fontSize: 12, color: 'var(--accent-blue)', textDecoration: 'none', fontWeight: 500 }}>Gestisci →</Link>
-            </div>
-            {sponsors && sponsors.length > 0 ? (
-              <div>
-                {sponsors.map(s => (
-                  <div key={s.id} style={{
-                    padding: '10px 18px',
-                    borderBottom: '1px solid var(--border-light)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                      <span className={`badge ${s.tipo === 'gold' ? 'badge-ambra' : s.tipo === 'silver' ? 'badge-grigio' : 'badge-viola'}`}>
-                        {s.tipo}
-                      </span>
-                      <span style={{ fontSize: 13, color: 'var(--text-primary)' }}>{s.nome}</span>
-                    </div>
-                    <span style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: 'var(--text-secondary)' }}>
-                      {s.importo_annuo ? Number(s.importo_annuo).toLocaleString('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }) : '—'}
+        {/* Colonna di stato */}
+        <div className="dash-colonna">
+          {!isScuolaCalcio && <ImpiantiDashboardWidget ruolo="presidente" />}
+
+          <section className="card pannello">
+            <div className="pannello-testa"><h2>{isScuolaCalcio ? 'Categorie attive' : 'Squadre attive'} <span className="conta">· {squadre?.length ?? 0}</span></h2><Link href="/dashboard/presidente/club">Dettaglio</Link></div>
+            {squadre && squadre.length > 0 ? (
+              <div className="squadre-griglia">
+                {squadre.map(s => (
+                  <div key={s.id} className="squadra-voce">
+                    <span className="pallino-lime" />
+                    <span className="squadra-nome">{s.nome}</span>
+                    <span className="squadra-cat">
+                      {isScuolaCalcio && categoriaFederaleDaEta(s.categoria_eta)
+                        ? CATEGORIE_FEDERALI[categoriaFederaleDaEta(s.categoria_eta)!].label
+                        : s.categoria_eta.replace('_', ' ')}
                     </span>
                   </div>
                 ))}
               </div>
             ) : (
-              <div style={{ padding: '30px 20px', textAlign: 'center', color: 'var(--text-muted)', fontSize: 13 }}>
-                Nessuno sponsor configurato
-              </div>
+              <div className="riga riga-vuota">Nessuna squadra attiva</div>
             )}
-          </div>
+          </section>
+
+          <section className="card pannello">
+            <div className="pannello-testa"><h2>Sponsor</h2><Link href="/dashboard/presidente/sponsor">Gestisci</Link></div>
+            {sponsors && sponsors.length > 0 ? (
+              sponsors.map(s => (
+                <div key={s.id} className="riga">
+                  <span className="riga-icona"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 7h18v13H3zM8 7V4h8v3M3 13h18"/></svg></span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 14, fontWeight: 600 }}>{s.nome}</div>
+                    <div className="riga-sub" style={{ textTransform: 'capitalize' }}>{s.tipo}</div>
+                  </div>
+                  <span style={{ fontSize: 15, fontWeight: 650, fontVariantNumeric: 'tabular-nums' }}>
+                    {s.importo_annuo ? Number(s.importo_annuo).toLocaleString('it-IT', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }) : '—'}
+                  </span>
+                </div>
+              ))
+            ) : (
+              <div className="riga riga-vuota">Nessuno sponsor configurato</div>
+            )}
+          </section>
         </div>
       </div>
 
-      {/* Link rapidi */}
-      <div className="card" style={{ padding: 18, marginTop: 20, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+      {/* Vai a: collegamenti rapidi */}
+      <div className="card vai-a">
+        <span className="vai-a-titolo">Vai a</span>
         {isScuolaCalcio ? (
           <>
             <Link href="/dashboard/presidente/finanze" className="btn btn-secondary btn-sm">Entrate & Uscite</Link>

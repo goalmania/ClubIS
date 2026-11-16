@@ -127,6 +127,82 @@ const AZIONI_PER_RUOLO_SCUOLA_CALCIO: Partial<Record<RuoloUtente, AzioneRapida[]
   ],
 }
 
+// Una riga sotto ogni azione per far capire subito cosa si fa.
+const SPIEGAZIONI: Record<string, string> = {
+  "Importa dati": "Carica giocatori da file",
+  "Gestisci iscrizioni": "Richieste e moduli ricevuti",
+  "Visite mediche": "Certificati e scadenze",
+  "Rimborso trasferta": "Registra una spesa di viaggio",
+  "Pagamento fornitore": "Registra un'uscita",
+  "Tassa federale": "Registra un versamento FIGC",
+  "Visualizza bilancio": "Entrate, uscite e saldo",
+  "Scadenziario FIGC": "Adempimenti e date",
+  "Pratiche tesseramento": "Stato delle pratiche",
+  "Comunicati FIGC": "Leggi e abbina i comunicati",
+  "Monitor squalifiche": "Squalificati e diffidati",
+  "Genera documento": "Moduli e lettere pronti",
+  "Quietanze": "Ricevute da firmare",
+  "Invia comunicazione": "Messaggio a famiglie e staff",
+  "Gestisci accrediti": "Richieste stampa e ospiti",
+  "Gestisci squadre": "Categorie del settore giovanile",
+  "Quote mensili": "Rette e pagamenti",
+  "Prima nota": "Registra entrate e uscite",
+  "Config. finanziaria": "Quote, conti e categorie",
+  "Info club": "Dati, logo e firma",
+  "Sponsor": "Contratti e importi",
+  "Organigramma": "Ruoli e responsabili",
+  "Obiettivi": "Traguardi della stagione",
+  "Disponibilità rosa": "Chi è disponibile per la gara",
+  "Ultimi risultati": "Partite giocate e punteggi",
+  "Nuovo allenamento": "Pianifica una seduta",
+  "Registra presenze": "Chi c'era all'allenamento",
+  "Convocazioni": "Lista per la prossima gara",
+  "Schema tattico": "Modulo e posizioni",
+  "Valuta giocatore": "Scheda di valutazione",
+  "Messaggio squadra": "Scrivi a giocatori e famiglie",
+  "Nuova trattativa": "Apri una trattativa di mercato",
+  "Scadenze contratti": "Contratti in scadenza",
+  "Nuovo scouting": "Segnala un giocatore",
+  "Statistiche rosa": "Numeri della squadra",
+  "Registra infortunio": "Nuovo infortunio in rosa",
+  "Pianifica visita": "Fissa una visita medica",
+  "Cert. in scadenza": "Certificati da rinnovare",
+  "Cartelle mediche": "Storico sanitario",
+  "Stato sanitario rosa": "Chi è idoneo",
+  "Nuovo report": "Scheda di osservazione",
+  "Pipeline scouting": "Giocatori seguiti per fase",
+  "Confronta giocatori": "Metti a confronto due profili",
+  "Richiedi materiale": "Divise e attrezzatura",
+  "Gestisci trasferte": "Viaggi e logistica",
+  "Presenze rapide": "Segna le presenze",
+  "Distinte gara": "Distinta per l'arbitro",
+  "Profilo figlio": "Dati e squadra",
+  "Paga quota": "Pagamenti e ricevute",
+  "Prossimi eventi": "Allenamenti e partite",
+  "Progressi figlio": "Valutazioni e crescita",
+  "Allenamenti": "Le prossime sedute",
+  "Partite": "Calendario e risultati",
+  "Valutazioni": "Le tue schede",
+  "Le mie quote": "Pagamenti e scadenze",
+  "Esegui checklist": "Controlli di oggi",
+  "Apri ticket": "Segnala un problema",
+  "Nuova intervista": "Organizza un'intervista",
+  "Calendario media": "Uscite e appuntamenti",
+  "Accrediti": "Richieste stampa",
+  "Nuovo brief": "Richiesta grafica per locandina",
+  "Template articoli": "Testi pronti da usare",
+  "Info scuola": "Dati, logo e firma",
+  "Staff": "Allenatori e collaboratori",
+  "Entrate & uscite": "Movimenti del mese",
+  "Comunicazioni": "Messaggi alle famiglie",
+  "Certificati medici": "Certificati e scadenze",
+  "Pagamenti": "Rette incassate e da incassare",
+  "Calendario": "Allenamenti ed eventi",
+  "Trasferte & tornei": "Viaggi e tornei",
+  "Rosa": "Giocatori della categoria",
+  "Valutazioni mensili": "Schede del mese",
+}
+
 export default function AzioniRapide({ ruolo, variante = 'agonistico' }: { ruolo: RuoloUtente; variante?: 'agonistico' | 'scuola_calcio' }) {
   const azioni = (variante === 'scuola_calcio' ? AZIONI_PER_RUOLO_SCUOLA_CALCIO[ruolo] : undefined) ?? AZIONI_PER_RUOLO[ruolo] ?? []
 
@@ -137,31 +213,16 @@ export default function AzioniRapide({ ruolo, variante = 'agonistico' }: { ruolo
     return acc
   }, {})
 
+  // Su computer: gruppi con righe (icona · nome · cosa fa). Su telefono la
+  // stessa struttura diventa una griglia di icone 4 per riga (vedi globals.css).
   return (
-    <section style={{
-      background: 'var(--surface-2)',
-      borderRadius: 20,
-      marginBottom: 24,
-      padding: '16px 18px 18px',
-    }}>
-      <h2 style={{ fontSize: 17, fontWeight: 600, letterSpacing: '-0.01em', color: 'var(--white)', marginBottom: 12 }}>
-        Azioni rapide
-      </h2>
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(190px, 1fr))',
-        gap: '16px 18px',
-      }}>
+    <section className="glass az" style={{ marginBottom: 20, padding: '16px 14px 12px' }}>
+      <h2 className="az-titolo">Azioni rapide</h2>
+      <div className="az-gruppi">
         {Object.entries(perArea).map(([area, azioniArea]) => (
-          <div key={area} style={{ minWidth: 0 }}>
-            <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--gray)', marginBottom: 6 }}>
-              {area}
-            </div>
-            <div className="azioni-list" style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              {azioniArea.map(a => (
-                <AzioneLink key={a.href} azione={a} />
-              ))}
-            </div>
+          <div key={area} className="az-gruppo">
+            <div className="az-area">{area}</div>
+            {azioniArea.map(a => <AzioneLink key={a.href + a.label} azione={a} />)}
           </div>
         ))}
       </div>
@@ -170,16 +231,15 @@ export default function AzioniRapide({ ruolo, variante = 'agonistico' }: { ruolo
 }
 
 function AzioneLink({ azione: a }: { azione: AzioneRapida }) {
+  const spiegazione = SPIEGAZIONI[a.label]
   return (
-    <Link href={a.href} className="quick-action-link" style={{ gap: 10 }}>
-      <span aria-hidden="true" style={{
-        width: 26, height: 26, borderRadius: 8, flexShrink: 0,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontSize: 14, lineHeight: 1,
-        color: a.colore ?? 'var(--accent)',
-        background: `color-mix(in srgb, ${a.colore ?? 'var(--accent)'} 18%, transparent)`,
-      }}>{a.icon}</span>
-      <span style={{ lineHeight: 1.25, minWidth: 0 }}>{a.label}</span>
+    <Link href={a.href} className="az-voce">
+      <span aria-hidden="true" className="az-icona">{a.icon}</span>
+      <span className="az-testo">
+        <span className="az-nome">{a.label}</span>
+        {spiegazione && <span className="az-spiega">{spiegazione}</span>}
+      </span>
+      <svg className="az-freccia" aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m9 6 6 6-6 6" /></svg>
     </Link>
   )
 }
