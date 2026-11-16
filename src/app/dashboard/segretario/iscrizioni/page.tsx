@@ -195,7 +195,7 @@ export default function IscrizioniPage() {
             </span>
           </div>
           <div style={{ overflow: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <table className="tabella-schede" style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr>
                   {['Titolo', 'Tipo', 'Stagione', 'Scadenza', 'Iscritti', 'Link pubblico', 'Stato', ''].map(h => (
@@ -209,12 +209,12 @@ export default function IscrizioniPage() {
                   const link = `${baseUrl}/iscriviti/${m.slug}`
                   return (
                     <tr key={m.id} style={{ borderBottom: '1px solid var(--border)' }}>
-                      <td style={{ padding: '10px 14px', fontSize: 13, fontWeight: 600 }}>{m.titolo}</td>
-                      <td style={{ padding: '10px 14px', fontSize: 12, color: 'var(--grigio-3)' }}>{tipoLabel[m.tipo] ?? m.tipo}</td>
-                      <td style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'var(--font-mono)' }}>{m.stagione}</td>
-                      <td style={{ padding: '10px 14px', fontSize: 12, color: 'var(--grigio-3)' }}>{m.data_chiusura ? new Date(m.data_chiusura).toLocaleDateString('it-IT') : '—'}</td>
-                      <td style={{ padding: '10px 14px', fontSize: 13, fontFamily: 'var(--font-mono)', fontWeight: 700 }}>{cnt}{m.max_iscrizioni ? `/${m.max_iscrizioni}` : ''}</td>
-                      <td style={{ padding: '10px 14px' }}>
+                      <td data-label="Titolo" style={{ padding: '10px 14px', fontSize: 13, fontWeight: 600 }}>{m.titolo}</td>
+                      <td data-label="Tipo" style={{ padding: '10px 14px', fontSize: 12, color: 'var(--grigio-3)' }}>{tipoLabel[m.tipo] ?? m.tipo}</td>
+                      <td data-label="Stagione" style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'var(--font-mono)' }}>{m.stagione}</td>
+                      <td data-label="Scadenza" style={{ padding: '10px 14px', fontSize: 12, color: 'var(--grigio-3)' }}>{m.data_chiusura ? new Date(m.data_chiusura).toLocaleDateString('it-IT') : '—'}</td>
+                      <td data-label="Iscritti" style={{ padding: '10px 14px', fontSize: 13, fontFamily: 'var(--font-mono)', fontWeight: 700 }}>{cnt}{m.max_iscrizioni ? `/${m.max_iscrizioni}` : ''}</td>
+                      <td data-label="Link pubblico" style={{ padding: '10px 14px' }}>
                         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                           <a href={link} target="_blank" rel="noreferrer" style={{ fontSize: 12, color: 'var(--accent)', fontFamily: 'var(--font-mono)', wordBreak: 'break-all' }}>
                             /iscriviti/{m.slug}
@@ -223,10 +223,10 @@ export default function IscrizioniPage() {
                           <a href={`/api/moduli/qr/${m.slug}`} target="_blank" rel="noreferrer" style={iconBtn} title="QR Code">◻</a>
                         </div>
                       </td>
-                      <td style={{ padding: '10px 14px' }}>
+                      <td data-label="Stato" style={{ padding: '10px 14px' }}>
                         <span className={`badge ${m.attivo ? 'badge-verde' : 'badge-grigio'}`}>{m.attivo ? 'Attivo' : 'Chiuso'}</span>
                       </td>
-                      <td style={{ padding: '10px 14px' }}>
+                      <td data-label="" style={{ padding: '10px 14px' }}>
                         <button onClick={() => toggleModulo(m.id, m.attivo)} style={{ fontSize: 12, padding: '3px 8px', background: 'var(--grigio-mid)', border: '1px solid var(--border-solid)', borderRadius: 8, cursor: 'pointer', color: 'var(--grigio-3)' }}>
                           {m.attivo ? 'Disattiva' : 'Attiva'}
                         </button>
@@ -254,7 +254,7 @@ export default function IscrizioniPage() {
 
       <div className="card" style={{ overflow: 'hidden' }}>
         <div className="table-wrap">
-          <table>
+          <table className="tabella-schede">
             <thead>
               <tr>
                 {['Atleta', 'Genitore / Email', 'Modulo', 'Data richiesta', 'Pagamento', 'Stato', 'Azioni'].map(h => (
@@ -269,23 +269,23 @@ export default function IscrizioniPage() {
                 <tr><td colSpan={7} style={{ textAlign: 'center', padding: 40, color: 'var(--grigio-4)' }}>Nessuna richiesta</td></tr>
               ) : filtrate.map(r => (
                 <tr key={r.id}>
-                  <td style={{ fontWeight: 600 }}>{r.cognome} {r.nome}
+                  <td data-label="Atleta" style={{ fontWeight: 600 }}>{r.cognome} {r.nome}
                     {r.data_nascita && <div style={{ fontSize: 12, color: 'var(--grigio-3)', fontFamily: 'var(--font-mono)' }}>
                       {new Date(r.data_nascita).toLocaleDateString('it-IT')}
                     </div>}
                   </td>
-                  <td>
+                  <td data-label="Genitore / Email">
                     <div style={{ fontSize: 13 }}>{r.genitore_nome} {r.genitore_cognome}</div>
                     <div style={{ fontSize: 12, color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>{r.genitore_email}</div>
                   </td>
-                  <td style={{ fontSize: 12, color: 'var(--grigio-3)' }}>
+                  <td data-label="Modulo" style={{ fontSize: 12, color: 'var(--grigio-3)' }}>
                     {r.moduli_iscrizione?.titolo ?? '—'}
                     <div style={{ fontSize: 12, fontFamily: 'var(--font-mono)' }}>{r.moduli_iscrizione?.stagione}</div>
                   </td>
-                  <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
+                  <td data-label="Data richiesta" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
                     {new Date(r.created_at).toLocaleDateString('it-IT')}
                   </td>
-                  <td>
+                  <td data-label="Pagamento">
                     {r.pagamento_stato ? (
                       <span className={`badge ${pagamentoLabel[r.pagamento_stato]?.classe ?? 'badge-grigio'}`}>
                         {pagamentoLabel[r.pagamento_stato]?.label ?? r.pagamento_stato}
@@ -295,12 +295,12 @@ export default function IscrizioniPage() {
                       <span style={{ fontSize: 12, color: 'var(--grigio-4)' }}>Gratuito</span>
                     )}
                   </td>
-                  <td>
+                  <td data-label="Stato">
                     <span className={`badge ${r.stato === 'approvata' ? 'badge-verde' : r.stato === 'rifiutata' ? 'badge-rosso' : 'badge-grigio'}`}>
                       {r.stato.replace('_', ' ')}
                     </span>
                   </td>
-                  <td>
+                  <td data-label="Azioni">
                     <div style={{ display: 'flex', gap: 6 }}>
                       <button className="btn btn-sm" style={{ fontSize: 12 }} onClick={() => setDettaglio(r)}>
                         Dettaglio

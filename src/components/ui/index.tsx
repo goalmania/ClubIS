@@ -10,17 +10,10 @@ export function PageHeader({
   actions?: React.ReactNode
 }) {
   return (
-    <div className="page-header" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 24 }}>
-      <div style={{ minWidth: 0 }}>
-        <h1 style={{
-          fontFamily: 'var(--font-display)',
-          fontWeight: 700,
-          fontSize: 28,
-          textTransform: 'none',
-          letterSpacing: '-0.025em',
-          color: 'var(--white)',
-        }}>{title}</h1>
-        {subtitle && <p style={{ fontFamily: 'var(--font-sans)', fontSize: 13, color: 'var(--gray)', marginTop: 4, fontWeight: 400 }}>{subtitle}</p>}
+    <div className="page-header" style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 20 }}>
+      <div className="pagina-testa" style={{ minWidth: 0, margin: '4px 2px 0' }}>
+        <h1>{title}</h1>
+        {subtitle && <p>{subtitle}</p>}
       </div>
       {actions && <div className="page-header-actions" style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>{actions}</div>}
     </div>

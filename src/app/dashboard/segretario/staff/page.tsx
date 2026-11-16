@@ -171,7 +171,7 @@ export default function StaffAnagraficaPage() {
             </div>
           ) : (
             <div className="table-wrap">
-              <table>
+              <table className="tabella-schede">
                 <thead>
                   <tr>
                     <th>Membro staff</th>
@@ -197,7 +197,7 @@ export default function StaffAnagraficaPage() {
                       : `/dashboard/segretario/compensi?nome_esterno=${encodeURIComponent(`${nome} ${cognome}`.trim())}&cf_esterno=${encodeURIComponent(c.codice_fiscale)}&apri=1`
                     return (
                       <tr key={c.id}>
-                        <td>
+                        <td data-label="Membro staff">
                           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                             <div className="avatar" style={{ width: 32, height: 32, fontSize: 12 }}>{iniziali}</div>
                             <div>
@@ -206,7 +206,7 @@ export default function StaffAnagraficaPage() {
                             </div>
                           </div>
                         </td>
-                        <td>
+                        <td data-label="Ruolo">
                           {ruolo ? (
                             <span className={`badge ${roleBadge[ruolo] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>
                               {roleLabel[ruolo] ?? ruolo}
@@ -215,22 +215,22 @@ export default function StaffAnagraficaPage() {
                             <span className="badge badge-grigio" style={{ fontSize: 12 }}>{ruoloEsternoLabel}</span>
                           )}
                         </td>
-                        <td style={{ fontSize: 13, color: 'var(--grigio-3)' }}>{contrattoLabel[c.tipo_contratto] ?? c.tipo_contratto}</td>
-                        <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
+                        <td data-label="Contratto" style={{ fontSize: 13, color: 'var(--grigio-3)' }}>{contrattoLabel[c.tipo_contratto] ?? c.tipo_contratto}</td>
+                        <td data-label="Compenso mensile" style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
                           {c.compenso_mensile ? fmt(Number(c.compenso_mensile)) : '—'}
                         </td>
-                        <td style={{ fontFamily: 'var(--font-mono)' }}>
+                        <td data-label="Compenso annuale" style={{ fontFamily: 'var(--font-mono)' }}>
                           {c.compenso_annuale ? fmt(c.compenso_annuale) : '—'}
                         </td>
-                        <td style={{ fontFamily: 'var(--font-mono)', color: 'var(--verde)', fontWeight: 600 }}>
+                        <td data-label="Erogato" style={{ fontFamily: 'var(--font-mono)', color: 'var(--verde)', fontWeight: 600 }}>
                           {fmt(c.erogato_anno_corrente)}
                         </td>
-                        <td>
+                        <td data-label="Stato">
                           {c.attivo
                             ? <span className="badge badge-verde" style={{ fontSize: 12 }}>Attivo</span>
                             : <span className="badge badge-rosso" style={{ fontSize: 12 }}>Cessato</span>}
                         </td>
-                        <td>
+                        <td data-label="">
                           <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
                             <a href={linkPagamento} className="btn btn-ghost btn-sm" style={{ fontSize: 12 }}>
                               Registra pagamento

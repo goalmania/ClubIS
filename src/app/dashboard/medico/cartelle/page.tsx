@@ -74,7 +74,7 @@ export default function MedicoCartellePage() {
         </div>
       ) : (
         <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <table className="tabella-schede" style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ background: 'var(--grigio-6)' }}>
                 <th style={th}>Giocatore</th>
@@ -104,7 +104,7 @@ export default function MedicoCartellePage() {
 
                 return (
                   <tr key={g.id} style={{ borderTop: '1px solid var(--grigio-5)' }}>
-                    <td style={td}>
+                    <td data-label="Giocatore" style={td}>
                       <Link href={`/dashboard/medico/cartelle/${g.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                         <span style={{ fontWeight: 600, fontSize: 13 }}>{g.cognome} {g.nome}</span>
                         <div style={{ fontSize: 12, color: 'var(--grigio-4)', textTransform: 'capitalize', marginTop: 2 }}>
@@ -112,19 +112,19 @@ export default function MedicoCartellePage() {
                         </div>
                       </Link>
                     </td>
-                    <td style={td}>
+                    <td data-label="Nascita" style={td}>
                       {g.data_nascita ? new Date(g.data_nascita).toLocaleDateString('it-IT') : '—'}
                     </td>
-                    <td style={{ ...td, fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
+                    <td data-label="Gruppo" style={{ ...td, fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
                       {g.gruppo_sanguigno ?? '—'}
                     </td>
-                    <td style={{ ...td, fontSize: 12 }}>
+                    <td data-label="Allergie" style={{ ...td, fontSize: 12 }}>
                       {g.allergie
                         ? <span style={{ color: 'var(--ambra)' }}>{g.allergie}</span>
                         : <span style={{ color: 'var(--grigio-4)' }}>Nessuna</span>
                       }
                     </td>
-                    <td style={td}>
+                    <td data-label="Certificato" style={td}>
                       {ultimoCert?.data_scadenza ? (
                         <span className={`badge ${certValido ? 'badge-verde' : 'badge-rosso'}`}>
                           {new Date(ultimoCert.data_scadenza).toLocaleDateString('it-IT')}
@@ -133,14 +133,14 @@ export default function MedicoCartellePage() {
                         <span className="badge badge-grigio">Assente</span>
                       )}
                     </td>
-                    <td style={td}>
+                    <td data-label="Infortuni" style={td}>
                       {attivi > 0 ? (
                         <span className="badge badge-rosso">{attivi} attiv{attivi === 1 ? 'o' : 'i'}</span>
                       ) : (
                         <span style={{ fontSize: 12, color: 'var(--grigio-4)' }}>{infortuni.length} tot.</span>
                       )}
                     </td>
-                    <td style={td}>
+                    <td data-label="" style={td}>
                       <Link
                         href={`/dashboard/medico/cartelle/${g.id}`}
                         className="btn btn-secondary btn-sm"

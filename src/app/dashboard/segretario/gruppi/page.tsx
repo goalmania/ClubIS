@@ -300,7 +300,7 @@ export default function GruppiPage() {
               </div>
             </div>
           ) : (
-            <div className="table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <div className="table-wrap"><table className="tabella-schede" style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr>
                   {['Atleta', 'Ruolo', 'Maglia', 'Ruolo nel gruppo', 'Ingresso', ''].map(h => (
@@ -315,7 +315,7 @@ export default function GruppiPage() {
                   const maglia = !staf && p?.numero_maglia ? `#${p.numero_maglia}` : '—'
                   return (
                     <tr key={m.id} style={{ borderBottom: '1px solid var(--border)' }}>
-                      <td style={{ padding: '10px 14px', fontWeight: 600 }}>
+                      <td data-label="Atleta" style={{ padding: '10px 14px', fontWeight: 600 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                           <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'rgba(200,240,0,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: 'var(--accent)', flexShrink: 0 }}>
                             {p?.nome?.[0]}{p?.cognome?.[0]}
@@ -323,13 +323,13 @@ export default function GruppiPage() {
                           {p ? `${p.cognome} ${p.nome}` : <span style={{ color: 'var(--grigio-4)', fontStyle: 'italic', fontWeight: 400 }}>ID: {m.giocatore_id ?? m.utente_id}</span>}
                         </div>
                       </td>
-                      <td style={{ padding: '10px 14px', fontSize: 12, color: 'var(--grigio-3)' }}>{ruolo}</td>
-                      <td style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', fontSize: 12 }}>{maglia}</td>
-                      <td style={{ padding: '10px 14px', fontSize: 12, color: 'var(--grigio-3)' }}>{m.ruolo_nel_gruppo ?? '—'}</td>
-                      <td style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'var(--font-mono)' }}>
+                      <td data-label="Ruolo" style={{ padding: '10px 14px', fontSize: 12, color: 'var(--grigio-3)' }}>{ruolo}</td>
+                      <td data-label="Maglia" style={{ padding: '10px 14px', fontFamily: 'var(--font-mono)', fontSize: 12 }}>{maglia}</td>
+                      <td data-label="Ruolo nel gruppo" style={{ padding: '10px 14px', fontSize: 12, color: 'var(--grigio-3)' }}>{m.ruolo_nel_gruppo ?? '—'}</td>
+                      <td data-label="Ingresso" style={{ padding: '10px 14px', fontSize: 12, fontFamily: 'var(--font-mono)' }}>
                         {m.data_ingresso ? new Date(m.data_ingresso).toLocaleDateString('it-IT') : '—'}
                       </td>
-                      <td style={{ padding: '10px 14px' }}>
+                      <td data-label="" style={{ padding: '10px 14px' }}>
                         <button onClick={() => rimuoviMembro(m.id)}
                           style={{ fontSize: 12, padding: '2px 8px', background: 'transparent', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, cursor: 'pointer', color: 'var(--rosso)' }}>
                           Rimuovi

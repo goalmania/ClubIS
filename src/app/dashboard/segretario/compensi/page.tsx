@@ -241,7 +241,7 @@ export default function CompensiPage() {
       {tab === 'lista' && (
         <div className="card" style={{ overflow: 'hidden' }}>
           <div className="table-wrap">
-            <table>
+            <table className="tabella-schede">
               <thead>
                 <tr>
                   {['Collaboratore', 'Descrizione', 'Anno/Mese', 'Lordo', 'Ritenuta', 'Netto', 'Soglia', 'Autocert.'].map(h => (
@@ -259,22 +259,22 @@ export default function CompensiPage() {
                   const nomeCollab = collab ? `${collab.cognome} ${collab.nome}` : (c.nome_esterno ?? 'Esterno')
                   return (
                     <tr key={c.id}>
-                      <td style={{ fontWeight: 600 }}>{nomeCollab}
+                      <td data-label="Collaboratore" style={{ fontWeight: 600 }}>{nomeCollab}
                         {c.cf_esterno && <div style={{ fontSize: 12, fontFamily: 'var(--font-mono)', color: 'var(--grigio-3)' }}>{c.cf_esterno}</div>}
                       </td>
-                      <td style={{ fontSize: 12, maxWidth: 220, wordBreak: 'break-word' }}>{c.descrizione}</td>
-                      <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{c.anno}{c.mese ? `/${String(c.mese).padStart(2,'0')}` : ''}</td>
-                      <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>{fmt(Number(c.importo_lordo))}</td>
-                      <td style={{ fontFamily: 'var(--font-mono)', color: Number(c.ritenuta) > 0 ? 'var(--rosso)' : 'var(--grigio-3)' }}>
+                      <td data-label="Descrizione" style={{ fontSize: 12, maxWidth: 220, wordBreak: 'break-word' }}>{c.descrizione}</td>
+                      <td data-label="Anno/Mese" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{c.anno}{c.mese ? `/${String(c.mese).padStart(2,'0')}` : ''}</td>
+                      <td data-label="Lordo" style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>{fmt(Number(c.importo_lordo))}</td>
+                      <td data-label="Ritenuta" style={{ fontFamily: 'var(--font-mono)', color: Number(c.ritenuta) > 0 ? 'var(--rosso)' : 'var(--grigio-3)' }}>
                         {Number(c.ritenuta) > 0 ? `−${fmt(Number(c.ritenuta))}` : '—'}
                       </td>
-                      <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--verde)' }}>{fmt(Number(c.importo_netto))}</td>
-                      <td>
+                      <td data-label="Netto" style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--verde)' }}>{fmt(Number(c.importo_netto))}</td>
+                      <td data-label="Soglia">
                         {c.supera_soglia
                           ? <span className="badge badge-rosso">Sopra soglia</span>
                           : <span className="badge badge-verde">Esente</span>}
                       </td>
-                      <td>
+                      <td data-label="Autocert.">
                         <a href={`/api/compensi/autocertificazione/${c.id}`} target="_blank" rel="noreferrer"
                           style={{ fontSize: 12, color: 'var(--accent)', textDecoration: 'none', fontFamily: 'var(--font-mono)' }}>
                           📄 Genera
@@ -300,7 +300,7 @@ export default function CompensiPage() {
             </button>
           </div>
           <div className="table-wrap">
-            <table>
+            <table className="tabella-schede">
               <thead>
                 <tr>
                   {['Collaboratore', 'Totale lordo', 'Quota esente', 'Quota imponibile', 'Ritenuta totale', 'Totale netto'].map(h => (
@@ -313,14 +313,14 @@ export default function CompensiPage() {
                   <tr><td colSpan={6} style={{ textAlign: 'center', padding: 40, color: 'var(--grigio-4)' }}>Nessun dato</td></tr>
                 ) : report.map((r, i) => (
                   <tr key={i}>
-                    <td style={{ fontWeight: 600 }}>{r.nome}</td>
-                    <td style={{ fontFamily: 'var(--font-mono)' }}>{fmt(r.lordo)}</td>
-                    <td style={{ fontFamily: 'var(--font-mono)', color: 'var(--verde)' }}>{fmt(r.esente)}</td>
-                    <td style={{ fontFamily: 'var(--font-mono)', color: r.imponibile > 0 ? 'var(--accent-orange)' : 'var(--grigio-3)' }}>{fmt(r.imponibile)}</td>
-                    <td style={{ fontFamily: 'var(--font-mono)', color: r.ritenuta > 0 ? 'var(--rosso)' : 'var(--grigio-3)', fontWeight: 700 }}>
+                    <td data-label="Collaboratore" style={{ fontWeight: 600 }}>{r.nome}</td>
+                    <td data-label="Totale lordo" style={{ fontFamily: 'var(--font-mono)' }}>{fmt(r.lordo)}</td>
+                    <td data-label="Quota esente" style={{ fontFamily: 'var(--font-mono)', color: 'var(--verde)' }}>{fmt(r.esente)}</td>
+                    <td data-label="Quota imponibile" style={{ fontFamily: 'var(--font-mono)', color: r.imponibile > 0 ? 'var(--accent-orange)' : 'var(--grigio-3)' }}>{fmt(r.imponibile)}</td>
+                    <td data-label="Ritenuta totale" style={{ fontFamily: 'var(--font-mono)', color: r.ritenuta > 0 ? 'var(--rosso)' : 'var(--grigio-3)', fontWeight: 700 }}>
                       {r.ritenuta > 0 ? `−${fmt(r.ritenuta)}` : '—'}
                     </td>
-                    <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--verde)' }}>{fmt(r.netto)}</td>
+                    <td data-label="Totale netto" style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--verde)' }}>{fmt(r.netto)}</td>
                   </tr>
                 ))}
                 {report.length > 0 && (

@@ -530,7 +530,7 @@ export default function StadioPage() {
           </div>
         </div>
         <div className="table-wrap" style={{ marginBottom: 12 }}>
-          <table>
+          <table className="tabella-schede">
             <thead>
               <tr>
                 <th>Data</th>
@@ -546,11 +546,11 @@ export default function StadioPage() {
               ) : (
                 summaryByMatch.map(r => (
                   <tr key={r.partita.id}>
-                    <td>{new Date(r.partita.data_ora).toLocaleDateString('it-IT')}</td>
-                    <td>{r.partita.avversario}</td>
-                    <td>{r.venduti}</td>
-                    <td>{fmtEuro(r.ricavo)}</td>
-                    <td>{r.riemp}%</td>
+                    <td data-label="Data">{new Date(r.partita.data_ora).toLocaleDateString('it-IT')}</td>
+                    <td data-label="Avversario">{r.partita.avversario}</td>
+                    <td data-label="Totale venduto">{r.venduti}</td>
+                    <td data-label="Ricavo">{fmtEuro(r.ricavo)}</td>
+                    <td data-label="% Riempimento">{r.riemp}%</td>
                   </tr>
                 ))
               )}

@@ -112,7 +112,7 @@ export default function GiocatoriTable({
   return (
     <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
       <div style={{ overflowX: 'auto' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <table className="tabella-schede" style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ background: 'var(--bg-input)' }}>
               <th style={thStyle('nome')} onClick={() => toggleSort('nome')}>Nome{arrow('nome')}</th>
@@ -137,19 +137,19 @@ export default function GiocatoriTable({
                   onMouseEnter={ev => (ev.currentTarget.style.background = 'var(--bg-input)')}
                   onMouseLeave={ev => (ev.currentTarget.style.background = '')}
                 >
-                  <td style={{ padding: '12px 14px', fontWeight: 600, fontSize: 13, color: 'var(--text-primary)' }}>
+                  <td data-label="toggleSort('nome')}>Nome" style={{ padding: '12px 14px', fontWeight: 600, fontSize: 13, color: 'var(--text-primary)' }}>
                     {r.nome_giocatore_ext ?? '—'}
                   </td>
-                  <td style={{ padding: '12px 14px', fontSize: 12, color: 'var(--text-secondary)' }}>
+                  <td data-label="toggleSort('ruolo')}>Ruolo" style={{ padding: '12px 14px', fontSize: 12, color: 'var(--text-secondary)' }}>
                     {r.ruolo ? r.ruolo.replace('_', ' ') : '—'}
                   </td>
-                  <td style={{ padding: '12px 14px', fontSize: 13, color: 'var(--text-secondary)' }}>
+                  <td data-label="toggleSort('eta')}>Età" style={{ padding: '12px 14px', fontSize: 13, color: 'var(--text-secondary)' }}>
                     {e ?? '—'}
                   </td>
-                  <td style={{ padding: '12px 14px', fontSize: 12, color: 'var(--text-secondary)' }}>
+                  <td data-label="toggleSort('club')}>Club" style={{ padding: '12px 14px', fontSize: 12, color: 'var(--text-secondary)' }}>
                     {r.club_attuale_ext ?? '—'}
                   </td>
-                  <td style={{ padding: '12px 14px', textAlign: 'center' }}>
+                  <td data-label="toggleSort('rating')}>Rating" style={{ padding: '12px 14px', textAlign: 'center' }}>
                     {rating !== null ? (
                       <span style={{
                         display: 'inline-block', width: 32, height: 32, borderRadius: '50%', lineHeight: '32px',
@@ -159,17 +159,17 @@ export default function GiocatoriTable({
                       }}>{rating}</span>
                     ) : '—'}
                   </td>
-                  <td style={{ padding: '12px 14px' }}>
+                  <td data-label="toggleSort('potenziale')}>Potenziale" style={{ padding: '12px 14px' }}>
                     <span className={`badge ${potenzialeColore[r.potenziale] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>
                       {r.potenziale}
                     </span>
                   </td>
-                  <td style={{ padding: '12px 14px' }}>
+                  <td data-label="toggleSort('stato_pipeline')}>Pipeline" style={{ padding: '12px 14px' }}>
                     <span className={`badge ${PIPELINE_COLORE[r.stato_pipeline ?? 'in_osservazione'] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>
                       {PIPELINE_LABEL[r.stato_pipeline ?? 'in_osservazione'] ?? r.stato_pipeline}
                     </span>
                   </td>
-                  <td style={{ padding: '12px 14px', fontSize: 12, color: 'var(--text-muted)' }}>
+                  <td data-label="toggleSort('data_osservazione')}>Ultima oss." style={{ padding: '12px 14px', fontSize: 12, color: 'var(--text-muted)' }}>
                     {formatData(r.data_osservazione)}
                   </td>
                 </tr>

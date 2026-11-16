@@ -421,7 +421,7 @@ function ComunicatiLegaProContent() {
             Sanzioni confermate ({confermate.length})
           </div>
           <div style={{ border: '1px solid var(--border)', borderRadius: 12, overflow: 'hidden' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+            <table className="tabella-schede" style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
                 <tr style={{ background: 'var(--gray-light)', borderBottom: '1px solid var(--border)' }}>
                   {['Giocatore / Società', 'Tipo', 'Durata', 'Comunicato'].map(h => (
@@ -437,17 +437,17 @@ function ComunicatiLegaProContent() {
                     <tr key={sq.id} style={{
                       borderBottom: i < confermate.length - 1 ? '1px solid var(--border)' : 'none',
                     }}>
-                      <td style={{ padding: '10px 14px', fontWeight: 600 }}>
+                      <td data-label="Giocatore / Società" style={{ padding: '10px 14px', fontWeight: 600 }}>
                         {giocatore
                           ? `${giocatore.cognome} ${giocatore.nome}`
                           : <span style={{ color: 'var(--gray)', fontWeight: 400 }}>{sq.cognome_raw || sq.societa_raw}</span>
                         }
                       </td>
-                      <td style={{ padding: '10px 14px' }}>
+                      <td data-label="Tipo" style={{ padding: '10px 14px' }}>
                         <span className={`badge ${cfg.cls}`}>{cfg.label}</span>
                       </td>
-                      <td style={{ padding: '10px 14px', color: 'var(--gray)' }}>{sq.durata}</td>
-                      <td style={{ padding: '10px 14px', fontSize: 12, color: 'var(--gray)' }}>
+                      <td data-label="Durata" style={{ padding: '10px 14px', color: 'var(--gray)' }}>{sq.durata}</td>
+                      <td data-label="Comunicato" style={{ padding: '10px 14px', fontSize: 12, color: 'var(--gray)' }}>
                         Lega Pro{sq._comunicato.numero_comunicato ? ` n. ${sq._comunicato.numero_comunicato}` : ''}<br />
                         {fmt(sq._comunicato.data_comunicato)}
                       </td>

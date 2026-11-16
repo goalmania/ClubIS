@@ -370,7 +370,7 @@ export default function ContrattiView({ clubId, ruolo }: Props) {
       {/* Tabella */}
       <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
         <div className="table-wrap">
-          <table>
+          <table className="tabella-schede">
             <thead>
               <tr>
                 <th>Persona</th>
@@ -406,7 +406,7 @@ export default function ContrattiView({ clubId, ruolo }: Props) {
                 const importoAnnuo   = Number(c.importo_annuo ?? importoMensile * 10)
                 return (
                   <tr key={c.id}>
-                    <td>
+                    <td data-label="Persona">
                       <div style={{ fontWeight: 500, fontSize: 13 }}>{nomePersona}</div>
                       {ruoloPersona && (
                         <span className="badge badge-grigio" style={{ fontSize: 12, marginTop: 2 }}>
@@ -414,19 +414,19 @@ export default function ContrattiView({ clubId, ruolo }: Props) {
                         </span>
                       )}
                     </td>
-                    <td>
+                    <td data-label="Tipo">
                       <span className="badge badge-grigio" style={{ fontSize: 12 }}>
                         {TIPI_CONTRATTO.find(t => t.value === c.tipo)?.label ?? c.tipo ?? '—'}
                       </span>
                     </td>
-                    <td>
+                    <td data-label="Stato">
                       <span className={`badge badge-${stato === 'attivo' ? 'verde' : stato === 'in_bozza' ? 'ambra' : 'rosso'}`} style={{ fontSize: 12 }}>
                         {STATI_CONTRATTO.find(s => s.value === stato)?.label ?? stato}
                       </span>
                     </td>
-                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{formatData(c.data_inizio)}</td>
-                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{formatData(c.data_scadenza)}</td>
-                    <td>
+                    <td data-label="Inizio" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{formatData(c.data_inizio)}</td>
+                    <td data-label="Scadenza" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{formatData(c.data_scadenza)}</td>
+                    <td data-label="Gg rimanenti">
                       {stato === 'scaduto' || gg < 0
                         ? <span className="badge badge-rosso">Scaduto</span>
                         : gg <= 30
@@ -436,13 +436,13 @@ export default function ContrattiView({ clubId, ruolo }: Props) {
                             : <span className="badge badge-verde">{gg}gg</span>
                       }
                     </td>
-                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 13 }}>
+                    <td data-label="Mensile" style={{ fontFamily: 'var(--font-mono)', fontSize: 13 }}>
                       {importoMensile > 0 ? formatEuro(importoMensile) : '—'}
                     </td>
-                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-3)' }}>
+                    <td data-label="Annuo" style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-3)' }}>
                       {importoAnnuo > 0 ? formatEuro(importoAnnuo) : '—'}
                     </td>
-                    <td>
+                    <td data-label="">
                       <button
                         className="btn btn-secondary btn-sm"
                         style={{ fontSize: 12 }}

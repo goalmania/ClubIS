@@ -292,7 +292,7 @@ export default function ConfrontoPage() {
         <>
           {/* Tabella comparativa */}
           <div className="card" style={{ padding: 0, overflow: 'hidden', marginBottom: 20 }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <table className="tabella-schede" style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ background: 'var(--grigio-6)' }}>
                   <th style={{ padding: '10px 16px', textAlign: 'left', fontSize: 12, fontWeight: 600, color: 'var(--grigio-3)', textTransform: 'none', width: 130 }}>
@@ -358,11 +358,11 @@ export default function ConfrontoPage() {
 
                 {/* Riga esito */}
                 <tr style={{ borderTop: '1px solid var(--grigio-6)' }}>
-                  <td style={{ padding: '10px 16px', fontSize: 12, color: 'var(--grigio-3)', fontWeight: 600, textTransform: 'none', letterSpacing: '0' }}>
+                  <td data-label="Attributo" style={{ padding: '10px 16px', fontSize: 12, color: 'var(--grigio-3)', fontWeight: 600, textTransform: 'none', letterSpacing: '0' }}>
                     Esito
                   </td>
                   {confrontati.map(r => (
-                    <td key={r.id} style={{ padding: '10px 16px', textAlign: 'center' }}>
+                    <td data-label="{r.nome_giocatore_ext ?? `G$`}" key={r.id} style={{ padding: '10px 16px', textAlign: 'center' }}>
                       <span className={`badge ${ESITO_COLORE[r.esito] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>
                         {ESITO_LABEL[r.esito] ?? r.esito}
                       </span>

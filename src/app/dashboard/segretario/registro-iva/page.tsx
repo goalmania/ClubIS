@@ -254,7 +254,7 @@ export default function RegistroIvaPage() {
       {/* Tabella */}
       <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
         <div className="table-wrap">
-          <table>
+          <table className="tabella-schede">
             <thead>
               <tr>
                 <th>N. Progressivo</th>
@@ -278,32 +278,32 @@ export default function RegistroIvaPage() {
                 </tr>
               ) : righeFiltrate.map(r => (
                 <tr key={r.id}>
-                  <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: 600 }}>
+                  <td data-label="N. Progressivo" style={{ fontFamily: 'var(--font-mono)', fontSize: 12, fontWeight: 600 }}>
                     {r.numero_progressivo}
                   </td>
-                  <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
+                  <td data-label="Data" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
                     {new Date(r.data_operazione).toLocaleDateString('it-IT')}
                   </td>
-                  <td>
+                  <td data-label="Tipo">
                     <span className={`badge ${r.tipo === 'entrata' ? 'badge-verde' : 'badge-rosso'}`}>
                       {r.tipo === 'entrata' ? 'Entrata' : 'Uscita'}
                     </span>
                   </td>
-                  <td style={{ fontSize: 13 }}>
+                  <td data-label="Natura" style={{ fontSize: 13 }}>
                     <div>{r.natura}</div>
                     {r.note && <div style={{ fontSize: 12, color: 'var(--grigio-4)' }}>{r.note}</div>}
                   </td>
-                  <td style={{ fontSize: 12, color: 'var(--grigio-4)' }}>{r.controparte ?? '—'}</td>
-                  <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontSize: 12 }}>
+                  <td data-label="Controparte" style={{ fontSize: 12, color: 'var(--grigio-4)' }}>{r.controparte ?? '—'}</td>
+                  <td data-label="Imponibile" style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontSize: 12 }}>
                     {fmt(Number(r.imponibile))}
                   </td>
-                  <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontSize: 12 }}>
+                  <td data-label="IVA" style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontSize: 12 }}>
                     {fmt(Number(r.iva))}
                   </td>
-                  <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 600 }}>
+                  <td data-label="Totale" style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontSize: 13, fontWeight: 600 }}>
                     {fmt(Number(r.totale))}
                   </td>
-                  <td><RegimeBadge regime={r.regime} /></td>
+                  <td data-label="Regime"><RegimeBadge regime={r.regime} /></td>
                 </tr>
               ))}
             </tbody>

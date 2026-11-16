@@ -307,7 +307,7 @@ export default function ProfiloGiocatoreScoutingPage() {
           {storico.length === 0 ? (
             <div style={{ fontSize: 12, color: 'var(--text-muted)', textAlign: 'center', padding: '20px 0' }}>Nessun dato</div>
           ) : (
-            <div className="table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+            <div className="table-wrap"><table className="tabella-schede" style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
               <thead>
                 <tr>
                   {['Club', 'Stagione', 'Camp.', 'Pres.', 'Gol', 'Assist'].map(h => (
@@ -320,12 +320,12 @@ export default function ProfiloGiocatoreScoutingPage() {
               <tbody>
                 {storico.map((row, i) => (
                   <tr key={i} style={{ borderBottom: '1px solid var(--border-light)' }}>
-                    <td style={{ padding: '6px 8px', color: 'var(--text-primary)', fontWeight: 500 }}>{row.club}</td>
-                    <td style={{ padding: '6px 8px', color: 'var(--text-secondary)' }}>{row.stagione}</td>
-                    <td style={{ padding: '6px 8px', color: 'var(--text-secondary)' }}>{row.campionato}</td>
-                    <td style={{ padding: '6px 8px', fontFamily: 'var(--font-mono)' }}>{row.presenze}</td>
-                    <td style={{ padding: '6px 8px', fontFamily: 'var(--font-mono)' }}>{row.gol}</td>
-                    <td style={{ padding: '6px 8px', fontFamily: 'var(--font-mono)' }}>{row.assist}</td>
+                    <td data-label="Club" style={{ padding: '6px 8px', color: 'var(--text-primary)', fontWeight: 500 }}>{row.club}</td>
+                    <td data-label="Stagione" style={{ padding: '6px 8px', color: 'var(--text-secondary)' }}>{row.stagione}</td>
+                    <td data-label="Camp." style={{ padding: '6px 8px', color: 'var(--text-secondary)' }}>{row.campionato}</td>
+                    <td data-label="Pres." style={{ padding: '6px 8px', fontFamily: 'var(--font-mono)' }}>{row.presenze}</td>
+                    <td data-label="Gol" style={{ padding: '6px 8px', fontFamily: 'var(--font-mono)' }}>{row.gol}</td>
+                    <td data-label="Assist" style={{ padding: '6px 8px', fontFamily: 'var(--font-mono)' }}>{row.assist}</td>
                   </tr>
                 ))}
               </tbody>

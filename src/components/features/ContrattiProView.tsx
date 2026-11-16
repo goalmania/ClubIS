@@ -344,7 +344,7 @@ export default function ContrattiProView({ clubId, ruolo }: { clubId: string; ru
           Nessun contratto professionista registrato
         </div>
       ) : (
-        <div className="table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <div className="table-wrap"><table className="tabella-schede" style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ borderBottom: '1px solid var(--grigio-5)' }}>
               {['Tesserato', 'Tipo', 'Retribuzione lorda', 'Scadenza', 'Stato', ''].map(h => (
@@ -358,24 +358,24 @@ export default function ContrattiProView({ clubId, ruolo }: { clubId: string; ru
               const statoEffettivo = isScaduto && c.stato_deposito !== 'depositato' ? 'scaduto' : c.stato_deposito
               return (
                 <tr key={c.id} style={{ borderBottom: '1px solid var(--grigio-6)', opacity: isScaduto ? 0.7 : 1 }}>
-                  <td style={{ padding: '10px 12px', fontWeight: 600, color: 'var(--white)' }}>
+                  <td data-label="Tesserato" style={{ padding: '10px 12px', fontWeight: 600, color: 'var(--white)' }}>
                     {c.cognome_tesserato} {c.nome_tesserato}
                   </td>
-                  <td style={{ padding: '10px 12px', color: 'var(--grigio-2)', fontSize: 12 }}>
+                  <td data-label="Tipo" style={{ padding: '10px 12px', color: 'var(--grigio-2)', fontSize: 12 }}>
                     {c.tipo_lavoratore === 'calciatore_professionista' ? 'Calciatore Prof.' : 'Collab. Tecnico'}
                   </td>
-                  <td style={{ padding: '10px 12px', fontFamily: 'var(--font-mono)', color: 'var(--accent)' }}>
+                  <td data-label="Retribuzione lorda" style={{ padding: '10px 12px', fontFamily: 'var(--font-mono)', color: 'var(--accent)' }}>
                     {c.retribuzione_lorda_annua
                       ? new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(c.retribuzione_lorda_annua)
                       : '—'}
                   </td>
-                  <td style={{ padding: '10px 12px', fontFamily: 'var(--font-mono)', fontSize: 12, color: isScaduto ? '#f66' : 'var(--grigio-2)' }}>
+                  <td data-label="Scadenza" style={{ padding: '10px 12px', fontFamily: 'var(--font-mono)', fontSize: 12, color: isScaduto ? '#f66' : 'var(--grigio-2)' }}>
                     {formatData(c.data_scadenza)}
                   </td>
-                  <td style={{ padding: '10px 12px' }}>
+                  <td data-label="Stato" style={{ padding: '10px 12px' }}>
                     <BadgeStato stato={statoEffettivo} />
                   </td>
-                  <td style={{ padding: '10px 12px', display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+                  <td data-label="" style={{ padding: '10px 12px', display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
                     <button
                       onClick={async () => {
                         try {

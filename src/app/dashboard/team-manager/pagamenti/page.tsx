@@ -215,7 +215,7 @@ export default function TeamManagerPagamentiPage() {
       {tab === 'prima_nota' && (
         <div className="card" style={{ overflow: 'hidden' }}>
           <div className="table-wrap">
-            <table>
+            <table className="tabella-schede">
               <thead>
                 <tr>
                   <th>Data</th>
@@ -235,10 +235,10 @@ export default function TeamManagerPagamentiPage() {
                   </tr>
                 ) : movimenti.map(m => (
                   <tr key={m.id}>
-                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12, whiteSpace: 'nowrap' }}>
+                    <td data-label="Data" style={{ fontFamily: 'var(--font-mono)', fontSize: 12, whiteSpace: 'nowrap' }}>
                       {new Date(m.data).toLocaleDateString('it-IT')}
                     </td>
-                    <td style={{ fontSize: 13, fontWeight: 500 }}>
+                    <td data-label="Descrizione" style={{ fontSize: 13, fontWeight: 500 }}>
                       {m.descrizione ?? '—'}
                       {m.sorgente && m.sorgente !== 'manuale' && (
                         <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 1 }}>
@@ -246,18 +246,18 @@ export default function TeamManagerPagamentiPage() {
                         </div>
                       )}
                     </td>
-                    <td>
+                    <td data-label="Categoria">
                       <span className="badge badge-grigio" style={{ fontSize: 12, textTransform: 'capitalize' }}>
                         {(m.categoria ?? '').replace(/_/g, ' ')}
                       </span>
                     </td>
-                    <td style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{m.controparte ?? '—'}</td>
-                    <td>
+                    <td data-label="Controparte" style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{m.controparte ?? '—'}</td>
+                    <td data-label="Tipo">
                       <span className={`badge ${m.tipo === 'entrata' ? 'badge-verde' : 'badge-rosso'}`}>
                         {m.tipo === 'entrata' ? '↑ Entrata' : '↓ Uscita'}
                       </span>
                     </td>
-                    <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontWeight: 700, color: m.tipo === 'entrata' ? 'var(--accent-green)' : 'var(--accent-red)' }}>
+                    <td data-label="Importo" style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontWeight: 700, color: m.tipo === 'entrata' ? 'var(--accent-green)' : 'var(--accent-red)' }}>
                       {m.tipo === 'entrata' ? '+' : '–'}{fmt(Number(m.importo))}
                     </td>
                   </tr>
@@ -272,7 +272,7 @@ export default function TeamManagerPagamentiPage() {
       {(tab === 'in_scadenza' || tab === 'tutte_rate') && (
         <div className="card" style={{ overflow: 'hidden' }}>
           <div className="table-wrap">
-            <table>
+            <table className="tabella-schede">
               <thead>
                 <tr>
                   <th>Descrizione</th>
@@ -294,14 +294,14 @@ export default function TeamManagerPagamentiPage() {
                   const { label, cls } = statoLabel(r)
                   return (
                     <tr key={r.id}>
-                      <td style={{ fontSize: 13, fontWeight: 500 }}>{r.descrizione ?? '—'}</td>
-                      <td style={{ fontSize: 12, color: 'var(--text-muted)' }}>#{r.numero_rata}</td>
-                      <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
+                      <td data-label="Descrizione" style={{ fontSize: 13, fontWeight: 500 }}>{r.descrizione ?? '—'}</td>
+                      <td data-label="Rata" style={{ fontSize: 12, color: 'var(--text-muted)' }}>#{r.numero_rata}</td>
+                      <td data-label="Scadenza" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
                         {new Date(r.scadenza).toLocaleDateString('it-IT')}
                       </td>
-                      <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 700 }}>{fmt(Number(r.importo))}</td>
-                      <td><span className={`badge ${cls}`}>{label}</span></td>
-                      <td>
+                      <td data-label="Importo" style={{ fontFamily: 'var(--font-mono)', fontWeight: 700 }}>{fmt(Number(r.importo))}</td>
+                      <td data-label="Stato"><span className={`badge ${cls}`}>{label}</span></td>
+                      <td data-label="">
                         {r.stato !== 'pagata' && (
                           <button
                             className="btn btn-secondary btn-sm"

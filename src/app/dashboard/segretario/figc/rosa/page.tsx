@@ -304,7 +304,7 @@ export default function RosaFIGCPage() {
             </div>
 
             <div className="table-wrap">
-              <table>
+              <table className="tabella-schede">
                 <thead>
                   <tr>
                     <th>#</th>
@@ -320,24 +320,24 @@ export default function RosaFIGCPage() {
                     <tr><td colSpan={6} style={{ textAlign: 'center', padding: '40px', color: 'var(--grigio-4)' }}>Nessun giocatore in questo reparto</td></tr>
                   ) : filtrati.map((g) => (
                     <tr key={g.id}>
-                      <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 700 }}>
+                      <td data-label="#" style={{ fontFamily: 'var(--font-mono)', fontWeight: 700 }}>
                         {g.numero_maglia ?? '—'}
                       </td>
-                      <td>
+                      <td data-label="Giocatore">
                         <div style={{ fontWeight: 600, fontSize: 13 }}>{g.cognome} {g.nome}</div>
                       </td>
-                      <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
+                      <td data-label="Data nascita" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
                         {g.data_nascita
                           ? `${new Date(g.data_nascita).toLocaleDateString('it-IT')} (${etaAnni(g.data_nascita)} anni)`
                           : '—'}
                       </td>
-                      <td style={{ fontSize: 12 }}>{g.nazionalita_paese || '—'}</td>
-                      <td>
+                      <td data-label="Nazionalità" style={{ fontSize: 12 }}>{g.nazionalita_paese || '—'}</td>
+                      <td data-label="Ruolo">
                         <span className="badge badge-grigio" style={{ textTransform: 'capitalize' }}>
                           {g.ruolo_principale?.replace(/_/g, ' ') ?? '—'}
                         </span>
                       </td>
-                      <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
+                      <td data-label="Tessera FIGC" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
                         {g.codice_tessera_figc || <span style={{ color: 'var(--grigio-4)' }}>—</span>}
                       </td>
                     </tr>

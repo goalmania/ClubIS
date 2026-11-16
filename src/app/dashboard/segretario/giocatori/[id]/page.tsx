@@ -550,7 +550,7 @@ export default function GiocatoreDetailPage() {
                 {certificati.length === 0 ? (
                   <p style={{ fontSize: 13, color: 'var(--grigio-4)' }}>Nessun certificato registrato</p>
                 ) : (
-                  <div className="table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                  <div className="table-wrap"><table className="tabella-schede" style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                     <thead><tr style={{ borderBottom: '1px solid var(--border-solid)' }}>{['Tipo', 'Rilascio', 'Scadenza', 'Stato'].map(h => <th key={h} style={{ textAlign: 'left', padding: '6px 10px', fontSize: 12, fontFamily: 'var(--font-mono)', textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-4)' }}>{h}</th>)}</tr></thead>
                     <tbody>
                       {certificati.map(c => {
@@ -558,10 +558,10 @@ export default function GiocatoreDetailPage() {
                         const gg = Math.ceil((new Date(c.data_scadenza).getTime() - oggi.getTime()) / 86400000)
                         return (
                           <tr key={c.id} style={{ borderBottom: '1px solid var(--border)' }}>
-                            <td style={{ padding: '8px 10px' }}><span className="badge badge-grigio">{c.tipo}</span></td>
-                            <td style={{ padding: '8px 10px', fontFamily: 'var(--font-mono)', fontSize: 12 }}>{formatData(c.data_rilascio)}</td>
-                            <td style={{ padding: '8px 10px', fontFamily: 'var(--font-mono)', fontSize: 12 }}>{formatData(c.data_scadenza)}</td>
-                            <td style={{ padding: '8px 10px' }}>{!valido ? <span className="badge badge-rosso">Scaduto</span> : gg <= 30 ? <span className="badge badge-ambra">{gg}gg</span> : <span className="badge badge-verde">Valido</span>}</td>
+                            <td data-label="Tipo" style={{ padding: '8px 10px' }}><span className="badge badge-grigio">{c.tipo}</span></td>
+                            <td data-label="Rilascio" style={{ padding: '8px 10px', fontFamily: 'var(--font-mono)', fontSize: 12 }}>{formatData(c.data_rilascio)}</td>
+                            <td data-label="Scadenza" style={{ padding: '8px 10px', fontFamily: 'var(--font-mono)', fontSize: 12 }}>{formatData(c.data_scadenza)}</td>
+                            <td data-label="Stato" style={{ padding: '8px 10px' }}>{!valido ? <span className="badge badge-rosso">Scaduto</span> : gg <= 30 ? <span className="badge badge-ambra">{gg}gg</span> : <span className="badge badge-verde">Valido</span>}</td>
                           </tr>
                         )
                       })}
@@ -800,14 +800,14 @@ export default function GiocatoreDetailPage() {
               {matComodato.length === 0 ? (
                 <p style={{ fontSize: 13, color: 'var(--grigio-4)', padding: '12px 0' }}>Nessun materiale in comodato</p>
               ) : (
-                <div className="table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                <div className="table-wrap"><table className="tabella-schede" style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                   <thead><tr style={{ borderBottom: '1px solid var(--border-solid)' }}>{['Materiale', 'Consegna', 'Restituzione'].map(h => <th key={h} style={{ textAlign: 'left', padding: '6px 10px', fontSize: 12, fontFamily: 'var(--font-mono)', textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-4)' }}>{h}</th>)}</tr></thead>
                   <tbody>
                     {matComodato.map((m: any, i: number) => (
                       <tr key={i} style={{ borderBottom: '1px solid var(--border)' }}>
-                        <td style={{ padding: '8px 10px' }}>{m.nome ?? '—'}</td>
-                        <td style={{ padding: '8px 10px', fontFamily: 'var(--font-mono)', fontSize: 12 }}>{m.data_consegna ? formatData(m.data_consegna) : '—'}</td>
-                        <td style={{ padding: '8px 10px', fontFamily: 'var(--font-mono)', fontSize: 12 }}>{m.data_restituzione ? formatData(m.data_restituzione) : <span className="badge badge-verde">In uso</span>}</td>
+                        <td data-label="Materiale" style={{ padding: '8px 10px' }}>{m.nome ?? '—'}</td>
+                        <td data-label="Consegna" style={{ padding: '8px 10px', fontFamily: 'var(--font-mono)', fontSize: 12 }}>{m.data_consegna ? formatData(m.data_consegna) : '—'}</td>
+                        <td data-label="Restituzione" style={{ padding: '8px 10px', fontFamily: 'var(--font-mono)', fontSize: 12 }}>{m.data_restituzione ? formatData(m.data_restituzione) : <span className="badge badge-verde">In uso</span>}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -838,14 +838,14 @@ export default function GiocatoreDetailPage() {
               {presenze.length === 0 ? (
                 <p style={{ fontSize: 13, color: 'var(--grigio-4)' }}>Nessuna presenza registrata</p>
               ) : (
-                <div className="table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                <div className="table-wrap"><table className="tabella-schede" style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                   <thead><tr style={{ borderBottom: '1px solid var(--border-solid)' }}>{['Data', 'Tipo', 'Presenza'].map(h => <th key={h} style={{ textAlign: 'left', padding: '6px 10px', fontSize: 12, fontFamily: 'var(--font-mono)', textTransform: 'none', letterSpacing: '0', color: 'var(--grigio-4)' }}>{h}</th>)}</tr></thead>
                   <tbody>
                     {presenze.slice(0, 30).map(p => (
                       <tr key={p.id} style={{ borderBottom: '1px solid var(--border)' }}>
-                        <td style={{ padding: '8px 10px', fontFamily: 'var(--font-mono)', fontSize: 12 }}>{p.sessioni_allenamento ? formatData(p.sessioni_allenamento.data) : '—'}</td>
-                        <td style={{ padding: '8px 10px', fontSize: 12, color: 'var(--grigio-3)', textTransform: 'capitalize' }}>{p.sessioni_allenamento?.tipo ?? '—'}</td>
-                        <td style={{ padding: '8px 10px' }}><span className={`badge ${p.presente ? 'badge-verde' : 'badge-rosso'}`}>{p.presente ? 'Presente' : 'Assente'}</span></td>
+                        <td data-label="Data" style={{ padding: '8px 10px', fontFamily: 'var(--font-mono)', fontSize: 12 }}>{p.sessioni_allenamento ? formatData(p.sessioni_allenamento.data) : '—'}</td>
+                        <td data-label="Tipo" style={{ padding: '8px 10px', fontSize: 12, color: 'var(--grigio-3)', textTransform: 'capitalize' }}>{p.sessioni_allenamento?.tipo ?? '—'}</td>
+                        <td data-label="Presenza" style={{ padding: '8px 10px' }}><span className={`badge ${p.presente ? 'badge-verde' : 'badge-rosso'}`}>{p.presente ? 'Presente' : 'Assente'}</span></td>
                       </tr>
                     ))}
                   </tbody>
@@ -908,7 +908,7 @@ export default function GiocatoreDetailPage() {
                       </div>
                     </div>
                     {qPag.length > 0 && (
-                      <div className="table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                      <div className="table-wrap"><table className="tabella-schede" style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                         <thead><tr>{['Data', 'Importo', 'Metodo', ''].map(h => <th key={h} style={{ textAlign: 'left', padding: '6px 10px', fontSize: 12, fontFamily: 'var(--font-mono)', textTransform: 'none', color: 'var(--grigio-4)', borderBottom: '1px solid var(--border)' }}>{h}</th>)}</tr></thead>
                         <tbody>
                           {qPag.map(p => {
@@ -917,10 +917,10 @@ export default function GiocatoreDetailPage() {
                             const puoRimborsare = p.metodo === 'stripe' && importo > 0 && !!p.stripe_payment_id && !giaRimborsato
                             return (
                               <tr key={p.id} style={{ borderBottom: '1px solid var(--border)' }}>
-                                <td style={{ padding: '7px 10px', fontFamily: 'var(--font-mono)', fontSize: 12 }}>{formatData(p.data_pagamento)}</td>
-                                <td style={{ padding: '7px 10px', fontFamily: 'var(--font-mono)', fontWeight: 600, color: importo < 0 ? 'var(--rosso)' : 'var(--verde)' }}>€{importo.toFixed(2)}</td>
-                                <td style={{ padding: '7px 10px', fontSize: 12, textTransform: 'capitalize', color: 'var(--grigio-3)' }}>{p.metodo}</td>
-                                <td style={{ padding: '7px 10px', textAlign: 'right' }}>
+                                <td data-label="Data" style={{ padding: '7px 10px', fontFamily: 'var(--font-mono)', fontSize: 12 }}>{formatData(p.data_pagamento)}</td>
+                                <td data-label="Importo" style={{ padding: '7px 10px', fontFamily: 'var(--font-mono)', fontWeight: 600, color: importo < 0 ? 'var(--rosso)' : 'var(--verde)' }}>€{importo.toFixed(2)}</td>
+                                <td data-label="Metodo" style={{ padding: '7px 10px', fontSize: 12, textTransform: 'capitalize', color: 'var(--grigio-3)' }}>{p.metodo}</td>
+                                <td data-label="" style={{ padding: '7px 10px', textAlign: 'right' }}>
                                   {puoRimborsare && (
                                     <button
                                       className="btn btn-secondary btn-sm"
@@ -1021,7 +1021,7 @@ export default function GiocatoreDetailPage() {
               {pagamentiCompenso.length === 0 ? (
                 <p style={{ fontSize: 13, color: 'var(--grigio-4)' }}>Nessun pagamento registrato per questo giocatore</p>
               ) : (
-                <div className="table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                <div className="table-wrap"><table className="tabella-schede" style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                   <thead>
                     <tr style={{ borderBottom: '1px solid var(--border-solid)' }}>
                       {['Data', 'Descrizione', 'Importo'].map(h => (
@@ -1032,9 +1032,9 @@ export default function GiocatoreDetailPage() {
                   <tbody>
                     {pagamentiCompenso.map(p => (
                       <tr key={p.id} style={{ borderBottom: '1px solid var(--border)' }}>
-                        <td style={{ padding: '8px 10px', fontFamily: 'var(--font-mono)', fontSize: 12 }}>{formatData(p.data)}</td>
-                        <td style={{ padding: '8px 10px' }}>{p.descrizione}</td>
-                        <td style={{ padding: '8px 10px', fontFamily: 'var(--font-mono)', fontWeight: 600, color: 'var(--rosso)' }}>{formatEuro(Number(p.importo))}</td>
+                        <td data-label="Data" style={{ padding: '8px 10px', fontFamily: 'var(--font-mono)', fontSize: 12 }}>{formatData(p.data)}</td>
+                        <td data-label="Descrizione" style={{ padding: '8px 10px' }}>{p.descrizione}</td>
+                        <td data-label="Importo" style={{ padding: '8px 10px', fontFamily: 'var(--font-mono)', fontWeight: 600, color: 'var(--rosso)' }}>{formatEuro(Number(p.importo))}</td>
                       </tr>
                     ))}
                   </tbody>

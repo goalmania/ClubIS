@@ -105,7 +105,7 @@ export default function CampiPage() {
 
       <div className="card" style={{ overflow: 'hidden', marginTop: 20 }}>
         <div className="table-wrap">
-          <table>
+          <table className="tabella-schede">
             <thead><tr><th>Nome</th><th>Indirizzo</th><th>Costo/ora</th><th>Orari disponibili</th><th>Stato</th><th></th></tr></thead>
             <tbody>
               {loading ? (
@@ -115,12 +115,12 @@ export default function CampiPage() {
               ) : campi.map(c => (
                 <>
                   <tr key={c.id}>
-                    <td style={{ fontWeight: 500 }}>{c.nome}</td>
-                    <td style={{ fontSize: 13, color: 'var(--gray)' }}>{c.indirizzo ?? '—'}</td>
-                    <td style={{ fontSize: 13, color: 'var(--gray)' }}>{c.costo_orario != null ? `€${Number(c.costo_orario).toFixed(0)}` : '—'}</td>
-                    <td style={{ fontSize: 13, color: 'var(--gray)' }}>{c.orari_disponibili ?? '—'}</td>
-                    <td><span className={`badge ${c.attivo ? 'badge-verde' : 'badge-grigio'}`}>{c.attivo ? 'Attivo' : 'Disattivato'}</span></td>
-                    <td>
+                    <td data-label="Nome" style={{ fontWeight: 500 }}>{c.nome}</td>
+                    <td data-label="Indirizzo" style={{ fontSize: 13, color: 'var(--gray)' }}>{c.indirizzo ?? '—'}</td>
+                    <td data-label="Costo/ora" style={{ fontSize: 13, color: 'var(--gray)' }}>{c.costo_orario != null ? `€${Number(c.costo_orario).toFixed(0)}` : '—'}</td>
+                    <td data-label="Orari disponibili" style={{ fontSize: 13, color: 'var(--gray)' }}>{c.orari_disponibili ?? '—'}</td>
+                    <td data-label="Stato"><span className={`badge ${c.attivo ? 'badge-verde' : 'badge-grigio'}`}>{c.attivo ? 'Attivo' : 'Disattivato'}</span></td>
+                    <td data-label="">
                       <div style={{ display: 'flex', gap: 6 }}>
                         <button className="btn btn-ghost btn-sm" onClick={() => setEspanso(espanso === c.id ? null : c.id)}>
                           Prenotazioni {c.prenotazioni.length > 0 ? `(${c.prenotazioni.length})` : ''}

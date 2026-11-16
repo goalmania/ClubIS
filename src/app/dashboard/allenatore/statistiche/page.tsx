@@ -79,7 +79,7 @@ export default async function AllenatoreStatistichePage() {
 
       <div className="card" style={{ overflow: 'hidden' }}>
         <div className="table-wrap">
-          <table>
+          <table className="tabella-schede">
             <thead>
               <tr>
                 <th>Giocatore</th>
@@ -108,41 +108,41 @@ export default async function AllenatoreStatistichePage() {
                   : null
                 return (
                   <tr key={item.g.id}>
-                    <td style={{ fontWeight: 500, fontSize: 13 }}>{item.g.cognome} {item.g.nome}</td>
-                    <td>
+                    <td data-label="Giocatore" style={{ fontWeight: 500, fontSize: 13 }}>{item.g.cognome} {item.g.nome}</td>
+                    <td data-label="Ruolo">
                       <span className="badge badge-grigio" style={{ fontSize: 12 }}>
                         {item.g.ruolo_principale ? (ruoloShort[item.g.ruolo_principale] ?? item.g.ruolo_principale) : '—'}
                       </span>
                     </td>
-                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
+                    <td data-label="Pres. gara" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
                       {item.presPartite > 0
                         ? <span style={{ color: 'var(--verde)' }}>{item.presPartite}</span>
                         : <span style={{ color: 'var(--grigio-4)' }}>—</span>}
                     </td>
-                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
+                    <td data-label="Pres. all." style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
                       {item.presAllen > 0
                         ? <span style={{ color: item.presAllen >= 10 ? 'var(--verde)' : 'var(--ambra)' }}>{item.presAllen}</span>
                         : <span style={{ color: 'var(--grigio-4)' }}>—</span>}
                     </td>
-                    <td style={{ fontWeight: item.gol > 0 ? 700 : 400, color: item.gol > 0 ? 'var(--verde)' : undefined }}>
+                    <td data-label="Gol" style={{ fontWeight: item.gol > 0 ? 700 : 400, color: item.gol > 0 ? 'var(--verde)' : undefined }}>
                       {item.gol || '—'}
                     </td>
-                    <td style={{ fontWeight: item.assist > 0 ? 600 : 400 }}>
+                    <td data-label="Assist" style={{ fontWeight: item.assist > 0 ? 600 : 400 }}>
                       {item.assist || '—'}
                     </td>
-                    <td style={{ fontWeight: 600 }}>
+                    <td data-label="G+A" style={{ fontWeight: 600 }}>
                       {(item.gol + item.assist) || '—'}
                     </td>
-                    <td style={{ color: item.amm >= 5 ? 'var(--ambra)' : undefined }}>
+                    <td data-label="Amm." style={{ color: item.amm >= 5 ? 'var(--ambra)' : undefined }}>
                       {item.amm || '—'}
                     </td>
-                    <td style={{ color: item.esp > 0 ? 'var(--rosso)' : undefined }}>
+                    <td data-label="Esp." style={{ color: item.esp > 0 ? 'var(--rosso)' : undefined }}>
                       {item.esp || '—'}
                     </td>
-                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
+                    <td data-label="Minuti" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
                       {item.minuti > 0 ? `${item.minuti}'` : '—'}
                     </td>
-                    <td>
+                    <td data-label="Media voto">
                       {mediaVoto ? (
                         <span style={{
                           fontSize: 13, fontWeight: 700, fontFamily: 'var(--font-mono)',

@@ -45,7 +45,7 @@ export default async function DSScoutingPage() {
 
       <div className="card" style={{ overflow: 'hidden' }}>
         <div className="table-wrap">
-          <table>
+          <table className="tabella-schede">
             <thead>
               <tr><th>Giocatore</th><th>Club attuale</th><th>Osservatore</th><th>Data</th><th>Voto</th><th>Potenziale</th><th>Esito</th><th></th></tr>
             </thead>
@@ -58,11 +58,11 @@ export default async function DSScoutingPage() {
                 const oss = r.utenti as any
                 return (
                   <tr key={r.id}>
-                    <td style={{ fontWeight: 500, fontSize: 13 }}>{r.nome_giocatore_ext ?? '—'}</td>
-                    <td style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{r.club_attuale_ext ?? '—'}</td>
-                    <td style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{oss?.nome} {oss?.cognome}</td>
-                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{new Date(r.data_osservazione).toLocaleDateString('it-IT')}</td>
-                    <td>
+                    <td data-label="Giocatore" style={{ fontWeight: 500, fontSize: 13 }}>{r.nome_giocatore_ext ?? '—'}</td>
+                    <td data-label="Club attuale" style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{r.club_attuale_ext ?? '—'}</td>
+                    <td data-label="Osservatore" style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{oss?.nome} {oss?.cognome}</td>
+                    <td data-label="Data" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{new Date(r.data_osservazione).toLocaleDateString('it-IT')}</td>
+                    <td data-label="Voto">
                       <div style={{
                         width: 30, height: 30, borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center',
                         fontWeight: 700, fontSize: 13, fontFamily: 'var(--font-mono)',
@@ -70,11 +70,11 @@ export default async function DSScoutingPage() {
                         color: (r.voto_globale ?? 0) >= 7 ? 'var(--verde)' : (r.voto_globale ?? 0) >= 5 ? 'var(--ambra)' : 'var(--rosso)',
                       }}>{r.voto_globale ?? '—'}</div>
                     </td>
-                    <td><span className={`badge ${potenzialeColore[r.potenziale] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>{r.potenziale}</span></td>
-                    <td>
+                    <td data-label="Potenziale"><span className={`badge ${potenzialeColore[r.potenziale] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>{r.potenziale}</span></td>
+                    <td data-label="Esito">
                       <EsitoSelect reportId={r.id} esito={r.esito} />
                     </td>
-                    <td>
+                    <td data-label="">
                       <Link href={`/dashboard/ds/scouting/${r.id}`} className="btn btn-ghost btn-sm" style={{ fontSize: 12 }}>Dettaglio →</Link>
                     </td>
                   </tr>

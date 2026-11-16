@@ -119,7 +119,7 @@ export default async function SegretarioStatoMedicoPage() {
 
       <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
         <div className="table-wrap">
-          <table>
+          <table className="tabella-schede">
             <thead>
               <tr>
                 <th>Giocatore</th>
@@ -149,18 +149,18 @@ export default async function SegretarioStatoMedicoPage() {
 
                 return (
                   <tr key={g.id} style={{ background: cfg.rowBg }}>
-                    <td style={{ fontWeight: 500, fontSize: 13, borderLeft: cfg.border ? `2px solid ${cfg.border}` : '2px solid transparent' }}>
+                    <td data-label="Giocatore" style={{ fontWeight: 500, fontSize: 13, borderLeft: cfg.border ? `2px solid ${cfg.border}` : '2px solid transparent' }}>
                       {g.cognome} {g.nome}
                     </td>
-                    <td>
+                    <td data-label="Ruolo">
                       {g.ruolo_principale
                         ? <span className="badge badge-grigio" style={{ fontSize: 12 }}>{ruoloShort[g.ruolo_principale] ?? g.ruolo_principale}</span>
                         : <span style={{ color: 'var(--grigio-4)' }}>—</span>
                       }
                     </td>
-                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 13, color: 'var(--grigio-3)' }}>{eta ?? '—'}</td>
-                    <td><span className={`badge ${cfg.badge}`}>{cfg.label}</span></td>
-                    <td style={{ fontSize: 12, color: 'var(--grigio-3)' }}>
+                    <td data-label="Età" style={{ fontFamily: 'var(--font-mono)', fontSize: 13, color: 'var(--grigio-3)' }}>{eta ?? '—'}</td>
+                    <td data-label="Stato medico"><span className={`badge ${cfg.badge}`}>{cfg.label}</span></td>
+                    <td data-label="Dettaglio" style={{ fontSize: 12, color: 'var(--grigio-3)' }}>
                       {infort && (
                         <span>
                           {infort.tipo} &middot; rientro{' '}
@@ -178,7 +178,7 @@ export default async function SegretarioStatoMedicoPage() {
                         </span>
                       )}
                     </td>
-                    <td>
+                    <td data-label="">
                       <Link href={`/dashboard/segretario/cartelle/${g.id}`} className="btn btn-secondary btn-sm" style={{ fontSize: 12 }}>
                         Cartella
                       </Link>

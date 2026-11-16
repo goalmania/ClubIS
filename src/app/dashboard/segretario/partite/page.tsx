@@ -241,22 +241,22 @@ export default function SegretarioPartitePage() {
   function PartitaRow({ p }: { p: Partita }) {
     return (
       <tr key={p.id}>
-        <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12, whiteSpace: 'nowrap' }}>
+        <td data-label="Data" style={{ fontFamily: 'var(--font-mono)', fontSize: 12, whiteSpace: 'nowrap' }}>
           {new Date(p.data_ora).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit' })}
           <span style={{ color: 'var(--grigio-4)', marginLeft: 4 }}>
             {new Date(p.data_ora).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}
           </span>
         </td>
-        <td style={{ fontWeight: 500, fontSize: 13 }}>
+        <td data-label="Avversario" style={{ fontWeight: 500, fontSize: 13 }}>
           {p.casa_trasferta === 'trasferta' && <span style={{ fontSize: 12, color: 'var(--grigio-4)', marginRight: 4 }}>@</span>}
           {p.avversario}
         </td>
-        <td style={{ fontSize: 12, color: 'var(--grigio-4)' }}>{(p.squadre as any)?.nome}</td>
-        <td><span className="badge badge-grigio" style={{ fontSize: 12 }}>{p.tipo}</span></td>
-        <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-4)' }}>
+        <td data-label="Squadra" style={{ fontSize: 12, color: 'var(--grigio-4)' }}>{(p.squadre as any)?.nome}</td>
+        <td data-label="Tipo"><span className="badge badge-grigio" style={{ fontSize: 12 }}>{p.tipo}</span></td>
+        <td data-label="G" style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-4)' }}>
           {p.giornata ? `G${p.giornata}` : '—'}
         </td>
-        <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 14, color: esitoColore(p) }}>
+        <td data-label="Risultato" style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 14, color: esitoColore(p) }}>
           {editId === p.id ? (
             <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
               <input
@@ -277,7 +277,7 @@ export default function SegretarioPartitePage() {
             p.gol_fatti !== null ? `${p.gol_fatti} – ${p.gol_subiti}` : '—'
           )}
         </td>
-        <td>
+        <td data-label="Stato">
           {editId === p.id ? (
             <select
               value={editVal.stato}
@@ -295,7 +295,7 @@ export default function SegretarioPartitePage() {
             </span>
           )}
         </td>
-        <td>
+        <td data-label="">
           {editId === p.id ? (
             <div style={{ display: 'flex', gap: 4 }}>
               <button className="btn btn-primary btn-sm" style={{ fontSize: 12, padding: '3px 8px' }} onClick={salvaEdit} disabled={salvando}>
@@ -428,7 +428,7 @@ export default function SegretarioPartitePage() {
                   {hasBothGroups && <GruppoHeader label={gruppo.label} count={gruppo.rows.length} />}
                   <div className="card" style={{ overflow: 'hidden', padding: 0 }}>
                     <div className="table-wrap">
-                      <table>
+                      <table className="tabella-schede">
                         <thead>
                           <tr>
                             <th>Data</th><th>Avversario</th><th>Squadra</th><th>Tipo</th>

@@ -30,7 +30,7 @@ export default async function TesseramentiPage() {
     if (!g) return null
     return (
       <tr key={t.id}>
-        <td>
+        <td data-label="Giocatore">
           <div style={{ display:'flex', alignItems:'center', gap:10 }}>
             <div className="avatar" style={{ width:28, height:28, fontSize:12 }}>{g.nome[0]}{g.cognome[0]}</div>
             <div>
@@ -39,14 +39,14 @@ export default async function TesseramentiPage() {
             </div>
           </div>
         </td>
-        <td style={{ fontSize:12, color:'var(--grigio-3)' }}>{calcolaEta(g.data_nascita)} anni</td>
-        <td><span className="badge badge-grigio" style={{ fontSize:12 }}>{g.ruolo_principale ? ruoloShort[g.ruolo_principale] : '—'}</span></td>
-        <td style={{ fontSize:12, color:'var(--grigio-3)' }}>{(t.squadre as any)?.nome ?? '—'}</td>
-        <td><span className={`badge ${tipoBadge[t.tipo] ?? 'badge-grigio'}`} style={{ fontSize:12 }}>{t.tipo}</span></td>
-        <td style={{ fontFamily:'var(--font-mono)', fontSize:12 }}>{t.stagione}</td>
-        <td style={{ fontFamily:'var(--font-mono)', fontSize:12 }}>{formatData(t.data_inizio, { day:'2-digit', month:'2-digit', year:'2-digit' })}</td>
-        <td><span className={`badge ${t.stato==='attivo'?'badge-verde':t.stato==='sospeso'?'badge-ambra':'badge-grigio'}`} style={{ fontSize:12 }}>{t.stato}</span></td>
-        <td>
+        <td data-label="Età" style={{ fontSize:12, color:'var(--grigio-3)' }}>{calcolaEta(g.data_nascita)} anni</td>
+        <td data-label="Ruolo"><span className="badge badge-grigio" style={{ fontSize:12 }}>{g.ruolo_principale ? ruoloShort[g.ruolo_principale] : '—'}</span></td>
+        <td data-label="Squadra" style={{ fontSize:12, color:'var(--grigio-3)' }}>{(t.squadre as any)?.nome ?? '—'}</td>
+        <td data-label="Tipo"><span className={`badge ${tipoBadge[t.tipo] ?? 'badge-grigio'}`} style={{ fontSize:12 }}>{t.tipo}</span></td>
+        <td data-label="Stagione" style={{ fontFamily:'var(--font-mono)', fontSize:12 }}>{t.stagione}</td>
+        <td data-label="Dal" style={{ fontFamily:'var(--font-mono)', fontSize:12 }}>{formatData(t.data_inizio, { day:'2-digit', month:'2-digit', year:'2-digit' })}</td>
+        <td data-label="Stato"><span className={`badge ${t.stato==='attivo'?'badge-verde':t.stato==='sospeso'?'badge-ambra':'badge-grigio'}`} style={{ fontSize:12 }}>{t.stato}</span></td>
+        <td data-label="">
           <div style={{ display:'flex', gap:6 }}>
             <Link href={`/dashboard/segretario/giocatori/${g.id}`} className="btn btn-ghost btn-sm" style={{ fontSize:12 }}>Profilo →</Link>
             {t.stato === 'attivo' && (
@@ -86,7 +86,7 @@ export default async function TesseramentiPage() {
           <span className="badge badge-verde">{attivi.length}</span>
         </div>
         <div className="table-wrap">
-          <table>
+          <table className="tabella-schede">
             <thead><tr><th>Giocatore</th><th>Età</th><th>Ruolo</th><th>Squadra</th><th>Tipo</th><th>Stagione</th><th>Dal</th><th>Stato</th><th></th></tr></thead>
             <tbody>
               {attivi.length === 0
@@ -103,7 +103,7 @@ export default async function TesseramentiPage() {
             <span className="badge badge-grigio">{archivio.length}</span>
           </div>
           <div className="table-wrap">
-            <table>
+            <table className="tabella-schede">
               <thead><tr><th>Giocatore</th><th>Età</th><th>Ruolo</th><th>Squadra</th><th>Tipo</th><th>Stagione</th><th>Dal</th><th>Stato</th><th></th></tr></thead>
               <tbody>{archivio.map(renderRiga)}</tbody>
             </table>

@@ -241,7 +241,7 @@ export default function PrimaNotaPage() {
       {/* Tabella movimenti */}
       <div className="card" style={{ overflow: 'hidden' }}>
         <div className="table-wrap">
-          <table>
+          <table className="tabella-schede">
             <thead>
               <tr>
                 <th>Data</th>
@@ -262,21 +262,21 @@ export default function PrimaNotaPage() {
                 const isStorno = m.descrizione?.startsWith('STORNO:')
                 return (
                   <tr key={m.id} style={isStornato ? { opacity: 0.45 } : undefined}>
-                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{fmtDataTabella(m.data)}</td>
-                    <td>
+                    <td data-label="Data" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{fmtDataTabella(m.data)}</td>
+                    <td data-label="Tipo">
                       <span className={`badge ${m.tipo === 'entrata' ? 'badge-verde' : 'badge-rosso'}`}>{m.tipo}</span>
                       {isStornato && <span className="badge badge-grigio" style={{ marginLeft: 4, fontSize: 11 }}>Stornato</span>}
                       {isStorno && <span className="badge" style={{ marginLeft: 4, fontSize: 11, background: 'var(--accent-orange-lt)', color: 'var(--accent-orange)' }}>Storno</span>}
                     </td>
-                    <td style={{ fontSize: 12, color: 'var(--grigio-3)', textTransform: 'capitalize' }}>{m.categoria.replace(/_/g, ' ')}</td>
-                    <td style={{ fontSize: 13 }}>
+                    <td data-label="Categoria" style={{ fontSize: 12, color: 'var(--grigio-3)', textTransform: 'capitalize' }}>{m.categoria.replace(/_/g, ' ')}</td>
+                    <td data-label="Descrizione" style={{ fontSize: 13 }}>
                       {m.descrizione}
                       {m.note && <div style={{ fontSize: 12, color: 'var(--grigio-4)', fontStyle: 'italic' }}>{m.note}</div>}
                     </td>
-                    <td style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontWeight: 600, color: m.tipo === 'entrata' ? 'var(--verde)' : 'var(--rosso)', textDecoration: isStornato ? 'line-through' : undefined }}>
+                    <td data-label="Importo" style={{ textAlign: 'right', fontFamily: 'var(--font-mono)', fontWeight: 600, color: m.tipo === 'entrata' ? 'var(--verde)' : 'var(--rosso)', textDecoration: isStornato ? 'line-through' : undefined }}>
                       {m.tipo === 'entrata' ? '+' : '−'}€{Number(m.importo).toLocaleString('it-IT')}
                     </td>
-                    <td style={{ textAlign: 'right' }}>
+                    <td data-label="" style={{ textAlign: 'right' }}>
                       {!isStornato && !isStorno && (
                         <button
                           onClick={() => apriStorno(m)}

@@ -217,7 +217,7 @@ export default function PresidenteRisultatiPage() {
                 )}
                 <div className="card" style={{ overflow: 'hidden', padding: 0 }}>
                   <div className="table-wrap">
-                    <table>
+                    <table className="tabella-schede">
                       <thead><tr><th>Data</th><th>Avversario</th><th>Esito</th><th>Risultato</th><th>Tipo</th><th>Giornata</th></tr></thead>
                       <tbody>
                         {sq.lista.length === 0 ? (
@@ -229,21 +229,21 @@ export default function PresidenteRisultatiPage() {
                             : { l: 'P', c: 'var(--ambra)', bg: 'var(--ambra-lt)' }
                           return (
                             <tr key={p.id}>
-                              <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
+                              <td data-label="Data" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
                                 {new Date(p.data_ora).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit' })}
                               </td>
-                              <td style={{ fontWeight: 500, fontSize: 13 }}>
+                              <td data-label="Avversario" style={{ fontWeight: 500, fontSize: 13 }}>
                                 {p.casa_trasferta === 'trasferta' && <span style={{ fontSize: 12, color: 'var(--grigio-4)', marginRight: 4 }}>@</span>}
                                 {p.avversario}
                               </td>
-                              <td>
+                              <td data-label="Esito">
                                 <span style={{ display: 'inline-flex', width: 24, height: 24, borderRadius: 10, alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, background: esito.bg, color: esito.c }}>
                                   {esito.l}
                                 </span>
                               </td>
-                              <td style={{ fontFamily: 'var(--font-mono)', fontWeight: 700 }}>{gf} – {gs}</td>
-                              <td><span className="badge badge-grigio" style={{ fontSize: 12 }}>{p.tipo}</span></td>
-                              <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-4)' }}>{p.giornata ? `G${p.giornata}` : '—'}</td>
+                              <td data-label="Risultato" style={{ fontFamily: 'var(--font-mono)', fontWeight: 700 }}>{gf} – {gs}</td>
+                              <td data-label="Tipo"><span className="badge badge-grigio" style={{ fontSize: 12 }}>{p.tipo}</span></td>
+                              <td data-label="Giornata" style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--grigio-4)' }}>{p.giornata ? `G${p.giornata}` : '—'}</td>
                             </tr>
                           )
                         })}

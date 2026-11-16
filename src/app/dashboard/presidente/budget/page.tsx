@@ -389,7 +389,7 @@ export default function BudgetPage() {
             Modifica budget → salva con TAB o clic fuori
           </span>
         </div>
-        <div className="table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <div className="table-wrap"><table className="tabella-schede" style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ borderBottom: '1px solid var(--grigio-5)' }}>
               {['Categoria', 'Budget Annuo', 'Speso YTD', 'Avanzamento', 'Residuo'].map(h => (
@@ -406,10 +406,10 @@ export default function BudgetPage() {
               const res = item.budget_annuo - item.speso_ytd
               return (
                 <tr key={item.id} style={{ borderBottom: '1px solid var(--grigio-6)' }}>
-                  <td style={{ padding: '12px 16px', fontFamily: 'var(--font-display)', textTransform: 'none', letterSpacing: '0', fontSize: 12, color: 'var(--grigio-2)' }}>
+                  <td data-label="Categoria" style={{ padding: '12px 16px', fontFamily: 'var(--font-display)', textTransform: 'none', letterSpacing: '0', fontSize: 12, color: 'var(--grigio-2)' }}>
                     {categoriaLabel[item.categoria] ?? item.categoria}
                   </td>
-                  <td style={{ padding: '10px 16px' }}>
+                  <td data-label="Budget Annuo" style={{ padding: '10px 16px' }}>
                     <input
                       type="number"
                       value={editValues[item.id] ?? item.budget_annuo}
@@ -427,10 +427,10 @@ export default function BudgetPage() {
                       }}
                     />
                   </td>
-                  <td style={{ padding: '12px 16px', fontFamily: 'var(--font-mono)', fontSize: 13, color: 'var(--accent)' }}>
+                  <td data-label="Speso YTD" style={{ padding: '12px 16px', fontFamily: 'var(--font-mono)', fontSize: 13, color: 'var(--accent)' }}>
                     {fmt(item.speso_ytd)}
                   </td>
-                  <td style={{ padding: '12px 16px' }}>
+                  <td data-label="Avanzamento" style={{ padding: '12px 16px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                       <div style={{ flex: 1, height: 6, background: 'var(--grigio-5)' }}>
                         <div style={{ width: `${Math.min(100, perc)}%`, height: '100%', background: barColor, transition: 'width 0.5s ease' }} />
@@ -440,7 +440,7 @@ export default function BudgetPage() {
                       </span>
                     </div>
                   </td>
-                  <td style={{ padding: '12px 16px', fontFamily: 'var(--font-mono)', fontSize: 13, color: res < 0 ? 'var(--rosso)' : 'var(--grigio-3)' }}>
+                  <td data-label="Residuo" style={{ padding: '12px 16px', fontFamily: 'var(--font-mono)', fontSize: 13, color: res < 0 ? 'var(--rosso)' : 'var(--grigio-3)' }}>
                     {fmt(res)}
                   </td>
                 </tr>
@@ -476,7 +476,7 @@ export default function BudgetPage() {
             {fmt(totBudgetEntrate)}
           </span>
         </div>
-        <div className="table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <div className="table-wrap"><table className="tabella-schede" style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ borderBottom: '1px solid var(--grigio-5)' }}>
               {['Categoria', 'Budget Annuo', 'Incassato YTD', 'Da Incassare'].map(h => (
@@ -491,10 +491,10 @@ export default function BudgetPage() {
               const res = item.budget_annuo - item.speso_ytd
               return (
                 <tr key={item.id} style={{ borderBottom: '1px solid var(--grigio-6)' }}>
-                  <td style={{ padding: '12px 16px', fontFamily: 'var(--font-display)', textTransform: 'none', letterSpacing: '0', fontSize: 12, color: 'var(--grigio-2)' }}>
+                  <td data-label="Categoria" style={{ padding: '12px 16px', fontFamily: 'var(--font-display)', textTransform: 'none', letterSpacing: '0', fontSize: 12, color: 'var(--grigio-2)' }}>
                     {categoriaLabel[item.categoria] ?? item.categoria}
                   </td>
-                  <td style={{ padding: '10px 16px' }}>
+                  <td data-label="Budget Annuo" style={{ padding: '10px 16px' }}>
                     <input
                       type="number"
                       value={editValues[item.id] ?? item.budget_annuo}
@@ -512,10 +512,10 @@ export default function BudgetPage() {
                       }}
                     />
                   </td>
-                  <td style={{ padding: '12px 16px', fontFamily: 'var(--font-mono)', fontSize: 13, color: 'var(--verde)' }}>
+                  <td data-label="Incassato YTD" style={{ padding: '12px 16px', fontFamily: 'var(--font-mono)', fontSize: 13, color: 'var(--verde)' }}>
                     {fmt(item.speso_ytd)}
                   </td>
-                  <td style={{ padding: '12px 16px', fontFamily: 'var(--font-mono)', fontSize: 13, color: res < 0 ? 'var(--ambra)' : 'var(--grigio-3)' }}>
+                  <td data-label="Da Incassare" style={{ padding: '12px 16px', fontFamily: 'var(--font-mono)', fontSize: 13, color: res < 0 ? 'var(--ambra)' : 'var(--grigio-3)' }}>
                     {fmt(res)}
                   </td>
                 </tr>

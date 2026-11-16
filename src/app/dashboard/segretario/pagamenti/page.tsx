@@ -394,7 +394,7 @@ export default function PagamentiDashboard() {
       <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
         <div className="table-wrap">
           {isScuolaCalcio ? (
-            <table>
+            <table className="tabella-schede">
               <thead>
                 <tr>
                   <th>Giocatore</th>
@@ -414,13 +414,13 @@ export default function PagamentiDashboard() {
                   </tr>
                 ) : righeFiltrateScuola.map(({ gid, corrente, giocatore }) => (
                   <tr key={gid}>
-                    <td style={{ fontWeight: 600, fontSize: 13 }}>
+                    <td data-label="Giocatore" style={{ fontWeight: 600, fontSize: 13 }}>
                       {giocatore ? `${giocatore.cognome} ${giocatore.nome}` : '—'}
                     </td>
-                    <td style={{ fontSize: 13, color: 'var(--grigio-3)' }}>
+                    <td data-label="Mese" style={{ fontSize: 13, color: 'var(--grigio-3)' }}>
                       {corrente ? MESE_LABEL[corrente.mese] ?? corrente.mese : '—'}
                     </td>
-                    <td>
+                    <td data-label="Importo">
                       <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
                         {fmt(Number(corrente?.importo_totale ?? 0))}
                       </div>
@@ -430,15 +430,15 @@ export default function PagamentiDashboard() {
                         </div>
                       )}
                     </td>
-                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
+                    <td data-label="Scadenza" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
                       {corrente?.scadenza
                         ? new Date(corrente.scadenza).toLocaleDateString('it-IT')
                         : '—'}
                     </td>
-                    <td>
+                    <td data-label="Stato">
                       {corrente && <StatoBadgeQuota stato={corrente.stato} scadenza={corrente.scadenza} />}
                     </td>
-                    <td>
+                    <td data-label="Azioni">
                       <div style={{ display: 'flex', gap: 6 }}>
                         <Link
                           href={`/dashboard/segretario/giocatori/${gid}`}
@@ -453,7 +453,7 @@ export default function PagamentiDashboard() {
               </tbody>
             </table>
           ) : (
-            <div className="table-wrap"><table>
+            <div className="table-wrap"><table className="tabella-schede">
               <thead>
                 <tr>
                   <th>Famiglia</th>
@@ -473,7 +473,7 @@ export default function PagamentiDashboard() {
                   </tr>
                 ) : righeFiltrate.map(({ famId, corrente, statoGen, famiglia, giocatore }) => (
                   <tr key={famId}>
-                    <td>
+                    <td data-label="Famiglia">
                       <div style={{ fontWeight: 600, fontSize: 13 }}>
                         {famiglia?.cognome ?? '—'} {famiglia?.nome ?? ''}
                       </div>
@@ -481,10 +481,10 @@ export default function PagamentiDashboard() {
                         <div style={{ fontSize: 12, color: 'var(--grigio-4)' }}>{famiglia.email}</div>
                       )}
                     </td>
-                    <td style={{ fontSize: 13 }}>
+                    <td data-label="Giocatore" style={{ fontSize: 13 }}>
                       {giocatore ? `${giocatore.cognome} ${giocatore.nome}` : '—'}
                     </td>
-                    <td>
+                    <td data-label="Rata corrente">
                       <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
                         {fmt(Number(corrente?.importo ?? 0))}
                       </div>
@@ -492,15 +492,15 @@ export default function PagamentiDashboard() {
                         <div style={{ fontSize: 12, color: 'var(--grigio-4)' }}>Rata {corrente.numero_rata}</div>
                       )}
                     </td>
-                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
+                    <td data-label="Scadenza" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
                       {corrente?.scadenza
                         ? new Date(corrente.scadenza).toLocaleDateString('it-IT')
                         : '—'}
                     </td>
-                    <td>
+                    <td data-label="Stato">
                       {corrente && <StatoBadge stato={corrente.stato} scadenza={corrente.scadenza} />}
                     </td>
-                    <td>
+                    <td data-label="Azioni">
                       <div style={{ display: 'flex', gap: 6 }}>
                         {famiglia?.id && (
                           <Link

@@ -41,7 +41,7 @@ export default async function ValutazioniPage() {
 
       <div className="card" style={{ overflow: 'hidden' }}>
         <div className="table-wrap">
-          <table>
+          <table className="tabella-schede">
             <thead><tr><th>Giocatore</th><th>Data</th><th>Tecnica</th><th>Tattica</th><th>Fisico</th><th>Mentale</th><th>Media</th><th>Visibile fam.</th></tr></thead>
             <tbody>
               {(valutazioni ?? []).length === 0 ? (
@@ -57,14 +57,14 @@ export default async function ValutazioniPage() {
                   : <span style={{ color: 'var(--grigio-4)' }}>—</span>
                 return (
                   <tr key={v.id}>
-                    <td style={{ fontWeight: 500, fontSize: 13 }}>{g?.cognome} {g?.nome}</td>
-                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{formatData(v.data)}</td>
-                    <td>{voto(v.tecnica)}</td>
-                    <td>{voto(v.tattica)}</td>
-                    <td>{voto(v.fisico)}</td>
-                    <td>{voto(v.mentale)}</td>
-                    <td><span style={{ fontSize: 15, fontWeight: 700, fontFamily: 'var(--font-mono)', color: col }}>{m ?? '—'}</span></td>
-                    <td>
+                    <td data-label="Giocatore" style={{ fontWeight: 500, fontSize: 13 }}>{g?.cognome} {g?.nome}</td>
+                    <td data-label="Data" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{formatData(v.data)}</td>
+                    <td data-label="Tecnica">{voto(v.tecnica)}</td>
+                    <td data-label="Tattica">{voto(v.tattica)}</td>
+                    <td data-label="Fisico">{voto(v.fisico)}</td>
+                    <td data-label="Mentale">{voto(v.mentale)}</td>
+                    <td data-label="Media"><span style={{ fontSize: 15, fontWeight: 700, fontFamily: 'var(--font-mono)', color: col }}>{m ?? '—'}</span></td>
+                    <td data-label="Visibile fam.">
                       <span className={`badge ${v.visibile_famiglia ? 'badge-verde' : 'badge-grigio'}`} style={{ fontSize: 12 }}>
                         {v.visibile_famiglia ? '✓ Sì' : 'No'}
                       </span>

@@ -290,7 +290,7 @@ export default function QuietanzePage() {
       {/* Tabella */}
       <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
         <div className="table-wrap">
-          <table>
+          <table className="tabella-schede">
             <thead>
               <tr>
                 <th>Giocatore</th>
@@ -310,7 +310,7 @@ export default function QuietanzePage() {
                 </tr>
               ) : righeFiltrate.map(({ player, quietanza }) => (
                 <tr key={player.giocatore_id}>
-                  <td>
+                  <td data-label="Giocatore">
                     <div style={{ fontWeight: 600, fontSize: 13 }}>
                       {player.giocatore?.cognome ?? '—'} {player.giocatore?.nome ?? ''}
                     </div>
@@ -320,7 +320,7 @@ export default function QuietanzePage() {
                       </div>
                     )}
                   </td>
-                  <td>
+                  <td data-label="Quota iscrizione">
                     {player.quota ? (
                       <>
                         <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
@@ -334,13 +334,13 @@ export default function QuietanzePage() {
                       <span style={{ color: 'var(--grigio-4)', fontSize: 12 }}>—</span>
                     )}
                   </td>
-                  <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
+                  <td data-label="N. Quietanza" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
                     {quietanza?.numero_quietanza ?? '—'}
                   </td>
-                  <td style={{ fontSize: 12 }}>
+                  <td data-label="Tipo" style={{ fontSize: 12 }}>
                     {quietanza ? (tipoLabel[quietanza.tipo] ?? quietanza.tipo) : '—'}
                   </td>
-                  <td>
+                  <td data-label="Stato">
                     {!quietanza ? (
                       <span className="badge badge-grigio">Da generare</span>
                     ) : quietanza.firmata ? (
@@ -349,7 +349,7 @@ export default function QuietanzePage() {
                       <span className="badge badge-ambra">Generata</span>
                     )}
                   </td>
-                  <td>
+                  <td data-label="Azioni">
                     <div style={{ display: 'flex', gap: 6 }}>
                       {!quietanza ? (
                         <button

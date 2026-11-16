@@ -58,7 +58,7 @@ async function DSDatabaseContent() {
       </div>
       <div className="card" style={{ overflow: 'hidden' }}>
         <div className="table-wrap">
-          <table>
+          <table className="tabella-schede">
             <thead><tr><th>Giocatore</th><th>Club</th><th>Voto</th><th>Potenziale</th><th>Osservazioni</th><th>Ultimo report</th><th>Esito</th></tr></thead>
             <tbody>
               {lista.length === 0 ? (
@@ -70,9 +70,9 @@ async function DSDatabaseContent() {
                 const esitoC: Record<string, string> = { in_valutazione: 'badge-ambra', ingaggiato: 'badge-verde', rifiutato: 'badge-rosso', archiviato: 'badge-grigio', lista_attesa: 'badge-blu' }
                 return (
                   <tr key={i}>
-                    <td style={{ fontWeight: 500, fontSize: 13 }}>{r.nome_giocatore_ext}</td>
-                    <td style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{r.club_attuale_ext ?? '—'}</td>
-                    <td>
+                    <td data-label="Giocatore" style={{ fontWeight: 500, fontSize: 13 }}>{r.nome_giocatore_ext}</td>
+                    <td data-label="Club" style={{ fontSize: 12, color: 'var(--grigio-3)' }}>{r.club_attuale_ext ?? '—'}</td>
+                    <td data-label="Voto">
                       {r.voto_globale !== null ? (
                         <span style={{
                           display: 'inline-flex', width: 28, height: 28, borderRadius: 10,
@@ -82,10 +82,10 @@ async function DSDatabaseContent() {
                         }}>{r.voto_globale}</span>
                       ) : '—'}
                     </td>
-                    <td><span className={`badge ${potenzialeColore[r.potenziale] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>{r.potenziale}</span></td>
-                    <td style={{ fontSize: 13, color: 'var(--grigio-3)' }}>{nObs} {nObs === 1 ? 'report' : 'report'}</td>
-                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{new Date(r.data_osservazione).toLocaleDateString('it-IT')}</td>
-                    <td><span className={`badge ${esitoC[r.esito] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>{r.esito?.replace('_', ' ')}</span></td>
+                    <td data-label="Potenziale"><span className={`badge ${potenzialeColore[r.potenziale] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>{r.potenziale}</span></td>
+                    <td data-label="Osservazioni" style={{ fontSize: 13, color: 'var(--grigio-3)' }}>{nObs} {nObs === 1 ? 'report' : 'report'}</td>
+                    <td data-label="Ultimo report" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>{new Date(r.data_osservazione).toLocaleDateString('it-IT')}</td>
+                    <td data-label="Esito"><span className={`badge ${esitoC[r.esito] ?? 'badge-grigio'}`} style={{ fontSize: 12 }}>{r.esito?.replace('_', ' ')}</span></td>
                   </tr>
                 )
               })}

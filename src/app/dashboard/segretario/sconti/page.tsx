@@ -206,7 +206,7 @@ export default function ScontiPage() {
             </button>
           </div>
         ) : (
-          <div className="table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <div className="table-wrap"><table className="tabella-schede" style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid var(--border)' }}>
                 {['Nome', 'Tipo', 'Valore', 'Stato', 'Azioni'].map(h => (
@@ -217,17 +217,17 @@ export default function ScontiPage() {
             <tbody>
               {sconti.map(s => (
                 <tr key={s.id} style={{ borderBottom: '1px solid var(--border)', opacity: s.attivo ? 1 : 0.45 }}>
-                  <td style={{ padding: '10px 12px', fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 13, color: 'var(--white)' }}>{s.nome}</td>
-                  <td style={{ padding: '10px 12px', fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', textTransform: 'none' }}>{s.tipo}</td>
-                  <td style={{ padding: '10px 12px', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, color: 'var(--accent)' }}>
+                  <td data-label="Nome" style={{ padding: '10px 12px', fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 13, color: 'var(--white)' }}>{s.nome}</td>
+                  <td data-label="Tipo" style={{ padding: '10px 12px', fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', textTransform: 'none' }}>{s.tipo}</td>
+                  <td data-label="Valore" style={{ padding: '10px 12px', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, color: 'var(--accent)' }}>
                     {s.tipo === 'percentuale' ? `${s.valore}%` : `€${s.valore}`}
                   </td>
-                  <td style={{ padding: '10px 12px' }}>
+                  <td data-label="Stato" style={{ padding: '10px 12px' }}>
                     <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, padding: '2px 8px', borderRadius: 8, background: s.attivo ? 'rgba(200,240,0,0.1)' : 'var(--gray-mid)', color: s.attivo ? 'var(--accent)' : 'var(--gray)', textTransform: 'none' }}>
                       {s.attivo ? 'Attivo' : 'Disattivo'}
                     </span>
                   </td>
-                  <td style={{ padding: '10px 12px' }}>
+                  <td data-label="Azioni" style={{ padding: '10px 12px' }}>
                     <button className="btn btn-secondary btn-sm" onClick={() => toggleAttivo(s)}>
                       {s.attivo ? 'Disattiva' : 'Attiva'}
                     </button>
@@ -317,7 +317,7 @@ export default function ScontiPage() {
               Totale risparmiato: €{totaleRisparmiato.toFixed(2)}
             </div>
           </div>
-          <div className="table-wrap"><table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <div className="table-wrap"><table className="tabella-schede" style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid var(--border)' }}>
                 {['Famiglia / Giocatore', 'Piano', 'Sconto applicato', 'Importo risparmiato'].map(h => (
@@ -332,10 +332,10 @@ export default function ScontiPage() {
                 const nomeSconto = r.sconti_listino?.nome ?? '—'
                 return (
                   <tr key={r.id} style={{ borderBottom: '1px solid var(--border)' }}>
-                    <td style={{ padding: '10px 12px', fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 13, color: 'var(--white)' }}>{chi}</td>
-                    <td style={{ padding: '10px 12px', fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)' }}>{piano?.descrizione}</td>
-                    <td style={{ padding: '10px 12px', fontFamily: 'var(--font-display)', fontSize: 12, color: 'var(--white)' }}>{nomeSconto}</td>
-                    <td style={{ padding: '10px 12px', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, color: '#4ade80' }}>€{Number(r.sconto_importo).toFixed(2)}</td>
+                    <td data-label="Famiglia / Giocatore" style={{ padding: '10px 12px', fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 13, color: 'var(--white)' }}>{chi}</td>
+                    <td data-label="Piano" style={{ padding: '10px 12px', fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)' }}>{piano?.descrizione}</td>
+                    <td data-label="Sconto applicato" style={{ padding: '10px 12px', fontFamily: 'var(--font-display)', fontSize: 12, color: 'var(--white)' }}>{nomeSconto}</td>
+                    <td data-label="Importo risparmiato" style={{ padding: '10px 12px', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, color: '#4ade80' }}>€{Number(r.sconto_importo).toFixed(2)}</td>
                   </tr>
                 )
               })}

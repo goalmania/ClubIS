@@ -203,7 +203,7 @@ export default function DSMercatoPage() {
       {/* Tabella trattative */}
       <div className="card" style={{ overflow: 'hidden' }}>
         <div className="table-wrap">
-          <table>
+          <table className="tabella-schede">
             <thead>
               <tr>
                 <th>Giocatore</th>
@@ -226,24 +226,24 @@ export default function DSMercatoPage() {
                 const importo = fmt(t.importo_accordo ?? t.importo_offerto ?? t.importo_richiesto)
                 return (
                   <tr key={t.id}>
-                    <td style={{ fontWeight: 600, fontSize: 13 }}>{nomeDisplay(t)}</td>
-                    <td>
+                    <td data-label="Giocatore" style={{ fontWeight: 600, fontSize: 13 }}>{nomeDisplay(t)}</td>
+                    <td data-label="Tipo">
                       <span className="badge badge-grigio" style={{ fontSize: 12, textTransform: 'capitalize' }}>
                         {TIPI.find(x => x.value === t.tipo)?.label ?? t.tipo}
                       </span>
                     </td>
-                    <td>
+                    <td data-label="Stato">
                       <span style={{ fontSize: 12, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: si.c + '22', color: si.c }}>
                         {si.label}
                       </span>
                     </td>
-                    <td style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
+                    <td data-label="Club" style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
                       {t.club_provenienza ?? t.club_destinazione ?? '—'}
                     </td>
-                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--accent-green)', fontWeight: 600 }}>
+                    <td data-label="Importo" style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--accent-green)', fontWeight: 600 }}>
                       {importo ?? '—'}
                     </td>
-                    <td style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
+                    <td data-label="Scadenza" style={{ fontFamily: 'var(--font-mono)', fontSize: 12 }}>
                       {t.data_scadenza ? new Date(t.data_scadenza).toLocaleDateString('it-IT') : '—'}
                     </td>
                   </tr>

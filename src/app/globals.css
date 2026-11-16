@@ -1447,3 +1447,9 @@ body::before {
   .card:has(> .table-wrap > table.tabella-schede), .card:has(> table.tabella-schede) { background: none !important; box-shadow: none !important; }
   .card:has(> .table-wrap > table.tabella-schede)::before { display: none; }
 }
+
+/* Titoli di pagina uniformi (anche quelli scritti a mano nelle pagine) */
+.dashboard-content h1 { font-size: 30px !important; font-weight: 650 !important; letter-spacing: -0.03em !important; line-height: 1.15; }
+.dashboard-content h1 + p { font-size: 14px; color: var(--gray); }
+.page-header-actions .btn { min-height: 40px; }
+@media (max-width: 860px) { .dashboard-content h1 { font-size: 28px !important; } }
