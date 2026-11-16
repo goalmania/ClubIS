@@ -120,7 +120,7 @@ export default function PortafoglioFIGCPage() {
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div>
-            <label style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', display: 'block', marginBottom: 6 }}>IMPORTO RICARICATO (€)</label>
+            <label style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', display: 'block', marginBottom: 6 }}>Importo ricaricato (€)</label>
             <input type="number" min="0" step="0.01" className="input" style={{ width: '100%' }} placeholder="100.00" value={importo} onChange={e => setImporto(e.target.value)} />
           </div>
           <div>
@@ -187,7 +187,7 @@ export default function PortafoglioFIGCPage() {
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
           <div>
-            <label style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', display: 'block', marginBottom: 5 }}>TESSERAMENTO DEFINITIVO (€)</label>
+            <label style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', display: 'block', marginBottom: 5 }}>Tesseramento definitivo (€)</label>
             <input type="number" min="0" step="0.5" className="input" style={{ width: '100%' }}
               value={costi.costo_definitivo}
               onChange={e => setCosti(c => ({ ...c, costo_definitivo: +e.target.value }))}
@@ -195,7 +195,7 @@ export default function PortafoglioFIGCPage() {
             />
           </div>
           <div>
-            <label style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', display: 'block', marginBottom: 5 }}>TESSERAMENTO PRESTITO (€)</label>
+            <label style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', display: 'block', marginBottom: 5 }}>Tesseramento prestito (€)</label>
             <input type="number" min="0" step="0.5" className="input" style={{ width: '100%' }}
               value={costi.costo_prestito}
               onChange={e => setCosti(c => ({ ...c, costo_prestito: +e.target.value }))}

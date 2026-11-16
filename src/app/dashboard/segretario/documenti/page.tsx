@@ -391,12 +391,12 @@ export default function DocumentiPage() {
 
   return (
     <FeatureGate feature="genera_documenti" featureLabel="Genera Documenti">
-        <div style={{ display: 'flex', gap: 0, minHeight: 'calc(100vh - 100px)' }}>
+        <div className="doc-layout" style={{ display: 'flex', gap: 0, minHeight: 'calc(100vh - 100px)' }}>
 
           {/* ── Sidebar categorie ─────────────────────────────── */}
-          <div style={{ width: 248, flexShrink: 0, borderRight: '1px solid var(--border-solid)', marginRight: 24 }}>
-            <div style={{ position: 'sticky', top: 0 }}>
-              <div style={{
+          <div className="doc-categorie" style={{ width: 248, flexShrink: 0, borderRight: '1px solid var(--border-solid)', marginRight: 24 }}>
+            <div className="doc-cat-lista" style={{ position: 'sticky', top: 0 }}>
+              <div className="doc-cat-titolo" style={{
                 fontFamily: 'var(--font-mono)', fontSize: '0.78rem',
                 letterSpacing: '0', textTransform: 'none', color: 'var(--text-muted)',
                 padding: '0 0 10px 0', marginBottom: 6,
@@ -406,7 +406,7 @@ export default function DocumentiPage() {
 
               {SIDEBAR_ITEMS.map((item, i) => {
                 if (item.key === 'sep1' || item.key === 'sep2') {
-                  return <div key={i} style={{ height: 1, background: 'var(--border-solid)', margin: '8px 0' }} />
+                  return <div key={i} className="doc-cat-sep" style={{ height: 1, background: 'var(--border-solid)', margin: '8px 0' }} />
                 }
                 const isActive = categoriaAttiva === item.key
                 const count = item.key === 'preferiti' ? nPref : undefined
@@ -414,20 +414,20 @@ export default function DocumentiPage() {
                   <button
                     key={item.key}
                     onClick={() => { setCatAttiva(item.key as CategoriaKey); setSearch('') }}
+                    className={isActive ? 'doc-cat attiva' : 'doc-cat'}
                     style={{
                       display: 'flex', alignItems: 'center', gap: 8,
                       width: '100%', padding: '8px 10px', cursor: 'pointer',
-                      border: 'none', borderRadius: 8, marginBottom: 2, textAlign: 'left',
-                      background:   isActive ? 'rgba(200,240,0,0.07)' : 'transparent',
-                      borderLeft:   isActive ? '2px solid var(--accent)' : '2px solid transparent',
+                      border: 'none', borderRadius: 999, marginBottom: 2, textAlign: 'left',
+                      background:   isActive ? '#c8f000' : 'transparent',
                     }}
                   >
                     <span style={{ fontSize: 14, flexShrink: 0 }}>{item.icona}</span>
                     <span style={{
-                      fontSize: 12, flex: 1,
-                      fontFamily: 'var(--font-display)', fontWeight: isActive ? 700 : 400,
+                      fontSize: 13.5, flex: 1,
+                      fontFamily: 'var(--font-display)', fontWeight: isActive ? 650 : 500,
                       textTransform: 'none', letterSpacing: '0',
-                      color: isActive ? 'var(--accent)' : 'var(--gray)',
+                      color: isActive ? '#0b0c0a' : 'var(--label)',
                     }}>
                       {item.label}
                     </span>

@@ -1510,3 +1510,15 @@ body::before {
 }
 .dashboard-content [style*="display: grid"][style*="gap: 1px"] > :first-child *,
 .dashboard-content [style*="display:grid"][style*="gap:1px"] > :first-child * { color: #0b0c0a !important; }
+
+/* Documenti: categorie a pillole sopra l'elenco su schermi medi e piccoli */
+.doc-cat.attiva { box-shadow: 0 0 18px rgba(200,240,0,0.25); }
+@media (max-width: 1200px) {
+  .doc-layout { flex-direction: column; }
+  .doc-categorie { width: 100% !important; border-right: 0 !important; margin: 0 0 16px !important; }
+  .doc-cat-lista { position: static !important; display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 4px; }
+  .doc-cat-lista::-webkit-scrollbar { display: none; }
+  .doc-cat-titolo, .doc-cat-sep { display: none; }
+  .doc-cat { width: auto !important; flex-shrink: 0; white-space: nowrap; padding: 8px 14px !important; margin: 0 !important; border: 1px solid rgba(255,255,255,0.1) !important; background: rgba(255,255,255,0.06); }
+  .doc-cat.attiva { border-color: #c8f000 !important; }
+}
