@@ -30,17 +30,13 @@ export default async function CustodeDashboard() {
 
   return (
     <div style={{ animation: 'fadeIn 0.3s ease' }}>
-      <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>
-          Area Custode
-        </h1>
-        <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>
-          Buongiorno, {utente.nome}. Gestione impianti e segnalazioni.
-        </p>
+      <div className="pagina-testa">
+        <h1>Area Custode</h1>
+        <p>Buongiorno, {utente.nome}. Gestione impianti e segnalazioni.</p>
       </div>
 
       {/* KPI */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 28 }}>
+      <div className="kpi-riga due">
         <div className="stat-card">
           <div className="stat-label">Checklist oggi</div>
           <div className="stat-value" style={{ color: (checklistOggi ?? 0) > 0 ? 'var(--accent)' : 'var(--gray)' }}>

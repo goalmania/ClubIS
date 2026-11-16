@@ -16,16 +16,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (!utente?.is_super_admin) redirect('/dashboard')
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
+    <div className="admin-shell">
       <AdminSidebar utente={{ nome: utente.nome, cognome: utente.cognome }} />
-      <main style={{
-        flex: 1,
-        padding: '28px 32px',
-        overflowY: 'auto',
-        maxWidth: '100%',
-        background: 'var(--grigio-6)',
-        minHeight: '100vh',
-      }}>
+      <main className="admin-main dashboard-content">
         {children}
       </main>
     </div>

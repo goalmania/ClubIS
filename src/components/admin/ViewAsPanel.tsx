@@ -69,7 +69,7 @@ export default function ViewAsPanel({
 
       <div style={{
         display: 'grid',
-        gridTemplateColumns: variant === 'compact' ? 'repeat(4, 1fr)' : 'repeat(4, 1fr)',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(118px, 1fr))',
         gap: 8,
       }}>
         {RUOLI.map(r => (
@@ -90,7 +90,6 @@ export default function ViewAsPanel({
               gap: 6,
               transition: 'all 0.15s',
               opacity: loading && loading !== r.key ? 0.4 : 1,
-              borderLeft: `3px solid ${r.color}`,
             }}
             onMouseEnter={(e) => {
               if (!loading) e.currentTarget.style.background = 'var(--bg-card-hover, var(--bg-card))'
@@ -99,7 +98,7 @@ export default function ViewAsPanel({
               e.currentTarget.style.background = 'var(--bg-input)'
             }}
           >
-            <span style={{ fontSize: 22 }}>{r.icon}</span>
+            <span style={{ fontSize: 18, width: 38, height: 38, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: r.color, background: `color-mix(in srgb, ${r.color} 16%, transparent)` }}>{r.icon}</span>
             <span style={{ fontSize: 12, fontWeight: 600 }}>
               {loading === r.key ? 'Apertura…' : r.label}
             </span>

@@ -126,12 +126,10 @@ export default async function AllenatoreDashboard() {
 
   return (
     <div>
-      <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Ciao, {utente?.nome ?? ''}</h1>
-        <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>
-          {oggi.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' })}
-          {squadre && squadre.length > 0 && ` · ${squadre.map(s => s.nome).join(', ')}`}
-        </p>
+      <div className="pagina-testa">
+        <h1>Ciao, {utente?.nome ?? ''}</h1>
+        <p>{oggi.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' })}
+          {squadre && squadre.length > 0 && ` · ${squadre.map(s => s.nome).join(', ')}`}</p>
       </div>
 
       <AzioniRapide ruolo="allenatore" variante={isScuolaCalcio ? 'scuola_calcio' : 'agonistico'} />
@@ -184,7 +182,7 @@ export default async function AllenatoreDashboard() {
       )}
 
       {/* Stat cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 14, marginBottom: 28 }}>
+      <div className="kpi-riga">
         <div className="stat-card">
           <div className="stat-label">Squadre</div>
           <div className="stat-value">{squadre?.length ?? 0}</div>

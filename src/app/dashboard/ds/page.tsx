@@ -71,35 +71,13 @@ export default async function DSDashboard() {
   return (
     <ServerFeatureGate feature="dashboard_ds" featureLabel="Dashboard Direttore Sportivo">
     <div>
-      <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Area Direttore Sportivo</h1>
-        <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>
-          Controllo rosa, contratti e scouting
-        </p>
+      <div className="pagina-testa">
+        <h1>Area Direttore Sportivo</h1>
+        <p>Controllo rosa, contratti e scouting</p>
       </div>
 
-      <AzioniRapide ruolo="ds" />
-
-      <DMScoutWidget
-        attivo={club?.dmscout_abbonamento_attivo ?? false}
-        scadenza={club?.dmscout_abbonamento_scadenza ?? null}
-        clubId={clubId}
-      />
-
-      <ObiettiviWidget clubId={clubId} ruolo="ds" />
-
-      <ImpiantiDashboardWidget ruolo="ds" />
-
-      {/* Alert contratti in scadenza */}
-      {contratti && contratti.length > 0 && (
-        <div className="alert alert-warning" style={{ marginBottom: 20 }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          <span><strong>{contratti.length} contratt{contratti.length === 1 ? 'o' : 'i'}</strong> in scadenza nei prossimi 90 giorni — programma i rinnovi.</span>
-        </div>
-      )}
-
-      {/* Stat cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 28 }}>
+      {/* Statistiche: la prima in lime */}
+      <div className="kpi-riga">
         <div className="stat-card">
           <div className="stat-label">Rosa attiva</div>
           <div className="stat-value">{totGiocatori ?? 0}</div>
@@ -125,6 +103,28 @@ export default async function DSDashboard() {
           <div className="stat-sub">giocatori osservati</div>
         </div>
       </div>
+
+      <AzioniRapide ruolo="ds" />
+
+      <DMScoutWidget
+        attivo={club?.dmscout_abbonamento_attivo ?? false}
+        scadenza={club?.dmscout_abbonamento_scadenza ?? null}
+        clubId={clubId}
+      />
+
+      <ObiettiviWidget clubId={clubId} ruolo="ds" />
+
+      <ImpiantiDashboardWidget ruolo="ds" />
+
+      {/* Alert contratti in scadenza */}
+      {contratti && contratti.length > 0 && (
+        <div className="alert alert-warning" style={{ marginBottom: 20 }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span><strong>{contratti.length} contratt{contratti.length === 1 ? 'o' : 'i'}</strong> in scadenza nei prossimi 90 giorni — programma i rinnovi.</span>
+        </div>
+      )}
+
+      {/* Stat cards */}
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
 

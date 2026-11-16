@@ -1,13 +1,14 @@
 'use client'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
+import clsx from 'clsx'
 
 const nav = [
-  { label: 'Dashboard', href: '/admin', icon: 'Home' },
-  { label: 'Club', href: '/admin/clubs', icon: 'Shield' },
-  { label: 'Utenti', href: '/admin/utenti', icon: 'Users' },
-  { label: 'Abbonamenti', href: '/admin/abbonamenti', icon: 'Euro' },
-  { label: 'Statistiche', href: '/admin/statistiche', icon: 'Chart' },
+  { label: 'Dashboard', breve: 'Home', href: '/admin', icon: 'Home' },
+  { label: 'Club', breve: 'Club', href: '/admin/clubs', icon: 'Shield' },
+  { label: 'Utenti', breve: 'Utenti', href: '/admin/utenti', icon: 'Users' },
+  { label: 'Abbonamenti', breve: 'Piani', href: '/admin/abbonamenti', icon: 'Euro' },
+  { label: 'Statistiche', breve: 'Numeri', href: '/admin/statistiche', icon: 'Chart' },
 ]
 
 const icons: Record<string, () => JSX.Element> = {
@@ -17,6 +18,7 @@ const icons: Record<string, () => JSX.Element> = {
   Euro: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 10h12"/><path d="M4 14h9"/><path d="M19 6a7.7 7.7 0 0 0-5.2-2A7.9 7.9 0 0 0 6 20.1 8 8 0 0 0 19 18"/></svg>,
   Chart: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" x2="18" y1="20" y2="10"/><line x1="12" x2="12" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="14"/></svg>,
   LogOut: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>,
+  Back: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>,
 }
 
 export default function AdminSidebar({ utente }: { utente: { nome: string; cognome: string } }) {
@@ -34,127 +36,71 @@ export default function AdminSidebar({ utente }: { utente: { nome: string; cogno
     if (href === '/admin') return pathname === href
     return pathname.startsWith(href)
   }
+  const corrente = nav.find(v => isActive(v.href))
 
   return (
-    <aside style={{
-      width: 240,
-      minHeight: '100vh',
-      background: 'var(--surface-1)',
-      borderRight: '1px solid var(--border-solid)',
-      display: 'flex',
-      flexDirection: 'column',
-      flexShrink: 0,
-      position: 'sticky',
-      top: 0,
-      height: '100vh',
-      overflowY: 'auto',
-    }}>
-      {/* Header */}
-      <div style={{ padding: '18px 16px 14px', borderBottom: '1px solid var(--border-solid)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <img src="/clubis-logo.png" alt="ClubIS" style={{ height: 28, flexShrink: 0 }} />
-          <div>
-            <div style={{
-              fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14,
-              letterSpacing: '0', textTransform: 'none',
-            }}>
-              <span style={{ color: 'var(--gray)' }}> / </span>
-              <span style={{ color: 'var(--white)' }}>ADMIN</span>
-            </div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', letterSpacing: '0', textTransform: 'none' }}>Pannello di controllo</div>
-          </div>
+    <>
+      {/* Telefono: intestazione compatta in vetro */}
+      <header className="admin-testa-mobile">
+        <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'var(--accent-red-lt)', color: '#ff8a7d', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, flexShrink: 0 }}>{iniziali}</div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: 15, fontWeight: 650 }}>Admin · {corrente?.label ?? 'Pannello'}</div>
+          <div style={{ fontSize: 12, color: 'var(--gray)' }}>{utente.nome} {utente.cognome}</div>
         </div>
-      </div>
+        <Link href="/dashboard/presidente" className="topbar-icon-btn" aria-label="Torna al club" title="Torna al club"><icons.Back /></Link>
+        <button type="button" onClick={handleLogout} className="topbar-icon-btn" aria-label="Esci" title="Esci"><icons.LogOut /></button>
+      </header>
 
-      {/* Nav */}
-      <nav style={{ flex: 1, padding: '10px 8px' }}>
+      {/* Telefono: barra in basso con le 5 sezioni */}
+      <nav className="mobile-tabbar" aria-label="Sezioni admin">
         {nav.map(v => {
           const IconComp = icons[v.icon]
           const attiva = isActive(v.href)
           return (
-            <Link
-              key={v.href}
-              href={v.href}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 10,
-                padding: '8px 10px',
-                borderRadius: 8,
-                fontFamily: 'var(--font-display)',
-                fontSize: '0.78rem', letterSpacing: '0', textTransform: 'none',
-                textDecoration: 'none',
-                marginBottom: 1,
-                background: attiva ? 'rgba(200,240,0,0.06)' : 'transparent',
-                color: attiva ? 'var(--accent)' : 'var(--gray)',
-                fontWeight: attiva ? 600 : 500,
-                borderLeft: attiva ? '2px solid var(--accent)' : '2px solid transparent',
-                transition: 'all 0.15s',
-              }}
-            >
+            <Link key={v.href} href={v.href} className={clsx('mobile-tab', { active: attiva })} aria-current={attiva ? 'page' : undefined}>
               <IconComp />
-              <span>{v.label}</span>
+              <span className="lbl">{v.breve}</span>
             </Link>
           )
         })}
-
-        <div style={{ height: 1, background: 'var(--border-solid)', margin: '12px 8px' }} />
-
-        <Link
-          href="/dashboard/presidente"
-          style={{
-            display: 'flex', alignItems: 'center', gap: 10,
-            padding: '8px 10px', borderRadius: 8,
-            fontFamily: 'var(--font-display)', fontSize: '0.78rem',
-            letterSpacing: '0', textTransform: 'none',
-            textDecoration: 'none',
-            color: 'var(--gray)',
-            transition: 'all 0.15s',
-          }}
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-          <span>Torna al club</span>
-        </Link>
       </nav>
 
-      {/* Utente */}
-      <div style={{
-        padding: '12px 12px',
-        borderTop: '1px solid var(--border-solid)',
-        display: 'flex', alignItems: 'center', gap: 9,
-        background: 'var(--surface-1)',
-      }}>
-        <div style={{
-          width: 32, height: 32, borderRadius: 8,
-          background: 'var(--accent-red-lt)', color: 'var(--accent-red)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontFamily: 'var(--font-display)', fontSize: 12, fontWeight: 700,
-          letterSpacing: '0', textTransform: 'none',
-          flexShrink: 0, border: '1px solid rgba(255,68,68,0.2)',
-        }}>
-          {iniziali}
-        </div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{
-            fontFamily: 'var(--font-display)', fontSize: 12, fontWeight: 600,
-            letterSpacing: '0', textTransform: 'none',
-            color: 'var(--white)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-          }}>
-            {utente.nome} {utente.cognome}
+      {/* Computer: menu laterale in vetro */}
+      <aside className="sidebar-shell admin-aside" aria-label="Menu admin" style={{ width: 240, display: 'flex', flexDirection: 'column', flexShrink: 0, overflow: 'hidden' }}>
+        <div style={{ padding: '18px 16px 12px', display: 'flex', alignItems: 'center', gap: 10 }}>
+          <img src="/clubis-logo.png" alt="ClubIS" style={{ height: 28, flexShrink: 0 }} />
+          <div>
+            <div style={{ fontWeight: 650, fontSize: 15 }}>Admin</div>
+            <div style={{ fontSize: 12, color: 'var(--gray)' }}>Pannello di controllo</div>
           </div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--gray)', letterSpacing: '0' }}>Super Admin</div>
         </div>
-        <button
-          onClick={handleLogout}
-          title="Esci"
-          style={{
-            background: 'none', border: 'none', cursor: 'pointer',
-            color: 'var(--gray)', padding: 4, borderRadius: 8,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            flexShrink: 0,
-          }}
-        >
-          <icons.LogOut />
-        </button>
-      </div>
-    </aside>
+
+        <nav style={{ flex: 1, padding: '6px 10px', display: 'flex', flexDirection: 'column', gap: 2 }}>
+          {nav.map(v => {
+            const IconComp = icons[v.icon]
+            return (
+              <Link key={v.href} href={v.href} className={clsx('sidebar-nav-link', { active: isActive(v.href) })}>
+                <IconComp />
+                <span>{v.label}</span>
+              </Link>
+            )
+          })}
+          <div style={{ height: 1, background: 'var(--separator)', margin: '10px 6px' }} />
+          <Link href="/dashboard/presidente" className="sidebar-nav-link">
+            <icons.Back />
+            <span>Torna al club</span>
+          </Link>
+        </nav>
+
+        <div style={{ margin: '0 10px 10px', padding: 10, borderRadius: 16, background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--accent-red-lt)', color: '#ff8a7d', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, flexShrink: 0 }}>{iniziali}</div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 13, fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{utente.nome} {utente.cognome}</div>
+            <div style={{ fontSize: 12, color: 'var(--gray)' }}>Super Admin</div>
+          </div>
+          <button onClick={handleLogout} title="Esci" aria-label="Esci" className="topbar-icon-btn" style={{ width: 34, height: 34 }}><icons.LogOut /></button>
+        </div>
+      </aside>
+    </>
   )
 }

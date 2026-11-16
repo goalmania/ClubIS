@@ -61,13 +61,17 @@ export default async function SegretarioDashboard() {
   return (
     <div>
       {/* Header */}
-      <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>
-          Panoramica segreteria
-        </h1>
-        <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>
-          {oggi.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
-        </p>
+      <div className="pagina-testa">
+        <h1>Panoramica segreteria</h1>
+        <p>{oggi.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
+      </div>
+
+      {/* Statistiche: la prima in lime */}
+      <div className="kpi-riga">
+        <StatCard label="Giocatori tesserati" value={totTesserati ?? 0} sub="stagione corrente" />
+        <StatCard label="Certificati in scadenza" value={(certInScadenza?.length ?? 0)} sub="nei prossimi 30 giorni" colore={certUrgenti.length > 0 ? 'rosso' : 'ambra'} />
+        <StatCard label="Quote arretrate" value={quoteArretrate ?? 0} sub="da riscuotere" colore={quoteArretrate && quoteArretrate > 0 ? 'rosso' : undefined} />
+        <StatCard label="Prossime partite" value={prossimePartite?.length ?? 0} sub="programmate" />
       </div>
 
       {!isScuolaCalcio && (
@@ -91,13 +95,6 @@ export default async function SegretarioDashboard() {
         </div>
       )}
 
-      {/* Stat cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 28 }}>
-        <StatCard label="Giocatori tesserati" value={totTesserati ?? 0} sub="stagione corrente" />
-        <StatCard label="Certificati in scadenza" value={(certInScadenza?.length ?? 0)} sub="nei prossimi 30 giorni" colore={certUrgenti.length > 0 ? 'rosso' : 'ambra'} />
-        <StatCard label="Quote arretrate" value={quoteArretrate ?? 0} sub="da riscuotere" colore={quoteArretrate && quoteArretrate > 0 ? 'rosso' : undefined} />
-        <StatCard label="Prossime partite" value={prossimePartite?.length ?? 0} sub="programmate" />
-      </div>
 
       {/* Corpo principale: 2 colonne */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 20 }}>

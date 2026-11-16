@@ -44,27 +44,13 @@ export default async function MedicoDashboard() {
   return (
     <ServerFeatureGate feature="dashboard_medico_completa" featureLabel="Dashboard Medico Completa">
     <div style={{ animation: 'fadeIn 0.3s ease' }}>
-      <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Area Medica</h1>
-        <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>
-          Salute, infortuni e idoneità sanitaria
-        </p>
+      <div className="pagina-testa">
+        <h1>Area Medica</h1>
+        <p>Salute, infortuni e idoneità sanitaria</p>
       </div>
 
-      <AzioniRapide ruolo="medico" />
-
-      {(certScadenza! > 0 || certScaduti! > 0) && (
-      <div className="alert alert-warning" style={{ marginBottom: 20 }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          <span>
-            {certScaduti! > 0 && <><strong>{certScaduti} certificati scaduti</strong>. </>}
-            {certScadenza! > 0 && <><strong>{certScadenza}</strong> in scadenza nei prossimi 30 giorni.</>}
-          </span>
-        </div>
-      )}
-
-      {/* KPI */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 28 }}>
+      {/* Statistiche: la prima in lime */}
+      <div className="kpi-riga">
         <div className="stat-card">
           <div className="stat-label">Giocatori in cura</div>
           <div className="stat-value">{totGiocatori ?? 0}</div>
@@ -86,6 +72,20 @@ export default async function MedicoDashboard() {
           <div className="stat-sub">da effettuare</div>
         </div>
       </div>
+
+      <AzioniRapide ruolo="medico" />
+
+      {(certScadenza! > 0 || certScaduti! > 0) && (
+      <div className="alert alert-warning" style={{ marginBottom: 20 }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span>
+            {certScaduti! > 0 && <><strong>{certScaduti} certificati scaduti</strong>. </>}
+            {certScadenza! > 0 && <><strong>{certScadenza}</strong> in scadenza nei prossimi 30 giorni.</>}
+          </span>
+        </div>
+      )}
+
+      {/* KPI */}
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20 }}>
         {/* Infortuni attivi */}

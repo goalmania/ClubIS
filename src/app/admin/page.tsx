@@ -25,15 +25,13 @@ export default async function AdminDashboard() {
 
   return (
     <div>
-      <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontSize: 28, fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.025em'}}>Pannello Admin</h1>
-        <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>
-          Gestione globale ClubIS — The Intelligence System
-        </p>
+      <div className="pagina-testa">
+        <h1>Pannello Admin</h1>
+        <p>Gestione globale ClubIS · The Intelligence System</p>
       </div>
 
       {/* KPI */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 28 }}>
+      <div className="kpi-riga">
         <StatCard label="Club attivi" value={totClub ?? 0} />
         <StatCard label="Utenti totali" value={totUtenti ?? 0} />
         <StatCard label="Giocatori tesserati" value={totGiocatori ?? 0} />

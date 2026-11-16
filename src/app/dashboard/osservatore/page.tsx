@@ -45,25 +45,13 @@ export default async function OsservatoreDashboard() {
 
   return (
     <div>
-      <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Area Osservatore</h1>
-        <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>
-          I tuoi report di scouting e statistiche personali
-        </p>
+      <div className="pagina-testa">
+        <h1>Area Osservatore</h1>
+        <p>I tuoi report di scouting e statistiche personali</p>
       </div>
 
-      <AzioniRapide ruolo="osservatore" />
-
-      <DMScoutWidget
-        attivo={club?.dmscout_abbonamento_attivo ?? false}
-        scadenza={club?.dmscout_abbonamento_scadenza ?? null}
-        clubId={utente.club_id}
-      />
-
-      <ObiettiviWidget clubId={utente.club_id} ruolo="osservatore" />
-
-      {/* Stat personali */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 28 }}>
+      {/* Statistiche: la prima in lime */}
+      <div className="kpi-riga">
         <div className="stat-card">
           <div className="stat-label">Report totali</div>
           <div className="stat-value">{totReport ?? 0}</div>
@@ -87,6 +75,18 @@ export default async function OsservatoreDashboard() {
           <div className="stat-sub">aperti</div>
         </div>
       </div>
+
+      <AzioniRapide ruolo="osservatore" />
+
+      <DMScoutWidget
+        attivo={club?.dmscout_abbonamento_attivo ?? false}
+        scadenza={club?.dmscout_abbonamento_scadenza ?? null}
+        clubId={utente.club_id}
+      />
+
+      <ObiettiviWidget clubId={utente.club_id} ruolo="osservatore" />
+
+      {/* Stat personali */}
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 260px', gap: 20 }}>
 

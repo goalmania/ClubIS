@@ -143,18 +143,11 @@ function DashboardContent({
   return (
     <div style={{ maxWidth: 560, margin: '0 auto' }}>
       {/* Header */}
-      <div style={{ marginBottom: 24 }}>
-        <h1 style={{
-          fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700,
-          textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)',
-        }}>
-          {familiaNome ? `Ciao, ${familiaNome}` : 'Area Famiglia'}
-        </h1>
-        <p style={{ fontSize: 14, color: 'var(--gray)', marginTop: 4 }}>
-          {giocatore?.nome} {giocatore?.cognome} —{' '}
+      <div className="pagina-testa">
+        <h1>{familiaNome ? `Ciao, ${familiaNome}` : 'Area Famiglia'}</h1>
+        <p>{giocatore?.nome} {giocatore?.cognome} —{' '}
           {giocatore?.ruolo_principale?.replace(/_/g, ' ') ?? 'Giocatore'}
-          {giocatore?.data_nascita && ` · ${new Date().getFullYear() - new Date(giocatore.data_nascita).getFullYear()} anni`}
-        </p>
+          {giocatore?.data_nascita && ` · ${new Date().getFullYear() - new Date(giocatore.data_nascita).getFullYear()} anni`}</p>
       </div>
 
       {/* Selettore figlio multiplo */}

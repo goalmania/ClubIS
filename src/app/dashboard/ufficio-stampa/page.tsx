@@ -78,19 +78,13 @@ export default async function UfficioStampaDashboard() {
   return (
     <ServerFeatureGate feature="dashboard_addetto_stampa" featureLabel="Dashboard Addetto Stampa">
     <div>
-      <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>
-          Ufficio Stampa
-        </h1>
-        <p style={{ fontSize: 14, color: 'var(--grigio-3)', marginTop: 4 }}>
-          Gestione media, interviste, locandine e contenuti
-        </p>
+      <div className="pagina-testa">
+        <h1>Ufficio Stampa</h1>
+        <p>Gestione media, interviste, locandine e contenuti</p>
       </div>
 
-      <AzioniRapide ruolo="ufficio_stampa" />
-
-      {/* Stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 28 }}>
+      {/* Statistiche: la prima in lime */}
+      <div className="kpi-riga">
         <div className="stat-card">
           <div className="stat-label">Prossimi eventi media</div>
           <div className="stat-value">{eventiProssimi?.length ?? 0}</div>
@@ -114,6 +108,10 @@ export default async function UfficioStampaDashboard() {
           <div className="stat-sub">da inviare al grafico</div>
         </div>
       </div>
+
+      <AzioniRapide ruolo="ufficio_stampa" />
+
+      {/* Stats */}
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20 }}>
 

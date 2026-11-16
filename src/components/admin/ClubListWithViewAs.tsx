@@ -20,13 +20,7 @@ export default function ClubListWithViewAs({ clubs }: { clubs: Club[] }) {
     <div>
       {clubs.map(c => (
         <div key={c.id} style={{ borderBottom: '1px solid var(--border-light)' }}>
-          <div style={{
-            padding: '14px 18px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: 12,
-          }}>
+          <div className="admin-club-riga">
             <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 12 }}>
               <div style={{
                 width: 10, height: 10, borderRadius: '50%',
@@ -41,13 +35,13 @@ export default function ClubListWithViewAs({ clubs }: { clubs: Club[] }) {
                 </div>
               </div>
             </div>
-            <div style={{ display: 'flex', gap: 8 }}>
+            <div className="admin-club-azioni">
               <button
                 onClick={() => setExpanded(expanded === c.id ? null : c.id)}
                 className="btn btn-primary btn-sm"
                 style={{ fontSize: 12 }}
               >
-                {expanded === c.id ? 'Chiudi' : '👁 Visualizza come'}
+                {expanded === c.id ? 'Chiudi' : 'Visualizza come'}
               </button>
               <Link href={`/admin/clubs/${c.id}`} className="btn btn-secondary btn-sm" style={{ fontSize: 12 }}>
                 Dettaglio

@@ -56,18 +56,13 @@ export default async function TeamManagerDashboard() {
 
   return (
     <div style={{ animation: 'fadeIn 0.3s ease' }}>
-      <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 28, fontWeight: 700, textTransform: 'none', letterSpacing: '-0.025em', color: 'var(--white)' }}>Team Manager</h1>
-        <p style={{ fontSize: 14, color: 'var(--text-secondary)', marginTop: 4 }}>
-          Organizzazione squadra, trasferte e logistica
-        </p>
+      <div className="pagina-testa">
+        <h1>Team Manager</h1>
+        <p>Organizzazione squadra, trasferte e logistica</p>
       </div>
 
-      <RischioCovisocWidget />
-
-            <AzioniRapide ruolo="team_manager" />
-      {/* KPI */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 28 }}>
+      {/* Statistiche: la prima in lime */}
+      <div className="kpi-riga">
         <div className="stat-card">
           <div className="stat-label">Giocatori gestiti</div>
           <div className="stat-value">{totGiocatori ?? 0}</div>
@@ -89,6 +84,11 @@ export default async function TeamManagerDashboard() {
           <div className="stat-sub">richieste aperte</div>
         </div>
       </div>
+
+      <RischioCovisocWidget />
+
+            <AzioniRapide ruolo="team_manager" />
+      {/* KPI */}
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 20 }}>
         {/* Prossima partita */}
