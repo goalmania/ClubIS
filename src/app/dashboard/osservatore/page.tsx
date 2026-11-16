@@ -138,7 +138,7 @@ export default async function OsservatoreDashboard() {
         {/* Azioni rapide */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div className="card" style={{ padding: 18 }}>
-            <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 12 }}>Azioni rapide</div>
+            <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 12 }}>Vai a</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {[
                 { href: '/dashboard/osservatore/nuovo-report', label: '+ Nuovo report scouting' },

@@ -197,8 +197,8 @@ export default async function SegretarioDashboard() {
 
           {/* Azioni rapide */}
           <div className="card" style={{ padding: '18px' }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--grigio)', marginBottom: 12 }}>
-              Azioni rapide
+            <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--grigio)', marginBottom: 12 }}>
+              Vai a
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {isScuolaCalcio ? (
