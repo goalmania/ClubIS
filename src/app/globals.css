@@ -1558,3 +1558,7 @@ body::before {
   .dashboard-content [style*="grid-template-columns: 2fr 1fr"]:has(> .card, > section),
   .dashboard-content [style*="grid-template-columns: 160px 1fr"] { grid-template-columns: minmax(0, 1fr) !important; }
 }
+@media (max-width: 640px) {
+  .stat-card .stat-value { font-size: clamp(17px, 4.9vw, 26px) !important; white-space: nowrap; overflow-wrap: normal; letter-spacing: -0.04em; }
+  .kpi-riga .stat-value { font-size: 32px !important; }
+}
