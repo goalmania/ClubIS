@@ -175,7 +175,7 @@ export default function TMPresenzePage() {
           >
             ↓ Esporta PDF
           </button>
-          <button className="btn btn-primary btn-sm" onClick={() => setShowForm(v => !v)}>+</button>
+          <button className="btn btn-primary btn-sm" onClick={() => setShowForm(v => !v)}>{showForm ? "Chiudi" : "+ Presenza rapida"}</button>
         </div>
       </div>
 
