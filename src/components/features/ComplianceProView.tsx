@@ -65,7 +65,7 @@ function calcolaRischio(scadenze: Scadenza[]): RischioLivello {
 function RischioIndicatore({ livello }: { livello: RischioLivello }) {
   const cfg = {
     verde:  { color: '#4cff88', bg: 'rgba(76,255,136,0.08)', border: 'rgba(76,255,136,0.25)', label: 'Nessun rischio', sub: 'Tutte le scadenze nei tempi' },
-    giallo: { color: '#ffd600', bg: 'rgba(255,214,0,0.08)',  border: 'rgba(255,214,0,0.25)',  label: 'ATTENZIONE',    sub: 'Una o più scadenze entro 30 giorni' },
+    giallo: { color: '#ffd600', bg: 'rgba(255,214,0,0.08)',  border: 'rgba(255,214,0,0.25)',  label: 'Attenzione',    sub: 'Una o più scadenze entro 30 giorni' },
     rosso:  { color: '#ff4444', bg: 'rgba(255,68,68,0.08)',  border: 'rgba(255,68,68,0.25)',  label: 'Rischio penalizzazione', sub: 'Scadenze scadute senza attestazione' },
   }[livello]
 

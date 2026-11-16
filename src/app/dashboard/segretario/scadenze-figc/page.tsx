@@ -258,23 +258,16 @@ export default function ScadenzeFIGCPage() {
       })()}
 
       {/* ── KPI ─────────────────────────────────────────────────────────── */}
-      <div style={{
-        display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
-        gap: 1, background: 'var(--border-solid)', marginBottom: 20,
-      }}>
+      <div className="kpi-riga">
         {[
-          { label: 'TOTALI',         value: scadenze.length,  color: 'var(--grigio-3)' },
-          { label: 'URGENTI ≤10GG',  value: urgenti.length,   color: urgenti.length  > 0 ? '#ff4444' : '#c8f000' },
-          { label: 'SCADUTE',        value: scadute.length,   color: scadute.length  > 0 ? '#ff4444' : '#c8f000' },
-          { label: 'COMPLETATE',     value: complete.length,  color: '#c8f000' },
+          { label: 'Totali',          value: scadenze.length,  color: undefined },
+          { label: 'Urgenti ≤10 gg',  value: urgenti.length,   color: urgenti.length  > 0 ? '#ff6b5e' : undefined },
+          { label: 'Scadute',         value: scadute.length,   color: scadute.length  > 0 ? '#ff6b5e' : undefined },
+          { label: 'Completate',      value: complete.length,  color: '#c8f000' },
         ].map(k => (
-          <div key={k.label} style={{ background: 'var(--surface-2)', padding: '12px 18px' }}>
-            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 28, color: k.color, lineHeight: 1 }}>
-              {k.value}
-            </div>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', letterSpacing: '0', textTransform: 'none', color: 'var(--text-muted)', marginTop: 4 }}>
-              {k.label}
-            </div>
+          <div key={k.label} className="stat-card">
+            <div className="stat-label">{k.label}</div>
+            <div className="stat-value" style={{ color: k.color }}>{k.value}</div>
           </div>
         ))}
       </div>

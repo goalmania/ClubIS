@@ -38,10 +38,10 @@ interface Comunicato {
 }
 
 const TIPO_BADGE: Record<string, { label: string; cls: string }> = {
-  squalifica:  { label: 'SQUALIFICA',  cls: 'badge-rosso'  },
-  diffida:     { label: 'DIFFIDA',     cls: 'badge-ambra'  },
-  ammonizione: { label: 'AMMONIZIONE', cls: 'badge-grigio' },
-  ammenda:     { label: 'AMMENDA',     cls: 'badge-grigio' },
+  squalifica:  { label: 'Squalifica',  cls: 'badge-rosso'  },
+  diffida:     { label: 'Diffida',     cls: 'badge-ambra'  },
+  ammonizione: { label: 'Ammonizione', cls: 'badge-grigio' },
+  ammenda:     { label: 'Ammenda',     cls: 'badge-grigio' },
 }
 
 const fmt = (d: string) => new Date(d).toLocaleDateString('it-IT')
