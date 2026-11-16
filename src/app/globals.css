@@ -1562,3 +1562,9 @@ body::before {
   .stat-card .stat-value { font-size: clamp(17px, 4.9vw, 26px) !important; white-space: nowrap; overflow-wrap: normal; letter-spacing: -0.04em; }
   .kpi-riga .stat-value { font-size: 32px !important; }
 }
+
+/* Bottoni nelle intestazioni: non si allungano all'altezza della riga */
+[style*="justify-content: space-between"] > .btn,
+[style*="justify-content:space-between"] > .btn,
+.page-header-actions > .btn { align-self: center; }
+.btn-sm { max-height: 40px; }
