@@ -216,10 +216,10 @@ export default function IscrizioniPage() {
                       <td data-label="Iscritti" style={{ padding: '10px 14px', fontSize: 13, fontFamily: 'var(--font-mono)', fontWeight: 700 }}>{cnt}{m.max_iscrizioni ? `/${m.max_iscrizioni}` : ''}</td>
                       <td data-label="Link pubblico" style={{ padding: '10px 14px' }}>
                         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                          <a href={link} target="_blank" rel="noreferrer" style={{ fontSize: 12, color: 'var(--accent)', fontFamily: 'var(--font-mono)', wordBreak: 'break-all' }}>
+                          <a href={link} target="_blank" rel="noreferrer" style={{ fontSize: 12, color: 'var(--accent)', fontFamily: 'var(--font-mono)', maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'inline-block' }}>
                             /iscriviti/{m.slug}
                           </a>
-                          <button onClick={() => navigator.clipboard.writeText(link)} style={iconBtn} title="Copia link">📋</button>
+                          <button onClick={() => navigator.clipboard.writeText(link)} style={iconBtn} title="Copia link" aria-label="Copia link">📋</button>
                           <a href={`/api/moduli/qr/${m.slug}`} target="_blank" rel="noreferrer" style={iconBtn} title="QR Code">◻</a>
                         </div>
                       </td>

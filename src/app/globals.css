@@ -1522,3 +1522,15 @@ body::before {
   .doc-cat { width: auto !important; flex-shrink: 0; white-space: nowrap; padding: 8px 14px !important; margin: 0 !important; border: 1px solid rgba(255,255,255,0.1) !important; background: rgba(255,255,255,0.06); }
   .doc-cat.attiva { border-color: #c8f000 !important; }
 }
+
+/* Righe di statistiche lunghe su schermi medi */
+.stat-card .stat-value { font-size: clamp(24px, 2.3vw, 34px); line-height: 1.05; white-space: nowrap; }
+@media (max-width: 1200px) and (min-width: 861px) {
+  .dashboard-content [style*="grid-template-columns"][style*="repeat(5,"]:has(> .stat-card),
+  .dashboard-content [style*="grid-template-columns"][style*="repeat(6,"]:has(> .stat-card) { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+}
+/* Intestazioni: il titolo tiene il suo spazio, i bottoni vanno sotto se serve */
+.page-header > .pagina-testa { flex: 1 1 320px; }
+.dashboard-content > div > div:first-child:has(> h1):has(+ *) { min-width: 0; }
+.dashboard-content [style*="justify-content: space-between"]:has(> div > h1) { flex-wrap: wrap; row-gap: 12px; }
+.dashboard-content [style*="justify-content: space-between"]:has(> div > h1) > div:has(> h1) { flex: 1 1 320px; }
