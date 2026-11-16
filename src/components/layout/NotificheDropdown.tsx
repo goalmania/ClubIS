@@ -47,7 +47,7 @@ const TIPO_EMOJI: Record<string, string> = {
   scadenza_contratto:  '📄',
   quota_arretrata:     '💶',
   convocazione:        '📋',
-  messaggio:           '✉️',
+  messaggio:           '✉',
   abbonamento_cis:     '⭐',
 }
 

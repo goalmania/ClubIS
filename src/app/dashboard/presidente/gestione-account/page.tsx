@@ -483,7 +483,7 @@ export default function GestioneAccountPage() {
             border: '1px solid rgba(255,255,255,0.06)',
             borderRadius: 8, fontSize: 12, color: 'var(--gray)',
           }}>
-            ⚠️ L&apos;eliminazione di un account è definitiva e irreversibile. I dati associati al membro
+            ⚠ L&apos;eliminazione di un account è definitiva e irreversibile. I dati associati al membro
             (presenze, valutazioni, ecc.) rimarranno nel sistema ma l&apos;accesso verrà revocato immediatamente.
           </div>
         </>

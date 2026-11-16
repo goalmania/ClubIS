@@ -18,7 +18,7 @@ const RUOLI_LABEL: Record<string, string> = {
 
 const TIPI_MESSAGGIO = [
   { value: 'comunicazione', label: '📢 Comunicazione' },
-  { value: 'avviso',        label: '⚠️ Avviso urgente' },
+  { value: 'avviso',        label: '⚠ Avviso urgente' },
   { value: 'convocazione',  label: '⚽ Convocazione' },
   { value: 'alert_tecnico', label: '📋 Note tecniche' },
 ]

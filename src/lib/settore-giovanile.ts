@@ -269,7 +269,7 @@ export const GENERE_OPTIONS = [
 export const STATI_QUOTA_GIOVANILE = {
   da_pagare: { label: 'Da pagare',  colore: '#ff9900', icona: '⏳' },
   pagata:    { label: 'Pagata',     colore: '#c8f000', icona: '✓' },
-  in_ritardo:{ label: 'In ritardo', colore: '#ff4444', icona: '⚠️' },
+  in_ritardo:{ label: 'In ritardo', colore: '#ff4444', icona: '⚠' },
   esonerata: { label: 'Esonerata',  colore: '#888888', icona: '—' },
 } as const
 

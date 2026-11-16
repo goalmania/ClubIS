@@ -8,7 +8,7 @@ export default function ErrorePage() {
       justifyContent: 'center', flexDirection: 'column', gap: 16,
       background: '#0a0a0a', fontFamily: 'sans-serif', padding: 24,
     }}>
-      <div style={{ fontSize: 40 }}>⚠️</div>
+      <div style={{ fontSize: 40 }}>⚠</div>
       <div style={{ fontSize: 18, fontWeight: 600, color: '#fff' }}>Profilo non collegato</div>
       <div style={{ fontSize: 14, color: '#888', textAlign: 'center', maxWidth: 400, lineHeight: 1.6 }}>
         Il tuo account è autenticato ma non è ancora collegato a nessun club.

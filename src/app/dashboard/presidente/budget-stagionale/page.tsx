@@ -647,7 +647,7 @@ export default function BudgetStagionalePage() {
           {(addingE || editIdE) && (
             <div className="card" style={{ padding: '20px 24px', marginBottom: 20, borderLeft: '3px solid var(--verde)' }}>
               <div style={{ fontSize: 12, fontFamily: 'var(--font-mono)', textTransform: 'none', letterSpacing: '0', color: 'var(--verde)', marginBottom: 14 }}>
-                {editIdE ? '✏️ Modifica entrata' : '+ Nuova entrata prevista'}
+                {editIdE ? '✏ Modifica entrata' : '+ Nuova entrata prevista'}
               </div>
               <FormVoce tipo="entrata" initial={editIdE ? entratePrev.find(v => v.id === editIdE) : undefined}
                 onSave={vals => saveVoce('entrata', editIdE, vals)}
@@ -708,7 +708,7 @@ export default function BudgetStagionalePage() {
           {(addingU || editIdU) && (
             <div className="card" style={{ padding: '20px 24px', marginBottom: 20, borderLeft: '3px solid var(--rosso)' }}>
               <div style={{ fontSize: 12, fontFamily: 'var(--font-mono)', textTransform: 'none', letterSpacing: '0', color: 'var(--rosso)', marginBottom: 14 }}>
-                {editIdU ? '✏️ Modifica uscita' : '+ Nuova uscita prevista'}
+                {editIdU ? '✏ Modifica uscita' : '+ Nuova uscita prevista'}
               </div>
               <FormVoce tipo="uscita" initial={editIdU ? uscitePrev.find(v => v.id === editIdU) : undefined}
                 onSave={vals => saveVoce('uscita', editIdU, vals)}

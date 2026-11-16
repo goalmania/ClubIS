@@ -152,9 +152,9 @@ export default function GiocatoreDashboard() {
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 10, marginTop: 32, maxWidth: 520, margin: '32px auto 0' }}>
         {[
-          { href: '/dashboard/giocatore/allenamenti', label: 'Allenamenti', icon: '🏋️' },
+          { href: '/dashboard/giocatore/allenamenti', label: 'Allenamenti', icon: '🏋' },
           { href: '/dashboard/giocatore/convocazioni', label: 'Convocazioni', icon: '📋' },
-          { href: '/dashboard/giocatore/partite', label: 'Partite', icon: '🏟️' },
+          { href: '/dashboard/giocatore/partite', label: 'Partite', icon: '🏟' },
           { href: '/dashboard/giocatore/statistiche', label: 'Statistiche', icon: '📊' },
           { href: '/dashboard/giocatore/valutazioni', label: 'Valutazioni', icon: '⭐' },
           { href: '/dashboard/giocatore/pagamenti', label: 'Pagamenti', icon: '💰' },
@@ -163,7 +163,7 @@ export default function GiocatoreDashboard() {
           <Link key={item.href} href={item.href} style={{
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
             padding: '16px 12px', background: 'var(--surface-2)', border: '1px solid var(--border-solid)',
-            borderRadius: 8, color: 'var(--white)', textDecoration: 'none', fontSize: 12, fontWeight: 600,
+            borderRadius: 18, color: 'var(--white)', textDecoration: 'none', fontSize: 13, fontWeight: 600,
           }}>
             <span style={{ fontSize: 22 }}>{item.icon}</span>
             {item.label}
@@ -176,7 +176,7 @@ export default function GiocatoreDashboard() {
   /* ── Errore generico ───────────────────────────────────────────── */
   if (stato === 'errore') return (
     <div style={{ padding: 40, textAlign: 'center' }}>
-      <div style={{ fontSize: 36, marginBottom: 12 }}>⚠️</div>
+      <div style={{ fontSize: 36, marginBottom: 12 }}>⚠</div>
       <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 16, textTransform: 'none', color: 'var(--white)', marginBottom: 8 }}>
         Sessione scaduta
       </div>
@@ -196,10 +196,10 @@ export default function GiocatoreDashboard() {
       <div style={{
         display: 'flex', alignItems: 'center', gap: 20, marginBottom: 32,
         padding: '20px 24px', background: 'var(--surface-2)',
-        border: '1px solid var(--border-solid)', borderRadius: 8,
+        border: '1px solid var(--border-solid)', borderRadius: 20,
       }}>
         <div style={{
-          width: 56, height: 56, borderRadius: 8, background: 'var(--gray-mid)',
+          width: 56, height: 56, borderRadius: '50%', background: 'var(--gray-mid)',
           border: '1px solid var(--border-solid)', display: 'flex',
           alignItems: 'center', justifyContent: 'center', fontSize: 22, flexShrink: 0, overflow: 'hidden',
         }}>
@@ -236,15 +236,15 @@ export default function GiocatoreDashboard() {
         {/* Link rapidi */}
         <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
           <Link href="/dashboard/giocatore/allenamenti" style={linkBtn}>📋 Allenamenti</Link>
-          <Link href="/dashboard/giocatore/partite"     style={linkBtn}>🏟️ Partite</Link>
+          <Link href="/dashboard/giocatore/partite"     style={linkBtn}>🏟 Partite</Link>
           <Link href="/dashboard/giocatore/trasferte"   style={linkBtn}>🚌 Trasferte</Link>
         </div>
       </div>
 
       {/* Stat cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 12, marginBottom: 28 }}>
+      <div className="kpi-riga" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))' }}>
         <StatCard icona="📅" label="Presenze allenamenti" value={`${presenze.presenti} / ${presenze.tot}`} sub={`${percPresenze}% di partecipazione`} />
-        <StatCard icona="🏟️" label="Prossime gare"        value={String(prossimi.length)}                  sub="in programma" />
+        <StatCard icona="🏟" label="Prossime gare"        value={String(prossimi.length)}                  sub="in programma" />
         <StatCard icona="💰" label="Quota stagionale"      value={quotaAttiva ? formatEuro(Number(quotaAttiva.importo_pagato)) : '—'} sub={quotaAttiva ? `su ${formatEuro(Number(quotaAttiva.importo_totale))}` : 'Nessuna quota'} />
         <StatCard icona="📋" label="Convocazioni"          value={String(convocazioni.length)}              sub="ultime registrate" />
         <StatCard icona="🚌" label="Trasferte in programma" value={String(trasferte.length)}                sub="prossime assegnate" />
@@ -253,7 +253,7 @@ export default function GiocatoreDashboard() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
 
         {/* Prossime gare */}
-        <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8, overflow: 'hidden' }}>
+        <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 20, overflow: 'hidden' }}>
           <div style={cardHeader}>Prossime gare</div>
           {prossimi.length === 0
             ? <div style={emptyRow}>Nessuna gara programmata</div>
@@ -273,7 +273,7 @@ export default function GiocatoreDashboard() {
         </div>
 
         {/* Quote */}
-        <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8, overflow: 'hidden' }}>
+        <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 20, overflow: 'hidden' }}>
           <div style={cardHeader}>Situazione pagamenti</div>
           {quote.length === 0
             ? <div style={emptyRow}>Nessuna quota registrata</div>
@@ -300,7 +300,7 @@ export default function GiocatoreDashboard() {
 
       {/* Prossime trasferte */}
       {trasferte.length > 0 && (
-        <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8, overflow: 'hidden', marginBottom: 16 }}>
+        <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 20, overflow: 'hidden', marginBottom: 16 }}>
           <div style={{ ...cardHeader, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span>Prossime trasferte</span>
             <Link href="/dashboard/giocatore/trasferte" style={{ fontSize: 12, color: 'var(--accent)', fontFamily: 'var(--font-mono)', textDecoration: 'none' }}>Vedi tutte →</Link>
@@ -328,7 +328,7 @@ export default function GiocatoreDashboard() {
 
       {/* Prossimi eventi calendario (scuola calcio) */}
       {isScuolaCalcio && eventiCalendario.length > 0 && (
-        <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8, overflow: 'hidden', marginBottom: 16 }}>
+        <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 20, overflow: 'hidden', marginBottom: 16 }}>
           <div style={cardHeader}>Prossimi eventi</div>
           {eventiCalendario.map((e: any) => (
             <div key={e.id} style={{ padding: '10px 18px', borderBottom: '1px solid var(--border-solid)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -348,7 +348,7 @@ export default function GiocatoreDashboard() {
 
       {/* Ultime convocazioni */}
       {convocazioni.length > 0 && (
-        <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8, overflow: 'hidden' }}>
+        <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 20, overflow: 'hidden' }}>
           <div style={cardHeader}>Ultime convocazioni</div>
           {convocazioni.map((c: any, i: number) => {
             const p       = c.partite
@@ -386,18 +386,17 @@ const emptyRow: React.CSSProperties = {
 }
 const linkBtn: React.CSSProperties = {
   padding: '6px 12px', background: 'rgba(255,255,255,0.05)',
-  border: '1px solid var(--border-solid)', borderRadius: 8,
+  border: '1px solid var(--border-solid)', borderRadius: 999,
   color: 'var(--white)', textDecoration: 'none', fontSize: 12,
   fontWeight: 600, whiteSpace: 'nowrap',
 }
 
 function StatCard({ icona, label, value, sub }: { icona: string; label: string; value: string; sub: string }) {
   return (
-    <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border-solid)', borderRadius: 8, padding: '16px 18px' }}>
-      <div style={{ fontSize: 20, marginBottom: 8 }}>{icona}</div>
-      <div style={{ fontFamily: 'var(--font-mono)', fontSize: 12, textTransform: 'none', letterSpacing: '0', color: 'var(--gray)', marginBottom: 4 }}>{label}</div>
-      <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 24, color: 'var(--white)' }}>{value}</div>
-      <div style={{ fontSize: 12, color: 'var(--gray)', marginTop: 4 }}>{sub}</div>
+    <div className="stat-card">
+      <div className="stat-label" style={{ display: 'flex', alignItems: 'center', gap: 6 }}><span aria-hidden="true">{icona}</span>{label}</div>
+      <div className="stat-value">{value}</div>
+      <div className="stat-sub">{sub}</div>
     </div>
   )
 }

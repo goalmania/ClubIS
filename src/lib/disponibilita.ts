@@ -206,7 +206,7 @@ export async function getDisponibilitaSquadra(
       motivi.push(`Certificato scaduto il ${formatData(certScadenza)} (da ${giorniScaduto}gg)`)
       dati.certificato = { scaduto_il: certScadenza, giorni_scaduto: giorniScaduto }
     } else if (certScadenza <= in30g) {
-      alert.push(`⚠️ Certificato in scadenza il ${formatData(certScadenza)}`)
+      alert.push(`⚠ Certificato in scadenza il ${formatData(certScadenza)}`)
     }
 
     /* ── Diffida ─────────────────────────────────────────────── */

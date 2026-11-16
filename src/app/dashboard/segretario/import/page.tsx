@@ -242,7 +242,7 @@ export default function ImportPage() {
             </div>
             {'note' in tipo && tipo.note && (
               <div style={{ fontSize: 12, color: 'var(--accent)', marginTop: 8 }}>
-                ⚠️ {tipo.note as string}
+                ⚠ {tipo.note as string}
               </div>
             )}
           </div>

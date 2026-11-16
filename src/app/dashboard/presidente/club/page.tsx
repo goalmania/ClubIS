@@ -518,7 +518,7 @@ export default function InfoClubPage() {
                   </div>
                   <div style={{ display: 'flex', gap: 8 }}>
                     <button type="button" className="btn btn-secondary btn-sm" onClick={() => firmaInput.current?.click()}>
-                      ✏️ Sostituisci firma
+                      ✏ Sostituisci firma
                     </button>
                     <button
                       type="button"
@@ -545,7 +545,7 @@ export default function InfoClubPage() {
                       if (f) handleFirmaUpload({ target: { files: e.dataTransfer.files } } as React.ChangeEvent<HTMLInputElement>)
                     }}
                   >
-                    <div style={{ fontSize: 28, marginBottom: 8 }}>✍️</div>
+                    <div style={{ fontSize: 28, marginBottom: 8 }}>✍</div>
                     <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, textTransform: 'none', fontSize: 12, color: 'var(--white)', marginBottom: 4 }}>
                       Trascina qui la firma
                     </div>

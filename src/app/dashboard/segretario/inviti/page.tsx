@@ -6,7 +6,7 @@ import { CATEGORIE_FEDERALI_OPTIONS } from '@/lib/settore-giovanile'
 const RUOLI_STAFF_AGONISTICO = [
   { ruolo: 'segretario',    label: 'Segretario',          icona: '📋' },
   { ruolo: 'allenatore',    label: 'Allenatore',          icona: '🧢' },
-  { ruolo: 'medico',        label: 'Medico',              icona: '⚕️' },
+  { ruolo: 'medico',        label: 'Medico',              icona: '⚕' },
   { ruolo: 'ds',            label: 'Direttore Sportivo',  icona: '🔭' },
   { ruolo: 'team_manager',  label: 'Team Manager',        icona: '📊' },
   { ruolo: 'osservatore',   label: 'Osservatore',         icona: '👁' },
@@ -19,7 +19,7 @@ const RUOLI_STAFF_AGONISTICO = [
 // compare qui: si invita per categoria (vedi sezione dedicata sotto).
 const RUOLI_STAFF_SCUOLA_CALCIO = [
   { ruolo: 'segretario', label: 'Segretario', icona: '📋' },
-  { ruolo: 'medico',     label: 'Medico',     icona: '⚕️' },
+  { ruolo: 'medico',     label: 'Medico',     icona: '⚕' },
 ]
 
 const RUOLI_ATLETI = [

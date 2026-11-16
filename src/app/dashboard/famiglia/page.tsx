@@ -102,7 +102,7 @@ function NoGiocatorePreview() {
           { href: '/dashboard/famiglia/calendario',   label: 'Calendario',  icon: '📅' },
           { href: '/dashboard/famiglia/sviluppo',     label: 'Progressi',   icon: '⭐' },
           { href: '/dashboard/famiglia/pagamenti',    label: 'Pagamenti',   icon: '💶' },
-          { href: '/dashboard/famiglia/messaggi',     label: 'Bacheca',     icon: '✉️' },
+          { href: '/dashboard/famiglia/messaggi',     label: 'Bacheca',     icon: '✉' },
           { href: '/dashboard/famiglia/comunicazioni',label: 'Comunicazioni',icon: '💬' },
           { href: '/dashboard/famiglia/profilo',      label: 'Profilo',     icon: '👤' },
         ].map(item => (
@@ -333,7 +333,7 @@ function DashboardContent({
           { href: '/dashboard/famiglia/calendario',   label: 'Calendario',  icon: '📅' },
           { href: '/dashboard/famiglia/sviluppo',     label: 'Progressi',   icon: '⭐' },
           { href: '/dashboard/famiglia/pagamenti',    label: 'Pagamenti',   icon: '💶' },
-          { href: '/dashboard/famiglia/messaggi',     label: 'Bacheca',     icon: '✉️' },
+          { href: '/dashboard/famiglia/messaggi',     label: 'Bacheca',     icon: '✉' },
         ].map(l => (
           <Link key={l.href} href={l.href} className="btn btn-secondary btn-sm">
             <span style={{ color: 'var(--accent)' }}>{l.icon}</span>

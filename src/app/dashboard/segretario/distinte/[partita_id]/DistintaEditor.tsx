@@ -116,7 +116,7 @@ export default function DistintaEditor({
       {squalificheManuale > 0 && (
         <div className="alert alert-warning" style={{ marginBottom: 16, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
           <span>
-            ⚠️ {squalificheManuale} squalifica{squalificheManuale > 1 ? 'i' : ''} non collegata{squalificheManuale > 1 ? 'i' : ''} a un comunicato FIGC.
+            ⚠ {squalificheManuale} squalifica{squalificheManuale > 1 ? 'i' : ''} non collegata{squalificheManuale > 1 ? 'i' : ''} a un comunicato FIGC.
             Potrebbe trattarsi di inserimento manuale — verifica tramite i comunicati ufficiali.
           </span>
           {comunicatiFigcHref && (
@@ -159,7 +159,7 @@ export default function DistintaEditor({
       {/* Alert eleggibili insufficienti */}
       {eleggibili.length < 14 && (
         <div className="alert alert-warning" style={{ marginBottom: 20 }}>
-          ⚠️ Solo <strong>{eleggibili.length}</strong> giocatori eleggibili — verifica tesseramenti e certificati medici
+          ⚠ Solo <strong>{eleggibili.length}</strong> giocatori eleggibili — verifica tesseramenti e certificati medici
         </div>
       )}
 

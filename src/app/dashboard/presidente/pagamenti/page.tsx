@@ -14,7 +14,7 @@ const TIPI_PAGAMENTO = [
   { categoria: 'uscita',  label: 'Rimborso trasferta',       icon: '🚌', soggetto: 'squadra'   },
   { categoria: 'uscita',  label: 'Quota affiliazione FIGC',  icon: '🏛', soggetto: 'ente'      },
   { categoria: 'uscita',  label: 'Arbitraggi',               icon: '⚖', soggetto: 'ente'      },
-  { categoria: 'uscita',  label: 'Manutenzione campo',       icon: '⚙️', soggetto: 'fornitore' },
+  { categoria: 'uscita',  label: 'Manutenzione campo',       icon: '⚙', soggetto: 'fornitore' },
   { categoria: 'uscita',  label: 'Materiale sportivo',       icon: '👟', soggetto: 'fornitore' },
   { categoria: 'uscita',  label: 'Iscrizione campionato',    icon: '📋', soggetto: 'ente'      },
   // ENTRATE
@@ -22,7 +22,7 @@ const TIPI_PAGAMENTO = [
   { categoria: 'entrata', label: 'Sponsorizzazione',         icon: '💼', soggetto: 'sponsor'   },
   { categoria: 'entrata', label: 'Contributo comune/regione',icon: '🏛', soggetto: 'ente'      },
   { categoria: 'entrata', label: 'Botteghino partita',       icon: '🎟', soggetto: 'evento'    },
-  { categoria: 'entrata', label: 'Cessione giocatore',       icon: '↗️', soggetto: 'club'      },
+  { categoria: 'entrata', label: 'Cessione giocatore',       icon: '↗', soggetto: 'club'      },
 ] as const
 
 type TipoPag = typeof TIPI_PAGAMENTO[number]
@@ -370,7 +370,7 @@ export default function PresidentePagamentiPage() {
           borderRadius: 14, padding: '12px 16px', marginBottom: 20,
           fontSize: 14, color: 'var(--accent-red)', fontWeight: 600,
         }}>
-          ⚠️ {fmt(kpi!.totRitardo)} di rate in ritardo
+          ⚠ {fmt(kpi!.totRitardo)} di rate in ritardo
         </div>
       )}
 

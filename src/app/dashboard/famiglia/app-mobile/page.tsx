@@ -112,7 +112,7 @@ function IstruzioniIOS() {
         Apri <strong>clubis.it</strong> usando <strong>Safari</strong> (non Chrome) e accedi al tuo account come fai di solito.
       </Passo>
       <Passo n={2}>
-        In basso al centro (o in alto, su iPad) tocca l&apos;icona <strong>Condividi</strong> — il quadrato con la freccia verso l&apos;alto <span style={{ fontFamily: 'var(--font-mono)' }}>⬆️□</span>.
+        In basso al centro (o in alto, su iPad) tocca l&apos;icona <strong>Condividi</strong> — il quadrato con la freccia verso l&apos;alto <span style={{ fontFamily: 'var(--font-mono)' }}>⬆□</span>.
       </Passo>
       <Passo n={3}>
         Scorri l&apos;elenco delle opzioni verso il basso e tocca <strong>&quot;Aggiungi alla schermata Home&quot;</strong>.

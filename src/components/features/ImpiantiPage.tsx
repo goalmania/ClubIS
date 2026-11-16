@@ -441,7 +441,7 @@ export default function ImpiantiPage({ defaultTab = 'dashboard' }: Props) {
                         </div>
                         {scadenzaProx && (
                           <div style={{ fontSize: 12, marginTop: 5, color: scadenzaAlert ? 'var(--accent-orange)' : 'var(--gray)', fontFamily: 'var(--font-mono)' }}>
-                            {scadenzaAlert ? '⚠️ ' : '📅 '}
+                            {scadenzaAlert ? '⚠ ' : '📅 '}
                             Prossima scadenza: {formatData(scadenzaProx)}
                             {giorniAllaScad !== null && ` (${giorniAllaScad} giorni)`}
                           </div>
@@ -480,7 +480,7 @@ export default function ImpiantiPage({ defaultTab = 'dashboard' }: Props) {
             />
           </FormField>
           <div style={{ fontSize: 12, color: 'var(--accent-orange)', padding: '10px 12px', background: 'rgba(255,153,0,0.08)', border: '1px solid rgba(255,153,0,0.3)', marginTop: 8, borderRadius: 14 }}>
-            ⚠️ Ticket con urgenza "Alta" o "Bloccante" inviano una notifica immediata al presidente e al DG.
+            ⚠ Ticket con urgenza "Alta" o "Bloccante" inviano una notifica immediata al presidente e al DG.
           </div>
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 16 }}>
             <button className="btn btn-secondary" onClick={() => setModalTicket(false)}>Annulla</button>

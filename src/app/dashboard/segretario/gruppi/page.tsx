@@ -415,7 +415,7 @@ export default function GruppiPage() {
         <div style={{ padding: 40, textAlign: 'center', color: 'var(--grigio-4)' }}>Caricamento...</div>
       ) : gruppi.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--grigio-4)' }}>
-          <div style={{ fontSize: 40, marginBottom: 16 }}>🏟️</div>
+          <div style={{ fontSize: 40, marginBottom: 16 }}>🏟</div>
           <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, textTransform: 'none', letterSpacing: '0', color: 'var(--white)', marginBottom: 8 }}>
             Nessun gruppo
           </div>

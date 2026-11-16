@@ -86,7 +86,7 @@ export async function POST(req: Request) {
             destinatario_id:    u.id,
             ruolo_destinatario: u.ruolo,
             tipo:               'alert_sistema',
-            titolo:             '⚠️ Checklist pre-gara incompleta',
+            titolo:             '⚠ Checklist pre-gara incompleta',
             messaggio:          `${template.nome}: completata al ${completata_al}%. Verificare prima del fischio.`,
             azione_url:         '/dashboard/custode/impianti',
             letta:              false,

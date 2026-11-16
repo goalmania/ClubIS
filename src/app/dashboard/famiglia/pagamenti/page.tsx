@@ -208,7 +208,7 @@ function ModalPaga({
 
           {metodo === 'bonifico' && (
             <div style={{ fontSize: 12, color: 'var(--gray)', marginBottom: 14, lineHeight: 1.5 }}>
-              ℹ️ Dopo aver effettuato il bonifico clicca &quot;Dichiara&quot;. La segreteria confermerà l&apos;accredito.
+              ℹ Dopo aver effettuato il bonifico clicca &quot;Dichiara&quot;. La segreteria confermerà l&apos;accredito.
             </div>
           )}
 

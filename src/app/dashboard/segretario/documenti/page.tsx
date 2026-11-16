@@ -205,7 +205,7 @@ const SIDEBAR_ITEMS: { key: CategoriaKey | 'sep1' | 'sep2'; label: string; icona
     .sort(([, a], [, b]) => a.ordine - b.ordine)
     .map(([key, meta]) => ({ key: key as CategoriaKey, label: meta.label, icona: meta.icona })),
   { key: 'sep2',      label: '',                   icona: '' },
-  { key: 'archiviati', label: 'Archiviati',        icona: '🗄️' },
+  { key: 'archiviati', label: 'Archiviati',        icona: '🗄' },
 ]
 
 // ── Componente campo extra ─────────────────────────────────────────────────
@@ -716,7 +716,7 @@ export default function DocumentiPage() {
                     border: '1px solid var(--border-solid)', borderRadius: 8,
                     fontSize: 12, color: 'var(--gray)', lineHeight: 1.6,
                   }}>
-                    ℹ️ I dati del club vengono pre-compilati automaticamente.
+                    ℹ I dati del club vengono pre-compilati automaticamente.
                     Il documento si aprirà in una nuova finestra — usa il pulsante "Stampa / Salva PDF".
                   </div>
                 </div>

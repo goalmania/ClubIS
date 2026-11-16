@@ -54,7 +54,7 @@ export default async function CustodeDashboard() {
       </div>
 
       {/* Azioni principali */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+      <div className="stack-mobile" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
         <Link href="/dashboard/custode/impianti?tab=checklist" style={{ textDecoration: 'none' }}>
           <div className="card" style={{ padding: '28px 24px', cursor: 'pointer', borderLeft: '4px solid var(--accent)', transition: 'opacity 0.15s' }}>
             <div style={{ fontSize: 32, marginBottom: 12 }}>✅</div>

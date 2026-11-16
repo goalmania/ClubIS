@@ -1568,3 +1568,11 @@ body::before {
 [style*="justify-content:space-between"] > .btn,
 .page-header-actions > .btn { align-self: center; }
 .btn-sm { max-height: 40px; }
+
+/* Bottoni lime scritti a mano (senza .btn): come i bottoni principali */
+.dashboard-content a[style*="background: var(--accent)"],
+.dashboard-content button[style*="background: var(--accent)"],
+.dashboard-content a[style*="background:var(--accent)"],
+.dashboard-content button[style*="background:var(--accent)"] {
+  white-space: nowrap; flex-shrink: 0; border-radius: 999px !important;
+}

@@ -76,7 +76,7 @@ export type CategoriaDocumento =
 
 export const CATEGORIA_META: Record<CategoriaDocumento, { label: string; icona: string; ordine: number }> = {
   visite_mediche:             { label: 'Visite Mediche e Certificazioni Sanitarie', icona: '🏥', ordine: 1 },
-  riforma_sport:              { label: 'Riforma dello Sport',                       icona: '⚖️', ordine: 2 },
+  riforma_sport:              { label: 'Riforma dello Sport',                       icona: '⚖', ordine: 2 },
   dichiarazioni_fiscali:      { label: 'Dichiarazioni e Documenti Fiscali',          icona: '💰', ordine: 3 },
   iscrizioni_tesseramenti:    { label: 'Iscrizioni e Tesseramenti',                  icona: '📝', ordine: 4 },
   certificazioni_scolastiche: { label: 'Certificazioni e Attestati Scolastici',      icona: '🎓', ordine: 5 },

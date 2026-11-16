@@ -24,7 +24,7 @@ const LIVELLO_1: NodoOrg = {
   ruolo: 'presidente', label: 'Presidente', icon: '👑',
 }
 const LIVELLO_2: NodoOrg[] = [
-  { ruolo: 'team_manager',  label: 'Team Manager',       icon: '🗂️' },
+  { ruolo: 'team_manager',  label: 'Team Manager',       icon: '🗂' },
   { ruolo: 'ds',            label: 'Direttore Sportivo',  icon: '⚽' },
 ]
 const FIGLI_TM: NodoOrg[] = [

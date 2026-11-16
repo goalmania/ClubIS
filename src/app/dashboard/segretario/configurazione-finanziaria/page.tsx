@@ -443,7 +443,7 @@ export default function ConfigurazioneFinanziariaPage() {
               borderRadius: 10, fontSize: 13, fontWeight: 600, zIndex: 2000,
               maxWidth: 480, textAlign: 'center', boxShadow: '0 4px 20px rgba(0,0,0,0.5)',
             }}>
-              ⚠️ {errore}
+              ⚠ {errore}
               <button onClick={() => setErrore(null)} style={{ marginLeft: 12, background: 'none', border: 'none', color: '#fff', cursor: 'pointer', fontSize: 16 }}>×</button>
             </div>
           )}

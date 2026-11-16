@@ -276,7 +276,7 @@ export default function ScadenzeFIGCPage() {
       <div style={{ display: 'flex', gap: 6, marginBottom: 16 }}>
         {([
           { key: 'attive',     label: 'Attive' },
-          { key: 'urgenti',    label: '⚠️ Urgenti ≤30gg' },
+          { key: 'urgenti',    label: '⚠ Urgenti ≤30gg' },
           { key: 'completate', label: '✓ Completate' },
           { key: 'tutte',      label: 'Tutte' },
         ] as const).map(f => (

@@ -150,7 +150,7 @@ export default function PagamentiOnlinePage() {
           {daCompletare.length > 0 && (
             <div className="card" style={{ padding: 18, marginBottom: 20, borderColor: 'var(--accent-orange)' }}>
               <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 8, color: 'var(--accent-orange)' }}>
-                ⚠️ Manca ancora qualche dato
+                ⚠ Manca ancora qualche dato
               </div>
               <p style={{ fontSize: 14, color: 'var(--white)', marginTop: 0, marginBottom: 10 }}>
                 Capita spesso di saltare un campo per errore, nessun problema. Stripe chiede di completare:
@@ -237,7 +237,7 @@ function WizardStep({
         <div style={{ fontSize: 14, color: 'var(--gray)', lineHeight: 1.6 }}>{descrizione}</div>
         {nota && (
           <div style={{ fontSize: 13, color: 'var(--accent-orange)', lineHeight: 1.5, marginTop: 8, background: 'var(--accent-orange-lt)', padding: '8px 10px', borderRadius: 10 }}>
-            ℹ️ {nota}
+            ℹ {nota}
           </div>
         )}
         {azione && (
