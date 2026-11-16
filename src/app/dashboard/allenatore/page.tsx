@@ -131,6 +131,38 @@ export default async function AllenatoreDashboard() {
         <p>{oggi.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' })}
           {squadre && squadre.length > 0 && ` · ${squadre.map(s => s.nome).join(', ')}`}</p>
       </div>
+      {/* Stat cards */}
+      <div className="kpi-riga">
+        <div className="stat-card">
+          <div className="stat-label">Squadre</div>
+          <div className="stat-value">{squadre?.length ?? 0}</div>
+          <div className="stat-sub">assegnate</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-label">Presenze settimana</div>
+          <div className="stat-value" style={{ color: percPresenze !== null && percPresenze < 70 ? 'var(--ambra)' : 'var(--grigio)' }}>
+            {percPresenze !== null ? `${percPresenze}%` : '—'}
+          </div>
+          <div className="stat-sub">{presenti}/{totPresenze} rilevazioni</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-label">Conv. in attesa</div>
+          <div className="stat-value" style={{ color: convocazioniPendenti && convocazioniPendenti.length > 0 ? 'var(--ambra)' : 'var(--grigio)' }}>
+            {convocazioniPendenti?.length ?? 0}
+          </div>
+          <div className="stat-sub">risposte mancanti</div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-label">Prossima partita</div>
+          <div className="stat-value" style={{ fontSize: 18 }}>
+            {prossimaPartita?.[0]
+              ? new Date(prossimaPartita[0].data_ora).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit' })
+              : '—'
+            }
+          </div>
+          <div className="stat-sub">{prossimaPartita?.[0]?.avversario ?? 'nessuna in programma'}</div>
+        </div>
+      </div>
 
       <AzioniRapide ruolo="allenatore" variante={isScuolaCalcio ? 'scuola_calcio' : 'agonistico'} />
 
@@ -181,38 +213,6 @@ export default async function AllenatoreDashboard() {
         </div>
       )}
 
-      {/* Stat cards */}
-      <div className="kpi-riga">
-        <div className="stat-card">
-          <div className="stat-label">Squadre</div>
-          <div className="stat-value">{squadre?.length ?? 0}</div>
-          <div className="stat-sub">assegnate</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-label">Presenze settimana</div>
-          <div className="stat-value" style={{ color: percPresenze !== null && percPresenze < 70 ? 'var(--ambra)' : 'var(--grigio)' }}>
-            {percPresenze !== null ? `${percPresenze}%` : '—'}
-          </div>
-          <div className="stat-sub">{presenti}/{totPresenze} rilevazioni</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-label">Conv. in attesa</div>
-          <div className="stat-value" style={{ color: convocazioniPendenti && convocazioniPendenti.length > 0 ? 'var(--ambra)' : 'var(--grigio)' }}>
-            {convocazioniPendenti?.length ?? 0}
-          </div>
-          <div className="stat-sub">risposte mancanti</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-label">Prossima partita</div>
-          <div className="stat-value" style={{ fontSize: 18 }}>
-            {prossimaPartita?.[0]
-              ? new Date(prossimaPartita[0].data_ora).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit' })
-              : '—'
-            }
-          </div>
-          <div className="stat-sub">{prossimaPartita?.[0]?.avversario ?? 'nessuna in programma'}</div>
-        </div>
-      </div>
 
       {/* 2 colonne */}
       <div className="stack-mobile" style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 20 }}>

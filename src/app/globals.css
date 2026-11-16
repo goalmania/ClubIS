@@ -1534,3 +1534,13 @@ body::before {
 .dashboard-content > div > div:first-child:has(> h1):has(+ *) { min-width: 0; }
 .dashboard-content [style*="justify-content: space-between"]:has(> div > h1) { flex-wrap: wrap; row-gap: 12px; }
 .dashboard-content [style*="justify-content: space-between"]:has(> div > h1) > div:has(> h1) { flex: 1 1 320px; }
+.btn { white-space: nowrap; }
+@media (max-width: 640px) {
+  /* Disponibilità: maglia · nome · stato in riga, motivazione sotto */
+  .disp-testa { display: none !important; }
+  .disp-riga { grid-template-columns: 34px minmax(0, 1fr) auto !important; row-gap: 6px !important; padding: 12px 14px !important; }
+  .disp-riga > :nth-child(4) { grid-column: 2 / -1; font-size: 12.5px; }
+  /* Programmazione settimanale: giorni uno sotto l'altro */
+  .dashboard-content [style*="repeat(7,"][style*="min-width: 700px"],
+  .dashboard-content [style*="repeat(7,"][style*="min-width:700px"] { grid-template-columns: minmax(0, 1fr) !important; min-width: 0 !important; }
+}

@@ -165,7 +165,7 @@ export default async function VistaDisponibilita({ clubId, ruolo, squadraIds }: 
       ) : (
         <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
           {/* Header colonne */}
-          <div style={{
+          <div className="disp-testa" style={{
             display: 'grid',
             gridTemplateColumns: '44px 1fr 140px 1fr',
             padding: '10px 18px',
@@ -190,6 +190,7 @@ export default async function VistaDisponibilita({ clubId, ruolo, squadraIds }: 
             return (
               <div
                 key={g.giocatore_id}
+                className="disp-riga"
                 style={{
                   display: 'grid',
                   gridTemplateColumns: '44px 1fr 140px 1fr',
